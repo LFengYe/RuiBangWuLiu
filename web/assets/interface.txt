@@ -1,0 +1,125 @@
+interface.txt文件用来描述睿邦物流信息管理系统客户端与服务器用AJAx数据交互的数据格式
+
+①用户登录
+ 数据请求：{
+     module："用户登录",
+     operation:"login",
+     admin:"用户名",
+     password:"登录密码"
+ }
+返回数据：
+  成功：请参考data14.txt
+  失败：error     
+【返回数据说明：返回的是一个json格式的菜单数据,key键是模块名称,page1|page2|page3表示该模块使用的是哪一种页面,url是该模块进行ajax请求的服务器文件url地址】
+
+
+②页面的创建
+数据请求：{
+    module："模块名称",
+    operation："create"
+}
+返回数据：
+       成功：第一种页面请参考data1.txt，第二种页面请参考data6.txt,第三种页面请参考data12.txt
+       失败：error
+【返回数据说明：control格式：
+           "name":"中文lable,类型,最大长度" 类型可取值"string"|"number"|"data"|"website"|"bool"
+           "m3"："中文lable,@table,@m1,@m2:@m4,@m5" 表示请求的数据为表格      m3的填写依赖于m1、m2, m4和m5为m3携带的不可见字段
+           "name":"中文lable,@value1,@value2,@value3" 表示值必须在给定值选择，当给定值只有一个，自动填充到字段中 】
+
+③点击输入框ajax请求table数据         说明：该ajax请求发生在第一种页面和第二种页面
+数据请求：{
+    module："模块名称",
+    operation:"request_table",
+    rely：{"control1":"value1","control2":"value2"……},
+    target:"contorl3"
+}
+【数据请求说明：rely是该输入框所依赖的输入框的键值对的集合      target是请求的输入框的键值 】 
+返回数据：
+	成功:请参考data2.txt
+	失败：error
+	
+④根据任意字段   进行模糊查询一项完整的数据                  说明：该ajax请求发生在第一种页面
+数据请求：{
+ 	 module："模块名称",
+     operation:"query_item",
+     datas:{"control1":"value1","control2":"value2"……}
+}
+【数据请求说明：datas据以查询的数据    至少提供一个字段】
+返回数据：
+	成功:{
+	"control1":"value1",
+	"control2":"value2",
+	"control3":"value3"
+	}
+	失败：error
+
+⑤提交表格修改过的数据        说明：该ajax请求发生在第一种页面
+数据请求：{
+ 	 module："模块名称",
+     operation:"submit",
+     update:[数据项1，数据项2……],
+     add:[数据项1，数据项2……],
+     delete:[数据项1，数据项2……]
+}
+【数据请求说明：数据项是一个键值对对象  如：{key1:"value1",key2:"value2",key3:"value3"}】
+返回数据：
+   成功:success
+   失败:error
+   
+⑥根据日期查询表格数据（一次性加载查询结果）   说明：该ajax发生在第一个页面
+数据请求：{
+    module："模块名称",
+    operation:"query_on_date",
+    date:"2013-3-7&2013-3-18"
+}
+【数据请求说明：date是一个时间段】
+返回数据:
+	成功：请参考data5.txt   即[{数据项1},{数据项2},{数据项3}……] 每个数据项是一个键值对对象
+	失败：error
+
+⑦根据表格中的一行数据   请求明细（另一个表的数据） 说明：该ajax发生在第二种和第三种页面
+数据请求{
+	  module："模块名称",
+      operation:"request_detail",
+      datas:{key1:"value1",key2:"value2",key3:"value3"}
+}
+【数据请求说明：datas是当前的一项数据    根据此数据来查询明细表】
+返回数据:
+	成功：请参考data8.txt   即[{数据项1},{数据项2},{数据项3}……]  每个数据项是一个键值对对象
+	失败：error
+
+⑧服务器端分页表格   进行翻页ajax请求        说明：该ajax请求发生在第二种页面和第三种页面
+-数据请求{
+	  module："模块名称",
+      operation:"request_page",
+      startIndex:30,
+      endIndex:45,
+      dataType："2016-12-12&2016-12-26|关键字"
+}
+【数据请求说明：加载数据库的第startIndex到endIndex条数据  dataType是数据类型  数据类型可以是根据时间段查找   可以是根据关键搜索字查找   可以是查找全部】
+返回数据:
+	成功：请参考data9.txt   即[{数据项1},{数据项2},{数据项3}……]  每个数据项是一个键值对对象
+	失败：error
+
+⑨在第二个页面中    根据第二个表单内容  请求表二的数据
+数据请求{
+	  module："模块名称",
+      operation:"query_data",
+      datas:{key1:"value1",key2:"value2",key3:"value3"}
+}
+【数据请求说明：datas为表单2的数据】
+返回数据:
+	成功：请参考data10.txt   即[{数据项1},{数据项2},{数据项3}……]  每个数据项是一个键值对对象
+	失败：error
+	
+十、在第二个页面中    添加一项带有明细表的数据
+数据请求{
+	  module："模块名称",
+      operation:"submit",
+      item:{key1:"value1",key2:"value2",key3:"value3"}
+      details：[{数据项1},{数据项2},{数据项3}……]
+}
+【数据请求说明：item为主要描述    details是明细数据】
+返回数据:
+	成功：success
+	失败：error

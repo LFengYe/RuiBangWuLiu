@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../bootstrap/normalize.css" />
+		<link rel="stylesheet" href="../bootstrap/bootstrap.css" />
+		<link rel="stylesheet" href="jQueryTablePlug2.css" />
+	</head>
+	<body>
+		<div class="tableBox"></div>
+		<script type="text/javascript" src="../jQuery/jquery-2.2.4.js" ></script>
+		<script type="text/javascript" src="jQueryTablePlug2.js" ></script>
+		
+		<script>
+		var $table = null;
+		   $.ajax({
+		   	type:"get",
+		   	url:"../data/data5.json",
+			success:function(data){
+			   	$table = $(".tableBox").insertTable({
+				titles: data.titles,
+				datas: data.datas,
+				unique: data.unique
+				
+			 });
+			   }
+		   });
+			
+		
+		</script>
+	</body>
+</html>

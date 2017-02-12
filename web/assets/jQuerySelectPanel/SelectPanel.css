@@ -1,0 +1,24 @@
+.SelectPanel{
+	width: auto;
+	height: auto;
+	background-color: white;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	display: none;
+	cursor: pointer;
+}
+.SSP-element{
+	display: inline-block;
+	margin: 10px;
+	padding: 8px;
+	border: 1px solid royalblue;
+	cursor: pointer;
+}
+.SelectPanel  .my-sure{
+	background-color:black;
+	margin-left:10px;
+}

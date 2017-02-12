@@ -1,0 +1,39 @@
+    .jQueryForm .input-area{
+    	overflow: hidden;
+		
+		
+		padding:25px;
+    }
+    .jQueryForm .input-area div {
+       	width: 300px;
+       	height: 24px;
+       	margin: 5px;
+       /*	float: left; */
+	   display:inline-block;
+	   overflow:hidden;
+       }
+       
+       .jQueryForm  .input-area div span:first-child {
+       	width: 100px;
+       	display: inline-block;
+        text-align-last: justify;
+    
+       }
+     
+        .jQueryForm .input-area div input.input{
+       	width: 150px;
+       	margin-left: 20px;
+       	border-radius: 5px;
+       	position: relative;
+		border:1px #ddd solid;
+       }
+	    .jQueryForm .input-area div input.radio{
+			width:15px;
+			height:15px;
+			display:inline-block;
+			margin-left:20px;
+			margin-right:5px;
+		}
+	 .jQueryForm .input-area div 	input[type=file] {
+        display: inline-block; 
+     }

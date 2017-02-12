@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>睿邦物流管理系统登录</title>
+        <link rel="stylesheet" href="assets/bootstrap/normalize.css" />
+        <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!--<link rel="stylesheet" href="assets/bootstrap/bootstrap.css" />-->
+        <style>
+            html,body{
+                height: 100%;
+            }
+            .wc-container{
+                height: 100%;
+                background: -webkit-linear-gradient(200deg,white, blue); /* Safari 5.1 - 6.0 */
+                background: -o-linear-gradient(200deg,white, blue); /* Opera 11.1 - 12.0 */
+                background: -moz-linear-gradient(200deg,white, blue); /* Firefox 3.6 - 15 */
+                background: linear-gradient(200deg,white, blue); /* 标准的语法 */
+
+            }
+            .wc-login{
+                margin-top: 100px;
+                padding: 20px;
+                background-color: white;
+                border: 1px solid #CCCCCC;
+                border-radius: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container wc-container" >
+            <div class="row">
+                <div class="col-xs-8  col-xs-offset-2">
+                    <div class="wc-login">
+                        <div class="form-group">
+                            <label>UserName</label>
+                            <input type="text" class="form-control" id="loginUserName" placeholder="UserName">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" id="loginPassword"  placeholder="Password">
+                        </div>
+                        <button class="btn btn-success btn-block" id="loginBtn">login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="assets/jQuery/jquery-2.2.4.js" ></script>
+        <script type="text/javascript" src="assets/bootstrap/bootstrap.min.js" ></script>
+        <script type="text/javascript" src="assets/common-js/common.js" ></script>
+        <script type="text/javascript" src="javascript/JSON-js-master/json2.js" ></script>
+        <script>
+            //用户将用户名密码填写完整后登录系统   如果登陆成功   则localStorage的isLogin置为true,并将返回的菜单数据保存在localStorage的menuDatas中   
+            $("#loginBtn").click(function () {
+                var loginUser = $("#loginUserName").val();
+                var pswd = $("#loginPassword").val();
+                if (loginUser != '' && pswd != '') {
+                    var obj = new Object();
+                    obj.module = "userLogin";
+                    obj.operation = "login";
+                    obj.username = loginUser;
+                    obj.password = pswd;
+                    alert(loginUser);
+                    //登录
+                    $.ajax({
+                        type: "post",
+                        url: "/RuiBangWuLiu/action.do",
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.status != 0) {
+                                alert(data.msg);
+                            } else {
+                                localStorage.setItem("isLogin", "true");
+                                localStorage.setItem('menuDatas', data.data);
+                                location = "index.html";
+                            }
+                        }
+                    });
+
+                } else {
+                    alert("请将用户名及密码填写完整！");
+                    return false;
+                }
+            });
+        </script>
+    </body>
+</html>

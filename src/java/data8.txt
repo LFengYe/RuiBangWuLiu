@@ -1,0 +1,35 @@
+[{
+	    "type":"XXXXX",
+	    "courseID":"ghjfdgh",
+	    "courseName": "jhjhj",
+	    "classID":"456",
+	    "hours":"30",
+	    "test":"考核",
+	    "mm3":"dd",
+	    "address":"3467",
+	    "hasExperiment":"有",
+	    "expTeacher":"YYY"
+	},{
+	    "type":"XXXXX",
+	    "courseID":"ghjfddghw21",
+	    "courseName": "jhjhj",
+	    "classID":"456",
+	    "hours":"30",
+	    "test":"考核",
+	    "mm3":"dd",
+	    "address":"3467",
+	    "hasExperiment":"有",
+	    "expTeacher":"YYY"
+	},{
+	    "type":"XXXXX",
+	    "courseID":"ghjfdgh567",
+	    "courseName": "jhjhj",
+	    "classID":"456",
+	    "hours":"30",
+	    "test":"考核",
+	    "mm3":"dd",
+	    "address":"3467",
+	    "hasExperiment":"有",
+	    "expTeacher":"YYY"
+	}
+	]

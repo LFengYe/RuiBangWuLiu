@@ -1,0 +1,205 @@
+html,body{
+    font-family: "微软雅黑";
+    background-color: #434b4e;
+
+}
+/*页头样式*/
+.wc-header{
+    height: 30px;
+    background-color: #434b4e;
+    color: white;
+}
+
+/*只要内容  包括左侧菜单与右侧页面*/
+.wc-content{
+    /*height: 600px; */
+    background-color:#434b4e;
+}
+
+/*左侧菜单   */
+.wc-content .img-logo{
+    width:200px;
+    margin-top:-20px;
+}
+.wc-content .wc-menu{
+    height:600px;
+    background-color:#33363b;
+    color:white;
+    border-radius:10px;
+}
+.wc-content .wc-menu a{
+    color:white;
+}
+/*右侧page*/
+.wc-content .wc-page{
+    min-height:650px;
+    background-color:#fff; 
+    border-radius:10px;
+    box-shadow:-3px -3px 8px #33363b ;
+}
+/*右侧导航和当前位置*/
+.wc-content .wc-page .wc-nav{
+    height:60px;
+    background-color:#edf0f5;
+}
+.wc-content .wc-page .wc-nav ul {
+    overflow:hidden;
+
+    line-height: 40px;
+}
+.wc-content .wc-page .wc-nav ul li{
+    float:left;
+}
+.wc-content .wc-page .wc-nav ul li a{
+    font-size:18px;
+    color:black;
+}
+.wc-content .wc-page .wc-nav .left-nav{
+    float:left;
+}
+.wc-content .wc-page .wc-nav  .right-nav{
+    float: right;
+}
+.wc-route .breadcrumb{
+    background-color:white;
+}
+/*page1的样式*/
+#page1 .page1-input-box,
+#page2 .page2-main-input-box,
+#page2 .page2-child-input-box{
+    background-color:#edf0f5;
+    border-radius:5px;
+    border:1px solid #bbc3c9;
+    margin: 10px 18px;
+}
+#page1 .page1-button-area{
+    text-align:center;
+    margin-bottom: 30px;
+}
+#page1 .page1-button-area .button{
+    margin-right:20px;
+    background-color: #403939;
+    border: none;
+    margin-top: 10px;
+}
+.page1-table{
+    position:relative;
+}
+#page1 .wc-page1-form{
+    position:absolute;
+    top:10px;
+    right:20px;
+    /*
+    float:right;
+    margin-right:30px;
+    margin-top:10px; 
+    */
+}
+#page1 .page1-show-table {
+    width:100%;
+    overflow-x:scroll;
+}
+/*page2的样式*/
+.page2-main-table,.page3-main-table{
+    position:relative;
+}
+.page2-show-table {
+    width:100%;
+    overflow-x:scroll;
+}
+.wc-page2-form {
+    margin-left:10px;
+}
+.page2-button-area{
+    text-align:center;
+    padding:15px;
+}
+.page2-button-area .button{
+    background-color:#403939;
+    color:white;
+    margin-left:10px;
+    margin-right:10px;
+}
+/*page3*/
+#page3-return{
+    background-color:black;
+    margin-left:10px;
+}
+
+
+
+/*公共样式*/
+.wc-form  .wc-group{
+    float:left;
+    margin-right:20px;
+}
+
+.wc-form  .wc-group  input.wc-control {
+    padding: 3px;
+    font-size: 14px;
+    margin-left: 5px;
+    border-radius: 5px;
+    border: 1px #bbc3c9 solid;
+
+}
+
+.wc-form button{
+    background-color:#403939;
+    border-radius:5px;
+    padding:4px 8px;
+    color:white;
+}
+
+.wc-page2-form .page2-addItem{
+    float:right;
+}
+.page2-pagination,.page3-pagination{
+    margin:0;
+}
+
+
+
+/*响应式*/
+@media screen and (max-width:627px) {
+    body {
+        background-color:lightblue;
+    }
+    .wc-header{
+        display:none;
+    }
+    .wc-content{
+        width:100%;
+        padding:0;
+        background-color:white;
+    }
+    .wc-content .wc-menu{
+        /*display:none;*/
+        position: absolute;
+        z-index: 9999;
+        /* left: -15px; */
+        top: 60px;
+        opacity: .9;
+        left: -100%;
+    }
+    .wc-content .img-logo{
+        display:none;
+    }
+    #page1 .wc-page1-form {
+        display:none;
+    }
+    .wc-group  {
+        margin-bottom:10px;
+    }
+    .wc-group label{
+        width: 60px;
+    }
+    .wc-form button {
+        float: right;
+    }
+    #page3 .wc-form button {
+        margin-right:15px;
+    }
+    .wc-form .wc-group {
+        margin-left: 15px;
+    }
+}

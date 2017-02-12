@@ -1,0 +1,22 @@
+[{
+      "classID":"001",
+	    "hours":"20",
+	    "test":"考试",   
+	    "address":"7023",
+	    "hasExperiment":"有",
+	    "expTeacher":"肖青"
+	},{	   
+	    "classID":"002",
+	    "hours":"15",
+	    "test":"考试",	   
+	    "address":"6023",
+	    "hasExperiment":"有",
+	    "expTeacher":"肖青"
+	},{	   
+	    "classID":"003",
+	    "hours":"20",
+	    "test":"考试",	   
+	    "address":"7023",
+	    "hasExperiment":"有",
+	    "expTeacher":"肖青"
+	}]

@@ -1,0 +1,33 @@
+{
+	    "titles": {
+	     "depart":"系,100px",
+	     "departID":"系编号,50px",
+	     "SetUpTime":"成立时间,100px",
+	     "dean":"系主任,60px",
+	      "address":"地址,180px",
+	      "target":"目标,200px"
+	},		
+		"datas":[{
+	     "depart":"电气系",
+	     "departID":"111",
+	     "SetUpTime":"1990-1-1",
+	     "dean":"XX",
+	      "address":"XXXXXX",
+	      "target":"培养人才"
+	},{
+	     "depart":"计算机系",
+	     "departID":"222",
+	     "SetUpTime":"1990-1-1",
+	     "dean":"XX",
+	      "address":"XXXXXX",
+	      "target":"培养人才"
+	},
+	{
+	     "depart":"电信系",
+	     "departID":"333",
+	     "SetUpTime":"1990-1-1",
+	     "dean":"XX",
+	      "address":"XXXXXX",
+	      "target":"培养人才"
+	}]
+}

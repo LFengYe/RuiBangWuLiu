@@ -1,0 +1,64 @@
+.jtb ul,.jtb, li ,.jtb h5{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.jtb .wrapper{
+
+	font-family: "微软雅黑";
+}
+.jtb .wrapper .jtb-header{
+	padding-left: 10px;
+	padding-top: 10px;
+}
+.jtb .wrapper .jtb-header input{
+	padding: 3px;
+	font-size: 14px;
+	margin-right: 5px;
+	border-radius: 5px;
+	border: 1px #bbc3c9 solid;
+}
+.jtb .wrapper .jtb-header button{
+	background-color:#403939 ;
+	border-radius: 5px;
+	color: white;
+	border:1px solid #ddd;
+	padding:4px 8px;
+}
+.jtb .jtb-container{
+	border: #9D9D9D 1px solid;
+	margin: 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	-webkit-user-select: none;
+}
+.jtb .jtb-container .col{
+	display: inline-block;
+	text-align: center;
+	font-size: 12px;
+}
+.jtb .jtb-container .col ul li{
+	padding: 5px;
+	height: 26px;
+	overflow: hidden;
+	white-space:nowrap;  
+}
+.jtb .jtb-container .col ul li:nth-child(2n){
+	background-color: #eee;
+}
+.jtb .jtb-container .col h5{
+	background-color: #4A4644;
+	color: white;
+	padding: 5px;
+	height:26px;
+	overflow: hidden;
+	white-space:nowrap;  
+}
+.jtb .clicked{
+	color: red;
+    
+}
+.jtb .dbclicked{
+	color: #F1E7E7;
+    background-color: #ECB6B6 !important;
+}

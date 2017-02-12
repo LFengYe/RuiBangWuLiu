@@ -1,0 +1,54 @@
+{
+    "调货计划管理": {
+        "调货计划下达": "page1, action.do",
+        "送货计划查询": "page2, action.do"
+    },
+    "部品入库管理": {
+        "待检入库": "page3, action.do",
+        "待检审核": "page1,action.do",
+        "送检出库": "page2,action.do",
+        "送检返回": "page1,action.do",
+        "部品退库": "page3,action.do"
+    },
+    "部品移库管理": {
+        "报检信息": "page3,action.do",
+        "返修出库": "page2,action.do",
+        "返修退库": "page1,action.do",
+        "现场调账": "page3,action.do",
+        "库房调账": "page2,action.do"
+    },
+    "部品出库管理": {
+        "计划出库": "page3,action.do",
+        "非生产领料": "page2,action.do",
+        "现场结算": "page1,action.do",
+        "部品退货": "page1,action.do",
+        "备货确认": "page3,action.do",
+        "领货确认": "page2,action.do",
+        "配送确认": "page1,action.do",
+        "虚拟良品库存": "page1,action.do",
+        "排序卡打印": "page2,action.do"
+    },
+    "数据报表管理": {
+        "部品出入库明细": {
+            "待检入库报表": "page1,action.do",
+            "送检出库报表": "page1,action.do",
+            "送检品退库报表": "page1,action.do",
+            "良品入库报表": "page1,action.do",
+            "不良品入库报表": "page1,action.do",
+            "良品返修出库": "page1,action.do",
+            "不良品返修出库": "page1,action.do",
+            "返修良品入库": "page1,action.do",
+            "返修不良品入库": "page1,action.do",
+            "计划出库报表": "page1,action.do",
+            "配送上线报表": "page1,action.do",
+            "非生产领料": "page1,action.do",
+            "退货出库报表": "page1,action.do",
+            "终端良品退库": "page1,action.do",
+            "终端不良品退库": "page1,action.do"
+        },
+        "部品收发存总表": "page1,action.do",
+        "部品计划完成情况": "page1,action.do",
+        "部品报警明细表": "page1,action.do",
+        "盘点报表": "page1,action.do"
+    }
+}
