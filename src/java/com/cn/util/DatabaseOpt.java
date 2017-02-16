@@ -18,6 +18,25 @@ import java.util.Properties;
 public class DatabaseOpt {
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(DatabaseOpt.class);
     
+    
+    public Connection getConnectBase() {
+        try {
+            Properties prop = new Properties();
+            prop.load(DatabaseOpt.class.getClassLoader().getResourceAsStream("./config.properties"));
+            Class.forName(prop.getProperty("driverName"));
+            Connection connect = DriverManager.getConnection(prop.getProperty("baseUrl"), prop.getProperty("username"), prop.getProperty("password"));
+            return connect;
+        } catch (ClassNotFoundException ex) {
+            logger.error("找不类名错误", ex);
+        } catch (IOException ex) {
+            logger.error("IO错误", ex);
+        } catch (SQLException ex) {
+            logger.error("SQL错误", ex);
+        } finally {
+        }
+        return null;
+    }
+    
     /**
      * 连接数据库
      *

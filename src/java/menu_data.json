@@ -1,10 +1,18 @@
 {
+    "平台管理": {
+        "注册公司": "page1,action.do",
+        "注册数据库": "page1,action.do",
+        "注册平台用户": "page1,action.do",
+        "定义角色": "page1,action.do",
+        "定义角色权限": "page1,action.do",
+        "定义用户角色": "page1,action.do"
+    },
     "调货计划管理": {
-        "调货计划下达": "page1, action.do",
-        "送货计划查询": "page2, action.do"
+        "调货计划下达": "page1,action.do",
+        "送货计划查询": "page2,action.do"
     },
     "部品入库管理": {
-        "待检入库": "page3, action.do",
+        "待检入库": "page3,action.do",
         "待检审核": "page1,action.do",
         "送检出库": "page2,action.do",
         "送检返回": "page1,action.do",

@@ -1,10 +1,11 @@
 package com.cn.controller;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.cn.util.DatabaseOpt;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.apache.log4j.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,36 +18,49 @@ import java.util.logging.Logger;
  * @author LFeng
  */
 public class UserController {
+    private static final Logger logger = Logger.getLogger(UserController.class);
     
-    public String userLoginSuccess(String username, String password) {
+    /**
+     * 
+     * @param username
+     * @param password
+     * @return -1 -- 登陆出错 | 0 -- 登陆成功 | 1 -- 用户名不存在 | 2 -- 用户名或密码错误
+     */
+    public int userLoginSuccess(String username, String password) {
+        DatabaseOpt opt;
+        Connection conn = null;
+        CallableStatement statement = null;
+        
         try {
-            String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
-            File file = new File(path + "menu_data.json");
-            StringBuilder builder = new StringBuilder();
-            Scanner scanner = new Scanner(file, "utf-8");
-            while(scanner.hasNextLine()) {
-                builder.append(scanner.nextLine());
+            opt = new DatabaseOpt();
+            conn = opt.getConnectBase();
+            statement = conn.prepareCall("select * from tblPlatformUserInfo where UserLoginAccount = ?");
+            statement.setString(1, username);
+            ResultSet set = statement.executeQuery();
+            
+            while (set.next()) {
+                if (password.compareTo(set.getString("UserLoginPassWord")) == 0) {
+                    return 0;
+                } else {
+                    return 2;
+                }
             }
-            return builder.toString();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-    public String returnFileContext(String fileName) {
-        try {
-            String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
-            File file = new File(path + fileName);
-            StringBuilder builder = new StringBuilder();
-            Scanner scanner = new Scanner(file, "utf-8");
-            while(scanner.hasNextLine()) {
-                builder.append(scanner.nextLine());
+            
+            return 1;
+        } catch (SQLException ex) {
+            logger.error("数据库执行出错", ex);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                logger.error("数据库关闭连接错误", ex);
             }
-            return builder.toString();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return -1;
     }
 }

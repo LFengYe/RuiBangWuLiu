@@ -1,0 +1,31 @@
+{
+    "control": {
+        "dJInWareHouseID": "ID,string,22",
+        "supplierID": "供应商ID,number,10",
+        "supplierName": "供应商名称,string,50",
+        "inboundBatch": "批次,string,14",
+        "dJRKProducerName": "生产者,string,10",
+        "dJRKProduceTime": "生产时间,date,20",
+        "dJRKAuditStaffName": "确认者,string,10",
+        "dJRKAuditTime": "确认时间,date,20",
+        "printFlag": "打印标志,string,3",
+        "dJINWareHousRemark": "备注,string,500"
+    },
+    "mustwrite": [
+        "dJInWareHouseID",
+        "supplierID"
+    ],
+    "unique": ["dJInWareHouseID"],
+    "titles": {
+        "dJInWareHouseID": "ID,14%",
+        "supplierID": "供应商ID,5%",
+        "supplierName": "供应商名称,10%",
+        "inboundBatch": "批次,10%",
+        "dJRKProducerName": "生产者,8%",
+        "dJRKProduceTime": "生产时间,15%",
+        "dJRKAuditStaffName": "确认者,8%",
+        "dJRKAuditTime": "确认时间,15%",
+        "printFlag": "打印标志,5%",
+        "dJINWareHousRemark": "备注,10%"
+    }
+}

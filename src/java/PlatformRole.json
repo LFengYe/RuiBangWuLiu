@@ -1,0 +1,12 @@
+{
+    "control": {
+        "RoleCode": "角色代码,number,10",
+        "RoleName": "角色名称,string,10"
+    },
+    "mustwrite": ["RoleCode", "RoleName"],
+    "unique": ["RoleCode"],
+    "titles": {
+        "RoleCode": "角色代码,50%",
+        "RoleName": "角色名称,50%"
+    }
+}

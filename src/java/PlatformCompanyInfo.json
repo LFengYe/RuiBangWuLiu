@@ -1,0 +1,32 @@
+{
+    "control": {
+        "CompanyID": "公司编号,string,3",
+        "CompanyName": "公司名称,string,50",
+        "CompanyNameAPP": "名称缩写,string,10",
+        "CompanyAddress": "公司地址,string,100",
+        "LegalPersonName": "法人姓名,string,10",
+        "LegalPersonPhone": "法人电话,string,15",
+        "ContactPersonName": "联系人姓名,string,10",
+        "ContactPersonPhone": "联系人电话,string,15",
+        "CompanyCode": "公司代码,string,20",
+        "BusenessState": "是否停办业务,bool,0",
+        "CompanyWebSite": "公司网址,string,200",
+        "CompanyRemark": "备注,string,500"
+    },
+    "mustwrite": ["CompanyID", "CompanyName"],
+    "unique": ["CompanyID", "CompanyName"],
+    "titles": {
+        "CompanyID": "公司编号,5%",
+        "CompanyName": "公司名称,10%",
+        "CompanyNameAPP": "名称缩写,10%",
+        "CompanyAddress": "公司地址,10%",
+        "LegalPersonName": "法人姓名,5%",
+        "LegalPersonPhone": "法人电话,10%",
+        "ContactPersonName": "联系人姓名,10%",
+        "ContactPersonPhone": "联系人电话,10%",
+        "CompanyCode": "公司代码,5%",
+        "BusenessState": "是否停办业务,5%",
+        "CompanyWebSite": "公司网址,10%",
+        "CompanyRemark": "备注,10%"
+    }
+}

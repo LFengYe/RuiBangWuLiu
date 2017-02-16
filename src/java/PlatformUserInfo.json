@@ -1,0 +1,16 @@
+{
+    "control": {
+        "UserLoginAccount": "用户名,string,10",
+        "UserLoginPassWord": "密码,password,12",
+        "UserLoginDBName": "数据库名,@table",
+        "UserInfoRemark": "备注,string,500"
+    },
+    "mustwrite": ["UserLoginAccount", "UserLoginPassWord", "UserLoginDBName"],
+    "unique": ["UserLoginAccount"],
+    "titles": {
+        "UserLoginAccount": "用户名,20%",
+        "UserLoginPassWord": "密码,30%",
+        "UserLoginDBName": "数据库名,20%",
+        "UserInfoRemark": "备注,30%"
+    }
+}

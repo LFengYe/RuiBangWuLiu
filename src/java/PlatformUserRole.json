@@ -1,0 +1,12 @@
+{
+    "control": {
+        "UserLoginAccount": "用户名称,@table",
+        "RoleCode": "角色代码,@table"
+    },
+    "mustwrite": ["RoleCode", "UserLoginAccount"],
+    "unique": [],
+    "titles": {
+        "UserLoginAccount": "用户名称,50%",
+        "RoleCode": "角色代码,50%"
+    }
+}

@@ -6,16 +6,35 @@
 package com.cn.servlet;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cn.bean.DJWareHouse;
+import com.cn.bean.PlatformCompanyInfo;
+import com.cn.bean.PlatFormDataBaseInfo;
+import com.cn.bean.PlatformRight;
+import com.cn.bean.PlatformRole;
+import com.cn.bean.PlatformUserInfo;
+import com.cn.controller.CommonController;
+import com.cn.controller.DJInWareHouseController;
+import com.cn.controller.PlatformCompanyInfoController;
+import com.cn.controller.PlatFormDataBaseInfoController;
+import com.cn.controller.PlatformRightController;
+import com.cn.controller.PlatformRoleController;
+import com.cn.controller.PlatformUserInfoController;
 import com.cn.controller.UserController;
 import com.cn.util.Units;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 /**
  *
@@ -24,6 +43,8 @@ import org.apache.log4j.Logger;
 public class DataInterface extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(DataInterface.class);
+
+    ArrayList<String> roleCodeList = new ArrayList<>();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,23 +62,180 @@ public class DataInterface extends HttpServlet {
         String subUri = uri.substring(uri.lastIndexOf("/") + 1,
                 uri.lastIndexOf("."));
         String json = null;
+        CommonController commonController = new CommonController();
+        
         try {
             System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
-//            System.out.println("module:" + module + ",operation:" + operation);
             HttpSession session = request.getSession();
-            System.out.println("session id:" + session.getId());
+            String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
+
             switch (module) {
                 //<editor-fold desc="用户登陆模板">
                 case "userLogin": {
                     switch (operation) {
                         case "login": {
-                            UserController controller = new UserController();
-                            String result = controller.userLoginSuccess(paramsJson.getString("username"), paramsJson.getString("password"));
-                            if (result != null) {
+                            PlatformUserInfoController controller = new PlatformUserInfoController();
+                            int result = controller.userLogin(paramsJson.getString("username"), paramsJson.getString("password"));
+                            if (result == 0) {
                                 session.setAttribute("user", paramsJson.getString("username"));
+                                String menuJson = "{";
+
+                                SAXReader reader = new SAXReader();
+                                Document document = reader.read(new File(path + "menu.xml"));
+                                Element root = document.getRootElement();
+                                Iterator<Element> iterator = root.elementIterator();
+                                while (iterator.hasNext()) {
+                                    menuJson += commonController.hasRight(iterator.next());
+                                }
+                                menuJson = menuJson.substring(0, menuJson.length() - 1) + "}";
+
+                                json = Units.objectToJson(result, "登陆成功!", menuJson);
+                            } else if (result == 1) {
+                                json = Units.objectToJson(result, "用户名不存在!", null);
+                            } else if (result == 2) {
+                                json = Units.objectToJson(result, "用户名或密码错误!", null);
+                            } else if (result == -1) {
+                                json = Units.objectToJson(result, "登陆出错!", null);
+                            } else {
+                                json = Units.objectToJson(result, "服务器出错!", null);
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="注册公司">
+                case "注册公司": {
+                    switch (operation) {
+                        case "create": {
+                            String result = Units.returnFileContext(path, "PlatformCompanyInfo.json");
+                            if (result != null) {
+                                PlatformCompanyInfoController companyInfoController = new PlatformCompanyInfoController();
+                                ArrayList<PlatformCompanyInfo> infos = companyInfoController.getPlatformCompanyInfoData();
+                                if (null != infos && infos.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer(result);
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(infos, Units.features));
+                                    result = buffer.toString();
+                                }
+                                json = Units.objectToJson(0, "", result);
+                            } else {
+                                json = Units.objectToJson(-1, "服务器出错!", null);
+                            }
+                            break;
+                        }
+                        case "add": {
+
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="注册数据库">
+                case "注册数据库": {
+                    switch (operation) {
+                        case "create": {
+                            String result = Units.returnFileContext(path, "PlatFormDataBaseInfo.json");
+                            if (result != null) {
+                                PlatFormDataBaseInfoController controller = new PlatFormDataBaseInfoController();
+                                ArrayList<PlatFormDataBaseInfo> infos = controller.getPlatformUserInfoData();
+                                if (infos != null && infos.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer(result);
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(infos, Units.features));
+                                    result = buffer.toString();
+                                }
+                                json = Units.objectToJson(0, "", result);
+                            } else {
+                                json = Units.objectToJson(-1, "服务器出错!", null);
+                            }
+                            break;
+                        }
+                        case "request_table": {
+                            String target = paramsJson.getString("target");
+                            if (target.compareToIgnoreCase("CompanyID") == 0) {
+                                PlatformCompanyInfoController controller = new PlatformCompanyInfoController();
+                                ArrayList<PlatformCompanyInfo> result = controller.getPlatformCompanyInfoData();
+                                if (null != result && result.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer();
+                                    buffer.append("{\"titles\":{\"CompanyID\":\"公司编号,50%\",\"CompanyName\": \"公司名称,50%\"},\"datas\":[");
+                                    for (PlatformCompanyInfo companyInfo : result) {
+                                        buffer.append("{");
+                                        buffer.append("\"CompanyID\":").append("\"").append(companyInfo.CompanyID).append("\"").append(",");
+                                        buffer.append("\"CompanyName\":").append("\"").append(companyInfo.CompanyName).append("\"");
+                                        buffer.append("},");
+                                    }
+                                    buffer.deleteCharAt(buffer.length() - 1);
+                                    buffer.append("]}");
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="注册平台用户">
+                case "注册平台用户": {
+                    switch (operation) {
+                        case "create": {
+                            String result = Units.returnFileContext(path, "PlatformUserInfo.json");
+                            if (result != null) {
+                                json = Units.objectToJson(0, "", result);
+                            } else {
+                                json = Units.objectToJson(-1, "服务器出错!", null);
+                            }
+                            break;
+                        }
+                        case "request_table": {
+                            String target = paramsJson.getString("target");
+                            if (target.compareToIgnoreCase("UserLoginDBName") == 0) {
+                                PlatFormDataBaseInfoController controller = new PlatFormDataBaseInfoController();
+                                ArrayList<PlatFormDataBaseInfo> result = controller.getPlatformUserInfoData();
+                                if (result != null && result.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer();
+                                    buffer.append("{\"titles\":{\"UserLoginDBName\":\"数据库名,50%\",\"CompanyName\":\"公司名称,50%\"},\"datas\":[");
+                                    for (PlatFormDataBaseInfo userInfo : result) {
+                                        buffer.append("{");
+                                        buffer.append("\"UserLoginDBName\":").append("\"").append(userInfo.MasterDataBaseName).append("\"").append(",");
+                                        buffer.append("\"CompanyName\":").append("\"").append(userInfo.CompanyName).append("\"");
+                                        buffer.append("},");
+                                    }
+                                    buffer.deleteCharAt(buffer.length() - 1);
+                                    buffer.append("]}");
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="定义角色">
+                case "定义角色": {
+                    switch (operation) {
+                        case "create": {
+                            String result = Units.returnFileContext(path, "PlatformRole.json");
+                            if (result != null) {
+                                PlatformRoleController controller = new PlatformRoleController();
+                                ArrayList<PlatformRole> roles = controller.getPlatformRoleData();
+                                if (roles != null && roles.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer(result);
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(roles, Units.features));
+                                    result = buffer.toString();
+                                }
                                 json = Units.objectToJson(0, "", result);
                             } else {
                                 json = Units.objectToJson(-1, "服务器出错!", null);
@@ -69,12 +247,11 @@ public class DataInterface extends HttpServlet {
                 }
                 //</editor-fold>
 
-                //<editor-fold desc="调货计划下达">
-                case "调货计划下达": {
+                //<editor-fold desc="定义角色权限">
+                case "定义角色权限": {
                     switch (operation) {
                         case "create": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data1.txt");
+                            String result = Units.returnFileContext(path, "PlatformRoleRight.json");
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
                             } else {
@@ -83,8 +260,106 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "request_table": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data2.txt");
+                            String target = paramsJson.getString("target");
+                            if (target.compareToIgnoreCase("RoleCode") == 0) {
+                                PlatformRoleController controller = new PlatformRoleController();
+                                ArrayList<PlatformRole> result = controller.getPlatformRoleData();
+                                if (result != null && result.size() > 0) {
+//                                    String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
+                                    StringBuffer buffer = new StringBuffer(Units.returnFileContext(path, "PlatformRoleData.json"));
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(result, Units.features));
+
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
+                                }
+                            }
+                            if (target.compareToIgnoreCase("RightCode") == 0) {
+                                PlatformRightController controller = new PlatformRightController();
+                                ArrayList<PlatformRight> result = controller.getPlatformRightData();
+                                if (result != null && result.size() > 0) {
+//                                    String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
+                                    StringBuffer buffer = new StringBuffer(Units.returnFileContext(path, "PlatformRightData.json"));
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(result, Units.features));
+
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="定义用户角色">
+                case "定义用户角色": {
+                    switch (operation) {
+                        case "create": {
+                            String result = Units.returnFileContext(path, "PlatformUserRole.json");
+                            if (result != null) {
+                                json = Units.objectToJson(0, "", result);
+                            } else {
+                                json = Units.objectToJson(-1, "服务器出错!", null);
+                            }
+                            break;
+                        }
+                        case "request_table": {
+                            String target = paramsJson.getString("target");
+                            if (target.compareToIgnoreCase("RoleCode") == 0) {
+                                PlatformRoleController controller = new PlatformRoleController();
+                                ArrayList<PlatformRole> result = controller.getPlatformRoleData();
+                                if (result != null && result.size() > 0) {
+//                                    String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
+                                    StringBuffer buffer = new StringBuffer(Units.returnFileContext(path, "PlatformRoleData.json"));
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(result, Units.features));
+
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
+                                }
+                            }
+                            if (target.compareToIgnoreCase("UserLoginAccount") == 0) {
+                                PlatformUserInfoController controller = new PlatformUserInfoController();
+                                ArrayList<PlatformUserInfo> result = controller.getPlatformUserInfoData();
+                                if (result != null && result.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer();
+                                    buffer.append("{\"titles\":{\"UserLoginAccount\":\"用户名,100%\"},\"datas\":[");
+                                    for (PlatformUserInfo userInfo : result) {
+                                        buffer.append("{");
+                                        buffer.append("\"UserLoginAccount\":").append("\"").append(userInfo.UserLoginAccount).append("\"");
+                                        buffer.append("},");
+                                    }
+                                    buffer.deleteCharAt(buffer.length() - 1);
+                                    buffer.append("]}");
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="调货计划下达">
+                case "调货计划下达": {
+                    switch (operation) {
+                        case "create": {
+                            DJInWareHouseController controller = new DJInWareHouseController();
+                            String result = controller.getInWareHouseData();
+                            if (result != null) {
+//                                System.out.println("result:" + result);
+                                json = Units.objectToJson(0, "", result);
+                            } else {
+                                json = Units.objectToJson(-1, "服务器出错!", null);
+                            }
+                            break;
+                        }
+                        case "request_table": {
+                            String result = Units.returnFileContext(path, "data2.txt");
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
                             } else {
@@ -93,18 +368,7 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "query_item": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data3.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
-                            break;
-                        }
-                        case "submit": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data4.txt");
+                            String result = Units.returnFileContext(path, "data3.txt");
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
                             } else {
@@ -113,12 +377,33 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "query_on_date": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data5.txt");
+                            String result = Units.returnFileContext(path, "data5.txt");
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
                             } else {
                                 json = Units.objectToJson(-1, "服务器出错!", null);
+                            }
+                            break;
+                        }
+                        case "submit": {
+                            String result = Units.returnFileContext(path, "data4.txt");
+                            if (result != null) {
+                                json = Units.objectToJson(0, "", result);
+                            } else {
+                                json = Units.objectToJson(-1, "服务器出错!", null);
+                            }
+                            break;
+                        }
+                        case "add": {
+                            String datas = paramsJson.getString("datas");
+                            DJInWareHouseController controller = new DJInWareHouseController();
+                            int result = controller.addInWareHouseData(JSONObject.parseObject(datas, DJWareHouse.class));
+                            if (result == 0) {
+                                json = Units.objectToJson(result, "添加成功!", null);
+                            } else if (result == -1) {
+                                json = Units.objectToJson(result, "数据库执行出错!", null);
+                            } else {
+                                json = Units.objectToJson(result, "服务器出错!", null);
                             }
                             break;
                         }
@@ -131,8 +416,7 @@ public class DataInterface extends HttpServlet {
                 case "送货计划查询": {
                     switch (operation) {
                         case "create": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data6.txt");
+                            String result = Units.returnFileContext(path, "data6.txt");
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
                             } else {
@@ -143,11 +427,11 @@ public class DataInterface extends HttpServlet {
                         case "request_table": {
                             String target = paramsJson.getString("target");
                             UserController controller = new UserController();
-                            String result = controller.returnFileContext("data8.txt");
+                            String result = Units.returnFileContext(path, "data8.txt");
                             if (target.compareTo("depart") == 0) {
-                                result = controller.returnFileContext("data2.txt");
-                            } else if (target.compareTo("corseName") == 0) {
-                                result = controller.returnFileContext("data7.txt");
+                                result = Units.returnFileContext(path, "data2.txt");
+                            } else if (target.compareTo("courseName") == 0) {
+                                result = Units.returnFileContext(path, "data7.txt");
                             }
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
@@ -157,9 +441,9 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data8.txt");
+                            String result = Units.returnFileContext(path, "data8.txt");
                             if (result != null) {
+                                System.out.println("result:" + result);
                                 json = Units.objectToJson(0, "", result);
                             } else {
                                 json = Units.objectToJson(-1, "服务器出错!", null);
@@ -167,8 +451,7 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "request_page": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data9.txt");
+                            String result = Units.returnFileContext(path, "data9.txt");
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
                             } else {
@@ -177,8 +460,7 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "query_data": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data10.txt");
+                            String result = Units.returnFileContext(path, "data10.txt");
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
                             } else {
@@ -187,8 +469,7 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "submit": {
-                            UserController controller = new UserController();
-                            String result = controller.returnFileContext("data11.txt");
+                            String result = Units.returnFileContext(path, "data11.txt");
                             if (result != null) {
                                 json = Units.objectToJson(0, "", result);
                             } else {
@@ -200,33 +481,108 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-
-                //<editor-fold desc="待检入库">
-                case "待检入库": {
+                
+                //<editor-fold desc="部品档案">
+                case "部品档案": {
                     switch (operation) {
-                        case "login": {
+                        case "create": {
+                            
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-
-                //<editor-fold desc="待检审核">
-                case "待检审核": {
+                
+                //<editor-fold desc="客户档案">
+                case "客户档案": {
                     switch (operation) {
-                        case "login": {
+                        case "create": {
+                            
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-
-                //<editor-fold desc="送检出库">
-                case "送检出库": {
+                
+                //<editor-fold desc="部品存放地址">
+                case "部品存放地址": {
                     switch (operation) {
-                        case "login": {
+                        case "create": {
+                            
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="盛具档案">
+                case "盛具档案": {
+                    switch (operation) {
+                        case "create": {
+                            
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="部品类别">
+                case "部品类别": {
+                    switch (operation) {
+                        case "create": {
+                            
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="车型档案">
+                case "车型档案": {
+                    switch (operation) {
+                        case "create": {
+                            
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="客户类别">
+                case "客户类别": {
+                    switch (operation) {
+                        case "create": {
+                            
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="送货方式">
+                case "送货方式": {
+                    switch (operation) {
+                        case "create": {
+                            
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="库存安全">
+                case "库存安全": {
+                    switch (operation) {
+                        case "create": {
+                            
                             break;
                         }
                     }
@@ -254,6 +610,26 @@ public class DataInterface extends HttpServlet {
                 out.close();
             }
         }
+    }
+
+    private String hasRight(Element element) {
+        String menuJson = "";
+        String roleCode = element.attributeValue("id");
+        if (roleCodeList.contains(roleCode) || true) {
+            if (element.elementIterator().hasNext()) {
+                menuJson += "\"" + element.attributeValue("text") + "\":{";
+                Iterator<Element> iterator = element.elementIterator();
+                while (iterator.hasNext()) {
+                    menuJson += hasRight(iterator.next());
+                }
+                menuJson = menuJson.substring(0, menuJson.length() - 1);
+                menuJson += "},";
+            } else {
+                menuJson += "\"" + element.attributeValue("text") + "\":";
+                menuJson += "\"" + element.attributeValue("hypelnk") + ",action.do\",";
+            }
+        }
+        return menuJson;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -1,46 +1,38 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title></title>
-		<link rel="stylesheet" href="jQueryFormPlug.css" />
-		<link rel="stylesheet" href="../jQuerySelectPanel/SelectPanel.css" />
-	</head>
-	<body>
-		
-		<div id="test"></div>
-		<script type="text/javascript" src="../jQuery/jquery-2.2.4.js" ></script>
-		<script type="text/javascript" src="jQueryFormPlug.js" ></script>
-		<script type="text/javascript" src="../common-js/ajax.js" ></script>
-		<script type="text/javascript" src="../jQuerySelectPanel/jQuerySelectPanel-js.js" ></script>
-		<script>
- 
-		   
-		   
-
-			$(function(){
-				$.ajax({
-					type:"get",
-					url:"../data/data7.json",
-					success:function(data){
-//						alert(data);
-//						data = (new Function("","return"+data))();
-//						alert(data);
-						$("#test").insertInputForm({
-							controls:data.control,                       //输入框描述
-							mustWrite:data.mustWrite,//必填项目
-							requesFun:function(data,callback){
-								ajax("模块名称","../data/data5.txt","request_table",data,function(data){
-									callback(data);
-								},function(){
-									alert("fail");
-								})
-							},
-							selectpanel:sp
-						});
-					}
-				});
-			});
-		</script>
-	</body>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <link rel="stylesheet" href="jQueryFormPlug.css" />
+        <link rel="stylesheet" href="../jQuerySelectPanel/SelectPanel.css" />
+    </head>
+    <body>
+        <div id="test"></div>
+        <script type="text/javascript" src="../jQuery/jquery-2.2.4.js" ></script>
+        <script type="text/javascript" src="jQueryFormPlug.js" ></script>
+        <script type="text/javascript" src="../common-js/ajax.js" ></script>
+        <script type="text/javascript" src="../jQuerySelectPanel/jQuerySelectPanel-js.js" ></script>
+        <script>
+            $(function () {
+                $.ajax({
+                    type: "get",
+                    url: "../data/data7.json",
+                    success: function (data) {
+                        $("#test").insertInputForm({
+                            controls: data.control, //输入框描述
+                            mustWrite: data.mustWrite, //必填项目
+                            requesFun: function (data, callback) {
+                                ajax("模块名称", "../data/data5.txt", "request_table", data, function (data) {
+                                    callback(data);
+                                }, function () {
+                                    alert("fail");
+                                })
+                            },
+                            selectpanel: sp
+                        });
+                    }
+                });
+            });
+        </script>
+    </body>
 </html>

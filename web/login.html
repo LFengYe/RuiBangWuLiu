@@ -2,11 +2,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <title>睿邦物流管理系统登录</title>
         <link rel="stylesheet" href="assets/bootstrap/normalize.css" />
-        <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-        <!--<link rel="stylesheet" href="assets/bootstrap/bootstrap.css" />-->
+        <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css"/>
         <style>
             html,body{
                 height: 100%;
@@ -29,7 +28,7 @@
         </style>
     </head>
     <body>
-        <div class="container wc-container" >
+        <div class="container wc-container">
             <div class="row">
                 <div class="col-xs-8  col-xs-offset-2">
                     <div class="wc-login">
@@ -46,8 +45,8 @@
                 </div>
             </div>
         </div>
-        <script type="text/javascript" src="assets/jQuery/jquery-2.2.4.js" ></script>
-        <script type="text/javascript" src="assets/bootstrap/bootstrap.min.js" ></script>
+        <script type="text/javascript" src="assets/jQuery/jquery-1.11.1.min.js" ></script>
+        <script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js" ></script>
         <script type="text/javascript" src="assets/common-js/common.js" ></script>
         <script type="text/javascript" src="javascript/JSON-js-master/json2.js" ></script>
         <script>
@@ -61,7 +60,6 @@
                     obj.operation = "login";
                     obj.username = loginUser;
                     obj.password = pswd;
-                    alert(loginUser);
                     //登录
                     $.ajax({
                         type: "post",
@@ -70,7 +68,7 @@
                         dataType: "json",
                         success: function (data) {
                             if (data.status != 0) {
-                                alert(data.msg);
+                                alert(data.message);
                             } else {
                                 localStorage.setItem("isLogin", "true");
                                 localStorage.setItem('menuDatas', data.data);

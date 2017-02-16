@@ -3,7 +3,7 @@
 //点击菜单的某一项    则跳转到相应的页面  并将localstorage的module url值设置为点击的菜单项的相关值
 
 var t, s, sp;
-var ajaxPage1, ajaxPage2, ajaxPage3;             //ajaxPage*[1|2|3]根据module url向后台发送ajax请求  进行对应页面的渲染
+var ajaxPage1, ajaxPage2, ajaxPage3;    //ajaxPage*[1|2|3]根据module url向后台发送ajax请求  进行对应页面的渲染
 $(function () {
     if (localStorage.getItem("isLogin") == "true") {
         var menuDatas = localStorage.getItem('menuDatas');
@@ -16,7 +16,6 @@ $(function () {
                 for (var i = 0; i < route_arr.length; i++) {
                     $route.append("<li>" + route_arr[i] + "</li>");
                 }
-//						 self.location = type+".html";
                 $("#" + type).fadeIn(500).siblings(".page").hide();         //页面切换
                 localStorage.setItem("module", module);             //重置module  URL的值
                 localStorage.setItem("url", url);
@@ -71,22 +70,21 @@ function ajax(module, url, operation, data, successCallBack, failCallBack) {
         data: JSON.stringify(obj),
         dataType: "json",
         success: function (data) {
-            if (data.status !== 0) {
-                alert(data.msg);
-                failCallBack();
+            if (data) {
+                if (data.status !== 0) {
+                    alert(data.message);
+                    failCallBack();
+                } else {
+                    if (data.data) {
+                        successCallBack(JSON.parse(data.data));
+                    } else {
+                        successCallBack();
+                    }
+                }
             } else {
-                successCallBack(JSON.parse(data.data));
+                alert("服务器出错!");
+                //failCallBack();
             }
-            /*
-             if (data.indexOf("error") == 0) {
-             failCallBack();
-             } else if (data.indexOf("success") == 0) {
-             successCallBack(data);
-             } else {
-             data = (new Function("", "return" + data))();
-             successCallBack(data);
-             }
-             */
         }
     });
 }
@@ -99,17 +97,9 @@ function getLength(control) {
     var titles = {};
     var txt, len;
     for (var i in control) {
+        var controlItem = control[i].split(',');
         txt = control[i].split(',')[0];
-        len = control[i].split(',')[2];
-        if (len > 200) {
-            len = '140px';
-        } else if (len > 100) {
-            len = '120px';
-        } else if (len > 80) {
-            len = '100px';
-        } else {
-            len = '80px';
-        }
+        len = control[i].split(',')[controlItem.length - 1];
         titles[i] = txt + ',' + len;
     }
     return titles;

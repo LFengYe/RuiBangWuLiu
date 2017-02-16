@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,10 +37,10 @@ public class Units {
     public static final char[] codeSequence = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
         'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
         'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    
-    private static final double EARTH_RADIUS = 6378137;//赤道半径(单位m)
-    private static final String BAIDU_CONVERT_KEY = "UGTSrlHZTd3O95SiMiQkhLO2";
-    private static final SerializerFeature[] features = {SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullNumberAsZero,
+
+    public static final double EARTH_RADIUS = 6378137;//赤道半径(单位m)
+    public static final String BAIDU_CONVERT_KEY = "UGTSrlHZTd3O95SiMiQkhLO2";
+    public static final SerializerFeature[] features = {SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullNumberAsZero,
         SerializerFeature.WriteNullBooleanAsFalse, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullListAsEmpty};
 
     /**
@@ -210,9 +213,10 @@ public class Units {
 
     /**
      * 发送post请求
+     *
      * @param httpUrl
      * @param sendBody
-     * @return 
+     * @return
      */
     public static String requestWithPost(String httpUrl, String sendBody) {
         BufferedReader reader;
@@ -256,7 +260,7 @@ public class Units {
 
         return null;
     }
-    
+
     /**
      * 将列表转换成为json格式数据
      *
@@ -377,6 +381,7 @@ public class Units {
 
     /**
      * 获取指定时间的那天 23:59:59.999 的时间
+     *
      * @param date
      * @return
      */
@@ -389,20 +394,22 @@ public class Units {
         c.set(Calendar.MILLISECOND, 999);
         return c.getTime();
     }
-    
+
     /**
      * 判断给定的日期是不是今天
+     *
      * @param date
-     * @return 
+     * @return
      */
     public static boolean isToday(Date date) {
         Date nowDate = new Date();
         return (date.getTime() >= dayBegin(nowDate).getTime())
                 && (date.getTime() <= dayEnd(nowDate).getTime());
     }
-    
+
     /**
      * 获取当前系统时间字符串
+     *
      * @return 返回yyyy-MM-dd HH:mm:ss格式时间字符串
      */
     public static String getNowTime() {
@@ -410,28 +417,29 @@ public class Units {
         Date nowDate = new Date();
         return format.format(nowDate);
     }
-    
+
     /**
      * 获取系统当前日期字符串
-     * @return 
+     *
+     * @return
      */
     public static String getNowDate() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date nowDate = new Date();
         return format.format(nowDate);
     }
-    
+
     /**
      * 返回指定时间与当前时间之间的时间间隔
+     *
      * @param date
-     * @return 若指定时间早于当前时间则返回正值;
-     *          若指定时间晚于当前时间则返回负值.
+     * @return 若指定时间早于当前时间则返回正值; 若指定时间晚于当前时间则返回负值.
      */
     public static long getIntervalTimeWithNow(Date date) {
         Date nowDate = new Date();
         return nowDate.getTime() - date.getTime();
     }
-    
+
     /**
      * 根据状态码及消息内容返回json个数数据
      *
@@ -452,52 +460,67 @@ public class Units {
 
         return builder.toString();
     }
-    
+
     /**
      * 指定字符串是否在指定的字符串数组中
+     *
      * @param str
      * @param array
-     * @return 
+     * @return
      */
     public static boolean isStrInArray(String str, String[] array) {
         for (String string : array) {
-            if (string.compareTo(str) == 0)
+            if (string.compareTo(str) == 0) {
                 return true;
+            }
         }
         return false;
     }
 
     public static boolean strIsEmpty(String string) {
-        if (string == null)
+        if (string == null) {
             return true;
-        if (string.trim().length() <= 0)
+        }
+        if (string.trim().length() <= 0) {
             return true;
+        }
         return false;
     }
+
+    public static String returnFileContext(String path, String fileName) throws FileNotFoundException {
+        File file = new File(path + fileName);
+        StringBuilder builder = new StringBuilder();
+        Scanner scanner = new Scanner(file, "utf-8");
+        while (scanner.hasNextLine()) {
+            builder.append(scanner.nextLine());
+        }
+        return builder.toString();
+    }
+    
     /**
      * ************************************容联云通讯短信发送平台*****************************************
      */
     /**
      * 生成指定位数验证码(包含字母和数字)
+     *
      * @param codeCount
-     * @return 
+     * @return
      */
     /*
-    public static String createPhoneValidateCode(int codeCount) {
-        // randomCode记录随机产生的验证码
-        StringBuilder randomCode = new StringBuilder();
-        Random random = new Random();
-        // 随机产生codeCount个字符的验证码
-        for (int i = 0; i < codeCount; i++) {
+     public static String createPhoneValidateCode(int codeCount) {
+     // randomCode记录随机产生的验证码
+     StringBuilder randomCode = new StringBuilder();
+     Random random = new Random();
+     // 随机产生codeCount个字符的验证码
+     for (int i = 0; i < codeCount; i++) {
 
-            String strRand = String.valueOf(codeSequence[random.nextInt(codeSequence.length)]);
-            // 将产生的codeCount个随机数组合在一起
-            randomCode.append(strRand);
-        }
-        return randomCode.toString();
-    }
-    */
-    
+     String strRand = String.valueOf(codeSequence[random.nextInt(codeSequence.length)]);
+     // 将产生的codeCount个随机数组合在一起
+     randomCode.append(strRand);
+     }
+     return randomCode.toString();
+     }
+     */
     /**
      * 向指定的手机号发送验证码
      *
@@ -506,36 +529,35 @@ public class Units {
      * @return
      */
     /*
-    public static String sendSMSVerificationCode(String to, String verificationCode) {
-        //初始化SDK
-        CCPRestSmsSDK restAPI = new CCPRestSmsSDK();
+     public static String sendSMSVerificationCode(String to, String verificationCode) {
+     //初始化SDK
+     CCPRestSmsSDK restAPI = new CCPRestSmsSDK();
 
-        //*初始化服务器地址和端口
-        restAPI.init(Constants.SMS_PLATFORM_URL_DISTRIBUTION, Constants.SMS_PLATFORM_PORT);
+     //*初始化服务器地址和端口
+     restAPI.init(Constants.SMS_PLATFORM_URL_DISTRIBUTION, Constants.SMS_PLATFORM_PORT);
 
-        //*初始化主帐号和主帐号令牌,对应官网开发者主账号下的ACCOUNT SID和AUTH TOKEN
-        restAPI.setAccount(Constants.SMS_PLATFORM_ACCOUNT_SID, Constants.SMS_PLATFORM_AUTH_TOKEN);
+     //*初始化主帐号和主帐号令牌,对应官网开发者主账号下的ACCOUNT SID和AUTH TOKEN
+     restAPI.setAccount(Constants.SMS_PLATFORM_ACCOUNT_SID, Constants.SMS_PLATFORM_AUTH_TOKEN);
 
-        //*初始化应用ID
-        restAPI.setAppId(Constants.SMS_PLATFORM_APP_ID);
+     //*初始化应用ID
+     restAPI.setAppId(Constants.SMS_PLATFORM_APP_ID);
 
-        //*调用发送模板短信的接口发送短信
-        HashMap<String, Object> result = restAPI.sendTemplateSMS(to, Constants.SMS_PLATFORM_TEMPLATE_ID, new String[]{verificationCode, Constants.SMS_EXPIRED_MINUTE});
+     //*调用发送模板短信的接口发送短信
+     HashMap<String, Object> result = restAPI.sendTemplateSMS(to, Constants.SMS_PLATFORM_TEMPLATE_ID, new String[]{verificationCode, Constants.SMS_EXPIRED_MINUTE});
 
-        String json;
-        if ("000000".equals(result.get("statusCode"))) {
-            json = createJsonWithResult(String.valueOf(result.get("statusCode")), "验证码已发送到您的手机，请于5分钟内输入手机验证码，以免失效！");
-        } else {
-            json = createJsonWithResult(String.valueOf(result.get("statusCode")), String.valueOf(result.get("statusMsg")));
-        }
-        return json;
-    }
-    */
-    
+     String json;
+     if ("000000".equals(result.get("statusCode"))) {
+     json = createJsonWithResult(String.valueOf(result.get("statusCode")), "验证码已发送到您的手机，请于5分钟内输入手机验证码，以免失效！");
+     } else {
+     json = createJsonWithResult(String.valueOf(result.get("statusCode")), String.valueOf(result.get("statusMsg")));
+     }
+     return json;
+     }
+     */
     /*
-    public static void main(String[] args) {
-        String test = "{\"cardNum\":\"ffgg5558\",\"username\":\"test\",\"data\":\"[{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"34535\\\",\\\"fieldName\\\":\\\"TotalSizeValue1\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3452345\\\",\\\"fieldName\\\":\\\"TotalSizeValue2\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue1\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3453\\\",\\\"fieldName\\\":\\\"BurkeSizeValue2\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"2345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue3\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"2345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue4\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue5\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3453\\\",\\\"fieldName\\\":\\\"BurkeSizeValue6\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue7\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue8\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"PassSizeValue1\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"PassSizeValue2\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"AppearanceValue1\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"AppearanceValue2\\\"},{\\\"fieldType\\\":4,\\\"f";
-        System.out.println(test.length());
-    }
-    */
+     public static void main(String[] args) {
+     String test = "{\"cardNum\":\"ffgg5558\",\"username\":\"test\",\"data\":\"[{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"34535\\\",\\\"fieldName\\\":\\\"TotalSizeValue1\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3452345\\\",\\\"fieldName\\\":\\\"TotalSizeValue2\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue1\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3453\\\",\\\"fieldName\\\":\\\"BurkeSizeValue2\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"2345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue3\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"2345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue4\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue5\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3453\\\",\\\"fieldName\\\":\\\"BurkeSizeValue6\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue7\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue8\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"PassSizeValue1\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"PassSizeValue2\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"AppearanceValue1\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"AppearanceValue2\\\"},{\\\"fieldType\\\":4,\\\"f";
+     System.out.println(test.length());
+     }
+     */
 }
