@@ -25,7 +25,6 @@ $(function () {
                         ajaxPage1();
                         break;
                     case "page2":
-
                         ajaxPage2();
                         break;
                     case "page3":
@@ -54,16 +53,6 @@ function ajax(module, url, operation, data, successCallBack, failCallBack) {
         operation: operation
     };
     $.extend(obj, data);
-//    console.log("提交给服务器的数据：");
-    /*
-     $.each(obj, function (key, value) {
-     if (typeof value == "object") {
-     obj[key] = JSON.stringify(obj[key]);
-     }
-     });
-     */
-    //obj = JSON.stringfy(obj);
-//    console.log(obj);
     $.ajax({
         type: "post",
         url: url,

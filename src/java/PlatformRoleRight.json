@@ -1,12 +1,13 @@
 {
     "control": {
-        "RoleCode": "角色代码,@table",
-        "RightCode": "权限代码,@table"
+        "roleCode": "角色代码,@table",
+        "rightCode": "权限代码,@table"
     },
-    "mustwrite": ["RoleCode", "RightCode"],
+    "mustwrite": ["roleCode", "rightCode"],
     "unique": [],
+    "primary": "roleCode,rightCode",
     "titles": {
-        "RoleCode": "角色代码,50%",
-        "RightCode": "权限代码,50%"
+        "roleCode": "角色代码,50%",
+        "rightCode": "权限代码,50%"
     }
 }

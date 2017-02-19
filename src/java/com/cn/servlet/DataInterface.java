@@ -6,26 +6,24 @@
 package com.cn.servlet;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cn.bean.DJWareHouse;
 import com.cn.bean.PlatformCompanyInfo;
 import com.cn.bean.PlatFormDataBaseInfo;
 import com.cn.bean.PlatformRight;
 import com.cn.bean.PlatformRole;
 import com.cn.bean.PlatformUserInfo;
 import com.cn.controller.CommonController;
-import com.cn.controller.DJInWareHouseController;
-import com.cn.controller.PlatformCompanyInfoController;
-import com.cn.controller.PlatFormDataBaseInfoController;
-import com.cn.controller.PlatformRightController;
-import com.cn.controller.PlatformRoleController;
+//import com.cn.controller.DJInWareHouseController;
 import com.cn.controller.PlatformUserInfoController;
-import com.cn.controller.UserController;
+import com.cn.util.DatabaseOpt;
 import com.cn.util.Units;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +42,9 @@ public class DataInterface extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(DataInterface.class);
 
-    ArrayList<String> roleCodeList = new ArrayList<>();
+    private ArrayList<String> roleCodeList = new ArrayList<>();
+    private CommonController commonController = new CommonController();
+    private DatabaseOpt opt = new DatabaseOpt();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -62,13 +62,19 @@ public class DataInterface extends HttpServlet {
         String subUri = uri.substring(uri.lastIndexOf("/") + 1,
                 uri.lastIndexOf("."));
         String json = null;
-        CommonController commonController = new CommonController();
-        
+
         try {
             System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
+            String rely = paramsJson.getString("rely");
+            String target = paramsJson.getString("target");
+            String datas = paramsJson.getString("datas");
+            String update = paramsJson.getString("update");
+            String add = paramsJson.getString("add");
+            String delete = paramsJson.getString("del");
+
             HttpSession session = request.getSession();
             String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
 
@@ -115,11 +121,10 @@ public class DataInterface extends HttpServlet {
                         case "create": {
                             String result = Units.returnFileContext(path, "PlatformCompanyInfo.json");
                             if (result != null) {
-                                PlatformCompanyInfoController companyInfoController = new PlatformCompanyInfoController();
-                                ArrayList<PlatformCompanyInfo> infos = companyInfoController.getPlatformCompanyInfoData();
-                                if (null != infos && infos.size() > 0) {
+                                List<Object> list = commonController.dataBaseQuery("table", "PlatformCompanyInfo", "*", "", 11, 1, "CompanyID", 0, opt.getConnectBase());
+                                if (null != list && list.size() > 0) {
                                     StringBuffer buffer = new StringBuffer(result);
-                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(infos, Units.features));
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
                                     result = buffer.toString();
                                 }
                                 json = Units.objectToJson(0, "", result);
@@ -128,8 +133,9 @@ public class DataInterface extends HttpServlet {
                             }
                             break;
                         }
-                        case "add": {
-
+                        case "submit": {
+                            json = submitOperate("PlatformCompanyInfo", update, add, delete);
+                            break;
                         }
                     }
                     break;
@@ -142,11 +148,10 @@ public class DataInterface extends HttpServlet {
                         case "create": {
                             String result = Units.returnFileContext(path, "PlatFormDataBaseInfo.json");
                             if (result != null) {
-                                PlatFormDataBaseInfoController controller = new PlatFormDataBaseInfoController();
-                                ArrayList<PlatFormDataBaseInfo> infos = controller.getPlatformUserInfoData();
-                                if (infos != null && infos.size() > 0) {
+                                List<Object> list = commonController.dataBaseQuery("view", "PlatFormDataBaseInfo", "*", "", 11, 1, "DataBaseID", 0, opt.getConnectBase());
+                                if (list != null && list.size() > 0) {
                                     StringBuffer buffer = new StringBuffer(result);
-                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(infos, Units.features));
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
                                     result = buffer.toString();
                                 }
                                 json = Units.objectToJson(0, "", result);
@@ -156,17 +161,16 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "request_table": {
-                            String target = paramsJson.getString("target");
                             if (target.compareToIgnoreCase("CompanyID") == 0) {
-                                PlatformCompanyInfoController controller = new PlatformCompanyInfoController();
-                                ArrayList<PlatformCompanyInfo> result = controller.getPlatformCompanyInfoData();
-                                if (null != result && result.size() > 0) {
+                                List<Object> list = commonController.dataBaseQuery("table", "PlatformCompanyInfo", "*", "", 11, 1, "CompanyID", 0, opt.getConnectBase());
+                                if (null != list && list.size() > 0) {
                                     StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"CompanyID\":\"公司编号,50%\",\"CompanyName\": \"公司名称,50%\"},\"datas\":[");
-                                    for (PlatformCompanyInfo companyInfo : result) {
+                                    buffer.append("{\"titles\":{\"companyID\":\"公司编号,50%\",\"companyName\": \"公司名称,50%\"},\"datas\":[");
+                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+                                        PlatformCompanyInfo companyInfo = (PlatformCompanyInfo) it.next();
                                         buffer.append("{");
-                                        buffer.append("\"CompanyID\":").append("\"").append(companyInfo.CompanyID).append("\"").append(",");
-                                        buffer.append("\"CompanyName\":").append("\"").append(companyInfo.CompanyName).append("\"");
+                                        buffer.append("\"companyID\":").append("\"").append(companyInfo.getCompanyID()).append("\"").append(",");
+                                        buffer.append("\"companyName\":").append("\"").append(companyInfo.getCompanyName()).append("\"");
                                         buffer.append("},");
                                     }
                                     buffer.deleteCharAt(buffer.length() - 1);
@@ -176,6 +180,10 @@ public class DataInterface extends HttpServlet {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
                             }
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("PlatFormDataBaseInfo", update, add, delete);
                             break;
                         }
                     }
@@ -187,26 +195,20 @@ public class DataInterface extends HttpServlet {
                 case "注册平台用户": {
                     switch (operation) {
                         case "create": {
-                            String result = Units.returnFileContext(path, "PlatformUserInfo.json");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                            json = createOperate("table", "PlatformUserInfo", "UserLoginAccount", opt.getConnectBase());
                             break;
                         }
                         case "request_table": {
-                            String target = paramsJson.getString("target");
                             if (target.compareToIgnoreCase("UserLoginDBName") == 0) {
-                                PlatFormDataBaseInfoController controller = new PlatFormDataBaseInfoController();
-                                ArrayList<PlatFormDataBaseInfo> result = controller.getPlatformUserInfoData();
-                                if (result != null && result.size() > 0) {
+                                List<Object> list = commonController.dataBaseQuery("view", "PlatFormDataBaseInfo", "*", "", 11, 1, "CompanyID", 0, opt.getConnectBase());
+                                if (list != null && list.size() > 0) {
                                     StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"UserLoginDBName\":\"数据库名,50%\",\"CompanyName\":\"公司名称,50%\"},\"datas\":[");
-                                    for (PlatFormDataBaseInfo userInfo : result) {
+                                    buffer.append("{\"titles\":{\"userLoginDBName\":\"数据库名,50%\",\"companyName\":\"公司名称,50%\"},\"datas\":[");
+                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+                                        PlatFormDataBaseInfo userInfo = (PlatFormDataBaseInfo) it.next();
                                         buffer.append("{");
-                                        buffer.append("\"UserLoginDBName\":").append("\"").append(userInfo.MasterDataBaseName).append("\"").append(",");
-                                        buffer.append("\"CompanyName\":").append("\"").append(userInfo.CompanyName).append("\"");
+                                        buffer.append("\"userLoginDBName\":").append("\"").append(userInfo.getMasterDataBaseName()).append("\"").append(",");
+                                        buffer.append("\"companyName\":").append("\"").append(userInfo.getCompanyName()).append("\"");
                                         buffer.append("},");
                                     }
                                     buffer.deleteCharAt(buffer.length() - 1);
@@ -216,6 +218,10 @@ public class DataInterface extends HttpServlet {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
                             }
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("PlatformUserInfo", update, add, delete);
                             break;
                         }
                     }
@@ -227,19 +233,11 @@ public class DataInterface extends HttpServlet {
                 case "定义角色": {
                     switch (operation) {
                         case "create": {
-                            String result = Units.returnFileContext(path, "PlatformRole.json");
-                            if (result != null) {
-                                PlatformRoleController controller = new PlatformRoleController();
-                                ArrayList<PlatformRole> roles = controller.getPlatformRoleData();
-                                if (roles != null && roles.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer(result);
-                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(roles, Units.features));
-                                    result = buffer.toString();
-                                }
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                            json = createOperate("table", "PlatformRole", "RoleCode", opt.getConnectBase());
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("PlatformRole", update, add, delete);
                             break;
                         }
                     }
@@ -251,42 +249,54 @@ public class DataInterface extends HttpServlet {
                 case "定义角色权限": {
                     switch (operation) {
                         case "create": {
-                            String result = Units.returnFileContext(path, "PlatformRoleRight.json");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                            json = createOperate("table", "PlatformRoleRight", "RoleCode", opt.getConnectBase());
                             break;
                         }
                         case "request_table": {
-                            String target = paramsJson.getString("target");
                             if (target.compareToIgnoreCase("RoleCode") == 0) {
-                                PlatformRoleController controller = new PlatformRoleController();
-                                ArrayList<PlatformRole> result = controller.getPlatformRoleData();
-                                if (result != null && result.size() > 0) {
-//                                    String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
-                                    StringBuffer buffer = new StringBuffer(Units.returnFileContext(path, "PlatformRoleData.json"));
-                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(result, Units.features));
-
+                                List<Object> list = commonController.dataBaseQuery("table", "PlatformRole", "*", "", 11, 1, "RoleCode", 0, opt.getConnectBase());
+                                if (list != null && list.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer();
+                                    buffer.append("{\"titles\":{\"roleCode\":\"角色代码,50%\",\"roleName\":\"角色名称,50%\"},\"datas\":[");
+                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+                                        PlatformRole userInfo = (PlatformRole) it.next();
+                                        buffer.append("{");
+                                        buffer.append("\"roleCode\":").append("\"").append(userInfo.getRoleCode()).append("\"").append(",");
+                                        buffer.append("\"roleName\":").append("\"").append(userInfo.getRoleName()).append("\"");
+                                        buffer.append("},");
+                                    }
+                                    buffer.deleteCharAt(buffer.length() - 1);
+                                    buffer.append("]}");
                                     json = Units.objectToJson(0, "", buffer.toString());
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
                             }
                             if (target.compareToIgnoreCase("RightCode") == 0) {
-                                PlatformRightController controller = new PlatformRightController();
-                                ArrayList<PlatformRight> result = controller.getPlatformRightData();
-                                if (result != null && result.size() > 0) {
-//                                    String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
-                                    StringBuffer buffer = new StringBuffer(Units.returnFileContext(path, "PlatformRightData.json"));
-                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(result, Units.features));
-
+                                List<Object> list = commonController.dataBaseQuery("table", "PlatformRight", "*", "", 11, 1, "RightCode", 0, opt.getConnectBase());
+                                if (list != null && list.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer();
+                                    buffer.append("{\"titles\":{\"rightCode\":\"模块代码,20%\",\"rightName\":\"模块名称,40%\",\"righthyperlnk\":\"模块链接,40%\"},\"datas\":[");
+                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+                                        PlatformRight right = (PlatformRight) it.next();
+                                        buffer.append("{");
+                                        buffer.append("\"rightCode\":").append("\"").append(right.getRightCode()).append("\"").append(",");
+                                        buffer.append("\"rightName\":").append("\"").append(right.getRightName()).append("\"").append(",");
+                                        buffer.append("\"righthyperlnk\":").append("\"").append(right.getRighthyperlnk()).append("\"");
+                                        buffer.append("},");
+                                    }
+                                    buffer.deleteCharAt(buffer.length() - 1);
+                                    buffer.append("]}");
                                     json = Units.objectToJson(0, "", buffer.toString());
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
                             }
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("PlatformRoleRight", update, add, delete);
+                            break;
                         }
                     }
                     break;
@@ -297,38 +307,24 @@ public class DataInterface extends HttpServlet {
                 case "定义用户角色": {
                     switch (operation) {
                         case "create": {
-                            String result = Units.returnFileContext(path, "PlatformUserRole.json");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                            json = createOperate("table", "PlatformUserRole", "UserLoginAccount", opt.getConnectBase());
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("PlatformUserRole", update, add, delete);
                             break;
                         }
                         case "request_table": {
-                            String target = paramsJson.getString("target");
                             if (target.compareToIgnoreCase("RoleCode") == 0) {
-                                PlatformRoleController controller = new PlatformRoleController();
-                                ArrayList<PlatformRole> result = controller.getPlatformRoleData();
-                                if (result != null && result.size() > 0) {
-//                                    String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
-                                    StringBuffer buffer = new StringBuffer(Units.returnFileContext(path, "PlatformRoleData.json"));
-                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(result, Units.features));
-
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
-                            }
-                            if (target.compareToIgnoreCase("UserLoginAccount") == 0) {
-                                PlatformUserInfoController controller = new PlatformUserInfoController();
-                                ArrayList<PlatformUserInfo> result = controller.getPlatformUserInfoData();
-                                if (result != null && result.size() > 0) {
+                                List<Object> list = commonController.dataBaseQuery("table", "PlatformRole", "*", "", 11, 1, "RoleCode", 0, opt.getConnectBase());
+                                if (list != null && list.size() > 0) {
                                     StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"UserLoginAccount\":\"用户名,100%\"},\"datas\":[");
-                                    for (PlatformUserInfo userInfo : result) {
+                                    buffer.append("{\"titles\":{\"roleCode\":\"角色代码,50%\",\"roleName\":\"角色名称,50%\"},\"datas\":[");
+                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+                                        PlatformRole userInfo = (PlatformRole) it.next();
                                         buffer.append("{");
-                                        buffer.append("\"UserLoginAccount\":").append("\"").append(userInfo.UserLoginAccount).append("\"");
+                                        buffer.append("\"roleCode\":").append("\"").append(userInfo.getRoleCode()).append("\"").append(",");
+                                        buffer.append("\"roleName\":").append("\"").append(userInfo.getRoleName()).append("\"");
                                         buffer.append("},");
                                     }
                                     buffer.deleteCharAt(buffer.length() - 1);
@@ -338,6 +334,25 @@ public class DataInterface extends HttpServlet {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
                             }
+                            if (target.compareToIgnoreCase("UserLoginAccount") == 0) {
+                                List<Object> list = commonController.dataBaseQuery("table", "PlatformUserInfo", "*", "", 11, 1, "UserLoginAccount", 0, opt.getConnectBase());
+                                if (list != null && list.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer();
+                                    buffer.append("{\"titles\":{\"userLoginAccount\":\"用户名,100%\"},\"datas\":[");
+                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+                                        PlatformUserInfo userInfo = (PlatformUserInfo) it.next();
+                                        buffer.append("{");
+                                        buffer.append("\"userLoginAccount\":").append("\"").append(userInfo.getUserLoginAccount()).append("\"");
+                                        buffer.append("},");
+                                    }
+                                    buffer.deleteCharAt(buffer.length() - 1);
+                                    buffer.append("]}");
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
+                                }
+                            }
+                            break;
                         }
                     }
                     break;
@@ -348,14 +363,7 @@ public class DataInterface extends HttpServlet {
                 case "调货计划下达": {
                     switch (operation) {
                         case "create": {
-                            DJInWareHouseController controller = new DJInWareHouseController();
-                            String result = controller.getInWareHouseData();
-                            if (result != null) {
-//                                System.out.println("result:" + result);
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                            
                             break;
                         }
                         case "request_table": {
@@ -394,19 +402,6 @@ public class DataInterface extends HttpServlet {
                             }
                             break;
                         }
-                        case "add": {
-                            String datas = paramsJson.getString("datas");
-                            DJInWareHouseController controller = new DJInWareHouseController();
-                            int result = controller.addInWareHouseData(JSONObject.parseObject(datas, DJWareHouse.class));
-                            if (result == 0) {
-                                json = Units.objectToJson(result, "添加成功!", null);
-                            } else if (result == -1) {
-                                json = Units.objectToJson(result, "数据库执行出错!", null);
-                            } else {
-                                json = Units.objectToJson(result, "服务器出错!", null);
-                            }
-                            break;
-                        }
                     }
                     break;
                 }
@@ -425,8 +420,6 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "request_table": {
-                            String target = paramsJson.getString("target");
-                            UserController controller = new UserController();
                             String result = Units.returnFileContext(path, "data8.txt");
                             if (target.compareTo("depart") == 0) {
                                 result = Units.returnFileContext(path, "data2.txt");
@@ -481,108 +474,138 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="部品档案">
                 case "部品档案": {
                     switch (operation) {
                         case "create": {
-                            
+                            json = createOperate("table", "PartBaseInfo", "PartCode", opt.getConnect());
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("autoStyling") == 0) {
+
+                            }
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("PartBaseInfo", update, add, delete);
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="客户档案">
                 case "客户档案": {
                     switch (operation) {
                         case "create": {
-                            
+                            json = createOperate("table", "Customer", "CustomerID", opt.getConnect());
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("autoStyling") == 0) {
+
+                            }
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("Customer", update, add, delete);
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="部品存放地址">
                 case "部品存放地址": {
                     switch (operation) {
                         case "create": {
-                            
+
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="盛具档案">
                 case "盛具档案": {
                     switch (operation) {
                         case "create": {
-                            
+
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="部品类别">
                 case "部品类别": {
                     switch (operation) {
                         case "create": {
-                            
+
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="车型档案">
                 case "车型档案": {
                     switch (operation) {
                         case "create": {
-                            
+                            json = createOperate("table", "AutoStyling", "AutoStyling", opt.getConnect());
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("autoStyling") == 0) {
+
+                            }
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("AutoStyling", update, add, delete);
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="客户类别">
                 case "客户类别": {
                     switch (operation) {
                         case "create": {
-                            
+
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="送货方式">
                 case "送货方式": {
                     switch (operation) {
                         case "create": {
-                            
+
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="库存安全">
                 case "库存安全": {
                     switch (operation) {
                         case "create": {
-                            
+
                             break;
                         }
                     }
@@ -610,6 +633,74 @@ public class DataInterface extends HttpServlet {
                 out.close();
             }
         }
+    }
+
+    /**
+     * 数据产生操作
+     * @param type
+     * @param tableName
+     * @param orderField
+     * @return
+     * @throws FileNotFoundException
+     * @throws Exception 
+     */
+    private String createOperate(String type, String tableName, String orderField, Connection conn) throws FileNotFoundException, Exception {
+        String json;
+        String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
+        String result = Units.returnFileContext(path, tableName + ".json");
+        if (result != null) {
+            List<Object> list = commonController.dataBaseQuery(type, tableName, "*", "", 11, 1, orderField, 0, conn);
+            if (list != null && list.size() > 0) {
+                StringBuffer buffer = new StringBuffer(result);
+                buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
+                result = buffer.toString();
+            }
+            json = Units.objectToJson(0, "", result);
+        } else {
+            json = Units.objectToJson(-1, "服务器出错!", null);
+        }
+        return json;
+    }
+
+    /**
+     * 数据库操作
+     *
+     * @param tableName
+     * @param update
+     * @param add
+     * @param delete
+     * @return
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    private String submitOperate(String tableName, String update, String add, String delete) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        int result = 0;
+        String json;
+        if (!Units.strIsEmpty(update)) {
+            int updateResult = commonController.dataBaseOperate(update, tableName, "update", opt.getConnectBase());
+            result = (updateResult == -1) ? updateResult : result;
+        }
+        if (!Units.strIsEmpty(add)) {
+            int addResult = commonController.dataBaseOperate(add, tableName, "add", opt.getConnectBase());
+            result = (addResult == -1) ? addResult : result;
+            System.out.println("数据添加结果:" + addResult);
+        }
+        if (!Units.strIsEmpty(delete)) {
+            int delResult = commonController.dataBaseOperate(delete, tableName, "delete", opt.getConnectBase());
+            result = (delResult == -1) ? delResult : result;
+        }
+
+        if (result == 0) {
+            json = Units.objectToJson(result, "操作成功!", null);
+        } else if (result == -1) {
+            json = Units.objectToJson(result, "操作失败!", null);
+        } else if (result == 1) {
+            json = Units.objectToJson(result, "输入参数错误!", null);
+        } else {
+            json = Units.objectToJson(result, "服务器出错!", null);
+        }
+        return json;
     }
 
     private String hasRight(Element element) {

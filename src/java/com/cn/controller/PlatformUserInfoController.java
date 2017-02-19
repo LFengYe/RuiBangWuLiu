@@ -5,13 +5,11 @@
  */
 package com.cn.controller;
 
-import com.cn.bean.PlatformUserInfo;
 import com.cn.util.DatabaseOpt;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import org.apache.log4j.Logger;
 
 /**
@@ -65,6 +63,7 @@ public class PlatformUserInfoController {
         return -1;
     }
     
+    /*
     public ArrayList<PlatformUserInfo> getPlatformUserInfoData() {
         DatabaseOpt opt;
         Connection conn = null;
@@ -102,4 +101,5 @@ public class PlatformUserInfoController {
         }
         return null;
     }
+    */
 }

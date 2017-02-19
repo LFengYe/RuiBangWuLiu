@@ -11,8 +11,50 @@ package com.cn.bean;
  */
 public class PlatformUserInfo {
 
-    public String UserLoginAccount;
-    public String UserLoginPassWord;
-    public String UserLoginDBName;
-    public String UserInfoRemark;
+    private static int recordCount;
+
+    public static int getRecordCount() {
+        return recordCount;
+    }
+
+    public static void setRecordCount(int aRecordCount) {
+        recordCount = aRecordCount;
+    }
+    
+    private String UserLoginAccount;
+    private String UserLoginPassWord;
+    private String UserLoginDBName;
+    private String UserInfoRemark;
+
+    public String getUserLoginAccount() {
+        return UserLoginAccount;
+    }
+
+    public void setUserLoginAccount(String UserLoginAccount) {
+        this.UserLoginAccount = UserLoginAccount;
+    }
+
+    public String getUserLoginPassWord() {
+        return UserLoginPassWord;
+    }
+
+    public void setUserLoginPassWord(String UserLoginPassWord) {
+        this.UserLoginPassWord = UserLoginPassWord;
+    }
+
+    public String getUserLoginDBName() {
+        return UserLoginDBName;
+    }
+
+    public void setUserLoginDBName(String UserLoginDBName) {
+        this.UserLoginDBName = UserLoginDBName;
+    }
+
+    public String getUserInfoRemark() {
+        return UserInfoRemark;
+    }
+
+    public void setUserInfoRemark(String UserInfoRemark) {
+        this.UserInfoRemark = UserInfoRemark;
+    }
 }

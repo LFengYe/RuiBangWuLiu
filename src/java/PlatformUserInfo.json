@@ -1,16 +1,17 @@
 {
     "control": {
-        "UserLoginAccount": "用户名,string,10",
-        "UserLoginPassWord": "密码,password,12",
-        "UserLoginDBName": "数据库名,@table",
-        "UserInfoRemark": "备注,string,500"
+        "userLoginAccount": "用户名,string,10",
+        "userLoginPassWord": "密码,password,12",
+        "userLoginDBName": "数据库名,@table",
+        "userInfoRemark": "备注,string,500"
     },
-    "mustwrite": ["UserLoginAccount", "UserLoginPassWord", "UserLoginDBName"],
-    "unique": ["UserLoginAccount"],
+    "mustwrite": ["userLoginAccount", "userLoginPassWord", "userLoginDBName"],
+    "unique": ["userLoginAccount"],
+    "primary": "userLoginAccount",
     "titles": {
-        "UserLoginAccount": "用户名,20%",
-        "UserLoginPassWord": "密码,30%",
-        "UserLoginDBName": "数据库名,20%",
-        "UserInfoRemark": "备注,30%"
+        "userLoginAccount": "用户名,20%",
+        "userLoginPassWord": "密码,30%",
+        "userLoginDBName": "数据库名,20%",
+        "userInfoRemark": "备注,30%"
     }
 }

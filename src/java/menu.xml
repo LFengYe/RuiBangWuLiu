@@ -158,17 +158,17 @@
     <first  hypelnk=""  id="106" text="基础信息管理" url="">
         <second hypelnk="page1"  id="10601" text="部品档案" url="funinfo_page1.ashx" table="tblPartBaseInfo">
         </second>
-        <second hypelnk="hypelnk30"  id="10602" text="客户档案" url="aaa.ashx" table="tblCustomer">
+        <second hypelnk="page1"  id="10602" text="客户档案" url="aaa.ashx" table="tblCustomer">
         </second>
-        <second hypelnk="hypelnk32"  id="10604" text="部品存放地址" url="aaa.ashx" table="tblPartStore">
+        <second hypelnk="page1"  id="10604" text="部品存放地址" url="aaa.ashx" table="tblPartStore">
         </second>
-        <second hypelnk="hypelnk33"  id="10605" text="盛具档案" url="aaa.ashx" table="tblContainer">
+        <second hypelnk="page1"  id="10605" text="盛具档案" url="aaa.ashx" table="tblContainer">
         </second>
-        <second hypelnk="hypelnk34"  id="10606" text="部品类别" url="aaa.ashx" table="tblPartCategory">
+        <second hypelnk="page1"  id="10606" text="部品类别" url="aaa.ashx" table="tblPartCategory">
         </second>
-        <second hypelnk="hypelnk35"  id="10607" text="车型档案" url="aaa.ashx" table="tblAutoStyling">
+        <second hypelnk="page1"  id="10607" text="车型档案" url="aaa.ashx" table="tblAutoStyling">
         </second>
-        <second hypelnk="hypelnk36"  id="10608" text="客户类别" url="aaa.ashx" table="tblCustomerType">
+        <second hypelnk="page1"  id="10608" text="客户类别" url="aaa.ashx" table="tblCustomerType">
         </second>
         <second hypelnk="hypelnk37"  id="10609" text="送货方式" url="aaa.ashx" table="tblSHMethod">
         </second>

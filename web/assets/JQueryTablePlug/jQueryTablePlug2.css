@@ -32,6 +32,10 @@
 	cursor: pointer;
 	-webkit-user-select: none;
 }
+.jtb .jtb-container .jtb-scroll {
+    overflow-x: auto;
+    white-space: nowrap;
+}
 .jtb .jtb-container .col{
 	display: inline-block;
 	text-align: center;

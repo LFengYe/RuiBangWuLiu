@@ -61,9 +61,7 @@ $.fn.insertMenuPlug = function (options) {
             var arr = [$a.html()];
             
             while ($current.parents("ul").length > 0) {
-                console.log($current.parent("ul"));
                 $current = $current.parents("ul").prev();
-                console.log($current.text());
                 arr.unshift($current.text());
             }
             options.callback(id, $a.text(), url, arr);

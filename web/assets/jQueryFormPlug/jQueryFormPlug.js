@@ -44,6 +44,8 @@ $.fn.insertInputForm = function (options) {
                     inputResult += "<div><span>" + txt + "</span>:<input  class='input' type='file' name='" + i + "'/></div>";
                 } else if (controls[i].split(',')[1] == 'password') {
                     inputResult += "<div><span>" + txt + "</span>:<input  class='input' type='password' name='" + i + "'/></div>";
+                } else if (controls[i].split(',')[1] == 'hidden') {
+                    inputResult += "<input class='input' type='hidden' name='" + i + "'/>";
                 } else {
                     inputResult += "<div><span>" + txt + "</span>:<input class='input' name='" + i + "'/></div>";
                 }
@@ -63,14 +65,23 @@ $.fn.insertInputForm = function (options) {
                 }
             });
         },
-        getInputValObj: function () {
+        getInputValObj: function (containHidden) {
             var obj = {};
-            var name, value;
+            var name, value, type;
 
             for (var i = 0; i < this.$inputs.length; i++) {
-                name = this.$inputs.eq(i).attr("name");
-                value = this.$inputs.eq(i).val();
-                obj[name] = value;
+                if (containHidden) {
+                    name = this.$inputs.eq(i).attr("name");
+                    value = this.$inputs.eq(i).val();
+                    obj[name] = value;
+                } else {
+                    type = this.$inputs.eq(i).attr("type");
+                    if (type === "hidden")
+                        continue;
+                    name = this.$inputs.eq(i).attr("name");
+                    value = this.$inputs.eq(i).val();
+                    obj[name] = value;
+                }
             }
             for (var i = 0; i < this.$radios.length; i++) {
                 name = this.$radios.eq(i).attr("name");

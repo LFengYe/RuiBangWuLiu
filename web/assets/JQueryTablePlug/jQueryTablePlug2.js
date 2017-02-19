@@ -18,7 +18,7 @@
         getDOM: function () {
             
             this.html('');
-            this.html('<div class="wrapper"><div class="jtb-header"><input placeholder="查询条件" /><button class="LocalFilter">查询</button></div><div class="jtb-container"></div></div>');
+            this.html('<div class="wrapper"><div class="jtb-header"><input placeholder="查询条件" /><button class="LocalFilter">查询</button></div><div class="jtb-container"><div class="jtb-scroll"></div></div></div>');
 
             //加载表头
             var result = '', txt = '', width = '', totalWidth = 0;
@@ -26,9 +26,12 @@
                 txt = this.titles[i].split(',')[0];
                 width = this.titles[i].split(',')[1];
                 //totalWidth += parseInt(width);
-                result += '<div class="col" name="' + i + '" style="width:' + width + ';"><h5>' + txt + '</h5><div class="inner"><ul></ul></div></div>';
+                if (width === "0")
+                    result += '<div class="col" name="' + i + '" style="display:none;"><h5>' + txt + '</h5><div class="inner"><ul></ul></div></div>';
+                else
+                    result += '<div class="col" name="' + i + '" style="width:' + width + ';"><h5>' + txt + '</h5><div class="inner"><ul></ul></div></div>';
             }
-            this.$container = this.find(".jtb-container").append(result);
+            this.$container = this.find(".jtb-scroll").append(result);
             //this.$container.width(totalWidth + 2);
 
             this.addClass("jtb");
@@ -125,7 +128,6 @@
 
             }
             for (var j = 0; j < set.length; j++) {
-
                 set[j] && this.datas.push(set[j]);
             }
             this.render(this.datas);

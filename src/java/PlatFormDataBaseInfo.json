@@ -1,20 +1,23 @@
 {
     "control": {
-        "MasterDataBaseName": "工作数据库,string,25",
-        "CompanyID": "公司编号,@table",
-        "MasterDataBaseServer": "工作服务器,string,50",
-        "HistoryDataBaseName": "历史数据库,readonly,25",
-        "HistoryDataBaseServer": "历史服务器,readonly,50",
-        "DataBaseInfoRemark": "备注,string,500"
+        "dataBaseID": "数据库ID,hidden,0",
+        "masterDataBaseName": "工作数据库,string,25",
+        "companyID": "公司编号,@table",
+        "masterDataBaseServer": "工作服务器,string,50",
+        "historyDataBaseName": "历史数据库,readonly,25",
+        "historyDataBaseServer": "历史服务器,readonly,50",
+        "dataBaseInfoRemark": "备注,string,500"
     },
-    "mustwrite": ["CompanyID", "MasterDataBaseName", "MasterDataBaseServer"],
-    "unique": ["MasterDataBaseName"],
+    "mustwrite": ["companyID", "masterDataBaseName", "masterDataBaseServer"],
+    "unique": ["masterDataBaseName"],
+    "primary": "dataBaseID",
     "titles": {
-        "MasterDataBaseName": "工作数据库,15%",
-        "CompanyID": "公司编号,20%",
-        "MasterDataBaseServer": "工作服务器,15%",
-        "HistoryDataBaseName": "历史数据库,15%",
-        "HistoryDataBaseServer": "历史服务器,15%",
-        "DataBaseInfoRemark": "备注,20%"
+        "dataBaseID": "数据库ID,0",
+        "masterDataBaseName": "工作数据库,15%",
+        "companyID": "公司编号,20%",
+        "masterDataBaseServer": "工作服务器,15%",
+        "historyDataBaseName": "历史数据库,15%",
+        "historyDataBaseServer": "历史服务器,15%",
+        "dataBaseInfoRemark": "备注,20%"
     }
 }

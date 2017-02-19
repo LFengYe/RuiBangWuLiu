@@ -9,7 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
-public class PlatformRole {
+public class AutoStyling {
     private static int recordCount;
 
     public static int getRecordCount() {
@@ -19,22 +19,15 @@ public class PlatformRole {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    private String RoleCode;
-    private String RoleName;
+    
+    private String autoStyling;
 
-    public String getRoleCode() {
-        return RoleCode;
+    public String getAutoStyling() {
+        return autoStyling;
     }
 
-    public void setRoleCode(String RoleCode) {
-        this.RoleCode = RoleCode;
+    public void setAutoStyling(String AutoStyling) {
+        this.autoStyling = AutoStyling;
     }
-
-    public String getRoleName() {
-        return RoleName;
-    }
-
-    public void setRoleName(String RoleName) {
-        this.RoleName = RoleName;
-    }
+    
 }

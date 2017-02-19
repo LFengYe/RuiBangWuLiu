@@ -1,0 +1,11 @@
+{
+    "control": {
+        "autoStyling": "车型名称,string,10"
+    },
+    "mustwrite": ["autoStyling"],
+    "unique": ["autoStyling"],
+    "primary": "autoStyling",
+    "titles": {
+        "autoStyling": "车型名称,100%"
+    }
+}
