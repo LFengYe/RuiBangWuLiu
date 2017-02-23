@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>数据导入</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" type="text/css"/>
+
+        
+        <script type="text/javascript" src="assets/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/common-js/common.js"></script>
+        <script type="text/javascript" src="javascript/script.js"></script>
+        <script type="text/javascript">
+            window.onload = function() {
+                $("#importData").bind("click", function () {
+                    uploadExcel();
+                });
+                $("#loadTemplate").bind("click", function () {
+                    ajaxData("exportTemplate", null, function(data) {
+                       location.href = data.fileUrl;
+                    }, function(){});
+                });
+                $("iframe").bind("load", function () {
+                    var responseText = document.getElementById("hiddenFrame").contentWindow.document.body.innerText;
+                    var obj = JSON.parse(responseText);
+                    if (obj.status === 0) {
+                        var sendBody = new Object();
+                        sendBody.fileName = obj.data[0].fileName;
+                        console.log(JSON.stringify(sendBody));
+                        ajaxData("import", sendBody, function(data) {
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        });
+                    } else {
+                        alert(obj.message);
+                    }
+                });
+            };
+            
+            function uploadExcel() {
+                var filePath = $('#fileInput').val();
+                if (filePath !== "") {
+                    //对文件格式进行验证(简单验证)
+                    var d1 = /\.[^\.]+$/.exec(filePath);
+                    if (d1 == ".xls" || d1 == ".xlsx") {
+                        $("#import_form").submit();
+                    } else {
+                        alert("请选择Excel文件");
+                    }
+                } else {
+                    alert("请选择文件");
+                }
+            }
+        </script>
+        <style>
+            .button{margin-right:20px;background-color: #403939;border: none;margin-top: 10px;}
+            .layer-content{height: 400px;padding: 100px;}
+        </style>
+    </head>
+    <body>
+        <div class="layer-content">
+            <form target="hiddenFrame" class="form-horizontal" id="import_form" enctype="multipart/form-data" method="POST" action="uploadFile.do">
+                <div class="form-group-sm form-group">
+                    <label for="fileInput" class="col-sm-2 control-label">上传文件</label>
+                    <div class="col-sm-9">
+                        <input type="file" class="form-control" name="fileInput" id="fileInput" />
+                    </div>
+                </div>
+                <div class="form-group-sm form-group">
+                    <div class="col-sm-offset-2 col-sm-9">
+                        <a class="button btn btn-info" id="importData">导入</a>
+                        <a class="button btn btn-info" id="loadTemplate">下载模板</a>
+                    </div>
+                </div>
+            </form>
+            <iframe name="hiddenFrame" id="hiddenFrame" style="display: none;"></iframe>
+        </div>
+    </body>
+</html>

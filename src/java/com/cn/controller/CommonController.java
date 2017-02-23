@@ -8,7 +8,6 @@ package com.cn.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.sql.CallableStatement;
@@ -289,18 +288,14 @@ public class CommonController {
                 break;
             }
             //</editor-fold>
-
-            //<editor-fold desc="数据查询操作">
-            case "select": {
-                break;
-            }
-            //</editor-fold>
         }
         return -1;
     }
 
     /**
      * 数据库查询操作
+     * @param type -- table表示查询的是数据库表, tableName加tbl前缀进行查询;
+     *                 view表示查询的是师徒, tableName加view前缀进行查询
      * @param tableName
      * @param fields
      * @param wherecase
@@ -314,7 +309,7 @@ public class CommonController {
      */
     public List<Object> dataBaseQuery(String type, String tableName, String fields, String wherecase, int pageSize, int pageIndex, String orderField, int orderFlag,
             Connection conn) throws Exception {
-        CallableStatement statement = null;
+        CallableStatement statement;
         ArrayList<Object> result;
         Class objClass = Class.forName(beanPackage + tableName);
         try {
@@ -398,6 +393,27 @@ public class CommonController {
         }
     }
     
+    public String getWhereSQLStr(Class objClass, String keyWord) {
+        String result = null;
+        Field[] fields = objClass.getDeclaredFields();
+        for (Field field : fields) {
+            if (Modifier.isStatic(field.getModifiers()))
+                continue;
+            String fieldType = field.getGenericType().toString();
+            if (fieldType.contains("Integer") || fieldType.contains("Double") || fieldType.contains("Float")) {
+                if (result == null)
+                    result = "(" + field.getName() + " = " + keyWord + ")";
+                else
+                    result += " or " + "(" + field.getName() + " = " + keyWord + ")";
+            } else if (fieldType.contains("String")) {
+                if (result == null)
+                    result = "(" + field.getName() + " like '%" + keyWord + "%')";
+                else
+                    result += " or " + "(" + field.getName() + " like '%" + keyWord + "%')";
+            }
+        }
+        return result;
+    }
     /**
      * 
      * @param objClass
@@ -442,4 +458,6 @@ public class CommonController {
         }
         return menuJson;
     }
+    
+    
 }

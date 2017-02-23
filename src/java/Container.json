@@ -1,0 +1,11 @@
+{
+    "control": {
+        "containerName": "盛具名称,string,5"
+    },
+    "mustwrite": ["containerName"],
+    "unique": ["containerName"],
+    "primary": "containerName",
+    "titles": {
+        "containerName": "盛具名称,100%"
+    }
+}

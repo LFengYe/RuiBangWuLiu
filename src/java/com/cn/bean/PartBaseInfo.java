@@ -21,23 +21,41 @@ public class PartBaseInfo {
         recordCount = aRecordCount;
     }
 
+    @FieldDescription(description = "部品编号")
     private String partID;
+    @FieldDescription(description = "部品名称")
     private String partName;
+    @FieldDescription(description = "部品件号")
     private String partCode;
+    @FieldDescription(description = "使用车型")
     private String autoStyling;
+    @FieldDescription(description = "部品单位")
     private String partUnit;
+    @FieldDescription(description = "单车用量")
     private int dCAmount;
+    @FieldDescription(description = "入库盛具")
     private String inboundContainer;
+    @FieldDescription(description = "入库包装数量")
     private int inboundPackageAmount;
+    @FieldDescription(description = "出库盛具")
     private String outboundContainer;
+    @FieldDescription(description = "出库包装数量")
     private int outboundPackageAmount;
+    @FieldDescription(description = "是否停用")
     private boolean disabled;
+    @FieldDescription(description = "拼音助计")
     private String pinyinAbb;
+    @FieldDescription(description = "部品分类")
     private String partCategory;
+    @FieldDescription(description = "部品图片")
     private String partPicture;
+    @FieldDescription(description = "备注")
     private String partBaseInfoRemark;
+    @FieldDescription(description = "配送地址1")
     private String pSAddress1;
+    @FieldDescription(description = "配送地址2")
     private String pSAddress2;
+    @FieldDescription(description = "配送地址3")
     private String pSAddress3;
 
     public String getPartID() {
@@ -80,11 +98,11 @@ public class PartBaseInfo {
         this.partUnit = partUnit;
     }
 
-    public int getdCAmount() {
+    public int getDCAmount() {
         return dCAmount;
     }
 
-    public void setdCAmount(int dCAmount) {
+    public void setDCAmount(int dCAmount) {
         this.dCAmount = dCAmount;
     }
 
@@ -120,7 +138,7 @@ public class PartBaseInfo {
         this.outboundPackageAmount = outboundPackageAmount;
     }
 
-    public boolean isDisabled() {
+    public boolean getDisabled() {
         return disabled;
     }
 
@@ -160,27 +178,27 @@ public class PartBaseInfo {
         this.partBaseInfoRemark = partBaseInfoRemark;
     }
 
-    public String getpSAddress1() {
+    public String getPSAddress1() {
         return pSAddress1;
     }
 
-    public void setpSAddress1(String pSAddress1) {
+    public void setPSAddress1(String pSAddress1) {
         this.pSAddress1 = pSAddress1;
     }
 
-    public String getpSAddress2() {
+    public String getPSAddress2() {
         return pSAddress2;
     }
 
-    public void setpSAddress2(String pSAddress2) {
+    public void setPSAddress2(String pSAddress2) {
         this.pSAddress2 = pSAddress2;
     }
 
-    public String getpSAddress3() {
+    public String getPSAddress3() {
         return pSAddress3;
     }
 
-    public void setpSAddress3(String pSAddress3) {
+    public void setPSAddress3(String pSAddress3) {
         this.pSAddress3 = pSAddress3;
     }
 

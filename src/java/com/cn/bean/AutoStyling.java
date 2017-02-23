@@ -20,6 +20,7 @@ public class AutoStyling {
         recordCount = aRecordCount;
     }
     
+    @FieldDescription(description = "车型名称")
     private String autoStyling;
 
     public String getAutoStyling() {

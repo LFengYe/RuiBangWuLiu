@@ -1,0 +1,19 @@
+{
+    "control": {
+        "supplierID": "供应商代码,@table",
+        "partCode": "部品件号,@table",
+        "kCHighBound": "定额上限,number,0",
+        "kCLowBound": "定额下限,number,0",
+        "kCQuotaRemark": "备注,string,500"
+    },
+    "mustwrite": ["supplierID", "partCode", "kCHighBound", "kCLowBound"],
+    "unique": [],
+    "primary": "supplierID,partCode",
+    "titles": {
+        "supplierID": "供应商代码,20%",
+        "partCode": "部品件号,30%",
+        "kCHighBound": "定额上限,20%",
+        "kCLowBound": "定额下限,20%",
+        "kCQuotaRemark": "备注,10%"
+    }
+}

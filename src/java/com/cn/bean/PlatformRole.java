@@ -19,7 +19,10 @@ public class PlatformRole {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
+    
+    @FieldDescription(description = "角色代码")
     private String RoleCode;
+    @FieldDescription(description = "角色名称")
     private String RoleName;
 
     public String getRoleCode() {

@@ -30,21 +30,21 @@ $.fn.insertInputForm = function (options) {
                 var txt = controls[i].split(',')[0];
                 if (controls[i].indexOf('@') >= 0) {
                     //如果只有一个@符, 并且不是是@table(供选择值只有一个)
-                    if ((controls[i].indexOf('@') == controls[i].lastIndexOf("@")) && controls[i].indexOf("@table") < 0) {
+                    if ((controls[i].indexOf('@') === controls[i].lastIndexOf("@")) && controls[i].indexOf("@table") < 0) {
                         var value = controls[i].split("@")[1];
                         inputResult += "<div><span>" + txt + "</span>:<input class='event special input' name='" + i + "' value=" + value + "></div>";
                     } else {
                         inputResult += "<div><span>" + txt + "</span>:<input class='event input' name='" + i + "'/></div>";
                     }
-                } else if (controls[i].split(',')[1] == 'date') {
+                } else if (controls[i].split(',')[1] === 'date') {
                     inputResult += "<div><span>" + txt + "</span>:<input class='input' type='text' onfocus='WdatePicker({dateFmt: \"yyyy/MM/dd\", maxDate: getMaxDate()})' name='" + i + "'/></div>";
-                } else if (controls[i].split(',')[1] == 'bool') {
+                } else if (controls[i].split(',')[1] === 'bool') {
                     inputResult += "<div><span>" + txt + "</span>:<input class='radio' type='radio' name='" + i + "' value='1' />是<input  class='radio' type='radio' name='" + i + "' value='2'/>否</div>";
-                } else if (controls[i].split(',')[1] == 'img') {
+                } else if (controls[i].split(',')[1] === 'img') {
                     inputResult += "<div><span>" + txt + "</span>:<input  class='input' type='file' name='" + i + "'/></div>";
-                } else if (controls[i].split(',')[1] == 'password') {
+                } else if (controls[i].split(',')[1] === 'password') {
                     inputResult += "<div><span>" + txt + "</span>:<input  class='input' type='password' name='" + i + "'/></div>";
-                } else if (controls[i].split(',')[1] == 'hidden') {
+                } else if (controls[i].split(',')[1] === 'hidden') {
                     inputResult += "<input class='input' type='hidden' name='" + i + "'/>";
                 } else {
                     inputResult += "<div><span>" + txt + "</span>:<input class='input' name='" + i + "'/></div>";
@@ -115,7 +115,6 @@ $.fn.insertInputForm = function (options) {
         },
         isFinishForm: function () {
             var flag = true;
-
             for (var j = 0; j < options.mustWrite.length; j++) {
                 var $input = this.$inputs.filter("[name=" + options.mustWrite[j] + "]");
                 if ($input.val() == '') {
@@ -203,7 +202,7 @@ $.fn.insertInputForm = function (options) {
         EvtInputFocus: function () {
             this.extraDatas = {};
             var that = this;
-            this.$inputs.filter(".event").on('focus', function () {
+            this.$inputs.filter(".event").on('click', function () {
                 var name = $(this).attr("name");
                 var $input = $(this);
                 var obj = options.controls;
@@ -273,4 +272,4 @@ $.fn.insertInputForm = function (options) {
     this.inputAtuoToggle();
     this.lastInputEnter();
     return this;
-}
+};

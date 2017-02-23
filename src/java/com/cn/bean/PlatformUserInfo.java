@@ -21,9 +21,13 @@ public class PlatformUserInfo {
         recordCount = aRecordCount;
     }
     
+    @FieldDescription(description = "用户名")
     private String UserLoginAccount;
+    @FieldDescription(description = "密码")
     private String UserLoginPassWord;
+    @FieldDescription(description = "数据库名")
     private String UserLoginDBName;
+    @FieldDescription(description = "备注")
     private String UserInfoRemark;
 
     public String getUserLoginAccount() {

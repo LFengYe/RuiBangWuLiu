@@ -2,8 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
         <title>睿邦物流信息管理系统</title>
         <link rel="stylesheet" href="assets/bootstrap/normalize.css" />
         <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -20,7 +20,25 @@
         <script type="text/javascript" src="assets/jQuery/jquery-1.11.1.min.js" ></script>
         <script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="javascript/My97DatePicker/WdatePicker.js"></script>
+        <script type="text/javascript" src="javascript/laypage/laypage.js"></script>
+        <script type="text/javascript" src="javascript/layer/layer.js"></script>
         <script type="text/javascript" src="javascript/script.js"></script>
+        <script type="text/javascript">
+            function displayLayer(type, content, title, callback) {
+                layer.open({
+                    type: type,
+                    title: title,
+                    skin: 'layui-layer-rim',
+                    area: ['800px', '500px'],
+                    content: content,
+                    end: function () {
+                        if (callback) {
+                            callback();
+                        }
+                    }
+                });
+            }
+        </script>
     </head>
     <body>
         <!--头部-->
@@ -60,7 +78,7 @@
                                     <button class="button btn btn-info" id="page1-add">添加</button>
                                     <button class="button btn btn-info" id="page1-modify">修改</button>
                                     <button class="button btn btn-info" id="page1-delete">删除</button>
-                                    <button class="button btn btn-info" id="page1-query">查询</button>
+                                    <button class="button btn btn-info" id="page1-query" style="display: none;">查询</button>
                                     <button class="button btn btn-info" id="page1-submit">提交</button>
                                     <button class="button btn btn-info" id="page1-import">导入</button>
                                     <button class="button btn btn-info" id="page1-export">导出</button>
@@ -73,7 +91,7 @@
                             </div>
 
                         </div>
-                        
+
                         <div id="page2" style="display: none;" class="page">
                             <div class="page2-container">
                                 <div class="page2-main-table">
@@ -126,7 +144,7 @@
                                 </div>	
                             </div>
                         </div>
-                        
+
                         <div id="page3" style="display: none;" class="page">
                             <div class="page3-container">
                                 <div class="page3-main-table">
@@ -156,7 +174,7 @@
                                     </div>
 
                                 </div>
-                                
+
                                 <div class="page3-detail-list">
                                     <div class="page3-main-input-box">
                                         <!--动态添加-->
@@ -176,7 +194,7 @@
                 </div>
             </div>
         </div>
-        
+
         <script type="text/javascript" src="assets/JQueryMenuPlug/JQueryMenuPlug-js.js" ></script>
         <script type="text/javascript" src="assets/jQuerySelectPanel/jQuerySelectPanel-js.js" ></script>
         <script type="text/javascript" src="assets/jQueryFormPlug/jQueryFormPlug.js" ></script>
@@ -188,7 +206,5 @@
         <script type="text/javascript" src="assets/common-js/page1.js" ></script> 
         <script type="text/javascript" src="assets/common-js/page2.js" ></script>
         <script type="text/javascript" src="assets/common-js/page3.js" ></script>
-        <script>
-        </script>
     </body>
 </html>

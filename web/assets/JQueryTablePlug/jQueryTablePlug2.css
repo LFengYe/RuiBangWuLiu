@@ -58,9 +58,20 @@
 	overflow: hidden;
 	white-space:nowrap;  
 }
+.jtb .jtb-page{
+    display: none;
+    margin: 10px 2%;
+    height: 35px;
+    line-height: 35px;
+}
+.jtb .jtb-page .page{
+    float: left;
+}
+.jtb .jtb-page .page-info{
+    
+}
 .jtb .clicked{
 	color: red;
-    
 }
 .jtb .dbclicked{
 	color: #F1E7E7;

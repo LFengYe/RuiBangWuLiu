@@ -20,18 +20,31 @@ public class Customer {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
+    @FieldDescription(description = "客户代码")
     private String customerID;
+    @FieldDescription(description = "客户名称")
     private String customerName;
+    @FieldDescription(description = "客户名称简称")
     private String customerAbbName;
+    @FieldDescription(description = "客户类型")
     private String customerType;
+    @FieldDescription(description = "经办人")
     private String customerManager;
+    @FieldDescription(description = "经办人电话")
     private String customerManagerPhone;
+    @FieldDescription(description = "办公电话")
     private String customerOfficePhone;
+    @FieldDescription(description = "传真")
     private String customerOfficeFax;
+    @FieldDescription(description = "邮箱")
     private String customerEmail;
+    @FieldDescription(description = "送货方式")
     private String sHMethod;
+    @FieldDescription(description = "运输周期(小时)")
     private int transportCycle;
+    @FieldDescription(description = "拼音助记")
     private String pinyinAbb;
+    @FieldDescription(description = "备注")
     private String cutomerRemark;
 
     public String getCustomerID() {
@@ -106,11 +119,11 @@ public class Customer {
         this.customerEmail = customerEmail;
     }
 
-    public String getsHMethod() {
+    public String getSHMethod() {
         return sHMethod;
     }
 
-    public void setsHMethod(String sHMethod) {
+    public void setSHMethod(String sHMethod) {
         this.sHMethod = sHMethod;
     }
 

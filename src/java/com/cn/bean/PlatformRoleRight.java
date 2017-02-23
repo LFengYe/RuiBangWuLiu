@@ -20,7 +20,9 @@ public class PlatformRoleRight {
         recordCount = aRecordCount;
     }
     
+    @FieldDescription(description = "角色代码")
     private String roleCode;
+    @FieldDescription(description = "权限代码")
     private String rightCode;
 
     public String getRoleCode() {

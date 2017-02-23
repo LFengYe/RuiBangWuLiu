@@ -10,6 +10,7 @@ package com.cn.bean;
  * @author LFeng
  */
 public class PlatformCompanyInfo {
+
     private static int recordCount;
 
     public static int getRecordCount() {
@@ -19,18 +20,30 @@ public class PlatformCompanyInfo {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    
+
+    @FieldDescription(description = "公司编号")
     private String companyID;
+    @FieldDescription(description = "公司名称")
     private String companyName;
+    @FieldDescription(description = "名称缩写")
     private String companyNameAPP;
+    @FieldDescription(description = "公司地址")
     private String companyAddress;
+    @FieldDescription(description = "法人姓名")
     private String legalPersonName;
+    @FieldDescription(description = "法人电话")
     private String legalPersonPhone;
+    @FieldDescription(description = "联系人姓名")
     private String contactPersonName;
+    @FieldDescription(description = "联系人电话")
     private String contactPersonPhone;
+    @FieldDescription(description = "公司代码")
     private String companyCode;
-    private String busenessState;
+    @FieldDescription(description = "是否停办业务")
+    private boolean busenessState;
+    @FieldDescription(description = "公司网址")
     private String companyWebSite;
+    @FieldDescription(description = "备注")
     private String companyRemark;
 
     public String getCompanyID() {
@@ -105,11 +118,11 @@ public class PlatformCompanyInfo {
         this.companyCode = CompanyCode;
     }
 
-    public String getBusenessState() {
+    public boolean getBusenessState() {
         return busenessState;
     }
 
-    public void setBusenessState(String BusenessState) {
+    public void setBusenessState(boolean BusenessState) {
         this.busenessState = BusenessState;
     }
 
@@ -128,4 +141,25 @@ public class PlatformCompanyInfo {
     public void setCompanyRemark(String CompanyRemark) {
         this.companyRemark = CompanyRemark;
     }
+
+    /*
+    public static void main(String[] args) {
+        try {
+            Class objClass = Class.forName("com.cn.bean.PlatformCompanyInfo");
+            Field[] fields = objClass.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(FieldDescription.class)) {
+                    //获取字段名  
+                    String fieldNames = objClass.getSimpleName() + "." + field.getName();
+                    //获取字段注解  
+                    FieldDescription description = field.getAnnotation(FieldDescription.class);
+                    
+                    System.out.println("fieldNames:" + fieldNames + ",des:" + description.description());
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            
+        }
+    }
+    */
 }

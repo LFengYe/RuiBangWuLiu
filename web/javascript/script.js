@@ -21,7 +21,7 @@ function findDimensions() {
         winHeight = document.documentElement.clientHeight;
         winWidth = document.documentElement.clientWidth;
     }
-    
+
     if ($(".wc-menu")) {
         $(".wc-menu").css("width", 240);
         $(".wc-menu").css("height", winHeight - 120);
@@ -47,8 +47,16 @@ function getRootPath() {
 }
 
 function getCarYearCode(year) {
-    var code = ["A ","B ","C ","D","E","F","G","H","J","K","L","M","N","P","R","S","T","V","W","X","Y","1","2","3","4","5","6","7","8","9"];
+    var code = ["A ", "B ", "C ", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "X", "Y", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
     return code[(year - 1980) % 30];
+}
+
+function deepCopy(source) {
+    var result = {};
+    for (var key in source) {
+        result[key] = typeof source[key] === 'object' ? deepCoyp(source[key]): source[key];
+    }
+    return result;
 }
 
 //获取url中的参数
@@ -63,8 +71,8 @@ function getUrlParam(name) {
 //JQuery printArea插件, 打印div内容
 function printReport(divId, options) {
     $("#" + divId).css({
-        "height" : "auto"
-        ,"overflow" : "visible"
+        "height": "auto"
+        , "overflow": "visible"
     }).printArea(options);
 }
 

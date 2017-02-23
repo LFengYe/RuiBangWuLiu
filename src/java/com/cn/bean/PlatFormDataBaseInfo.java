@@ -22,12 +22,18 @@ public class PlatFormDataBaseInfo {
     }
 
     private String dataBaseID;
+    @FieldDescription(description = "公司编号")
     private String companyID;
     private String companyName;
+    @FieldDescription(description = "工作数据库")
     private String masterDataBaseName;
+    @FieldDescription(description = "工作服务器")
     private String masterDataBaseServer;
+    @FieldDescription(description = "历史数据库")
     private String historyDataBaseName;
+    @FieldDescription(description = "历史服务器")
     private String historyDataBaseServer;
+    @FieldDescription(description = "备注")
     private String dataBaseInfoRemark;
 
     public String getDataBaseID() {

@@ -20,7 +20,9 @@ public class PlatformUserRole {
         recordCount = aRecordCount;
     }
     
+    @FieldDescription(description = "用户名称")
     private String userLoginAccount;
+    @FieldDescription(description = "角色代码")
     private String roleCode;
 
     public String getUserLoginAccount() {

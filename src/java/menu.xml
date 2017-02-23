@@ -170,9 +170,9 @@
         </second>
         <second hypelnk="page1"  id="10608" text="客户类别" url="aaa.ashx" table="tblCustomerType">
         </second>
-        <second hypelnk="hypelnk37"  id="10609" text="送货方式" url="aaa.ashx" table="tblSHMethod">
+        <second hypelnk="page1"  id="10609" text="送货方式" url="aaa.ashx" table="tblSHMethod">
         </second>
-        <second hypelnk="hypelnk38"  id="10610" text="库存安全" url="aaa.ashx" table="tblKCQuota">
+        <second hypelnk="page1"  id="10610" text="库存安全" url="aaa.ashx" table="tblKCQuota">
         </second>
     </first>
     <first hypelnk=""  id="107" text="系统设置" url="">

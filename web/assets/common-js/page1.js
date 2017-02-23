@@ -5,6 +5,7 @@
     var $dateQueryBtn = $(".wc-page1-form .page1-query");
     var $dateInputs = $(".wc-page1-form input.wc-control");
     var primary = [];
+    var inputNames = {};
 
     var OPERATION = {
         CREATE: "create",
@@ -26,6 +27,11 @@
     function initDOM() {
         ajaxData(OPERATION.CREATE, {}, function (data) {
             primary = data.primary.split(",");
+            for (var i in data.control) {
+                var txt = data.control[i].split(',')[0];
+                inputNames[i] = txt;
+            }
+
             $inputBox.insertInputForm({
                 controls: data.control,
                 mustWrite: data.mustwrite,
@@ -41,6 +47,7 @@
                 titles: data.titles,
                 datas: data.datas,
                 unique: data.unique,
+                dataCount: data.counts,
                 dbclickRowCallBack: function (index, obj) {
                     $inputBox.objInInputs(obj);
                     modifyRow = index;
@@ -51,6 +58,9 @@
                     } else {
                         selectedSet[index] = obj;
                     }
+                },
+                pageCallBack: function () {
+
                 }
             });
         }, function () {
@@ -60,44 +70,52 @@
     }
 
     function bindEvt() {
+        $("#page1-add").off("click");
         $("#page1-add").on("click", function (e) {
+            $("#page1-add").attr("disabled", true);
             if ($inputBox.isFinishForm() && (!modifyRow)) {
-
                 var obj = $inputBox.getInputValObj(false);
                 if (!$tableBox.isUnique(obj)) {
+                    $("#page1-add").attr("disabled", false);
                     return false;
                 }
                 $tableBox.add(0, obj);
                 submitDatas.add.push(obj);
-                console.log(submitDatas.add);
                 selectedSet = [];
                 $inputBox.clearInputsArea();
             }
+            $("#page1-add").attr("disabled", false);
         });
+        $("#page1-modify").off("click");
         $("#page1-modify").on("click", function (e) {
+            $("#page1-modify").attr("disabled", true);
             if (modifyRow >= 0 && $inputBox.isFinishForm()) {
                 var obj = $inputBox.getInputValObj(true);
                 $tableBox.update(modifyRow, obj);
 
+                var updateObj = deepCopy(obj);
                 var whereObj = new Object();
                 for (var proIndex in primary) {
                     var proName = primary[proIndex];
-                    whereObj[proName] = obj[proName];
-                    delete obj[proName];
+                    whereObj[proName] = updateObj[proName];
+                    delete updateObj[proName];
                 }
 
-                submitDatas.update.push(obj);
+                submitDatas.update.push(updateObj);
                 submitDatas.update.push(whereObj);
-                
-                console.log(submitDatas.update);
+
                 modifyRow = null;
                 $inputBox.clearInputsArea();
+            } else {
+                alert("请先双击要修改的数据行");
             }
+            $("#page1-modify").attr("disabled", false);
         });
+        $("#page1-delete").off("click");
         $("#page1-delete").on("click", function (e) {
+            $("#page1-delete").attr("disabled", true);
             var arr = [];
             for (var index in selectedSet) {
-                console.log(index);
                 if (selectedSet[index]) {
                     arr.push(index);
 
@@ -110,7 +128,9 @@
                 }
             }
             $tableBox.del2(arr);
+            $("#page1-delete").attr("disabled", false);
         });
+        $("#page1-query").off("click");
         $("#page1-query").on("click", function (e) {
             var data = $inputBox.getInputValObj();
             ajaxData(OPERATION.QUERY_ITEM, {datas: data}, function (data) {
@@ -119,10 +139,12 @@
                 alert("未查询到任何结果");
             });
         });
+        $("#page1-submit").off("click");
         $("#page1-submit").on("click", function (e) {
-            //submitDatas.update = $tableBox.getAllDatas();
+            $("#page1-submit").attr("disabled", true);
             if (submitDatas.add.length == 0 && submitDatas.del.length == 0 && submitDatas.update.length == 0) {
                 alert("您当前没有新增任何信息");
+                $("#page1-submit").attr("disabled", false);
                 return;
             }
             ajaxData(OPERATION.SUBMIT, submitDatas, function (data) {
@@ -131,6 +153,27 @@
                 submitDatas.del = [];
                 submitDatas.update = [];
                 selectedSet = [];
+                $("#page1-submit").attr("disabled", false);
+            }, function () {
+                submitDatas.add = [];
+                submitDatas.del = [];
+                submitDatas.update = [];
+                selectedSet = [];
+                initDOM();
+                $("#page1-submit").attr("disabled", false);
+            });
+        });
+        $("#page1-import").off("click");
+        $("#page1-import").on("click", function (e) {
+            displayLayer(2, "import_page.html", "数据导入", function () {
+                initDOM();
+            });
+        });
+        $("#page1-export").off("click");
+        $("#page1-export").on("click", function (e) {
+            var obj = {"datas": $(".jtb-header input").val()};
+            ajaxData("export", obj, function (data) {
+                location.href = data.fileUrl;
             }, function () {
             });
         });

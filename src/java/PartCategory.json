@@ -1,0 +1,11 @@
+{
+    "control": {
+        "partCategory": "部品类别,string,10"
+    },
+    "mustwrite": ["partCategory"],
+    "unique": ["partCategory"],
+    "primary": "partCategory",
+    "titles": {
+        "partCategory": "部品类别,100%"
+    }
+}

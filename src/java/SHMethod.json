@@ -1,0 +1,11 @@
+{
+    "control": {
+        "shMethod": "送货方式,string,20"
+    },
+    "mustwrite": ["shMethod"],
+    "unique": ["shMethod"],
+    "primary": "shMethod",
+    "titles": {
+        "shMethod": "送货方式,100%"
+    }
+}

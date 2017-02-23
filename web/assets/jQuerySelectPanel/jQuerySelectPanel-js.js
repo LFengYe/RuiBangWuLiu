@@ -18,8 +18,8 @@ SelectPanel.prototype.reset = function (data, fun) {
     this.bindClickEvt();
 };
 SelectPanel.prototype.show = function () {
-    //public
-    this.$container.show(500);
+    displayLayer(1, $('.SelectPanel').first(), '选择信息');
+//    this.$container.show(500);
 };
 SelectPanel.prototype.initDOM = function () {
     //private
@@ -73,10 +73,12 @@ TableSelectPanel.prototype.render = function () {
     this.$container.insertTable({
         titles: this.data.titles, //表头  
         datas: this.data.datas, //数据源
+        isPage: false,
         clickRowCallBack: function (index, obj) {
             that.callback(obj);
-            that.$container.hide(500);
-            //console.log(index)
+//            that.$container.hide(500);
+            layer.closeAll('page');
+            console.log(index);
         },
         dbclickRowCallBack: function (index, obj) {
             console.log(obj);

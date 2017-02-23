@@ -417,6 +417,17 @@ public class Units {
         Date nowDate = new Date();
         return format.format(nowDate);
     }
+    
+    /**
+     * 获取当前系统时间没有分隔符的字符串
+     * 
+     * @return 返回yyyyMMddHHmmss格式时间字符串
+     */
+    public static String getNowTimeNoSeparator() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date nowDate = new Date();
+        return format.format(nowDate);
+    }
 
     /**
      * 获取系统当前日期字符串
@@ -477,6 +488,11 @@ public class Units {
         return false;
     }
 
+    /**
+     * 判断一个字符串是否为空, 长度为0或者是null都为空
+     * @param string
+     * @return 
+     */
     public static boolean strIsEmpty(String string) {
         if (string == null) {
             return true;
@@ -487,6 +503,13 @@ public class Units {
         return false;
     }
 
+    /**
+     * 指定文件的内容作为字符串返回
+     * @param path
+     * @param fileName
+     * @return
+     * @throws FileNotFoundException 
+     */
     public static String returnFileContext(String path, String fileName) throws FileNotFoundException {
         File file = new File(path + fileName);
         StringBuilder builder = new StringBuilder();
@@ -497,6 +520,23 @@ public class Units {
         return builder.toString();
     }
     
+    /**
+     * 根据给定的路径和文件名生产文件
+     * @param filePath
+     * @param fileName
+     * @return
+     * @throws IOException 
+     */
+    public static File createNewFile(String filePath, String fileName) throws IOException {
+        File path = new File(filePath);
+        if (!path.exists()) {
+            path.mkdir();
+        }
+        File file = new File(filePath, fileName);
+        if (!file.exists())
+            file.createNewFile();
+        return file;
+    }
     /**
      * ************************************容联云通讯短信发送平台*****************************************
      */
