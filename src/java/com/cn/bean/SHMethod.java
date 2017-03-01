@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "送货方式")
 public class SHMethod {
     private static int recordCount;
 

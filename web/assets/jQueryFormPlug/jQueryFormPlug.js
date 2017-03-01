@@ -32,12 +32,16 @@ $.fn.insertInputForm = function (options) {
                     //如果只有一个@符, 并且不是是@table(供选择值只有一个)
                     if ((controls[i].indexOf('@') === controls[i].lastIndexOf("@")) && controls[i].indexOf("@table") < 0) {
                         var value = controls[i].split("@")[1];
-                        inputResult += "<div><span>" + txt + "</span>:<input class='event special input' name='" + i + "' value=" + value + "></div>";
+                        if (controls[i].split(',')[1] === 'hidden') {
+                            inputResult += "<input class='input' type='hidden' name='" + i + "' value='" + value + "'/>";
+                        } else {
+                            inputResult += "<div><span>" + txt + "</span>:<input class='event special input' name='" + i + "' value='" + value + "'></div>";
+                        }
                     } else {
                         inputResult += "<div><span>" + txt + "</span>:<input class='event input' name='" + i + "'/></div>";
                     }
                 } else if (controls[i].split(',')[1] === 'date') {
-                    inputResult += "<div><span>" + txt + "</span>:<input class='input' type='text' onfocus='WdatePicker({dateFmt: \"yyyy/MM/dd\", maxDate: getMaxDate()})' name='" + i + "'/></div>";
+                    inputResult += "<div><span>" + txt + "</span>:<input class='input' type='text' onfocus='WdatePicker({dateFmt: \"yyyy/MM/dd HH:mm:ss\"})' name='" + i + "' value='" + getMaxDate() + "'/></div>";
                 } else if (controls[i].split(',')[1] === 'bool') {
                     inputResult += "<div><span>" + txt + "</span>:<input class='radio' type='radio' name='" + i + "' value='1' />是<input  class='radio' type='radio' name='" + i + "' value='2'/>否</div>";
                 } else if (controls[i].split(',')[1] === 'img') {
@@ -46,6 +50,23 @@ $.fn.insertInputForm = function (options) {
                     inputResult += "<div><span>" + txt + "</span>:<input  class='input' type='password' name='" + i + "'/></div>";
                 } else if (controls[i].split(',')[1] === 'hidden') {
                     inputResult += "<input class='input' type='hidden' name='" + i + "'/>";
+                } else if (controls[i].split(',')[1] === 'select') {
+                    var selects = controls[i].split(",").slice(2);
+                    
+                    inputResult += "<div><span>" + txt + "</span>:<input class='input' type='hidden' name='" + i + "' value='" + selects[0] + "'/>";
+                    inputResult += "<select class='select'>";
+                    
+                    for (var str in selects) {
+                        inputResult += "<option value='" + selects[str] + "'>" + selects[str] + "</option>";
+                    }
+                    inputResult += "</select>";
+                    inputResult += "</div>";
+                } else if (controls[i].split(',')[1] === 'calculate') {
+                    inputResult += "<input class='input calculate' type='hidden' name='" + i + "'/>";
+                } else if (controls[i].split(',')[1] === 'parent') {
+                    inputResult += "<input class='input parent' type='hidden' name='" + i + "'/>";
+                } else if (controls[i].split(',')[1] === 'check') {
+                    inputResult += "<div><span>" + txt + "</span>:<input class='input check' name='" + i + "'/></div>";
                 } else {
                     inputResult += "<div><span>" + txt + "</span>:<input class='input' name='" + i + "'/></div>";
                 }
@@ -55,8 +76,36 @@ $.fn.insertInputForm = function (options) {
             
             this.$inputs = this.find(".input-area input.input");
             this.$radios = this.find(".input-area input.radio");
+            this.$select = this.find(".input-area select");
+            this.$calculate = this.find(".input-area input.calculate");
+            this.parent = this.find(".input-area input.parent");
             //将只有一个选项的输入框默认输入这个选项
 
+        },
+        calculateValue: function() {
+            for (var i = 0; i < this.$calculate.length; i++) {
+                var item = this.$calculate[i];
+                var calFields = options.controls[item.name].split(',');
+                var firstFieldVal = this.$inputs.filter("[name=" + calFields[2] + "]").val();
+                var secondFieldVal = this.$inputs.filter("[name=" + calFields[3] + "]").val();
+                if (calFields[4] === "/")
+                    item.value = Math.ceil(firstFieldVal / secondFieldVal);
+                if (calFields[4] === "*")
+                    item.value = Math.ceil(firstFieldVal * secondFieldVal);
+                if (calFields[4] === "+")
+                    item.value = Math.ceil(firstFieldVal + secondFieldVal);
+                if (calFields[4] === "-")
+                    item.value = Math.ceil(firstFieldVal - secondFieldVal);
+                //console.log("name:" + item.name + ",value:" + item.value);
+            }
+        },
+        parentFieldValue: function(parent) {
+            var obj = parent.getInputValObj(true);
+            for (var i = 0; i < this.parent.length; i++) {
+                var item = this.parent[i];
+                item.value = obj[item.name];
+                //console.log("name:" + item.name + ",value:" + item.value);
+            }
         },
         lastInputEnter: function () {
             this.$inputs.last().bind("keypress", function (e) {
@@ -96,6 +145,7 @@ $.fn.insertInputForm = function (options) {
                     obj[name] = "";
                 }
             }
+            //console.log(this.extraDatas);
             $.extend(obj, this.extraDatas);
             return obj;
         },
@@ -128,7 +178,7 @@ $.fn.insertInputForm = function (options) {
         },
         clearInputsArea: function () {
             for (var i in this.$inputs) {
-                if (!this.$inputs.eq(i).hasClass("special")) {
+                if (!this.$inputs.eq(i).hasClass("special") && !this.$inputs.eq(i).attr("type") === "hidden") {
                     this.$inputs.eq(i).val("");
                 }
             }
@@ -162,7 +212,6 @@ $.fn.insertInputForm = function (options) {
                     if (isNaN(val) || val.length > maxLength) {
                         alert('请输入长度不超过' + maxLength + '位数字');
                         $input.val('').trigger('focus');
-
                     }
                     break;
                 case 'bool':
@@ -192,7 +241,6 @@ $.fn.insertInputForm = function (options) {
                 for (var i = 0; i < arr.length; i++) {
                     this.$inputs.filter("[name=" + arr[i] + "]").attr("disabled", "disabled");
                 }
-
             }
 
         },
@@ -226,9 +274,13 @@ $.fn.insertInputForm = function (options) {
                     //ajax请求数据
                     var data = {
                         rely: rely_obj,
-                        target: name
+                        target: name,
+                        datas: "",
+                        pageSize: 15,
+                        pageIndex: 1
                     };
-                    //判断该字段是否携带隐含的不可见字段  
+                    //判断该字段是否携带隐含的不可见字段
+//                    console.log(obj[name]);
                     if (obj[name].indexOf(":") >= 0) {
                         arr = obj[name].split(':')[1].split(',').map(function (i) {
                             return i.slice(1);
@@ -236,6 +288,7 @@ $.fn.insertInputForm = function (options) {
                     }
                     //进行ajax请求
                     options.requesFun(data, function (data) {
+                        //alert("成功!");
                         if (options.tableInputCallBack) {
                             options.selectpanel.reset(3, data, function (resarr) {
                                 $input.val(resarr[0][name]);
@@ -244,8 +297,14 @@ $.fn.insertInputForm = function (options) {
                         } else {
                             options.selectpanel.reset(2, data, function (obj) {
                                 $input.val(obj[name]);
+                                
+                                $(".parent").filter("[name=" + name + "]").val(obj[name]);
                                 for (var i = 0; i < arr.length; i++) {
                                     that.extraDatas[arr[i]] = obj[arr[i]];
+                                    $(".parent").filter("[name=" + arr[i] + "]").val(obj[arr[i]]);
+                                    if (that.$inputs.filter("[name=" + arr[i] + "]")) {
+                                        that.$inputs.filter("[name=" + arr[i] + "]").val(obj[arr[i]]);
+                                    }
                                 }
                             });
                         }
@@ -263,6 +322,34 @@ $.fn.insertInputForm = function (options) {
                     });
                 }
             });
+            
+            this.$inputs.filter(".check").on('blur', function() {
+                var name = $(this).attr("name");
+                var value = $(this).val();
+                var check = options.controls[name].split(",");
+                var referenceObj = that.$inputs.filter("[name=" + check[3] + "]");
+                
+                if (check[2] == "小于") {
+                    if (eval(referenceObj.val()) < eval(value)) {
+                        alert("值不能大于" + referenceObj.val());
+                        $(this).focus();
+                        return ;
+                    }
+                }
+                if (check[2] == "大于") {
+                    if (eval(referenceObj.val()) > eval(value)) {
+                        alert("值不能小于" + referenceObj.val());
+                        $(this).focus();
+                        return ;
+                    }
+                }
+            });
+        },
+        specialInput: function() {
+            this.$select.on("change", function() {
+                $(this).prev().val($(this).val());
+            });
+            this.$inputs.filter(".special").attr("disabled", "disabled");
         }
     };
     $.extend(this, _pro_);
@@ -271,5 +358,6 @@ $.fn.insertInputForm = function (options) {
     this.EvtInputFocus();
     this.inputAtuoToggle();
     this.lastInputEnter();
+    this.specialInput();
     return this;
 };

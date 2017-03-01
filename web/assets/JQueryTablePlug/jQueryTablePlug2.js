@@ -4,27 +4,28 @@
         datas: [], //数据源
         unique: [], //表的元组主码
         clickRowCallBack: function (index, obj) {
-            console.log(index);
+            //console.log(index);
         },
         dbclickRowCallBack: function (index, obj) {
-            console.log(obj);
+            //console.log(obj);
         },
-        pageCallBack: function (data, pageIndex) {
-
+        pageCallBack: function (pageIndex, keyword) {
+        },
+        searchCallBack: function(keyword) {
         },
         isLocalSearch: true,
         pageIndex: 1,
         pageSize: 15,
-        isPage: true
+        isDialog: false,
+        dataCount: 0
     };
 
     var _funs_ = {
-        getDOM: function (isPage) {
+        getDOM: function () {
 
             var htmlStr = '<div class="wrapper"><div class="jtb-header"><span>查询条件:</span><input placeholder="查询条件" /><button class="LocalFilter">查询</button></div>';
             htmlStr += '<div class="jtb-container"><div class="jtb-scroll"></div></div>';
-            if (isPage)
-                htmlStr += '<div class="jtb-page"><div class="page"></div><div class="page-info"></div></div>';
+            htmlStr += '<div class="jtb-page"><div class="page"></div><div class="page-info"></div></div>';
             htmlStr += '</div>';
             this.html(htmlStr);
 
@@ -32,7 +33,7 @@
             var result = '', txt = '', width = '', totalWidth = 0;
             for (var i in this.titles) {
                 txt = this.titles[i].split(',')[0];
-                width = this.titles[i].split(',')[1];
+                width = this.titles[i].split(',')[this.titles[i].split(',').length - 1];
                 //totalWidth += parseInt(width);
                 if (width === "0")
                     result += '<div class="col" name="' + i + '" style="display:none;"><h5>' + txt + '</h5><div class="inner"><ul></ul></div></div>';
@@ -40,9 +41,10 @@
                     result += '<div class="col" name="' + i + '" style="width:' + width + ';"><h5>' + txt + '</h5><div class="inner"><ul></ul></div></div>';
             }
             this.$container = this.find(".jtb-scroll").append(result);
+            this.$header = this.find(".jtb-header");
 
             this.addClass("jtb");
-            !this.isLocalSearch && this.$container.prev().hide();
+            !this.isLocalSearch && this.$header.hide();
             return this;
         },
         getTableDataDOM: function (datas) {
@@ -51,7 +53,7 @@
             var obj = null;
             for (var i = 0; i < datas.length; i++) {
                 obj = datas[i];
-                for (var k in obj) {
+                for (var k in this.titles) {
                     if (obj[k])
                         this.$container.children("div[name='" + k + "']").find("ul").append("<li>" + obj[k] + "</li>");
                     else
@@ -64,26 +66,25 @@
             var that = this;
             this.pageCount = parseInt((this.dataCount % this.pageSize === 0) ? (this.dataCount / this.pageSize) : (this.dataCount / this.pageSize + 1));
             laypage({
-                //cont: $("this > .jtb-page .page"),
-                cont: $(".jtb-page .page"),
+                cont: this.find(".jtb-page .page"),
                 pages: this.pageCount,
                 curr: this.pageIndex,
                 skip: true,
                 jump: function (obj, first) {
                     if (!first) {
                         that.pageIndex = obj.curr;
-                        var obj = {"pageIndex": obj.curr, "pageSize": that.pageSize, "datas": $(".LocalFilter").prev().val()};
-                        ajaxData("request_page", obj, function (data) {
-                            _funs_.getTableDataDOM.call(that, data.datas);
-                        });
+                        var keyWord = that.find(".LocalFilter").prev().val();
+                        if (that.pageCallBack) {
+                            that.pageCallBack(obj.curr, keyWord);
+                        }
                     }
                 }
             });
-            $(".jtb-page .page-info").html("当前第" + this.pageIndex + "页,当前页" + this.datas.length + "条数据,   共" + this.pageCount + "页");
+            this.find(".jtb-page .page-info").html("当前第" + this.pageIndex + "页,当前页" + this.datas.length + "条数据,   共" + this.pageCount + "页");
             if (this.pageCount > 1) {
-                $(".jtb-page").css("display", "block");
+                this.find(".jtb-page").css("display", "block");
             } else {
-                $(".jtb-page").css("display", "none");
+                this.find(".jtb-page").css("display", "none");
             }
             return this;
         },
@@ -91,7 +92,7 @@
             var that = this;
             this.$container.find("ul").on("click", "li", function (e) {
                 var index = $(this).index();
-                console.log(that.filterState);
+                //console.log(that.filterState);
                 that.filterState && that.clickRowCallBack(index, that.afterFilter[index]);
                 !that.filterState && that.clickRowCallBack(index, that.datas[index]);
                 that.$container.find("ul li:nth-child(" + (index + 1) + ")").toggleClass("clicked");
@@ -112,13 +113,10 @@
              */
             this.find(".jtb-header button").click(function (e) {
                 var keyWord = $(this).prev().val();
-                that.pageIndex = 1;
-                var obj = {"pageIndex": that.pageIndex, "pageSize": that.pageSize, "datas": keyWord};
-                ajaxData("request_page", obj, function (data) {
-                    _funs_.getTableDataDOM.call(that, data.datas);
-                    that.dataCount = data.counts;
-                    _funs_.getPageInfo.call(that);
-                });
+                if (that.searchCallBack) {
+                    that.searchCallBack(keyWord);
+                    return;
+                }
             }).prev().focus(function (e) {
 
             });
@@ -195,6 +193,12 @@
             this.datas = data;
             _funs_.getTableDataDOM.call(this, this.datas);
         },
+        page: function(dataCount, pageIndex, pageSize) {
+            this.dataCount = dataCount;
+            this.pageIndex = pageIndex;
+            this.pageSize = pageSize;
+            _funs_.getPageInfo.call(this);
+        },
         emptyTable: function () {
             this.datas = [];
             _funs_.getTableDataDOM.call(this, this.datas);
@@ -218,10 +222,9 @@
 
     $.fn.insertTable = function (options) {
         $.extend(this, _default, options);
-        _funs_.getDOM.call(this, this.isPage);
+        _funs_.getDOM.call(this);
         _funs_.getTableDataDOM.call(this, this.datas);
-        if (this.isPage)
-            _funs_.getPageInfo.call(this);
+        _funs_.getPageInfo.call(this);
         _funs_.bindEvt.call(this);
         $.extend(this, _interface);
         return this;

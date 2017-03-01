@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "部品档案")
 public class PartBaseInfo {
 
     private static int recordCount;
@@ -52,7 +53,7 @@ public class PartBaseInfo {
     @FieldDescription(description = "备注")
     private String partBaseInfoRemark;
     @FieldDescription(description = "配送地址1")
-    private String pSAddress1;
+    private String psAddress1;
     @FieldDescription(description = "配送地址2")
     private String pSAddress2;
     @FieldDescription(description = "配送地址3")
@@ -178,12 +179,12 @@ public class PartBaseInfo {
         this.partBaseInfoRemark = partBaseInfoRemark;
     }
 
-    public String getPSAddress1() {
-        return pSAddress1;
+    public String getPsAddress1() {
+        return psAddress1;
     }
 
-    public void setPSAddress1(String pSAddress1) {
-        this.pSAddress1 = pSAddress1;
+    public void setPsAddress1(String pSAddress1) {
+        this.psAddress1 = pSAddress1;
     }
 
     public String getPSAddress2() {

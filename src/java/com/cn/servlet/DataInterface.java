@@ -6,22 +6,14 @@
 package com.cn.servlet;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cn.bean.AutoStyling;
-import com.cn.bean.Customer;
-import com.cn.bean.CustomerType;
+import com.cn.bean.ClassDescription;
 import com.cn.bean.FieldDescription;
-import com.cn.bean.PartBaseInfo;
-import com.cn.bean.PartCategory;
-import com.cn.bean.PlatformCompanyInfo;
-import com.cn.bean.PlatFormDataBaseInfo;
-import com.cn.bean.PlatformRight;
-import com.cn.bean.PlatformRole;
-import com.cn.bean.PlatformUserInfo;
 import com.cn.controller.CommonController;
 import com.cn.controller.PlatformUserInfoController;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.ExportExcel;
 import com.cn.util.Units;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -84,12 +76,14 @@ public class DataInterface extends HttpServlet {
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
-            String rely = paramsJson.getString("rely");
+            String rely = (paramsJson.getString("rely") == null) ? ("{}") : (paramsJson.getString("rely"));
             String target = paramsJson.getString("target");
-            String datas = paramsJson.getString("datas");
+            String datas = (paramsJson.getString("datas") == null) ? ("") : paramsJson.getString("datas");
             String update = paramsJson.getString("update");
             String add = paramsJson.getString("add");
             String delete = paramsJson.getString("del");
+            String item = paramsJson.getString("item");
+            String details = paramsJson.getString("details");
             String fileName = paramsJson.getString("fileName");
             int pageIndex = paramsJson.getIntValue("pageIndex");
             int pageSize = paramsJson.getIntValue("pageSize");
@@ -139,27 +133,27 @@ public class DataInterface extends HttpServlet {
                 case "注册公司": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "PlatformCompanyInfo", "CompanyID", opt.getConnectBase());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "PlatformCompanyInfo", "CompanyID", opt.getConnectBase());
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PlatformCompanyInfo", update, add, delete, opt.getConnectBase());
+                            json = submitOperate("com.cn.bean.","PlatformCompanyInfo", update, add, delete, "base");
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "PlatformCompanyInfo", "CompanyID", datas, opt.getConnectBase(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "PlatformCompanyInfo", "CompanyID", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("PlatformCompanyInfo", importPath + fileName, opt.getConnectBase());
+                            json = importData("com.cn.bean.","PlatformCompanyInfo", importPath + fileName, opt.getConnectBase());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("PlatformCompanyInfo", null);
+                            json = exportData("com.cn.bean.","PlatformCompanyInfo", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("PlatformCompanyInfo", (ArrayList<Object>) queryData("table", "PlatformCompanyInfo", "CompanyID", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","PlatformCompanyInfo", (ArrayList<Object>) queryData("com.cn.bean.","table", "PlatformCompanyInfo", "CompanyID", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
                             break;
                         }
                     }
@@ -171,49 +165,38 @@ public class DataInterface extends HttpServlet {
                 case "注册数据库": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("view", "PlatFormDataBaseInfo", "DataBaseID", opt.getConnectBase());
+                            json = createOperate(15, "view", "com/cn/json/", "com.cn.bean.", "PlatFormDataBaseInfo", "DataBaseID", opt.getConnectBase());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("view", "PlatFormDataBaseInfo", "DataBaseID", datas, opt.getConnectBase(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","view", "PlatFormDataBaseInfo", "DataBaseID", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("PlatFormDataBaseInfo", importPath + fileName, opt.getConnectBase());
+                            json = importData("com.cn.bean.","PlatFormDataBaseInfo", importPath + fileName, opt.getConnectBase());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("PlatFormDataBaseInfo", null);
+                            json = exportData("com.cn.bean.","PlatFormDataBaseInfo", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("PlatFormDataBaseInfo", (ArrayList<Object>) queryData("view", "PlatFormDataBaseInfo", "DataBaseID", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","PlatFormDataBaseInfo", (ArrayList<Object>) queryData("com.cn.bean.","view", "PlatFormDataBaseInfo", "DataBaseID", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "request_table": {
                             if (target.compareToIgnoreCase("CompanyID") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "PlatformCompanyInfo", "*", "", Integer.MAX_VALUE, 1, "CompanyID", 0, opt.getConnectBase());
-                                if (null != list && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"companyID\":\"公司编号,50%\",\"companyName\": \"公司名称,50%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PlatformCompanyInfo companyInfo = (PlatformCompanyInfo) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"companyID\":").append("\"").append(companyInfo.getCompanyID()).append("\"").append(",");
-                                        buffer.append("\"companyName\":").append("\"").append(companyInfo.getCompanyName()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"companyID", "companyName"};
+                                String[] keysName = {"公司编号", "公司名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"companyID", "companyName"};
+                                System.out.println("datas:" + datas + ",pageSize:" + pageSize + ",pageIndex:" + pageIndex);
+                                json = queryOperate(target, "com.cn.bean.","table", "PlatformCompanyInfo", "CompanyID", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PlatFormDataBaseInfo", update, add, delete, opt.getConnectBase());
+                            json = submitOperate("com.cn.bean.","PlatFormDataBaseInfo", update, add, delete, "base");
                             break;
                         }
                     }
@@ -225,49 +208,37 @@ public class DataInterface extends HttpServlet {
                 case "注册平台用户": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "PlatformUserInfo", "UserLoginAccount", opt.getConnectBase());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "PlatformUserInfo", "UserLoginAccount", opt.getConnectBase());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "PlatformUserInfo", "UserLoginAccount", datas, opt.getConnectBase(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "PlatformUserInfo", "UserLoginAccount", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("PlatformUserInfo", importPath + fileName, opt.getConnectBase());
+                            json = importData("com.cn.bean.","PlatformUserInfo", importPath + fileName, opt.getConnectBase());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("PlatformUserInfo", null);
+                            json = exportData("com.cn.bean.","PlatformUserInfo", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("PlatformUserInfo", (ArrayList<Object>) queryData("view", "PlatformUserInfo", "UserLoginAccount", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","PlatformUserInfo", (ArrayList<Object>) queryData("com.cn.bean.","view", "PlatformUserInfo", "UserLoginAccount", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "request_table": {
                             if (target.compareToIgnoreCase("UserLoginDBName") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("view", "PlatFormDataBaseInfo", "*", "", Integer.MAX_VALUE, 1, "CompanyID", 0, opt.getConnectBase());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"userLoginDBName\":\"数据库名,50%\",\"companyName\":\"公司名称,50%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PlatFormDataBaseInfo userInfo = (PlatFormDataBaseInfo) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"userLoginDBName\":").append("\"").append(userInfo.getMasterDataBaseName()).append("\"").append(",");
-                                        buffer.append("\"companyName\":").append("\"").append(userInfo.getCompanyName()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"userLoginDBName", "companyName"};
+                                String[] keysName = {"数据库名", "公司名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"masterDataBaseName", "companyName"};
+                                json = queryOperate(target, "com.cn.bean.","view", "PlatFormDataBaseInfo", "CompanyID", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PlatformUserInfo", update, add, delete, opt.getConnectBase());
+                            json = submitOperate("com.cn.bean.","PlatformUserInfo", update, add, delete, "base");
                             break;
                         }
                     }
@@ -279,27 +250,27 @@ public class DataInterface extends HttpServlet {
                 case "定义角色": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "PlatformRole", "RoleCode", opt.getConnectBase());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "PlatformRole", "RoleCode", opt.getConnectBase());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "PlatformRole", "RoleCode", datas, opt.getConnectBase(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "PlatformRole", "RoleCode", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("PlatformRole", importPath + fileName, opt.getConnectBase());
+                            json = importData("com.cn.bean.","PlatformRole", importPath + fileName, opt.getConnectBase());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("PlatformRole", null);
+                            json = exportData("com.cn.bean.","PlatformRole", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("PlatformRole", (ArrayList<Object>) queryData("view", "PlatformRole", "RoleCode", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","PlatformRole", (ArrayList<Object>) queryData("com.cn.bean.","view", "PlatformRole", "RoleCode", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PlatformRole", update, add, delete, opt.getConnectBase());
+                            json = submitOperate("com.cn.bean.","PlatformRole", update, add, delete, "base");
                             break;
                         }
                     }
@@ -311,68 +282,43 @@ public class DataInterface extends HttpServlet {
                 case "定义角色权限": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "PlatformRoleRight", "RoleCode", opt.getConnectBase());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "PlatformRoleRight", "RoleCode", opt.getConnectBase());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "PlatformRoleRight", "RoleCode", datas, opt.getConnectBase(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "PlatformRoleRight", "RoleCode", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("PlatformRoleRight", importPath + fileName, opt.getConnectBase());
+                            json = importData("com.cn.bean.","PlatformRoleRight", importPath + fileName, opt.getConnectBase());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("PlatformRoleRight", null);
+                            json = exportData("com.cn.bean.","PlatformRoleRight", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("PlatformRoleRight", (ArrayList<Object>) queryData("table", "PlatformRoleRight", "RoleCode", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","PlatformRoleRight", (ArrayList<Object>) queryData("com.cn.bean.","table", "PlatformRoleRight", "RoleCode", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PlatformRoleRight", update, add, delete, opt.getConnectBase());
+                            json = submitOperate("com.cn.bean.","PlatformRoleRight", update, add, delete, "base");
                             break;
                         }
                         case "request_table": {
                             if (target.compareToIgnoreCase("RoleCode") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "PlatformRole", "*", "", Integer.MAX_VALUE, 1, "RoleCode", 0, opt.getConnectBase());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"roleCode\":\"角色代码,50%\",\"roleName\":\"角色名称,50%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PlatformRole userInfo = (PlatformRole) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"roleCode\":").append("\"").append(userInfo.getRoleCode()).append("\"").append(",");
-                                        buffer.append("\"roleName\":").append("\"").append(userInfo.getRoleName()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"roleCode", "roleName"};
+                                String[] keysName = {"角色代码", "角色名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"roleCode", "roleName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PlatformRole", "RoleCode", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("RightCode") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "PlatformRight", "*", "", Integer.MAX_VALUE, 1, "RightCode", 0, opt.getConnectBase());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"rightCode\":\"模块代码,20%\",\"rightName\":\"模块名称,40%\",\"righthyperlnk\":\"模块链接,40%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PlatformRight right = (PlatformRight) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"rightCode\":").append("\"").append(right.getRightCode()).append("\"").append(",");
-                                        buffer.append("\"rightName\":").append("\"").append(right.getRightName()).append("\"").append(",");
-                                        buffer.append("\"righthyperlnk\":").append("\"").append(right.getRighthyperlnk()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"rightCode", "rightName"};
+                                String[] keysName = {"模块代码", "模块名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"rightCode", "rightName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PlatformRight", "RightCode", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
@@ -385,66 +331,43 @@ public class DataInterface extends HttpServlet {
                 case "定义用户角色": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "PlatformUserRole", "UserLoginAccount", opt.getConnectBase());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "PlatformUserRole", "UserLoginAccount", opt.getConnectBase());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "PlatformUserRole", "UserLoginAccount", datas, opt.getConnectBase(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "PlatformUserRole", "UserLoginAccount", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("PlatformUserRole", importPath + fileName, opt.getConnectBase());
+                            json = importData("com.cn.bean.","PlatformUserRole", importPath + fileName, opt.getConnectBase());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("PlatformUserRole", null);
+                            json = exportData("com.cn.bean.","PlatformUserRole", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("PlatformUserRole", (ArrayList<Object>) queryData("table", "PlatformUserRole", "UserLoginAccount", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","PlatformUserRole", (ArrayList<Object>) queryData("com.cn.bean.","table", "PlatformUserRole", "UserLoginAccount", datas, opt.getConnectBase(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PlatformUserRole", update, add, delete, opt.getConnectBase());
+                            json = submitOperate("com.cn.bean.","PlatformUserRole", update, add, delete, "base");
                             break;
                         }
                         case "request_table": {
                             if (target.compareToIgnoreCase("RoleCode") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "PlatformRole", "*", "", Integer.MAX_VALUE, 1, "RoleCode", 0, opt.getConnectBase());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"roleCode\":\"角色代码,50%\",\"roleName\":\"角色名称,50%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PlatformRole userInfo = (PlatformRole) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"roleCode\":").append("\"").append(userInfo.getRoleCode()).append("\"").append(",");
-                                        buffer.append("\"roleName\":").append("\"").append(userInfo.getRoleName()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"roleCode", "roleName"};
+                                String[] keysName = {"角色代码", "角色名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"roleCode", "roleName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PlatformRole", "RoleCode", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("UserLoginAccount") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "PlatformUserInfo", "*", "", Integer.MAX_VALUE, 1, "UserLoginAccount", 0, opt.getConnectBase());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"userLoginAccount\":\"用户名,100%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PlatformUserInfo userInfo = (PlatformUserInfo) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"userLoginAccount\":").append("\"").append(userInfo.getUserLoginAccount()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"userLoginAccount"};
+                                String[] keysName = {"用户名"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"userLoginAccount"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PlatformUserInfo", "UserLoginAccount", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
@@ -457,42 +380,46 @@ public class DataInterface extends HttpServlet {
                 case "调货计划下达": {
                     switch (operation) {
                         case "create": {
-
+                            json = createOperate(20, "table", "com/cn/json/plan/", "com.cn.bean.plan.", "DHPlan", "DHPlanID", opt.getConnect());
+                            json = Units.insertStr(json, "\\\"调货计划单号\\", ",@DHJH_" + Units.getNowTimeNoSeparator());
                             break;
                         }
                         case "request_table": {
-                            String result = Units.returnFileContext(path, "data2.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
+                            if (target.compareToIgnoreCase("supplierID") == 0) {
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("partCode") == 0) {
+                                String[] keys = {"partCode", "partID", "partName", "partUnit", "cfAddress"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "部品单位", "存放地址"};
+                                int[] keysWidth = {20, 20, 20, 20, 20};
+                                String[] fieldsName = {"partCode", "partID", "partName", "partUnit", "psAddress1"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
-                        case "query_item": {
-                            String result = Units.returnFileContext(path, "data3.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                        case "request_detail": {
+                            json = queryOperate("com.cn.bean.plan.","table", "DHPlanList", "DHPlanID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
-                        case "query_on_date": {
-                            String result = Units.returnFileContext(path, "data5.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                        case "request_page": {
+                            json = queryOperate("com.cn.bean.plan.","table", "DHPlan", "DHPlanID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "submit": {
-                            String result = Units.returnFileContext(path, "data4.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
+                            int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.plan.", "DHPlan", "add", opt.getConnect());
+                            if (result == 0) {
+                                result = commonController.dataBaseOperate(details, "com.cn.bean.plan.", "DHPlanList", "add", opt.getConnect());
+                                if (result == 0) {
+                                    json = Units.objectToJson(0, "数据添加成功!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "明细添加失败!", null);
+                                }
                             } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
+                                json = Units.objectToJson(-1, "数据添加失败!", null);
                             }
                             break;
                         }
@@ -505,62 +432,205 @@ public class DataInterface extends HttpServlet {
                 case "送货计划查询": {
                     switch (operation) {
                         case "create": {
-                            String result = Units.returnFileContext(path, "data6.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                            json = createOperate(20, "table", "com/cn/json/plan/", "com.cn.bean.plan.", "SHPlan", "SHPlanID", opt.getConnect());
+                            json = Units.insertStr(json, "\\\"送货计划单号\\", ",@SHJH_" + Units.getNowTimeNoSeparator());
                             break;
                         }
                         case "request_table": {
-                            String result = Units.returnFileContext(path, "data8.txt");
-                            if (target.compareTo("depart") == 0) {
-                                result = Units.returnFileContext(path, "data2.txt");
-                            } else if (target.compareTo("courseName") == 0) {
-                                result = Units.returnFileContext(path, "data7.txt");
+                            if (target.compareToIgnoreCase("dhPlanID") == 0) {
+                                String[] keys = {"dhPlanID"};
+                                String[] keysName = {"调货计划单号"};
+                                int[] keysWidth = {100, 50};
+                                String[] fieldsName = {"dhPlanID"};
+                                json = queryOperate(target, "com.cn.bean.plan.","table", "DHPlan", "DHPlanID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
+                            if (target.compareToIgnoreCase("supplierID") == 0) {
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("partCode") == 0) {
+                                String[] keys = {"partCode", "partID", "partName", "partUnit", "cfAddress"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "部品单位", "存放地址"};
+                                int[] keysWidth = {20, 20, 20, 20, 20};
+                                String[] fieldsName = {"partCode", "partID", "partName", "partUnit", "psAddress1"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
                         case "request_detail": {
-                            String result = Units.returnFileContext(path, "data8.txt");
-                            if (result != null) {
-                                System.out.println("result:" + result);
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                            json = queryOperate("com.cn.bean.plan.","table", "SHPlanList", "SHPlanID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "request_page": {
-                            String result = Units.returnFileContext(path, "data9.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
-                            break;
-                        }
-                        case "query_data": {
-                            String result = Units.returnFileContext(path, "data10.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
-                            } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
-                            }
+                            json = queryOperate("com.cn.bean.plan.","table", "SHPlan", "SHPlanID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "submit": {
-                            String result = Units.returnFileContext(path, "data11.txt");
-                            if (result != null) {
-                                json = Units.objectToJson(0, "", result);
+                            int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.plan.", "SHPlan", "add", opt.getConnect());
+                            if (result == 0) {
+                                result = commonController.dataBaseOperate(details, "com.cn.bean.plan.", "SHPlanList", "add", opt.getConnect());
+                                if (result == 0) {
+                                    json = Units.objectToJson(0, "数据添加成功!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "明细添加失败!", null);
+                                }
                             } else {
-                                json = Units.objectToJson(-1, "服务器出错!", null);
+                                json = Units.objectToJson(-1, "数据添加失败!", null);
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="待检入库">
+                case "待检入库": {
+                    switch (operation) {
+                        case "create": {
+                            json = createOperate(20, "table", "com/cn/json/in/", "com.cn.bean.in.", "DJInWareHouse", "DJInWareHouseID", opt.getConnect());
+                            json = Units.insertStr(json, "\\\"待检入库单号\\", ",@DJRK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"部品状态\\", ",@待检");
+                            break;
+                        }
+                        case "add": {
+                            json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/in/", "DJInWareHouse.json"));
+                            json = Units.insertStr(json, "\\\"待检入库单号\\", ",@DJRK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"部品状态\\", ",@待检");
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("supplierID") == 0) {
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("partCode") == 0) {
+                                String[] keys = {"partCode", "partID", "partName", "partUnit", "cfAddress", "autoStyling", "inboundPackageAmount"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "部品单位", "存放地址", "车型", "入库包装数量"};
+                                int[] keysWidth = {20, 20, 20, 10, 10, 10, 10};
+                                String[] fieldsName = {"partCode", "partID", "partName", "partUnit", "psAddress1", "autoStyling", "inboundPackageAmount"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("autoStyling") == 0) {
+                                String[] keys = {"autoStyling"};
+                                String[] keysName = {"使用车型"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"autoStyling"};
+                                json = queryOperate(target, "com.cn.bean.","table", "AutoStyling", "AutoStyling", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = queryOperate("com.cn.bean.in.","table", "DJInWareHouseList", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_page": {
+                            json = queryOperate("com.cn.bean.in.","table", "DJInWareHouse", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_on_date": {
+                            json = queryOnDateOperate("com.cn.bean.in.", "table", "DJInWareHouse", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "submit": {
+                            int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "DJInWareHouse", "add", opt.getConnect());
+                            if (result == 0) {
+                                result = commonController.dataBaseOperate(details, "com.cn.bean.in.", "DJInWareHouseList", "add", opt.getConnect());
+                                if (result == 0) {
+                                    json = Units.objectToJson(0, "数据添加成功!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "明细添加失败!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "数据添加失败!", null);
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="待检审核">
+                case "待检审核": {
+                    switch (operation) {
+                        case "create": {
+                            json = createOperate(20, "table", "com/cn/json/in/", "com.cn.bean.in.", "DJInWareHouse", "DJInWareHouseID", opt.getConnect());
+                            json = Units.insertStr(json, "\\\"待检入库单号\\", ",@DJRK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"部品状态\\", ",@待检");
+                            break;
+                        }
+                        case "add": {
+                            json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/in/", "DJInWareHouse.json"));
+                            json = Units.insertStr(json, "\\\"待检入库单号\\", ",@DJRK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"部品状态\\", ",@待检");
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("supplierID") == 0) {
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("partCode") == 0) {
+                                String[] keys = {"partCode", "partID", "partName", "partUnit", "cfAddress", "autoStyling", "inboundPackageAmount"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "部品单位", "存放地址", "车型", "入库包装数量"};
+                                int[] keysWidth = {20, 20, 20, 10, 10, 10, 10};
+                                String[] fieldsName = {"partCode", "partID", "partName", "partUnit", "psAddress1", "autoStyling", "inboundPackageAmount"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("autoStyling") == 0) {
+                                String[] keys = {"autoStyling"};
+                                String[] keysName = {"使用车型"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"autoStyling"};
+                                json = queryOperate(target, "com.cn.bean.","table", "AutoStyling", "AutoStyling", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = queryOperate("com.cn.bean.in.","table", "DJInWareHouseList", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_page": {
+                            json = queryOperate("com.cn.bean.in.","table", "DJInWareHouse", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_on_date": {
+                            json = queryOnDateOperate("com.cn.bean.in.", "table", "DJInWareHouse", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "submit": {
+                            int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "DJInWareHouse", "add", opt.getConnect());
+                            if (result == 0) {
+                                result = commonController.dataBaseOperate(details, "com.cn.bean.in.", "DJInWareHouseList", "add", opt.getConnect());
+                                if (result == 0) {
+                                    json = Units.objectToJson(0, "数据添加成功!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "明细添加失败!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "数据添加失败!", null);
                             }
                             break;
                         }
@@ -569,70 +639,248 @@ public class DataInterface extends HttpServlet {
                 }
                 //</editor-fold>
 
-                //<editor-fold desc="部品档案">
-                case "部品档案": {
+                //<editor-fold desc="送检出库">
+                case "送检出库": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "PartBaseInfo", "PartCode", opt.getConnect());
+                            json = createOperate(20, "table", "com/cn/json/in/", "com.cn.bean.in.", "SJOutWareHouse", "SJOutWareHouseID", opt.getConnect());
+                            json = Units.insertStr(json, "\\\"送检出库单号\\", ",@SJCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            break;
+                        }
+                        case "add": {
+                            json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/in/", "SJOutWareHouse.json"));
+                            json = Units.insertStr(json, "\\\"送检出库单号\\", ",@SJCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            break;
+                        }
+                        case "request_detail": {
+                            json = queryOperate("com.cn.bean.in.","table", "SJOutWareHouseList", "SJOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "PartBaseInfo", "PartCode", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.in.","table", "SJOutWareHouse", "SJOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
-                        case "import": {
-                            json = importData("PartBaseInfo", importPath + fileName, opt.getConnect());
-                            break;
-                        }
-                        case "exportTemplate": {
-                            json = exportData("PartBaseInfo", null);
-                            break;
-                        }
-                        case "export": {
-                            json = exportData("PartBaseInfo", (ArrayList<Object>) queryData("table", "PartBaseInfo", "PartCode", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                        case "request_on_date": {
+                            json = queryOnDateOperate("com.cn.bean.in.","table", "SJOutWareHouse", "SJOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "request_table": {
-                            if (target.compareToIgnoreCase("autoStyling") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "AutoStyling", "*", "", Integer.MAX_VALUE, 1, "AutoStyling", 0, opt.getConnect());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"autoStyling\":\"使用车型,100%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        AutoStyling userInfo = (AutoStyling) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"autoStyling\":").append("\"").append(userInfo.getAutoStyling()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                            if (target.compareToIgnoreCase("supplierID") == 0) {
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
-                            if (target.compareToIgnoreCase("partCategory") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "PartCategory", "*", "", Integer.MAX_VALUE, 1, "PartCategory", 0, opt.getConnect());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"partCategory\":\"部品类别,100%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PartCategory userInfo = (PartCategory) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"partCategory\":").append("\"").append(userInfo.getPartCategory()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                            if (target.compareToIgnoreCase("partCode") == 0) {
+                                String[] keys = {"partCode", "partID", "partName", "partUnit", "inboundBatch", "inboundAmount"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "部品单位", "入库批次", "入库数量"};
+                                int[] keysWidth = {20, 20, 20, 10, 20, 10};
+                                String[] fieldsName = {"partCode", "partID", "partName", "partUnit", "inboundBatch", "inboundAmount"};
+                                json = queryOperate(target, "com.cn.bean.in.","table", "DJInWareHouseList", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PartBaseInfo", update, add, delete, opt.getConnect());
+                            int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "SJOutWareHouse", "add", opt.getConnect());
+                            if (result == 0) {
+                                result = commonController.dataBaseOperate(details, "com.cn.bean.in.", "SJOutWareHouseList", "add", opt.getConnect());
+                                if (result == 0) {
+                                    json = Units.objectToJson(0, "数据添加成功!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "明细添加失败!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "数据添加失败!", null);
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="送检返回">
+                case "送检返回": {
+                    switch (operation) {
+                        case "create": {
+                            json = createOperate(20, "table", "com/cn/json/in/", "com.cn.bean.in.", "SJOutWareHouse", "SJOutWareHouseID", opt.getConnect());
+                            json = Units.insertStr(json, "\\\"送检出库单号\\", ",@SJCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            break;
+                        }
+                        case "add": {
+                            json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/in/", "SJOutWareHouse.json"));
+                            json = Units.insertStr(json, "\\\"送检出库单号\\", ",@SJCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            break;
+                        }
+                        case "request_detail": {
+                            json = queryOperate("com.cn.bean.in.","table", "SJOutWareHouseList", "SJOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_page": {
+                            json = queryOperate("com.cn.bean.in.","table", "SJOutWareHouse", "SJOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_on_date": {
+                            json = queryOnDateOperate("com.cn.bean.in.","table", "SJOutWareHouse", "SJOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("supplierID") == 0) {
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("partCode") == 0) {
+                                String[] keys = {"partCode", "partID", "partName", "partUnit", "inboundBatch", "inboundAmount"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "部品单位", "入库批次", "入库数量"};
+                                int[] keysWidth = {20, 20, 20, 10, 20, 10};
+                                String[] fieldsName = {"partCode", "partID", "partName", "partUnit", "inboundBatch", "inboundAmount"};
+                                json = queryOperate(target, "com.cn.bean.in.","table", "DJInWareHouseList", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            break;
+                        }
+                        case "submit": {
+                            int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "SJOutWareHouse", "add", opt.getConnect());
+                            if (result == 0) {
+                                result = commonController.dataBaseOperate(details, "com.cn.bean.in.", "SJOutWareHouseList", "add", opt.getConnect());
+                                if (result == 0) {
+                                    json = Units.objectToJson(0, "数据添加成功!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "明细添加失败!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "数据添加失败!", null);
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="计划出库">
+                case "计划出库": {
+                    switch (operation) {
+                        case "create": {
+                            json = createOperate(20, "table", "com/cn/json/out/", "com.cn.bean.out.", "JHOutWareHouse", "JHOutWareHouseID", opt.getConnect());
+                            json = Units.insertStr(json, "\\\"计划出库单号\\", ",@JHCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("zdCustomerID") == 0) {
+                                String[] keys = {"zdCustomerID", "zdCustomerName"};
+                                String[] keysName = {"终端客户代码", "终端客户名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("supplierID") == 0) {
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("partCode") == 0) {
+                                String[] keys = {"partCode", "partID", "partName", "partUnit", "cfAddress", "outboundContainer", "containerAmount"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "部品单位", "存放地址", "出库盛具", "盛具数量"};
+                                int[] keysWidth = {20, 20, 20, 10, 10, 10, 10};
+                                String[] fieldsName = {"partCode", "partID", "partName", "partUnit", "psAddress1", "outboundContainer", "outboundPackageAmount"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("autoStyling") == 0) {
+                                String[] keys = {"autoStyling"};
+                                String[] keysName = {"使用车型"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"autoStyling"};
+                                json = queryOperate(target, "com.cn.bean.","table", "AutoStyling", "AutoStyling", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+//                            System.out.println("json:" + json);
+                            break;
+                        }
+                        case "request_detail": {
+                            json = queryOperate("com.cn.bean.out.","table", "JHOutWareHouseList", "JHOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_page": {
+                            json = queryOperate("com.cn.bean.out.","table", "JHOutWareHouse", "JHOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "submit": {
+                            int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.out.", "JHOutWareHouse", "add", opt.getConnect());
+                            if (result == 0) {
+                                result = commonController.dataBaseOperate(details, "com.cn.bean.out.", "JHOutWareHouseList", "add", opt.getConnect());
+                                if (result == 0) {
+                                    json = Units.objectToJson(0, "数据添加成功!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "明细添加失败!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "数据添加失败!", null);
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="部品档案">
+                case "部品档案": {
+                    switch (operation) {
+                        case "create": {
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "PartBaseInfo", "PartCode", opt.getConnect());
+                            break;
+                        }
+                        case "request_page": {
+                            json = queryOperate("com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "import": {
+                            json = importData("com.cn.bean.","PartBaseInfo", importPath + fileName, opt.getConnect());
+                            break;
+                        }
+                        case "exportTemplate": {
+                            json = exportData("com.cn.bean.","PartBaseInfo", null);
+                            break;
+                        }
+                        case "export": {
+                            json = exportData("com.cn.bean.","PartBaseInfo", (ArrayList<Object>) queryData("com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("autoStyling") == 0) {
+                                String[] keys = {"autoStyling"};
+                                String[] keysName = {"使用车型"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"autoStyling"};
+                                json = queryOperate(target, "com.cn.bean.","table", "AutoStyling", "AutoStyling", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("partCategory") == 0) {
+                                String[] keys = {"partCategory"};
+                                String[] keysName = {"部品类别"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"partCategory"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PartCategory", "PartCategory", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("com.cn.bean.","PartBaseInfo", update, add, delete, "data");
                             break;
                         }
                     }
@@ -644,48 +892,37 @@ public class DataInterface extends HttpServlet {
                 case "客户档案": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "Customer", "CustomerID", opt.getConnect());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "Customer", "CustomerID", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "Customer", "CustomerID", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("Customer", importPath + fileName, opt.getConnect());
+                            json = importData("com.cn.bean.","Customer", importPath + fileName, opt.getConnect());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("Customer", null);
+                            json = exportData("com.cn.bean.","Customer", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("Customer", (ArrayList<Object>) queryData("table", "Customer", "CustomerID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","Customer", (ArrayList<Object>) queryData("com.cn.bean.","table", "Customer", "CustomerID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "request_table": {
                             if (target.compareToIgnoreCase("customerType") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "CustomerType", "*", "", Integer.MAX_VALUE, 1, "CustomerType", 0, opt.getConnect());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"customerType\":\"客户类型,100%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        CustomerType userInfo = (CustomerType) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"customerType\":").append("\"").append(userInfo.getCustomerType()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"customerType"};
+                                String[] keysName = {"客户类型"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"customerType"};
+                                json = queryOperate(target, "com.cn.bean.","table", "CustomerType", "CustomerType", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("Customer", update, add, delete, opt.getConnect());
+                            json = submitOperate("com.cn.bean.","Customer", update, add, delete, "data");
                             break;
                         }
                     }
@@ -697,68 +934,44 @@ public class DataInterface extends HttpServlet {
                 case "部品存放地址": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "PartStore", "SupplierID", opt.getConnect());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "PartStore", "SupplierID", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "PartStore", "SupplierID", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "PartStore", "SupplierID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("PartStore", importPath + fileName, opt.getConnect());
+                            json = importData("com.cn.bean.","PartStore", importPath + fileName, opt.getConnect());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("PartStore", null);
+                            json = exportData("com.cn.bean.","PartStore", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("PartStore", (ArrayList<Object>) queryData("table", "PartStore", "SupplierID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","PartStore", (ArrayList<Object>) queryData("com.cn.bean.","table", "PartStore", "SupplierID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PartStore", update, add, delete, opt.getConnect());
+                            json = submitOperate("com.cn.bean.","PartStore", update, add, delete, "data");
                             break;
                         }
                         case "request_table": {
                             if (target.compareToIgnoreCase("supplierID") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "Customer", "*", "", Integer.MAX_VALUE, 1, "CustomerID", 0, opt.getConnect());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"supplierID\":\"供应商代码,50%\",\"supplierName\":\"供应商名称,50%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        Customer userInfo = (Customer) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"supplierID\":").append("\"").append(userInfo.getCustomerID()).append("\"").append(",");
-                                        buffer.append("\"supplierName\":").append("\"").append(userInfo.getCustomerName()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("partCode") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "PartBaseInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"partCode\":\"部品件号,40%\",\"partID\":\"部品代码,30%\",\"partName\":\"部品名称,30%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PartBaseInfo info = (PartBaseInfo) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"partCode\":").append("\"").append(info.getPartCode()).append("\"").append(",");
-                                        buffer.append("\"partID\":").append("\"").append(info.getPartID()).append("\"").append(",");
-                                        buffer.append("\"partName\":").append("\"").append(info.getPartName()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"partCode", "partID", "partName"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称"};
+                                int[] keysWidth = {40, 30, 30};
+                                String[] fieldsName = {"partCode", "partID", "partName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                                //System.out.println("json:" + json);
                             }
                             break;
                         }
@@ -771,27 +984,27 @@ public class DataInterface extends HttpServlet {
                 case "盛具档案": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "Container", "ContainerName", opt.getConnect());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "Container", "ContainerName", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "Container", "ContainerName", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "Container", "ContainerName", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("Container", importPath + fileName, opt.getConnect());
+                            json = importData("com.cn.bean.","Container", importPath + fileName, opt.getConnect());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("Container", null);
+                            json = exportData("com.cn.bean.","Container", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("Container", (ArrayList<Object>) queryData("table", "Container", "ContainerName", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","Container", (ArrayList<Object>) queryData("com.cn.bean.","table", "Container", "ContainerName", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("Container", update, add, delete, opt.getConnect());
+                            json = submitOperate("com.cn.bean.","Container", update, add, delete, "data");
                             break;
                         }
                     }
@@ -803,27 +1016,27 @@ public class DataInterface extends HttpServlet {
                 case "部品类别": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "PartCategory", "PartCategory", opt.getConnect());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "PartCategory", "PartCategory", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "PartCategory", "PartCategory", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "PartCategory", "PartCategory", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("PartCategory", importPath + fileName, opt.getConnect());
+                            json = importData("com.cn.bean.","PartCategory", importPath + fileName, opt.getConnect());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("PartCategory", null);
+                            json = exportData("com.cn.bean.","PartCategory", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("PartCategory", (ArrayList<Object>) queryData("table", "PartCategory", "PartCategory", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","PartCategory", (ArrayList<Object>) queryData("com.cn.bean.","table", "PartCategory", "PartCategory", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("PartCategory", update, add, delete, opt.getConnect());
+                            json = submitOperate("com.cn.bean.","PartCategory", update, add, delete, "data");
                             break;
                         }
                     }
@@ -835,27 +1048,27 @@ public class DataInterface extends HttpServlet {
                 case "车型档案": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "AutoStyling", "AutoStyling", opt.getConnect());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "AutoStyling", "AutoStyling", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "AutoStyling", "AutoStyling", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "AutoStyling", "AutoStyling", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("AutoStyling", importPath + fileName, opt.getConnect());
+                            json = importData("com.cn.bean.","AutoStyling", importPath + fileName, opt.getConnect());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("AutoStyling", null);
+                            json = exportData("com.cn.bean.","AutoStyling", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("AutoStyling", (ArrayList<Object>) queryData("table", "AutoStyling", "AutoStyling", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","AutoStyling", (ArrayList<Object>) queryData("com.cn.bean.","table", "AutoStyling", "AutoStyling", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("AutoStyling", update, add, delete, opt.getConnect());
+                            json = submitOperate("com.cn.bean.","AutoStyling", update, add, delete, "data");
                             break;
                         }
                     }
@@ -867,27 +1080,27 @@ public class DataInterface extends HttpServlet {
                 case "客户类别": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "CustomerType", "CustomerType", opt.getConnect());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "CustomerType", "CustomerType", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "CustomerType", "CustomerType", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "CustomerType", "CustomerType", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("CustomerType", importPath + fileName, opt.getConnect());
+                            json = importData("com.cn.bean.","CustomerType", importPath + fileName, opt.getConnect());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("CustomerType", null);
+                            json = exportData("com.cn.bean.","CustomerType", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("CustomerType", (ArrayList<Object>) queryData("table", "CustomerType", "CustomerType", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","CustomerType", (ArrayList<Object>) queryData("com.cn.bean.","table", "CustomerType", "CustomerType", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("CustomerType", update, add, delete, opt.getConnect());
+                            json = submitOperate("com.cn.bean.","CustomerType", update, add, delete, "data");
                             break;
                         }
                     }
@@ -899,27 +1112,27 @@ public class DataInterface extends HttpServlet {
                 case "送货方式": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "SHMethod", "SHMethod", opt.getConnect());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "SHMethod", "SHMethod", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "SHMethod", "SHMethod", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "SHMethod", "SHMethod", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("SHMethod", importPath + fileName, opt.getConnect());
+                            json = importData("com.cn.bean.","SHMethod", importPath + fileName, opt.getConnect());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("SHMethod", null);
+                            json = exportData("com.cn.bean.","SHMethod", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("SHMethod", (ArrayList<Object>) queryData("table", "SHMethod", "SHMethod", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","SHMethod", (ArrayList<Object>) queryData("com.cn.bean.","table", "SHMethod", "SHMethod", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "submit": {
-                            json = submitOperate("SHMethod", update, add, delete, opt.getConnect());
+                            json = submitOperate("com.cn.bean.","SHMethod", update, add, delete, "data");
                             break;
                         }
                     }
@@ -931,64 +1144,39 @@ public class DataInterface extends HttpServlet {
                 case "库存安全": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate("table", "KCQuota", "SupplierID", opt.getConnect());
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "KCQuota", "SupplierID", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("table", "KCQuota", "SupplierID", datas, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.","table", "KCQuota", "SupplierID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
-                            json = importData("KCQuota", importPath + fileName, opt.getConnect());
+                            json = importData("com.cn.bean.","KCQuota", importPath + fileName, opt.getConnect());
                             break;
                         }
                         case "exportTemplate": {
-                            json = exportData("KCQuota", null);
+                            json = exportData("com.cn.bean.","KCQuota", null);
                             break;
                         }
                         case "export": {
-                            json = exportData("KCQuota", (ArrayList<Object>) queryData("table", "KCQuota", "SupplierID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.","KCQuota", (ArrayList<Object>) queryData("com.cn.bean.","table", "KCQuota", "SupplierID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "request_table": {
                             if (target.compareToIgnoreCase("supplierID") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "Customer", "*", "", Integer.MAX_VALUE, 1, "CustomerID", 0, opt.getConnect());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"supplierID\":\"供应商代码,50%\",\"supplierName\":\"供应商名称,50%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        Customer userInfo = (Customer) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"supplierID\":").append("\"").append(userInfo.getCustomerID()).append("\"").append(",");
-                                        buffer.append("\"supplierName\":").append("\"").append(userInfo.getCustomerName()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"supplierID", "supplierName"};
+                                String[] keysName = {"供应商代码", "供应商名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"customerID", "customerName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("partCode") == 0) {
-                                List<Object> list = commonController.dataBaseQuery("table", "PartBaseInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
-                                if (list != null && list.size() > 0) {
-                                    StringBuffer buffer = new StringBuffer();
-                                    buffer.append("{\"titles\":{\"partCode\":\"部品件号,40%\",\"partID\":\"部品代码,30%\",\"partName\":\"部品名称,30%\"},\"datas\":[");
-                                    for (Iterator<Object> it = list.iterator(); it.hasNext();) {
-                                        PartBaseInfo info = (PartBaseInfo) it.next();
-                                        buffer.append("{");
-                                        buffer.append("\"partCode\":").append("\"").append(info.getPartCode()).append("\"").append(",");
-                                        buffer.append("\"partID\":").append("\"").append(info.getPartID()).append("\"").append(",");
-                                        buffer.append("\"partName\":").append("\"").append(info.getPartName()).append("\"");
-                                        buffer.append("},");
-                                    }
-                                    buffer.deleteCharAt(buffer.length() - 1);
-                                    buffer.append("]}");
-                                    json = Units.objectToJson(0, "", buffer.toString());
-                                } else {
-                                    json = Units.objectToJson(-1, "数据为空!", null);
-                                }
+                                String[] keys = {"partCode", "partID", "partName"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称"};
+                                int[] keysWidth = {40, 30, 30};
+                                String[] fieldsName = {"partCode", "partID", "partName"};
+                                json = queryOperate(target, "com.cn.bean.","table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
@@ -1005,6 +1193,7 @@ public class DataInterface extends HttpServlet {
         }
 
         PrintWriter out = response.getWriter();
+
         try {
             response.setContentType("text/html;charset=UTF-8");
             response.setHeader("Cache-Control", "no-store");
@@ -1029,14 +1218,14 @@ public class DataInterface extends HttpServlet {
      * @throws FileNotFoundException
      * @throws Exception
      */
-    private String createOperate(String type, String tableName, String orderField, Connection conn) throws Exception {
+    private String createOperate(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String orderField, Connection conn) throws Exception {
         String json;
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
-        String result = Units.returnFileContext(path, tableName + ".json");
-        Class objClass = Class.forName("com.cn.bean." + tableName);
+        String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
+        Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
         if (result != null) {
-            List<Object> list = commonController.dataBaseQuery(type, tableName, "*", "", 15, 1, orderField, 0, conn);
+            List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", "", pageSize, 1, orderField, 0, conn);
             if (list != null && list.size() > 0) {
                 StringBuffer buffer = new StringBuffer(result);
                 buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
@@ -1060,25 +1249,126 @@ public class DataInterface extends HttpServlet {
      * @return
      * @throws Exception
      */
-    private String queryOperate(String type, String tableName, String orderField, String keyWord,
+    private String queryOperate(String beanPackage, String type, String tableName, String orderField, String keyWord, String rely, boolean isAll,
             Connection conn, int pageSize, int pageIndex) throws Exception {
         String json;
-        String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = "{}";
-        Class objClass = Class.forName("com.cn.bean." + tableName);
+        Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
-        if (result != null) {
-            List<Object> list = commonController.dataBaseQuery(type, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord), pageSize, pageIndex, orderField, 0, conn);
-            if (list != null && list.size() > 0) {
-                StringBuffer buffer = new StringBuffer(result);
-                buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
-                buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
-                result = buffer.toString();
-            }
-            System.out.println("result:" + result);
+
+        List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);
+        if (list != null && list.size() > 0) {
+            StringBuffer buffer = new StringBuffer(result);
+            buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
+            buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+            buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
+            result = buffer.toString();
+            
             json = Units.objectToJson(0, "", result);
         } else {
-            json = Units.objectToJson(-1, "服务器出错!", null);
+            json = Units.objectToJson(-1, "数据为空!", null);
+        }
+
+        return json;
+    }
+
+    /**
+     * 包含日期的查询操作
+     * @param beanPackage
+     * @param type
+     * @param tableName
+     * @param orderField
+     * @param keyWord
+     * @param rely 日期查询的起止日期, 格式为: {"start": "startTime", "end": "endTime"}
+     * @param isAll
+     * @param conn
+     * @param pageSize
+     * @param pageIndex
+     * @return
+     * @throws Exception 
+     */
+    private String queryOnDateOperate(String beanPackage, String type, String tableName, String orderField, String keyWord, String rely, boolean isAll,
+            Connection conn, int pageSize, int pageIndex) throws Exception {
+        String json;
+        String result = "{}";
+        Class objClass = Class.forName(beanPackage + tableName);
+        Method method = objClass.getMethod("getRecordCount", null);
+
+        List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStrWithDate(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);
+        if (list != null && list.size() > 0) {
+            StringBuffer buffer = new StringBuffer(result);
+            buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
+            buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+            buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
+            result = buffer.toString();
+            
+            json = Units.objectToJson(0, "", result);
+        } else {
+            json = Units.objectToJson(-1, "数据为空!", null);
+        }
+
+        return json;
+    }
+    
+    /**
+     * 数据库查询, 只返回指定字段, 给指定字段重新设置key值
+     *
+     * @param type
+     * @param tableName
+     * @param orderField
+     * @param keyWord
+     * @param conn
+     * @param pageSize
+     * @param pageIndex
+     * @param keys 返回的数据中的key值
+     * @param keysName 返回的数据中的key值对应的名称(长度必须和keys参数长度保持一致)
+     * @param keysWidth 返回的数据中的key值的宽度(长度必须和keys参数长度保持一致)
+     * @param fieldsName 返回的key值在类中对应的字段(长度必须和keys参数长度保持一致)
+     * @return
+     * @throws Exception
+     */
+    private String queryOperate(String target, String beanPackage, String type, String tableName,
+            String orderField, String keyWord, String rely, boolean isAll, Connection conn, int pageSize, int pageIndex,
+            String[] keys, String[] keysName, int[] keysWidth, String[] fieldsName) throws Exception {
+        String json;
+        Class objClass = Class.forName(beanPackage + tableName);
+        Method method = objClass.getMethod("getRecordCount", null);
+        List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);
+        if (null != list && list.size() > 0) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("{\"titles\":{");
+            for (int i = 0; i < keys.length; i++) {
+                buffer.append("\"").append(keys[i]).append("\"").append(":");
+                buffer.append("\"").append(keysName[i]).append(",").append(keysWidth[i]).append("%").append("\"").append(",");
+            }
+            buffer.deleteCharAt(buffer.length() - 1);
+            buffer.append("},\"datas\":[");
+            for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+                Object object = it.next();
+                buffer.append("{");
+                for (int i = 0; i < keys.length; i++) {
+                    PropertyDescriptor descriptor = new PropertyDescriptor(fieldsName[i], objClass);
+                    Method getMethod = descriptor.getReadMethod();
+                    buffer.append("\"").append(keys[i]).append("\":").append("\"").append(getMethod.invoke(object)).append("\"").append(",");
+                }
+                buffer.deleteCharAt(buffer.length() - 1);
+                buffer.append("},");
+            }
+            buffer.deleteCharAt(buffer.length() - 1);
+            buffer.append("]");
+            buffer.append(",\"counts\":").append(method.invoke(null, null));
+            buffer.append(",\"target\":").append("\"").append(target).append("\"");
+            buffer.append(",\"rely\":").append(rely);
+
+            if (objClass.isAnnotationPresent(ClassDescription.class
+            )) {
+                ClassDescription description = (ClassDescription) objClass.getAnnotation(ClassDescription.class);
+                buffer.append(",\"module\":").append("\"").append(description.classDesc()).append("\"");
+            }
+            buffer.append("}");
+            json = Units.objectToJson(0, "", buffer.toString());
+        } else {
+            json = Units.objectToJson(-1, "数据为空!", null);
         }
         return json;
     }
@@ -1096,10 +1386,10 @@ public class DataInterface extends HttpServlet {
      * @return
      * @throws Exception
      */
-    private List<Object> queryData(String type, String tableName, String orderField, String keyWord,
+    private List<Object> queryData(String beanPackage, String type, String tableName, String orderField, String keyWord,
             Connection conn, int pageSize, int pageIndex) throws Exception {
-        Class objClass = Class.forName("com.cn.bean." + tableName);
-        return commonController.dataBaseQuery(type, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord), pageSize, pageIndex, orderField, 0, conn);
+        Class objClass = Class.forName(beanPackage + tableName);
+        return commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, "{}", true), pageSize, pageIndex, orderField, 0, conn);
     }
 
     /**
@@ -1114,53 +1404,55 @@ public class DataInterface extends HttpServlet {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private String submitOperate(String tableName, String update, String add, String delete, Connection conn) throws Exception {
-        int result = 0;
-        String json;
+    private String submitOperate(String beanPackage, String tableName, String update, String add, String delete, String connType) throws Exception {
+        String json = null;
+        Connection conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
         if (!Units.strIsEmpty(update)) {
-            int updateResult = commonController.dataBaseOperate(update, tableName, "update", conn);
-            result = (updateResult == -1) ? updateResult : result;
+            int updateResult = commonController.dataBaseOperate(update, beanPackage, tableName, "update", conn);
+            if (updateResult == -1)
+                json = Units.objectToJson(-1, "修改操作失败!", null);
         }
+        conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
         if (!Units.strIsEmpty(add)) {
-            int addResult = commonController.dataBaseOperate(add, tableName, "add", conn);
-            result = (addResult == -1) ? addResult : result;
-            System.out.println("数据添加结果:" + addResult);
+            int addResult = commonController.dataBaseOperate(add, beanPackage, tableName, "add", conn);
+            if (addResult == -1)
+                json = Units.objectToJson(-1, "添加操作失败!", null);
         }
+        conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
         if (!Units.strIsEmpty(delete)) {
-            int delResult = commonController.dataBaseOperate(delete, tableName, "delete", conn);
-            result = (delResult == -1) ? delResult : result;
+            int delResult = commonController.dataBaseOperate(delete, beanPackage, tableName, "delete", conn);
+            if (delResult == -1)
+                json = Units.objectToJson(-1, "删除操作失败!", null);
         }
-
-        if (result == 0) {
-            json = Units.objectToJson(result, "操作成功!", null);
-        } else if (result == -1) {
-            json = Units.objectToJson(result, "操作失败!", null);
-        } else if (result == 1) {
-            json = Units.objectToJson(result, "输入参数错误!", null);
-        } else {
-            json = Units.objectToJson(result, "服务器出错!", null);
+        
+        if (json == null) {
+            json = Units.objectToJson(0, "操作成功!", null);
         }
         return json;
     }
 
     /**
      * 导入Excel数据
+     *
      * @param tableName
      * @param fileName
      * @param conn
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
-    private String importData(String tableName, String fileName, Connection conn) throws Exception {
+    private String importData(String beanPackage, String tableName, String fileName, Connection conn) throws Exception {
         String json;
         //获取所有设置字段名称的字段
-        Class objClass = Class.forName("com.cn.bean." + tableName);
+        Class objClass = Class.forName(beanPackage + tableName);
         Field[] fields = objClass.getDeclaredFields();
         ArrayList<Field> accessFields = new ArrayList<>();
         ArrayList<String> fieldDes = new ArrayList<>();
+
         for (Field field : fields) {
-            if (field.isAnnotationPresent(FieldDescription.class)) {
+            if (field.isAnnotationPresent(FieldDescription.class
+            )) {
                 FieldDescription description = field.getAnnotation(FieldDescription.class);
+
                 fieldDes.add(description.description());
 
                 accessFields.add(field);
@@ -1185,7 +1477,7 @@ public class DataInterface extends HttpServlet {
 
         Row headerRow = sheet.getRow(0);
         //如果第一行标题行为空或上传数据列数和类的字段描述长度不一致, 返回数据格式不正确
-        System.out.println("cells num:" + headerRow.getPhysicalNumberOfCells() + ",des size:" + fieldDes.size());
+//        System.out.println("cells num:" + headerRow.getPhysicalNumberOfCells() + ",des size:" + fieldDes.size());
         if (headerRow == null || headerRow.getPhysicalNumberOfCells() != fieldDes.size()) {
             json = Units.objectToJson(-1, "上传数据格式不正确, 请先下载模板, 按照模板格式录入数据", null);
             return json;
@@ -1204,25 +1496,31 @@ public class DataInterface extends HttpServlet {
         //解析表格数据, 存入List中
         for (int i = 1; i <= sheet.getPhysicalNumberOfRows(); i++) {
             Row row = sheet.getRow(i);
-            if (row == null)
+            if (row == null) {
                 continue;
-            
+            }
+
             Object object = objClass.newInstance();
             for (int j = 0; j < accessFields.size(); j++) {
                 Field field = accessFields.get(j);
                 field.setAccessible(true);
                 Cell cell = row.getCell(templateDataIndex[j]);
 //                String fieldType = field.getGenericType().toString();
-                
-                if (field.getType() == int.class || field.getType() == float.class || field.getType() == double.class) {
-                    if (cell == null) {
+
+                if (field.getType() == int.class
+                        || field.getType() == float.class
+                        || field.getType() == double.class) {
+                    if (cell
+                            == null) {
                         field.set(object, 0);
                     } else {
                         row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
                         field.set(object, row.getCell(templateDataIndex[j]).getNumericCellValue());
                     }
-                } else if (field.getType() == boolean.class) {
-                    if (cell == null) {
+                } else if (field.getType()
+                        == boolean.class) {
+                    if (cell
+                            == null) {
                         field.set(object, false);
                     } else {
                         row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_BOOLEAN);
@@ -1241,8 +1539,8 @@ public class DataInterface extends HttpServlet {
 
             result.add(object);
         }
-        
-        int addResult = commonController.dataBaseOperate(JSONObject.toJSONString(result), tableName, "add", conn);
+
+        int addResult = commonController.dataBaseOperate(JSONObject.toJSONString(result), beanPackage, tableName, "add", conn);
         if (addResult == 0) {
             json = Units.objectToJson(addResult, "数据导入成功!", null);
         } else if (addResult == -1) {
@@ -1255,14 +1553,16 @@ public class DataInterface extends HttpServlet {
 
     /**
      * 导入数据到Excel
+     *
      * @param tableName
      * @return
      * @throws Exception
      */
-    private String exportData(String tableName, ArrayList<Object> datas) throws Exception {
-        Class objClass = Class.forName("com.cn.bean." + tableName);
+    private String exportData(String beanPackage, String tableName, ArrayList<Object> datas) throws Exception {
+        Class objClass = Class.forName(beanPackage + tableName);
         Field[] fields = objClass.getDeclaredFields();
         ArrayList<String> fieldDes = new ArrayList<>();
+
         for (Field field : fields) {
             if (field.isAnnotationPresent(FieldDescription.class)) {
                 FieldDescription description = field.getAnnotation(FieldDescription.class);

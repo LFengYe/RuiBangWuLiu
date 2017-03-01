@@ -11,15 +11,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @Description 用于配置实体类字段说明信息 
+ * @FieldDescription 用于配置实体类字段说明信息 
  * @author LFeng
  */
-@Target(ElementType.FIELD)  
-@Retention(RetentionPolicy.RUNTIME) 
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface FieldDescription {
     /** 
      * 字段的中文名 
      * @return 
      */
     String description() default "";
+    
+    String type() default "String";
 }

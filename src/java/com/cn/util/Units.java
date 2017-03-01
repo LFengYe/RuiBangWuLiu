@@ -417,10 +417,10 @@ public class Units {
         Date nowDate = new Date();
         return format.format(nowDate);
     }
-    
+
     /**
      * 获取当前系统时间没有分隔符的字符串
-     * 
+     *
      * @return 返回yyyyMMddHHmmss格式时间字符串
      */
     public static String getNowTimeNoSeparator() {
@@ -490,8 +490,9 @@ public class Units {
 
     /**
      * 判断一个字符串是否为空, 长度为0或者是null都为空
+     *
      * @param string
-     * @return 
+     * @return
      */
     public static boolean strIsEmpty(String string) {
         if (string == null) {
@@ -505,10 +506,11 @@ public class Units {
 
     /**
      * 指定文件的内容作为字符串返回
+     *
      * @param path
      * @param fileName
      * @return
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException
      */
     public static String returnFileContext(String path, String fileName) throws FileNotFoundException {
         File file = new File(path + fileName);
@@ -519,13 +521,14 @@ public class Units {
         }
         return builder.toString();
     }
-    
+
     /**
      * 根据给定的路径和文件名生产文件
+     *
      * @param filePath
      * @param fileName
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public static File createNewFile(String filePath, String fileName) throws IOException {
         File path = new File(filePath);
@@ -533,10 +536,30 @@ public class Units {
             path.mkdir();
         }
         File file = new File(filePath, fileName);
-        if (!file.exists())
+        if (!file.exists()) {
             file.createNewFile();
+        }
         return file;
     }
+
+    /**
+     * 在srcStr字符串中查找desStr字符串, 然后在desStr后面插入insertStr字符串
+     *
+     * @param srcStr
+     * @param desStr
+     * @param insertStr
+     * @return
+     */
+    public static String insertStr(String srcStr, String desStr, String insertStr) {
+        StringBuffer buffer = new StringBuffer(srcStr);
+        int index = 0;
+        while ((index = buffer.indexOf(desStr, index)) != -1) {
+            index += desStr.length() - 1;
+            buffer.insert(index, insertStr);
+        }
+        return buffer.toString();
+    }
+
     /**
      * ************************************容联云通讯短信发送平台*****************************************
      */
@@ -592,12 +615,6 @@ public class Units {
      json = createJsonWithResult(String.valueOf(result.get("statusCode")), String.valueOf(result.get("statusMsg")));
      }
      return json;
-     }
-     */
-    /*
-     public static void main(String[] args) {
-     String test = "{\"cardNum\":\"ffgg5558\",\"username\":\"test\",\"data\":\"[{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"34535\\\",\\\"fieldName\\\":\\\"TotalSizeValue1\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3452345\\\",\\\"fieldName\\\":\\\"TotalSizeValue2\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue1\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3453\\\",\\\"fieldName\\\":\\\"BurkeSizeValue2\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"2345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue3\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"2345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue4\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue5\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"3453\\\",\\\"fieldName\\\":\\\"BurkeSizeValue6\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue7\\\"},{\\\"fieldType\\\":1,\\\"fieldValue\\\":\\\"345\\\",\\\"fieldName\\\":\\\"BurkeSizeValue8\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"PassSizeValue1\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"PassSizeValue2\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"AppearanceValue1\\\"},{\\\"fieldType\\\":4,\\\"fieldValue\\\":\\\"true\\\",\\\"fieldName\\\":\\\"AppearanceValue2\\\"},{\\\"fieldType\\\":4,\\\"f";
-     System.out.println(test.length());
      }
      */
 }

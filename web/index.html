@@ -5,14 +5,15 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
         <title>睿邦物流信息管理系统</title>
-        <link rel="stylesheet" href="assets/bootstrap/normalize.css" />
-        <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="assets/common-css/style.css" />
-        <link rel="stylesheet" href="assets/JQueryMenuPlug/JQueryMenuPlug-css.css" />
-        <link rel="stylesheet" href="assets/jQueryFormPlug/jQueryFormPlug.css" />
-        <link rel="stylesheet" href="assets/jQuerySelectPanel/SelectPanel.css" />
-        <link rel="stylesheet" href="assets/JQueryTablePlug/jQueryTablePlug2.css" />
-        <link rel="stylesheet" href="assets/TwoHeaderTablePlug/TwoHeaderTable.css" />
+        <link rel="stylesheet" href="assets/bootstrap/normalize.css" media="screen" />
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" media="screen" />
+        <link rel="stylesheet" href="assets/common-css/style.css" media="screen" />
+        <link rel="stylesheet" href="assets/JQueryMenuPlug/JQueryMenuPlug-css.css" media="screen" />
+        <link rel="stylesheet" href="assets/jQueryFormPlug/jQueryFormPlug.css" media="screen" />
+        <link rel="stylesheet" href="assets/jQuerySelectPanel/SelectPanel.css" media="screen" />
+        <link rel="stylesheet" href="assets/JQueryTablePlug/jQueryTablePlug2.css" media="screen" />
+        <link rel="stylesheet" href="assets/TwoHeaderTablePlug/TwoHeaderTable.css" media="screen" />
+        <link rel="stylesheet" href="assets/JqueryPrintPlug/jqueryPrintPlug.css" media="print" />
         <!--[if lt IE 9]>
         <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -22,14 +23,21 @@
         <script type="text/javascript" src="javascript/My97DatePicker/WdatePicker.js"></script>
         <script type="text/javascript" src="javascript/laypage/laypage.js"></script>
         <script type="text/javascript" src="javascript/layer/layer.js"></script>
+        <script type="text/javascript" src="javascript/jquery.PrintArea.js"></script>
         <script type="text/javascript" src="javascript/script.js"></script>
         <script type="text/javascript">
+            window.onload = function () {
+                findDimensions();
+            };
+            window.onresize = function () {
+                findDimensions();
+            };
             function displayLayer(type, content, title, callback) {
                 layer.open({
                     type: type,
                     title: title,
                     skin: 'layui-layer-rim',
-                    area: ['800px', '500px'],
+                    area: ['1000px', '600px'],
                     content: content,
                     end: function () {
                         if (callback) {
@@ -39,14 +47,28 @@
                 });
             }
         </script>
+        <style>
+            .div_table{display: table;width: 100%;margin: auto;margin-top: 10px;text-align: center;border-top: 1px solid;}
+            .div_table_2{display: table;width: 90%;text-align: center;border-top: 1px solid;border-right: 1px solid;margin: 0px;padding: 0px;}
+            .div_table_2 .col{display: inline-block;text-align: center;font-size: 12px;height: auto;}
+            .div_table_2 .col ul{margin: 0px;padding: 0px;}
+            .div_table_2 .col ul li{text-align: center;height: 40px;line-height: 40px;border-top: 1px solid;overflow: hidden;white-space:nowrap;}
+            /*.div_top_row{display: table-row;}*/
+            /*.div_top_row .div_cell{display: table-cell;float: left;height: 40px;line-height: 40px;white-space: nowrap;}*/
+            .div_row{display: table-row;}
+            .div_cell{display: table-column;float: left;height: 40px;line-height: 40px;border-bottom: 1px solid;white-space: nowrap;}
+            .div_cell .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
+            .div_cell .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
+            .div_cell_double{height: 80px;line-height: 80px;}
+        </style>
     </head>
     <body>
         <!--头部-->
-        <div class="container-fluid text-left wc-header">
+        <div class="container-fluid text-left wc-header no_print">
             <!-- <h3>物流睿邦信息管理系统</h3> -->
         </div>
 
-        <div class="container-fluid wc-content">
+        <div class="container-fluid wc-content no_print">
             <div class="row">
                 <div class="col-xs-4 col-sm-4 col-md-3 col-lg-2">
                     <img class="img-logo" alt="" src="assets/img/rbwl_logo.png"/>
@@ -54,6 +76,7 @@
                 </div>
                 <div class="col-xs-8 col-sm-8 col-md-9 col-lg-10">
                     <div class="wc-page">
+                        <!--导航菜单-->
                         <div class="wc-nav">
                             <ul class="nav left-nav hidden-sm hidden-md hidden-lg">
                                 <li id="fold" role="presentation"><a href="#"><span class="glyphicon glyphicon-list-alt"></span></a></li>
@@ -64,11 +87,13 @@
                                 <li role="presentation"><a href="#"><span class="glyphicon glyphicon-refresh"></span></a></li>
                             </ul>
                         </div>
+                        <!--指示器-->
                         <div class="wc-route">
                             <ol class="breadcrumb">
 
                             </ol>
                         </div>
+                        <!--page1-->
                         <div id="page1" style="display: none;" class="page">
                             <div class="page1-container">
                                 <div class="page1-input-box">
@@ -91,11 +116,10 @@
                             </div>
 
                         </div>
-
+                        <!--page2-->
                         <div id="page2" style="display: none;" class="page">
                             <div class="page2-container">
                                 <div class="page2-main-table">
-
                                     <div class="wc-page2-form wc-form ">
                                         <div class="wc-group">
                                             <label>关键字</label>
@@ -103,40 +127,42 @@
                                         </div>
                                         <div class="wc-group">
                                             <label>起始日期</label>
-                                            <input type="text" class="wc-control" onfocus="WdatePicker({dateFmt: 'yyyy/MM/dd', maxDate: getMaxDate()})">
+                                            <input type="text" class="wc-control" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})"/>
                                         </div>
                                         <div class="wc-group">
                                             <label>终止日期</label>
-                                            <input type="text" class="wc-control" onfocus="WdatePicker({dateFmt: 'yyyy/MM/dd', maxDate: getMaxDate()})">
+                                            <input type="text" class="wc-control" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
                                         </div>
                                         <button class="page2-query">查询</button>
                                         <button class="page2-addItem">添加</button>
                                     </div>
                                     <div class="page2-show-table"><!--动态添加--></div>
-                                    <div class="text-center">
+
+                                    <!--<div class="text-center">
                                         <nav>
                                             <ul class="pagination page2-pagination">
                                                 <li><a href="#" class="page2-left">&laquo;</a></li>
                                                 <li><a href="#" class="page2-right">&raquo;</a></li>
                                             </ul>
                                         </nav>
-                                    </div>
+                                    </div>-->
                                 </div>
                                 <div class="page2-detail-list">
                                     <div class="page2-main-input-box">
                                         <!--动态添加-->
                                     </div>
-
                                     <div class="page2-button-area">
-                                        <button class="button btn" id="page2-add">保存</button>
+                                        <button class="button btn" id="page2-submit">保存</button>
                                         <button class="button btn" id="page2-return">返回</button>
                                     </div>
                                     <div class="page2-child-input-box">
                                         <!--动态添加-->
                                     </div>
                                     <div class="page2-button-area">
+                                        <button class="button btn" id="page2-add">添加</button>
                                         <button class="button btn" id="page2-modify">修改</button>
                                         <button class="button btn" id="page2-cancel">删除</button>
+                                        <button class="button btn" id="page2-print">打印</button>
                                     </div>
                                     <div class="page2-show-table">
                                         <!--动态添加-->
@@ -144,7 +170,7 @@
                                 </div>	
                             </div>
                         </div>
-
+                        <!--page3-->
                         <div id="page3" style="display: none;" class="page">
                             <div class="page3-container">
                                 <div class="page3-main-table">
@@ -195,11 +221,128 @@
             </div>
         </div>
 
+        <div class="print_area content_hidden" id="print_area">
+            <div class="div_table" style="display: none;">
+                <div class="div_row">
+                    <div class="div_cell" style="width: 100%;"><div class="cell_start"></div>待检入库单<div class="cell_separate"></div></div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div>单据编号<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 20%;">DJRK-2017022704565692511<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 10%;">供应商<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 20%;">成都格林兰特环保科技有限公司<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 5%;">1001<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 10%;">制单人<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 20%;">test<div class="cell_separate"></div></div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div>入库批次<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 20%;">20170223227092511<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 10%;">制单时间<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 20%;">17/2/27 9:25<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 35%;">第   1   页共 1    页<div class="cell_separate"></div></div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell col" style="width: 10%;"><div class="cell_start"></div>序号<div class="cell_separate"></div></div>
+                    <div class="div_cell col" style="width: 15%;">部品名称<div class="cell_separate"></div></div>
+                    <div class="div_cell col" style="width: 15%;">部品件号<div class="cell_separate"></div></div>
+                    <div class="div_cell col" style="width: 5%;">单位<div class="cell_separate"></div></div>
+                    <div class="div_cell col" style="width: 10%;">入库数量<div class="cell_separate"></div></div>
+                    <div class="div_cell col" style="width: 15%;">原厂批次<div class="cell_separate"></div></div>
+                    <div class="div_cell col" style="width: 15%;">检验结论<div class="cell_separate"></div></div>
+                    <div class="div_cell col" style="width: 15%;">备注<div class="cell_separate"></div></div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>总计<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 90%;">3306<div class="cell_separate"></div></div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>供应商<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 15%;"><div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 10%;">库管员<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 15%;"><div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 10%;">审核人<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 15%;"><div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 10%;">检验人<div class="cell_separate"></div></div>
+                    <div class="div_cell" style="width: 15%;"><div class="cell_separate"></div></div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 100%;"><div class="cell_start"></div>备注：白-->存根；红色-->客户；蓝-->库房；绿色-->检验；黄-->返回；<div class="cell_separate"></div></div>
+                </div>
+            </div>
+
+            <div class="div_table_2">
+                <div class="div_row">
+                    <div class="div_cell" style="width: 100%;"><div class="cell_start"></div>待检入库单</div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div>单据编号</div>
+                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div>DJRK-2017022704565692511</div>
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>供应商</div>
+                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div>成都格林兰特环保科技有限公司</div>
+                    <div class="div_cell" style="width: 5%;"><div class="cell_start"></div>1001</div>
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>制单人</div>
+                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div>test</div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div>入库批次</div>
+                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div>20170223227092511</div>
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>制单时间</div>
+                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div>17/2/27 9:25</div>
+                    <div class="div_cell" style="width: 35%;"><div class="cell_start"></div>第   1   页共 1    页</div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell col" style="width: 10%;"><div class="cell_start"></div>序号
+                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
+                    </div>
+                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>部品名称
+                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
+                    </div>
+                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>部品件号
+                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
+                    </div>
+                    <div class="div_cell col" style="width: 5%;"><div class="cell_start"></div>单位
+                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
+                    </div>
+                    <div class="div_cell col" style="width: 10%;"><div class="cell_start"></div>入库数量
+                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
+                    </div>
+                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>原厂批次
+                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
+                    </div>
+                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>检验结论
+                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
+                    </div>
+                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>备注
+                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
+                    </div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>总计</div>
+                    <div class="div_cell" style="width: 90%;"><div class="cell_start"></div>3306</div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>供应商</div>
+                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div></div>
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>库管员</div>
+                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div></div>
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>审核人</div>
+                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div></div>
+                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>检验人</div>
+                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div></div>
+                </div>
+                <div class="div_row">
+                    <div class="div_cell" style="width: 100%;"><div class="cell_start"></div>备注：白-->存根；红色-->客户；蓝-->库房；绿色-->检验；黄-->返回；</div>
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript" src="assets/JQueryMenuPlug/JQueryMenuPlug-js.js" ></script>
         <script type="text/javascript" src="assets/jQuerySelectPanel/jQuerySelectPanel-js.js" ></script>
         <script type="text/javascript" src="assets/jQueryFormPlug/jQueryFormPlug.js" ></script>
         <script type="text/javascript" src="assets/JQueryTablePlug/jQueryTablePlug2.js" ></script>
         <script type="text/javascript" src="assets/TwoHeaderTablePlug/TwoheaderTable.js" ></script>
+        <script type="text/javascript" src="assets/JqueryPrintPlug/jqueryPrintPlug.js" ></script>
 
         <script type="text/javascript" src="assets/common-js/common.js" ></script>
         <script type="text/javascript" src="assets/common-js/mobile.js" ></script>		

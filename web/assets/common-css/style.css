@@ -3,6 +3,7 @@ html,body{
     background-color: #434b4e;
 
 }
+.content_hidden{display: none;}
 /*页头样式*/
 .wc-header{
     height: 30px;
@@ -25,6 +26,7 @@ html,body{
     background-color:#33363b;
     color:white;
     border-radius:10px;
+    overflow-y: auto;
 }
 .wc-content .wc-menu a{
     color:white;
@@ -104,7 +106,7 @@ html,body{
 }
 .page2-show-table {
     width:100%;
-    overflow-x:scroll;
+    /*overflow-x:scroll;*/
 }
 .wc-page2-form {
     margin-left:10px;
@@ -148,9 +150,10 @@ html,body{
     padding:4px 8px;
     color:white;
 }
-
+.wc-page2-form .query{}
 .wc-page2-form .page2-addItem{
     float:right;
+    margin-right: 10px;
 }
 .page2-pagination,.page3-pagination{
     margin:0;

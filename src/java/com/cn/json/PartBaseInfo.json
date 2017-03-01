@@ -10,12 +10,12 @@
         "inboundPackageAmount": "入库包装数量,number,0",
         "outboundContainer": "出库盛具,string,10",
         "outboundPackageAmount": "出库包装数量,number,0",
-        "disabled": "是否停用,boolean,0",
+        "disabled": "是否停用,bool",
         "pinyinAbb": "拼音助计,string,100",
         "partCategory": "部品分类,@table",
         "partPicture": "部品图片,string,100",
         "partBaseInfoRemark": "备注,string,500",
-        "pSAddress1": "配送地址1,string,12",
+        "psAddress1": "配送地址1,string,12",
         "pSAddress2": "配送地址2,string,12",
         "pSAddress3": "配送地址3,string,12"
     },
@@ -38,7 +38,7 @@
         "partCategory": "部品分类,10%",
         "partPicture": "部品图片,12%",
         "partBaseInfoRemark": "备注,12%",
-        "pSAddress1": "配送地址1,12%",
+        "psAddress1": "配送地址1,12%",
         "pSAddress2": "配送地址2,12%",
         "pSAddress3": "配送地址3,12%"
     }

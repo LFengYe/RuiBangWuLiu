@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "库存安全")
 public class KCQuota {
 
     private static int recordCount;

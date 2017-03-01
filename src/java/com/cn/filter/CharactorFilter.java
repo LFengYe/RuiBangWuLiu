@@ -98,6 +98,7 @@ public class CharactorFilter implements Filter {
             HttpSession session = servletRequest.getSession();
             // 这里判断目录，后缀名，当然也可以写在web.xml中，用url-pattern进行拦截映射
             if ((!servletRequest.getServletPath().endsWith("login.html"))
+                    && (!servletRequest.getServletPath().endsWith("test.html"))
                     && (!servletRequest.getServletPath().endsWith(".js"))
                     && (!servletRequest.getServletPath().endsWith(".do"))
                     && (!servletRequest.getServletPath().endsWith(".css"))

@@ -33,14 +33,14 @@ $(function () {
                 }
             }
         });
+        
         if (window.TableSelectPanel) {
-            t = new TableSelectPanel({}, null);
             s = new stringSelectPanel([]);
-
+            t = new TableSelectPanel({}, null);
             m = new TableMultiSelectPanel({}, null);
+            
             sp = new SelectPanelProxy(t, s, m);
         }
-
     }
 });
 

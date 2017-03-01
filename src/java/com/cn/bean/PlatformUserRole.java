@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "定义用户角色")
 public class PlatformUserRole {
     private static int recordCount;
 

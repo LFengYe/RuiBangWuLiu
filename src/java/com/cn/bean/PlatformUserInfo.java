@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "注册平台用户")
 public class PlatformUserInfo {
 
     private static int recordCount;

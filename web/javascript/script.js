@@ -23,11 +23,12 @@ function findDimensions() {
     }
 
     if ($(".wc-menu")) {
-        $(".wc-menu").css("width", 240);
-        $(".wc-menu").css("height", winHeight - 120);
+        //$(".wc-menu").css("width", 240);
+        $(".wc-menu").css("min-height", winHeight - 100);
     }
+    
     if ($(".wc-page")) {
-        $(".wc-page").css("height", winHeight - 56);
+        $(".wc-page").css("min-height", winHeight - 36);
     }
 }
 
@@ -99,7 +100,7 @@ function getNowDateShort() {
 function getMaxDate() {
     var t = new Date();
     var maxDate = [t.getFullYear(), t.getMonth() + 1, t.getDate()].join('-');
-    maxDate += ' ' + [t.getHours(), t.getMinutes()].join(":");
+    maxDate += ' ' + [t.getHours(), t.getMinutes(), t.getSeconds()].join(":");
     return maxDate;
 }
 //getMinDate生成客户端本地时间

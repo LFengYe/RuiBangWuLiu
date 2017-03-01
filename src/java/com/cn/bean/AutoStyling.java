@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "车型档案")
 public class AutoStyling {
     private static int recordCount;
 

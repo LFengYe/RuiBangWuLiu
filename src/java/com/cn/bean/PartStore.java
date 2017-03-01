@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "部品存放地址")
 public class PartStore {
 
     private static int recordCount;

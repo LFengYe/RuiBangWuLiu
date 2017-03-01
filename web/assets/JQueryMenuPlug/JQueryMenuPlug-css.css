@@ -11,7 +11,7 @@
 	font-size: 16px;
 }
 .jmp .list-group-item span{
-	margin-right:20px;
+	margin-right:5px;
 }
 .jmp .jmp-list .jmp-title{
 	margin-left:0px;
@@ -23,7 +23,7 @@
 	//color:black;
 }
 .jmp .jmp-a {
-	text-indent:30px;
+	/*text-indent:30px;*/
 	background-color:white;
 }
 .jmp .jmp-a.selected{

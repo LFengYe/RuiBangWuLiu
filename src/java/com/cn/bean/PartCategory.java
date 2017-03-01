@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "部品类别")
 public class PartCategory {
     private static int recordCount;
 

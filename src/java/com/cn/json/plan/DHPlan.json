@@ -1,0 +1,53 @@
+{
+    "control": {
+        "dhPlanID": "调货计划单号",
+        "supplierID": "供应商代码,@table:@supplierName",
+        "dhTime": "到货时间,date",
+        "dhProducerName": "制单人员姓名,string,10",
+        "dhProduceTime": "制单时间,date",
+        "dhAuditStaffName": "审核人员姓名,string,10",
+        "dhAuditTime": "审核时间,date",
+        "shAcknowledge": "客户确认,bool",
+        "printFlag": "打印标志,select,已打印,未打印",
+        "dhPlanRemark": "备注,string,500"
+    },
+    "mustwrite": ["dhPlanID", "supplierID", "dhProducerName", "dhProduceTime"],
+    "unique": ["dhPlanID"],
+    "primary": "dhPlanID",
+    "titles": {
+        "dhPlanID": "调货计划单号,15%",
+        "supplierID": "供应商代码,5%",
+        "supplierName": "供应商名称,15%",
+        "dhTime": "到货时间,10%",
+        "dhProducerName": "制单人员姓名,10%",
+        "dhProduceTime": "制单时间,10%",
+        "dhAuditStaffName": "审核人员姓名,10%",
+        "dhAuditTime": "审核时间,10%",
+        "shAcknowledge": "客户确认,5%",
+        "printFlag": "打印标志,5%",
+        "dhPlanRemark": "备注,5%"
+    },
+    "detailControl": {
+        "listNumber": "单内显示序号,number",
+        "supplierID": "供应商代码,@table:@supplierName",
+        "partCode": "部品件号,@table:@partID,@partName,@partUnit",
+        "dhAmount": "计划数量,number",
+        "dhPlanListRemark": "备注,string,500",
+        "dhPlanID": "调货计划单号"
+    },
+    "detailMustwrite": ["dhPlanID", "supplierID", "partCode", "dhAmount", "listNumber"],
+    "detailUnique": [],
+    "detailPrimary": "dhPlanID,partCode",
+    "detailTitles": {
+        "listNumber": "单内显示序号,10%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "partID": "部品编号,10%",
+        "partName": "部品名称,10%",
+        "partCode": "部品件号,10%",
+        "partUnit": "部品单位,10%",
+        "dhAmount": "计划数量,10%",
+        "dhPlanListRemark": "备注,10%",
+        "dhPlanID": "调货计划单号,10%"
+    }
+}

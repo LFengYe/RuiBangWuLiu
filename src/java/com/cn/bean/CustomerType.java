@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "客户类别")
 public class CustomerType {
     private static int recordCount;
 

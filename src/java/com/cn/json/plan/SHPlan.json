@@ -1,0 +1,49 @@
+{
+    "control": {
+        "shPlanID": "送货计划单号",
+        "dhPlanID": "调货计划单号,@table",
+        "supplierID": "供应商代码,@table:@supplierName",
+        "shTime": "送货时间,date",
+        "shMethod": "送货方式,string,10",
+        "yjDHTime": "预计到货时间,date",
+        "printFlag": "打印标志,select,已打印,未打印",
+        "shPlanRemark": "备注,string,500"
+    },
+    "mustwrite": ["shPlanID", "supplierID", "dhPlanID", "shMethod"],
+    "unique": ["shPlanID"],
+    "primary": "shPlanID",
+    "titles": {
+        "shPlanID": "送货计划单号,15%",
+        "dhPlanID": "调货计划单号,15%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "shTime": "送货时间,10%",
+        "shMethod": "送货方式,10%",
+        "yjDHTime": "预计到货时间,10%",
+        "printFlag": "打印标志,10%",
+        "shPlanRemark": "备注,10%"
+    },
+    "detailControl": {
+        "listNumber": "单内显示序号,number",
+        "supplierID": "供应商代码,@table:@supplierName",
+        "partCode": "部品件号,@table:@partID,@partName,@partUnit",
+        "shAmount": "送货数量,number",
+        "shPlanListRemark": "备注,string,500",
+        "shPlanID": "送货计划单号"
+    },
+    "detailMustwrite": ["shPlanID", "supplierID", "partCode", "shAmount", "listNumber"],
+    "detailUnique": [],
+    "detailPrimary": "shPlanID,partCode",
+    "detailTitles": {
+        "listNumber": "单内显示序号,10%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "partID": "部品编号,10%",
+        "partName": "部品名称,10%",
+        "partCode": "部品件号,10%",
+        "partUnit": "部品单位,10%",
+        "shAmount": "送货数量,10%",
+        "shPlanListRemark": "备注,10%",
+        "shPlanID": "送货计划单号,10%"
+    }
+}

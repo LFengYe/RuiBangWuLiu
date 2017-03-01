@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "注册公司")
 public class PlatformCompanyInfo {
 
     private static int recordCount;
@@ -146,6 +147,9 @@ public class PlatformCompanyInfo {
     public static void main(String[] args) {
         try {
             Class objClass = Class.forName("com.cn.bean.PlatformCompanyInfo");
+            ClassDescription description = (ClassDescription) objClass.getAnnotation(ClassDescription.class);
+            System.out.println(description.classDesc());
+            
             Field[] fields = objClass.getDeclaredFields();
             for (Field field : fields) {
                 if (field.isAnnotationPresent(FieldDescription.class)) {
@@ -157,6 +161,7 @@ public class PlatformCompanyInfo {
                     System.out.println("fieldNames:" + fieldNames + ",des:" + description.description());
                 }
             }
+                    
         } catch (ClassNotFoundException ex) {
             
         }

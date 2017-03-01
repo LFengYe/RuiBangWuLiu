@@ -1,0 +1,92 @@
+{
+    "control": {
+        "djInWareHouseID": "待检入库单号",
+        "customerType": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table:@supplierName",
+        "inboundBatch": "入库批次",
+        "djRKProducerName": "制单人员姓名",
+        "djRKProduceTime": "制单时间",
+        "djINWareHousRemark": "备注,string,500"
+    },
+    "mustwrite": ["djInWareHouseID", "supplierID", "inboundBatch", "djRKProducerName", "djRKProduceTime"],
+    "unique": ["djInWareHouseID", "inboundBatch"],
+    "primary": "djInWareHouseID",
+    "titles": {
+        "djInWareHouseID": "待检入库单号,15%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,15%",
+        "inboundBatch": "入库批次,10%",
+        "djRKProducerName": "制单人员姓名,10%",
+        "djRKProduceTime": "制单时间,10%",
+        "djRKAuditStaffName": "审核人员姓名,10%",
+        "djRKAuditTime": "审核时间,10%",
+        "printFlag": "打印标志,5%",
+        "djINWareHousRemark": "备注,5%"
+    },
+    "detailControl": {
+        "listNumber": "单内显示序号,hidden",
+        "djInWareHouseID": "待检入库单号,parent",
+        "inboundBatch": "入库批次,parent",
+        "supplierID": "供应商代码,parent",
+        "supplierName": "供应商名称,parent",
+        "partCode": "部品件号,@table:@partID,@partName,@partUnit,@cfAddress,@autoStyling,@inboundPackageAmount",
+        "partState": "部品状态",
+        "inboundAmount": "入库数量,number",
+        "inboundPackageAmount": "入库包装数量,hidden",
+        "inboundBoxAmount": "入库箱数,calculate,inboundAmount,inboundPackageAmount,/",
+        "originalBatch": "原厂批次,string,12",
+        "djInWareHouseListRemark": "备注,string,500",
+        "jhBalance": "余数,hidden"
+    },
+    "detailMustwrite": ["djInWareHouseID", "supplierID", "partCode", "inboundBatch"],
+    "detailUnique": [],
+    "detailPrimary": "djInWareHouseID,inboundBatch,partCode",
+    "detailTitles": {
+        "listNumber": "单内显示序号,10%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "partID": "部品编号,10%",
+        "partName": "部品名称,10%",
+        "partCode": "部品件号,10%",
+        "partUnit": "部品单位,10%",
+        "partState": "部品状态,10%",
+        "autoStyling": "车型,10%",
+        "inboundAmount": "入库数量,10%",
+        "inboundBoxAmount": "入库箱数,10%",
+        "cfAddress": "存放地址,10%",
+        "inboundBatch": "入库批次,10%",
+        "originalBatch": "原厂批次,10%",
+        "djInWareHouseListRemark": "备注,10%",
+        "djInWareHouseID": "待检入库单号,10%",
+        "jhBalance": "余数,10%"
+    },
+    "printArea": {
+        "title": {"djInWareHouse":"100%,待检入库单"},
+        "rows1": {
+            "djInWareHouseIDName":"15%,单据编号",
+            "djInWareHouseID":"20%",
+            "supplierNameName":"10%,供应商",
+            "supplierName":"20%",
+            "supplierID":"5%",
+            "djRKProducerNameName":"10%,制单人",
+            "djRKProducerName":"20%"
+            },
+        "rows2": {
+            "inboundBatchName":"15%,入库批次",
+            "inboundBatch":"20%",
+            "djRKProduceTimeName":"10%,制单时间",
+            "djRKProduceTime":"20%",
+            "pageInfo":"35%,第 1 页共 1 页"
+            },
+        "datasTitle": {
+            "listNumber": "10%,序号",
+            "partName":"15%,部品名称",
+            "partCode":"15%,部品件号",
+            "partUnit":"5%,单位",
+            "inboundAmount":"10%,入库数量",
+            "originalBatch":"15%,原厂批次",
+            "result":"15%,检验结论",
+            "djInWareHouseListRemark":"15%,备注"
+        }
+    }
+}

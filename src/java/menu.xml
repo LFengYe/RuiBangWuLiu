@@ -9,33 +9,33 @@
         <second hypelnk="page1" id="00006" text="定义用户角色" url="funinfo_page1.ashx"/>
     </first>
     <first hypelnk=""  id="101" text="调货计划管理" url="">
-        <second  hypelnk="page2.html"  id="10101" text="调货计划下达" url="input_single.ashx">
+        <second  hypelnk="page2"  id="10101" text="调货计划下达" url="input_single.ashx">
         </second >
-        <second hypelnk="hypelnk9"  id="10102" text="送货计划查询" url="_url">
+        <second hypelnk="page2"  id="10102" text="送货计划查询" url="_url">
         </second >
     </first>
     <first   hypelnk=""  id="102" text="部品入库管理" url="">
-        <second  hypelnk="page2"  id="10201" text="待检入库" url="djruku.ashx">
+        <second  hypelnk="page2"  id="10201" text="待检入库" url="djruku.ashx" table="tblDJInWareHouse">
         </second >
-        <second  hypelnk="hypelnk11"  id="10202" text="待检审核" url="aaa.ashx">
+        <second  hypelnk="page2"  id="10202" text="待检审核" url="aaa.ashx">
         </second >
-        <second  hypelnk="hypelnk12"  id="10203" text="送检出库" url="aaa.ashx">
+        <second  hypelnk="page2"  id="10203" text="送检出库" url="aaa.ashx" module="tblSJOutWareHouse">
         </second >
-        <second  hypelnk="hypelnk13"  id="10204" text="送检返回" url="aaa.ashx">
+        <second  hypelnk="page2"  id="10204" text="送检返回" url="aaa.ashx" module="tblSJBackWareHouse">
         </second >
-        <second  hypelnk="hypelnk14"  id="10205" text="部品退库" url="aaa.ashx">
+        <second  hypelnk="page2"  id="10205" text="部品退库" url="aaa.ashx" module="tblBPTHOutWareHouse">
         </second >
     </first >
     <first   hypelnk=""  id="103" text="部品移库管理" url="">
-        <second  hypelnk="hypelnk15"  id="10301" text="报检信息" url="aaa.ashx">
+        <second  hypelnk="hypelnk15"  id="10301" text="报检信息" url="aaa.ashx" module="">
         </second >
-        <second  hypelnk="hypelnk16"  id="10302" text="返修出库" url="aaa.ashx">
+        <second  hypelnk="hypelnk16"  id="10302" text="返修出库" url="aaa.ashx" module="tblFXOutWareHouse">
         </second >
-        <second  hypelnk="hypelnk17"  id="10303" text="返修退库" url="aaa.ashx">
+        <second  hypelnk="hypelnk17"  id="10303" text="返修退库" url="aaa.ashx" module="tblFXInWareHouse?">
         </second >
-        <second  hypelnk="hypelnk84"  id="10304" text="现场调账" url="aaa.ashx">
+        <second  hypelnk="hypelnk84"  id="10304" text="现场调账" url="aaa.ashx" module="">
         </second >
-        <second hypelnk="hypelnk85"  id="10305" text="库房调账" url="aaa.ashx">
+        <second hypelnk="hypelnk85"  id="10305" text="库房调账" url="aaa.ashx" module="">
         </second>
     </first >
     <first   hypelnk=""  id="104" text="部品出库管理" url="">
@@ -45,7 +45,7 @@
         </second>
         <second hypelnk="hypelnk20"  id="10403" text="现场结算" url="aaa.ashx">
         </second>
-        <second hypelnk="hypelnk21"  id="10404" text="部品退货" url="aaa.ashx">
+        <second hypelnk="hypelnk21"  id="10404" text="部品退货" url="aaa.ashx" module="tblBPTHOutWareHouse?">
         </second>
         <second hypelnk="hypelnk73"  id="10405" text="备货确认" url="aaa.ashx">
         </second>
@@ -55,7 +55,7 @@
         </second>
         <second hypelnk="hypelnk87"  id="10408" text="良品库存" url="aaa.ashx">
         </second>
-        <second hypelnk="hypelnk89"  id="10409" text="排序卡打印" url="aaa.ashx">
+        <second hypelnk="hypelnk89"  id="10409" text="排序卡打印" url="aaa.ashx" module="">
         </second>
         <second hypelnk="hypelnk86"  id="10410" text="送货清单" url="aaa.ashx">
         </second>

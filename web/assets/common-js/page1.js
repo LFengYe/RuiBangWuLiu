@@ -4,8 +4,6 @@
     var $tableBox = $(".page1-container .page1-show-table");
     var $dateQueryBtn = $(".wc-page1-form .page1-query");
     var $dateInputs = $(".wc-page1-form input.wc-control");
-    var primary = [];
-    var inputNames = {};
 
     var OPERATION = {
         CREATE: "create",
@@ -21,8 +19,12 @@
         update: [],
         del: []
     };
+    
+    var primary = [];
+    var inputNames = {};
     var modifyRow = null;
     var selectedSet = [];
+    var pageSize = 15;
 
     function initDOM() {
         ajaxData(OPERATION.CREATE, {}, function (data) {
@@ -48,8 +50,10 @@
                 datas: data.datas,
                 unique: data.unique,
                 dataCount: data.counts,
+                pageSize: pageSize,
                 dbclickRowCallBack: function (index, obj) {
                     $inputBox.objInInputs(obj);
+                    $inputBox.formDisable(primary);
                     modifyRow = index;
                 },
                 clickRowCallBack: function (index, obj) {
@@ -59,8 +63,22 @@
                         selectedSet[index] = obj;
                     }
                 },
-                pageCallBack: function () {
-
+                pageCallBack: function (pageIndex, keyword) {
+                    var obj = {"pageIndex": pageIndex, "pageSize": pageSize, "datas": keyword, "rely": "{}"};
+                    ajaxData("request_page", obj, function (data) {
+                        $tableBox.render(data.datas);
+                        $tableBox.page(data.counts, pageIndex, pageSize);
+                    }, function () {
+                    });
+                },
+                searchCallBack: function (keyword) {
+                    console.log("search key:" + keyword);
+                    var obj = {"pageIndex": 1, "pageSize": pageSize, "datas": keyword, "rely": "{}"};
+                    ajaxData("request_page", obj, function (data) {
+                        $tableBox.render(data.datas);
+                        $tableBox.page(data.counts, 1, pageSize);
+                    }, function () {
+                    });
                 }
             });
         }, function () {

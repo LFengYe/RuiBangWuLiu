@@ -10,7 +10,7 @@
         "customerOfficeFax": "传真,string,13",
         "customerEmail": "邮箱,string,100",
         "sHMethod": "送货方式,string,10",
-        "transportCycle": "运输周期(小时),number,0",
+        "transportCycle": "运输周期(小时),number",
         "pinyinAbb": "拼音助记,string,50",
         "cutomerRemark": "备注,string,500"
     },

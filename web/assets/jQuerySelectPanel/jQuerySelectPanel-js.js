@@ -1,6 +1,7 @@
 
 //abstract SelectPanel   
 function SelectPanel(data, callbackFun) {
+    this.pageSize = 15;
     this.data = data;                     //private
     this.callback = callbackFun;         //private
     this.$container = null;               //private
@@ -18,12 +19,12 @@ SelectPanel.prototype.reset = function (data, fun) {
     this.bindClickEvt();
 };
 SelectPanel.prototype.show = function () {
-    displayLayer(1, $('.SelectPanel').first(), '选择信息');
+    displayLayer(1, this.$container, '选择信息');
 //    this.$container.show(500);
 };
 SelectPanel.prototype.initDOM = function () {
     //private
-    this.$container = $('<div class="SelectPanel"></div>');
+    this.$container = $('<div class="SelectPanel no_print"></div>');
     this.$container.appendTo("body");
 };
 SelectPanel.prototype.render = function () {
@@ -56,7 +57,6 @@ stringSelectPanel.prototype.bindClickEvt = function () {
 };
 
 
-
 //extends SelectPanel
 function TableSelectPanel(data, callBackfun) {
     var _default_ = {
@@ -73,15 +73,30 @@ TableSelectPanel.prototype.render = function () {
     this.$container.insertTable({
         titles: this.data.titles, //表头  
         datas: this.data.datas, //数据源
-        isPage: false,
+        isDialog: true,
+        dataCount: this.data.counts,
         clickRowCallBack: function (index, obj) {
             that.callback(obj);
-//            that.$container.hide(500);
             layer.closeAll('page');
-            console.log(index);
         },
         dbclickRowCallBack: function (index, obj) {
             console.log(obj);
+        },
+        pageCallBack: function (pageIndex, keyword) {
+            var obj = {"pageIndex": pageIndex, "pageSize": that.pageSize, "datas": keyword, "target": that.data.target, "rely": that.data.rely};
+            ajaxData("request_table", obj, function (data) {
+                that.$container.render(data.datas);
+                that.$container.page(data.counts, pageIndex, that.pageSize);
+            }, function () {
+            });
+        },
+        searchCallBack: function (keyword) {
+            var obj = {"pageIndex": 1, "pageSize": that.pageSize, "datas": keyword, "target": that.data.target, "rely": that.data.rely};
+            ajaxData("request_table", obj, function (data) {
+                that.$container.render(data.datas);
+                that.$container.page(data.counts, 1, that.pageSize);
+            }, function () {
+            });
         },
         isLocalSearch: true
     });
@@ -126,14 +141,14 @@ TableMultiSelectPanel.prototype.bindClickEvt = function () {
 
     this.$container.find(".my-sure").on("click", function (e) {
         var resArr = [];
-        console.log(that.resSet);
         for (var ele in that.resSet) {
             if (that.resSet[ele]) {
                 resArr.push(that.resSet[ele]);
             }
         }
         that.callback(resArr);
-        that.$container.hide(500);
+        //that.$container.hide(500);
+        layer.closeAll('page');
     });
 };
 
@@ -153,6 +168,7 @@ function SelectPanelProxy(tableselet, stringselet, multiselet) {
     this.stringselet = stringselet;
     this.multiselet = multiselet;
 }
+
 SelectPanelProxy.prototype.reset = function (type, data, callback) {
 
     switch (type) {

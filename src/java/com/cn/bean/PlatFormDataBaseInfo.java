@@ -9,6 +9,7 @@ package com.cn.bean;
  *
  * @author LFeng
  */
+@ClassDescription(classDesc = "注册数据库")
 public class PlatFormDataBaseInfo {
 
     private static int recordCount;
