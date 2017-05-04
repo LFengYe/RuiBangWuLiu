@@ -20,31 +20,31 @@ public class PlatformRight {
         recordCount = aRecordCount;
     }
     
-    private String RightCode;
-    private String RightName;
-    private String Righthyperlnk;
+    private String rightCode;
+    private String rightName;
+    private String righthyperlnk;
 
     public String getRightCode() {
-        return RightCode;
+        return rightCode;
     }
 
     public void setRightCode(String RightCode) {
-        this.RightCode = RightCode;
+        this.rightCode = RightCode;
     }
 
     public String getRightName() {
-        return RightName;
+        return rightName;
     }
 
     public void setRightName(String RightName) {
-        this.RightName = RightName;
+        this.rightName = RightName;
     }
 
     public String getRighthyperlnk() {
-        return Righthyperlnk;
+        return righthyperlnk;
     }
 
     public void setRighthyperlnk(String Righthyperlnk) {
-        this.Righthyperlnk = Righthyperlnk;
+        this.righthyperlnk = Righthyperlnk;
     }
 }

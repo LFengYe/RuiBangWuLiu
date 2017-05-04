@@ -173,16 +173,15 @@ SelectPanelProxy.prototype.reset = function (type, data, callback) {
 
     switch (type) {
         case 1:
-            console.log(1);
             this.stringselet.reset(data, callback);
             this.stringselet.show();
             break;
         case 2:
-            console.log(2);
             this.tableselet.reset(data, callback);
             this.tableselet.show();
             break;
         case 3:
+            console.log(3);
             this.multiselet.reset(data, callback);
             this.multiselet.show();
             break;

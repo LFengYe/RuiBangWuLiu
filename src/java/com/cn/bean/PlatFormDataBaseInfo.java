@@ -25,6 +25,7 @@ public class PlatFormDataBaseInfo {
     private String dataBaseID;
     @FieldDescription(description = "公司编号")
     private String companyID;
+    @FieldDescription(description = "公司名称")
     private String companyName;
     @FieldDescription(description = "工作数据库")
     private String masterDataBaseName;
@@ -51,14 +52,6 @@ public class PlatFormDataBaseInfo {
 
     public void setCompanyID(String companyID) {
         this.companyID = companyID;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
     public String getMasterDataBaseName() {
@@ -99,6 +92,14 @@ public class PlatFormDataBaseInfo {
 
     public void setDataBaseInfoRemark(String dataBaseInfoRemark) {
         this.dataBaseInfoRemark = dataBaseInfoRemark;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
 }

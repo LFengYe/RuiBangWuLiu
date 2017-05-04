@@ -18,6 +18,9 @@ and open the template in the editor.
         <script type="text/javascript" src="javascript/script.js"></script>
         <script type="text/javascript">
             window.onload = function() {
+//                console.log(getUrlParam("item"));
+//                console.log(getUrlParam("detail"));
+//                console.log(getUrlParam("method"));
                 $("#importData").bind("click", function () {
                     uploadExcel();
                 });
@@ -32,8 +35,21 @@ and open the template in the editor.
                     if (obj.status === 0) {
                         var sendBody = new Object();
                         sendBody.fileName = obj.data[0].fileName;
-                        console.log(JSON.stringify(sendBody));
-                        ajaxData("import", sendBody, function(data) {
+                        sendBody.item = getUrlParam("item");
+                        sendBody.detail = getUrlParam("detail");
+                        ajaxData(getUrlParam("method"), sendBody, function(data) {
+                            parent.$("#import_result").val(0);
+                            if (data) {
+                                parent.$("#import_return_data").val(JSON.stringify(data));
+                                //parent.$(".page2-container .page2-detail-list .page2-show-table").render(data.datas);
+                            }
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        }, function(data){
+                            parent.$("#import_result").val(-1);
+                            if (data) {
+                                parent.$("#import_return_data").val(JSON.stringify(data));
+                            }
                             var index = parent.layer.getFrameIndex(window.name);
                             parent.layer.close(index);
                         });

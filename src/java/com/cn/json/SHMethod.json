@@ -1,11 +1,11 @@
 {
     "control": {
-        "shMethod": "送货方式,string,20"
+        "shMethodName": "送货方式,string,20"
     },
-    "mustwrite": ["shMethod"],
-    "unique": ["shMethod"],
-    "primary": "shMethod",
+    "mustwrite": ["shMethodName"],
+    "unique": ["shMethodName"],
+    "primary": "shMethodName",
     "titles": {
-        "shMethod": "送货方式,100%"
+        "shMethodName": "送货方式,100%"
     }
 }

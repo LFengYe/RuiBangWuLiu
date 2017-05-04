@@ -1,20 +1,20 @@
 {
     "control": {
-        "supplierID": "供应商代码,@table:@supplierName",
-        "partCode": "部品件号,@table:@partID,@partName",
-        "cFAddress": "存放地址,string,12",
+        "customerTypeName": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerTypeName",
+        "partCode": "部品件号,@table",
+        "kfCFAddress": "库房存放地址,string,12",
+        "jpqCFAddress": "集配区存放地址,string,12",
         "partStoreRemark": "备注,string,500"
     },
     "mustwrite": ["supplierID", "partCode"],
     "unique": [],
     "primary": "supplierID,partCode",
     "titles": {
-        "supplierID": "供应商代码,10%",
-        "supplierName": "供应商名称,20%",
-        "partID": "部品代码,10%",
-        "partName": "部品名称,10%",
+        "supplierID": "供应商代码,20%",
         "partCode": "部品件号,20%",
-        "cFAddress": "存放地址,20%",
-        "partStoreRemark": "备注,10%"
+        "kfCFAddress": "库房存放地址,20%",
+        "jpqCFAddress": "集配区存放地址,20%",
+        "partStoreRemark": "备注,20%"
     }
 }

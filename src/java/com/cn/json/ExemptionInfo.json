@@ -1,0 +1,18 @@
+{
+    "control": {
+        "customerTypeName": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerTypeName",
+        "partCode": "部品件号,@table",
+        "exemptionFlag": "免检标志,select,免检,不免检",
+        "exemptionInfoRemark": "备注,string,500"
+    },
+    "mustwrite": ["supplierID", "partCode", "exemptionFlag"],
+    "unique": [],
+    "primary": "supplierID,partCode",
+    "titles": {
+        "supplierID": "供应商代码,25%",
+        "partCode": "部品件号,25%",
+        "exemptionFlag": "免检标志,25%",
+        "exemptionInfoRemark": "备注,25%"
+    }
+}

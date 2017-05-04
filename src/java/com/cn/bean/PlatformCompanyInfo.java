@@ -41,7 +41,7 @@ public class PlatformCompanyInfo {
     @FieldDescription(description = "公司代码")
     private String companyCode;
     @FieldDescription(description = "是否停办业务")
-    private boolean busenessState;
+    private boolean businessState;
     @FieldDescription(description = "公司网址")
     private String companyWebSite;
     @FieldDescription(description = "备注")
@@ -120,11 +120,11 @@ public class PlatformCompanyInfo {
     }
 
     public boolean getBusenessState() {
-        return busenessState;
+        return businessState;
     }
 
-    public void setBusenessState(boolean BusenessState) {
-        this.busenessState = BusenessState;
+    public void setBusinessState(boolean BusenessState) {
+        this.businessState = BusenessState;
     }
 
     public String getCompanyWebSite() {

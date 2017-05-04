@@ -22,13 +22,13 @@ public class CustomerType {
     }
     
     @FieldDescription(description = "客户类别")
-    private String customerType;
+    private String customerTypeName;
 
-    public String getCustomerType() {
-        return customerType;
+    public String getCustomerTypeName() {
+        return customerTypeName;
     }
 
-    public void setCustomerType(String customerType) {
-        this.customerType = customerType;
+    public void setCustomerTypeName(String customerTypeName) {
+        this.customerTypeName = customerTypeName;
     }
 }

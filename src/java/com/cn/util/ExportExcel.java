@@ -69,24 +69,27 @@ public class ExportExcel<T> {
         // 生成一个表格
         HSSFSheet sheet = workbook.createSheet(title);
         // 设置表格默认列宽度为15个字节
-        sheet.setDefaultColumnWidth((short) 15);
+//        sheet.setDefaultColumnWidth((short) 15);
         // 生成一个样式
         HSSFCellStyle style = workbook.createCellStyle();
         // 设置这些样式
-        style.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+//        style.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+        style.setFillForegroundColor(HSSFColor.AUTOMATIC.index);
         style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
         style.setBorderRight(HSSFCellStyle.BORDER_THIN);
         style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+//        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        style.setAlignment(HSSFCellStyle.ALIGN_FILL);
         // 生成一个字体
         HSSFFont font = workbook.createFont();
-        font.setColor(HSSFColor.VIOLET.index);
-        font.setFontHeightInPoints((short) 12);
-        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+//        font.setColor(HSSFColor.VIOLET.index);
+        font.setFontHeightInPoints((short) 14);
+//        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         // 把字体应用到当前的样式
         style.setFont(font);
+        
         // 生成并设置另一个样式
         HSSFCellStyle style2 = workbook.createCellStyle();
         style2.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
@@ -119,9 +122,11 @@ public class ExportExcel<T> {
         if (null != headers) {
             for (int i = 0; i < headers.length; i++) {
                 HSSFCell cell = row.createCell(i);
-                cell.setCellStyle(style);
                 HSSFRichTextString text = new HSSFRichTextString(headers[i]);
                 cell.setCellValue(text);
+//                cell.setCellStyle(style);
+//                sheet.autoSizeColumn(i);
+                sheet.setColumnWidth(i, headers[i].getBytes().length * 256);
             }
         }
 
@@ -142,9 +147,11 @@ public class ExportExcel<T> {
                     }
                 }
                 
+//                System.out.println("");
                 for (int i = 0; i < fieldList.size(); i++) {
                     Field field = fieldList.get(i);
                     HSSFCell cell = row.createCell(i);
+//                    cell.setCellStyle(style);
                     String fieldName = field.getName();
                     String getMethodName = "get"
                             + fieldName.substring(0, 1).toUpperCase()
@@ -182,7 +189,7 @@ public class ExportExcel<T> {
                             // 其它数据类型都当作字符串简单处理
                             textValue = (value != null) ? (value.toString()) : ("");
                         }
-                    //System.out.print("field " + i + ":" + textValue);
+                        //System.out.print("field " + i + ":" + textValue);
                         // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
                         if (textValue != null) {
                             Pattern p = Pattern.compile("^//d+(//.//d+)?$");
@@ -191,13 +198,13 @@ public class ExportExcel<T> {
                                 // 是数字当作double处理
                                 cell.setCellValue(Double.parseDouble(textValue));
                             } else {
-                                HSSFRichTextString richString = new HSSFRichTextString(
-                                        textValue);
-                            //HSSFFont font3 = workbook.createFont();
-                                //font3.setColor(HSSFColor.BLUE.index);
-                                //richString.applyFont(font3);
+                                HSSFRichTextString richString = new HSSFRichTextString(textValue);
                                 cell.setCellValue(richString);
                             }
+                            int length = textValue.getBytes().length * 256;
+//                            System.out.print("cloumn width:" + sheet.getColumnWidth(i) + ",length:" + length);
+                            if (sheet.getColumnWidth(i) < length)
+                                sheet.setColumnWidth(i, length);
                         }
                     } catch (SecurityException e) {
                         Logger.getLogger(ExportExcel.class.getName()).log(Level.SEVERE, null, e);

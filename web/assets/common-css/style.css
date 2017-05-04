@@ -22,11 +22,16 @@ html,body{
     width:200px;
     margin-top:-20px;
 }
+.wc-content .wc-menu-parent{
+    width: 100%;
+    overflow: auto;
+}
 .wc-content .wc-menu{
+    width: 100%;
     background-color:#33363b;
     color:white;
     border-radius:10px;
-    overflow-y: auto;
+    overflow: auto;
 }
 .wc-content .wc-menu a{
     color:white;
@@ -75,7 +80,7 @@ html,body{
 }
 #page1 .page1-button-area{
     text-align:center;
-    margin-bottom: 30px;
+    /*margin-bottom: 30px;*/
 }
 #page1 .page1-button-area .button{
     margin-right:20px;
@@ -113,7 +118,7 @@ html,body{
 }
 .page2-button-area{
     text-align:center;
-    padding:15px;
+    /*padding:15px;*/
 }
 .page2-button-area .button{
     background-color:#403939;
@@ -151,6 +156,7 @@ html,body{
     color:white;
 }
 .wc-page2-form .query{}
+.wc-page2-form .page2-query{}
 .wc-page2-form .page2-addItem{
     float:right;
     margin-right: 10px;

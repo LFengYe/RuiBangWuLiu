@@ -1,0 +1,54 @@
+{
+    "control": {
+        "bpTHOutWareHoseID": "退货出库单据号",
+        "customerType": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerType:@supplierName",
+        "thPartState": "部品状态,select,待检,良品,不良品,返修",
+        "bpTHProducerName": "制单人",
+        "bpTHProduceTime": "制单时间",
+        "bpTHOutWareHouseRemark": "备注,string,500"
+    },
+    "mustwrite": ["bpTHOutWareHoseID", "supplierID", "thPartState", "bpTHProducerName", "bpTHProduceTime"],
+    "unique": [],
+    "primary": "bpTHOutWareHoseID",
+    "titles": {
+        "bpTHOutWareHoseID": "退货出库单据号,20%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "thPartState": "部品状态,10%",
+        "wareHouseManagerName": "库管员,10%",
+        "bpTHProducerName": "制单人,10%",
+        "bpTHProduceTime": "制单时间,10%",
+        "bpTHAuditStaffName": "审核人,10%",
+        "bpTHAuditTime": "审核时间,10%",
+        "printFlag": "打印标志,10%",
+        "bpTHOutWareHouseRemark": "备注,10%"
+    },
+    "detailControl": {
+        "listNumber": "单内显示序号,hidden",
+        "bpTHOutWareHoseID": "非计划出库单号,parent",
+        "supplierID": "非终端客户代码,parent",
+        "supplierName": "非终端客户名称,parent",
+        "partCode": "部品件号,@table:@partID,@partName,@partUnit,@inboundBatch,@thPartState",
+        "thCKAmount": "退库数量,number",
+        "fjhOutWareHouseListRemark": "备注,string,500"
+    },
+    "detailMustwrite": ["bpTHOutWareHoseID", "supplierID", "partCode", "thCKAmount"],
+    "detailUnique": [],
+    "detailPrimary": "bpTHOutWareHoseID,partCode",
+    "detailTitles": {
+        "listNumber": "单内显示序号,10%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "partID": "部品编号,10%",
+        "partName": "部品名称,10%",
+        "partCode": "部品件号,10%",
+        "partUnit": "部品单位,10%",
+        "thCKAmount": "退库数量,10%",
+        "inboundBatch": "入库批次,10%",
+        "thPartState": "部品状态,10%",
+        "bpTHOutWareHouseListRemark": "备注,10%",
+        "bpTHOutWareHoseID": "退货出库单据号,10%",
+        "wareHouseManagerName": "库管员,10%"
+    }
+}

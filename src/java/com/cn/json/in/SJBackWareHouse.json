@@ -1,0 +1,51 @@
+{
+    "control": {
+        "sjBackWareHouseID": "送检返回单号",
+        "customerType": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerType:@supplierName",
+        "sjTKProducerName": "制单人",
+        "sjTKProduceTime": "制单时间",
+        "sjBackWareHouseRemark": "备注,string,500"
+    },
+    "mustwrite": ["sjBackWareHouseID", "supplierID", "sjTKProducerName", "sjTKProduceTime"],
+    "unique": [],
+    "primary": "sjBackWareHouseID",
+    "titles": {
+        "sjBackWareHouseID": "送检返回单号,20%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "sjTKProducerName": "制单人员姓名,10%",
+        "sjTKProduceTime": "制单时间,10%",
+        "sjTKAuditStaffName": "审核人员姓名,10%",
+        "sjTKAuditTime": "审核时间,10%",
+        "printFlag": "打印标志,10%",
+        "sjBackWareHouseRemark": "备注,10%"
+    },
+    "detailControl": {
+        "listNumber": "单内显示序号,hidden",
+        "supplierID": "供应商代码,parent",
+        "supplierName": "供应商名称,parent",
+        "sjBackWareHouseID": "送检返回单号,parent",
+        "partCode": "部品件号,@table,@supplierID:@partID,@partName,@partUnit,@inboundBatch,@sjCKAmount",
+        "sjCKAmount": "入库数量,hidden",
+        "sjTKAmount": "送检退库数量,check,小于,sjCKAmount",
+        "sjBackWareHouseListRemark": "备注,string,500"
+    },
+    "detailMustwrite": ["sjBackWareHouseID", "supplierID", "partCode", "inboundBatch", "sjTKAmount"],
+    "detailUnique": [],
+    "detailPrimary": "sjBackWareHouseID,inboundBatch,partCode",
+    "detailTitles": {
+        "listNumber": "单内显示序号,10%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "partID": "部品编号,10%",
+        "partName": "部品名称,10%",
+        "partCode": "部品件号,10%",
+        "inboundBatch": "入库批次,10%",
+        "partUnit": "部品单位,10%",
+        "sjTKAmount": "送检退库数量,10%",
+        "sjBackWareHouseListRemark": "备注,10%",
+        "sjBackWareHouseID": "送检返回单号,10%",
+        "wareHouseManagerName": "库管员,10%"
+    }
+}

@@ -5,6 +5,7 @@
  */
 package com.cn.controller;
 
+import com.cn.bean.Employee;
 import com.cn.util.DatabaseOpt;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -62,44 +63,4 @@ public class PlatformUserInfoController {
         }
         return -1;
     }
-    
-    /*
-    public ArrayList<PlatformUserInfo> getPlatformUserInfoData() {
-        DatabaseOpt opt;
-        Connection conn = null;
-        CallableStatement statement = null;
-        try {
-            opt = new DatabaseOpt();
-            conn = opt.getConnectBase();
-            statement = conn.prepareCall("select * from tblPlatformUserInfo");
-            ResultSet set = statement.executeQuery();
-            ArrayList<PlatformUserInfo> result = new ArrayList<>();
-            while (set.next()) {
-                PlatformUserInfo role = new PlatformUserInfo();
-                
-                role.UserLoginAccount = set.getString("UserLoginAccount");
-                role.UserLoginDBName = set.getString("UserLoginDBName");
-                role.UserLoginPassWord = set.getString("UserLoginPassWord");
-                role.UserInfoRemark = set.getString("UserInfoRemark");
-                
-                result.add(role);
-            }
-            return result;
-        } catch (SQLException ex) {
-            logger.error("数据库执行出错", ex);
-        } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                logger.error("数据库关闭连接错误", ex);
-            }
-        }
-        return null;
-    }
-    */
 }

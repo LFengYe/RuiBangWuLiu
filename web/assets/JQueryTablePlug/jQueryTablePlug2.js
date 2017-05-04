@@ -1,29 +1,7 @@
 (function ($) {
-    var _default = {
-        titles: [], //表头  
-        datas: [], //数据源
-        unique: [], //表的元组主码
-        clickRowCallBack: function (index, obj) {
-            //console.log(index);
-        },
-        dbclickRowCallBack: function (index, obj) {
-            //console.log(obj);
-        },
-        pageCallBack: function (pageIndex, keyword) {
-        },
-        searchCallBack: function(keyword) {
-        },
-        isLocalSearch: true,
-        pageIndex: 1,
-        pageSize: 15,
-        isDialog: false,
-        dataCount: 0
-    };
-
     var _funs_ = {
         getDOM: function () {
-
-            var htmlStr = '<div class="wrapper"><div class="jtb-header"><span>查询条件:</span><input placeholder="查询条件" /><button class="LocalFilter">查询</button></div>';
+            var htmlStr = '<div class="wrapper"><div class="jtb-header"><span>查询条件:</span><input placeholder="查询条件" class="wc-control" /><button class="LocalFilter">查询</button></div>';
             htmlStr += '<div class="jtb-container"><div class="jtb-scroll"></div></div>';
             htmlStr += '<div class="jtb-page"><div class="page"></div><div class="page-info"></div></div>';
             htmlStr += '</div>';
@@ -118,7 +96,16 @@
                     return;
                 }
             }).prev().focus(function (e) {
-
+                $(this).val("");
+            });
+            this.find(".jtb-header button").prev().keypress(function(event) {
+                switch(event.keyCode) {
+                    case 13:
+                    {
+                        $(this).next().trigger("click");
+                        break;
+                    }
+                }
             });
         },
         dataFilter: function (data) {
@@ -145,7 +132,6 @@
 
     var _interface = {
         add: function (index, obj) {
-
             if (this.filterState) {
                 var eq = this.afterFilter[index][0];
                 this.datas.splice(0, 0, obj);
@@ -193,7 +179,7 @@
             this.datas = data;
             _funs_.getTableDataDOM.call(this, this.datas);
         },
-        page: function(dataCount, pageIndex, pageSize) {
+        page: function (dataCount, pageIndex, pageSize) {
             this.dataCount = dataCount;
             this.pageIndex = pageIndex;
             this.pageSize = pageSize;
@@ -207,13 +193,27 @@
             return this.datas;
         },
         isUnique: function (obj) {
-            for (var e = 0; e < this.unique.length; e++) {
-                var key = this.unique[e];
-                for (var i = 0; i < this.datas.length; i++) {
+            for (var i = 0; i < this.datas.length; i++) {
+                //判断表的unique字段是否存在重复
+                for (var e = 0; e < this.unique.length; e++) {
+                    var key = this.unique[e];
                     if (this.datas[i][key] == obj[key]) {
-                        alert(key + "不能重复");
+                        alert("【" + this.titles[key].split(",")[0] + "】不能重复!");
                         return false;
                     }
+                }
+                //判断表的主码是否存在重复记录
+                var primaryIsRepeat = true;
+                for (var index = 0; index < this.primary.length; index++) {
+                    var pri = this.primary[index];
+                    if (this.datas[i][pri] != obj[pri]) {
+                        primaryIsRepeat = false;
+                        break;
+                    }
+                }
+                if (primaryIsRepeat) {
+                    alert("该记录已存在!");
+                    return false;
                 }
             }
             return true;
@@ -221,6 +221,27 @@
     };
 
     $.fn.insertTable = function (options) {
+        var _default = {
+            titles: [], //表头  
+            datas: [], //数据源
+            unique: [], //表不重复字段
+            primary: [], //表主码
+            clickRowCallBack: function (index, obj) {
+                //console.log(index);
+            },
+            dbclickRowCallBack: function (index, obj) {
+                //console.log(obj);
+            },
+            pageCallBack: function (pageIndex, keyword) {
+            },
+            searchCallBack: function (keyword) {
+            },
+            isLocalSearch: true,
+            pageIndex: 1,
+            pageSize: 15,
+            isDialog: false,
+            dataCount: 0
+        };
         $.extend(this, _default, options);
         _funs_.getDOM.call(this);
         _funs_.getTableDataDOM.call(this, this.datas);

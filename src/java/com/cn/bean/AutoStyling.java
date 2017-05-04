@@ -22,14 +22,14 @@ public class AutoStyling {
     }
     
     @FieldDescription(description = "车型名称")
-    private String autoStyling;
+    private String autoStylingName;
 
-    public String getAutoStyling() {
-        return autoStyling;
+    public String getAutoStylingName() {
+        return autoStylingName;
     }
 
-    public void setAutoStyling(String AutoStyling) {
-        this.autoStyling = AutoStyling;
+    public void setAutoStylingName(String AutoStyling) {
+        this.autoStylingName = AutoStyling;
     }
     
 }

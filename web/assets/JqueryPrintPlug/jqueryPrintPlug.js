@@ -45,7 +45,7 @@
         },
         inputControlData: function(data) {
             for (var i in data) {
-                this.find("div[name='" + i + "']").children(".cell_start").after(data[i]);
+                this.find("div[name='" + i + "']").html("<div class='cell_start'></div>" + data[i]);
             }
             return this;
         }

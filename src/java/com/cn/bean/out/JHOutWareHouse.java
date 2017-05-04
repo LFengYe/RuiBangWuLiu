@@ -26,7 +26,7 @@ public class JHOutWareHouse {
     private String jhOutWareHouseID;
     @FieldDescription(description = "终端客户代码")
     private String zdCustomerID;
-    @FieldDescription(description = "终端客户名称")
+    @FieldDescription(description = "终端客户名称", operate = "display")
     private String zdCustomerName;
     @FieldDescription(description = "计划需求时间")
     private String jhDemandTime;
@@ -44,9 +44,8 @@ public class JHOutWareHouse {
     private String printFlag;
     @FieldDescription(description = "备注")
     private String jhOutWareHouseRemark;
-    private String shenHe;
-    private String lh_shenhe;
-    private String sx_shenhe;
+    @FieldDescription(description = "计划是否确认")
+    private boolean jhConfirm;
 
     public String getJhOutWareHouseID() {
         return jhOutWareHouseID;
@@ -136,27 +135,11 @@ public class JHOutWareHouse {
         this.jhOutWareHouseRemark = jhOutWareHouseRemark;
     }
 
-    public String getShenHe() {
-        return shenHe;
+    public boolean isJhConfirm() {
+        return jhConfirm;
     }
 
-    public void setShenHe(String shenHe) {
-        this.shenHe = shenHe;
-    }
-
-    public String getLh_shenhe() {
-        return lh_shenhe;
-    }
-
-    public void setLh_shenhe(String lh_shenhe) {
-        this.lh_shenhe = lh_shenhe;
-    }
-
-    public String getSx_shenhe() {
-        return sx_shenhe;
-    }
-
-    public void setSx_shenhe(String sx_shenhe) {
-        this.sx_shenhe = sx_shenhe;
+    public void setJhConfirm(boolean jhConfirm) {
+        this.jhConfirm = jhConfirm;
     }
 }

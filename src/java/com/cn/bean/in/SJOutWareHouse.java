@@ -26,7 +26,7 @@ public class SJOutWareHouse {
     private String sjOutWareHouseID;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+//    @FieldDescription(description = "供应商名称")
     private String supplierName;
     @FieldDescription(description = "制单人员姓名")
     private String sjCKProducerName;

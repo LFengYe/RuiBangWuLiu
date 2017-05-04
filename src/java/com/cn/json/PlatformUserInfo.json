@@ -2,7 +2,7 @@
     "control": {
         "userLoginAccount": "用户名,string,10",
         "userLoginPassWord": "密码,password,12",
-        "userLoginDBName": "数据库名,@table",
+        "userLoginDBName": "数据库名,@table:@companyID",
         "userInfoRemark": "备注,string,500"
     },
     "mustwrite": ["userLoginAccount", "userLoginPassWord", "userLoginDBName"],

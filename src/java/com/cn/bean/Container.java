@@ -23,6 +23,8 @@ public class Container {
     
     @FieldDescription(description = "盛具名称")
     private String containerName;
+    @FieldDescription(description = "盛具面积")
+    private float containerArea;
 
     public String getContainerName() {
         return containerName;
@@ -30,5 +32,13 @@ public class Container {
 
     public void setContainerName(String containerName) {
         this.containerName = containerName;
+    }
+
+    public float getContainerArea() {
+        return containerArea;
+    }
+
+    public void setContainerArea(float containerArea) {
+        this.containerArea = containerArea;
     }
 }

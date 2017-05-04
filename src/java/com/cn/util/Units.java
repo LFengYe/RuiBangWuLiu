@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +25,8 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  *
@@ -560,6 +563,71 @@ public class Units {
         return buffer.toString();
     }
 
+    /**
+     * 获取Excel单元格的值
+     *
+     * @param cell
+     * @return
+     */
+    public static String getCellValue(Cell cell) {
+        String result = null;
+        switch (cell.getCellType()) {
+            case Cell.CELL_TYPE_BOOLEAN:
+                result = String.valueOf(cell.getBooleanCellValue());
+                break;
+            case Cell.CELL_TYPE_NUMERIC:
+                result = String.valueOf(cell.getNumericCellValue());
+                break;
+            case Cell.CELL_TYPE_STRING:
+                result = cell.getStringCellValue();
+                break;
+            default:
+                result = cell.getStringCellValue();
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * 使用java正则表达式去掉多余的.与0
+     *
+     * @param s
+     * @return
+     */
+    public static String subZeroAndDot(String s) {
+        if (s.indexOf(".") > 0) {
+            s = s.replaceAll("0+?$", "");//去掉多余的0  
+            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉  
+        }
+        return s;
+    }
+
+    public static boolean isEmptyRowForExcel(Row row) {
+        for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
+            Cell cell = row.getCell(c);
+            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 查询给定结果集中是否包含指定列名
+     * @param res
+     * @param columnName
+     * @return 
+     */
+    public static boolean isExistColumn(ResultSet res, String columnName) {
+        try {
+            if (res.findColumn(columnName) > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
     /**
      * ************************************容联云通讯短信发送平台*****************************************
      */

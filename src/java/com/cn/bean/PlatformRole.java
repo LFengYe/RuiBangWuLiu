@@ -22,23 +22,23 @@ public class PlatformRole {
     }
     
     @FieldDescription(description = "角色代码")
-    private String RoleCode;
+    private String roleCode;
     @FieldDescription(description = "角色名称")
-    private String RoleName;
+    private String roleName;
 
     public String getRoleCode() {
-        return RoleCode;
+        return roleCode;
     }
 
     public void setRoleCode(String RoleCode) {
-        this.RoleCode = RoleCode;
+        this.roleCode = RoleCode;
     }
 
     public String getRoleName() {
-        return RoleName;
+        return roleName;
     }
 
     public void setRoleName(String RoleName) {
-        this.RoleName = RoleName;
+        this.roleName = RoleName;
     }
 }

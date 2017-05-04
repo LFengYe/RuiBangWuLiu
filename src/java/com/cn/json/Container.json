@@ -1,11 +1,13 @@
 {
     "control": {
-        "containerName": "盛具名称,string,5"
+        "containerName": "盛具名称,string,5",
+        "containerArea": "盛具面积,string"
     },
     "mustwrite": ["containerName"],
     "unique": ["containerName"],
     "primary": "containerName",
     "titles": {
-        "containerName": "盛具名称,100%"
+        "containerName": "盛具名称,50%",
+        "containerArea": "盛具面积,50%"
     }
 }

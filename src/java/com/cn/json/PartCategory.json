@@ -1,11 +1,13 @@
 {
     "control": {
-        "partCategory": "部品类别,string,10"
+        "partCategoryName": "部品类别,string,10",
+        "wareHouseManagerName": "库管员,string,10"
     },
-    "mustwrite": ["partCategory"],
-    "unique": ["partCategory"],
-    "primary": "partCategory",
+    "mustwrite": ["partCategoryName", "wareHouseManagerName"],
+    "unique": [""],
+    "primary": "partCategoryName",
     "titles": {
-        "partCategory": "部品类别,100%"
+        "partCategoryName": "部品类别,50%",
+        "wareHouseManagerName": "库管员,50%"
     }
 }

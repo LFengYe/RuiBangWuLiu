@@ -22,13 +22,13 @@ public class SHMethod {
     }
     
     @FieldDescription(description = "送货方式")
-    private String shMethod;
+    private String shMethodName;
 
-    public String getShMethod() {
-        return shMethod;
+    public String getShMethodName() {
+        return shMethodName;
     }
 
-    public void setShMethod(String shMethod) {
-        this.shMethod = shMethod;
+    public void setShMethodName(String shMethodName) {
+        this.shMethodName = shMethodName;
     }
 }

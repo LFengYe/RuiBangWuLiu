@@ -1,0 +1,15 @@
+{
+    "control": {
+        "addressCode": "仓位编码,string,10",
+        "ipAddress": "IP地址,string,20",
+        "remarker": "备注,string,50"
+    },
+    "mustwrite": ["addressCode", "ipAddress"],
+    "unique": [],
+    "primary": "addressCode",
+    "titles": {
+        "addressCode": "仓位编码,30%",
+        "ipAddress": "IP地址,40%",
+        "remarker": "备注,30%"
+    }
+}

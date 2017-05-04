@@ -30,30 +30,36 @@
 
     function initDOM() {
         ajaxData(OPERATION.CREATE, {}, function (arr) {
-            var data;
+            console.log(arr);
             $mainTableBox.html("");
-            for (var i = 0; i < arr.length; i++) {
-                data = arr[i];
-                $("<div></div>").appendTo($mainTableBox).insertTwoHeaderTable({
-                    title0: data.title0,
-                    title1: data.title1,
-                    datas: data.datas,
-                    dbclickRowCallBack: function (index, maps) {
-                        //$mainInputBox.objInInputs(maps);
-                        ajaxData(OPERATION.REQUEST_DETAIL, {datas: maps}, function (data) {
-                            $chidTableBox.insertTable({
-                                titles: data.titles,
-                                datas: data.datas
-                            });
-                            $detailList.show();
-                            $mainTable.hide();
-                        }, function () {
+            $("<div></div>").appendTo($mainTableBox).insertTwoHeaderTable({
+                title0: arr.titles,
+                title1: null,
+                datas: arr.datas,
+                dbclickRowCallBack: function (index, maps) {
+                    //$mainInputBox.objInInputs(maps);
+                    ajaxData(OPERATION.REQUEST_DETAIL, {datas: maps}, function (data) {
+                        $chidTableBox.insertTable({
+                            titles: data.titles,
+                            datas: data.datas
                         });
-                    }
-                });
-            }
+                        $detailList.show();
+                        $mainTable.hide();
+                    }, function () {
+                    });
+                }
+            });
+            /*
+             console.log(arr);
+             var data;
+             $mainTableBox.html("");
+             for (var i = 0; i < arr.length; i++) {
+             data = arr[i];
+             
+             }
+             */
         }, function () {
-            
+
         });
 
     }
@@ -101,7 +107,7 @@
         });
     }
 
-    ajaxPage3 = function () {
+    ajaxPage3 = function (moudle) {
         initDOM();
         bindEvt();
     };

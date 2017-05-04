@@ -1,0 +1,38 @@
+{
+    "control": {
+        "tzYMonth": "调帐编号",
+        "tzProduceTime": "制单时间",
+        "tzRemark": "备注,string,500"
+    },
+    "mustwrite": ["tzYMonth", "tzProduceTime"],
+    "unique": ["tzYMonth"],
+    "primary": "tzYMonth",
+    "titles": {
+        "tzYMonth": "调帐编号,30%",
+        "tzProduceTime": "制单时间,40%",
+        "tzRemark": "备注,30%"
+    },
+    "detailControl": {
+        "tzYMonth": "调帐编号,parent",
+        "partState": "部品状态,select,良品,不良品",
+        "supplierID": "供应商代码,@table",
+        "partCode": "部品件号,@table:@accountBalance",
+        "accountBalance": "账面结存,@0",
+        "realBalance": "实物结存,number",
+        "kfTZListRemark": "备注,string,500"
+    },
+    "detailMustwrite": ["tzYMonth", "supplierID", "partCode", "partState", "realBalance"],
+    "detailUnique": [],
+    "detailPrimary": "tzYMonth,supplierID,partCode,partState",
+    "detailTitles": {
+        "tzYMonth": "调帐编号,10%",
+        "supplierID": "供应商代码,10%",
+        "partCode": "部品件号,10%",
+        "partState": "部品状态,10%",
+        "accountBalance": "账面结存,10%",
+        "realBalance": "实物结存,10%",
+        "zsCY;": "帐实差异,10%",
+        "kfTZAuditStaffName": "审核人,10%",
+        "kfTZListRemark": "备注,10%"
+    }
+}

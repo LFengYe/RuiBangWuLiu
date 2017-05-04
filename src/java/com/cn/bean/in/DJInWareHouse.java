@@ -26,7 +26,7 @@ public class DJInWareHouse {
     private String djInWareHouseID;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+//    @FieldDescription(description = "供应商名称")
     private String supplierName;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;

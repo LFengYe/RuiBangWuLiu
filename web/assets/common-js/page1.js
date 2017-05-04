@@ -45,10 +45,12 @@
                 },
                 selectpanel: sp  //选择框对象
             });
+            
             $tableBox.insertTable({
                 titles: data.titles,
                 datas: data.datas,
                 unique: data.unique,
+                primary: primary,
                 dataCount: data.counts,
                 pageSize: pageSize,
                 dbclickRowCallBack: function (index, obj) {
@@ -72,7 +74,7 @@
                     });
                 },
                 searchCallBack: function (keyword) {
-                    console.log("search key:" + keyword);
+                    //console.log("search key:" + keyword);
                     var obj = {"pageIndex": 1, "pageSize": pageSize, "datas": keyword, "rely": "{}"};
                     ajaxData("request_page", obj, function (data) {
                         $tableBox.render(data.datas);
@@ -92,7 +94,8 @@
         $("#page1-add").on("click", function (e) {
             $("#page1-add").attr("disabled", true);
             if ($inputBox.isFinishForm() && (!modifyRow)) {
-                var obj = $inputBox.getInputValObj(false);
+                var obj = $inputBox.getInputValObj(true);
+                //console.log(obj);
                 if (!$tableBox.isUnique(obj)) {
                     $("#page1-add").attr("disabled", false);
                     return false;
@@ -166,7 +169,6 @@
                 return;
             }
             ajaxData(OPERATION.SUBMIT, submitDatas, function (data) {
-                alert("提交成功");
                 submitDatas.add = [];
                 submitDatas.del = [];
                 submitDatas.update = [];
@@ -177,13 +179,13 @@
                 submitDatas.del = [];
                 submitDatas.update = [];
                 selectedSet = [];
-                initDOM();
+                //initDOM();
                 $("#page1-submit").attr("disabled", false);
             });
         });
         $("#page1-import").off("click");
         $("#page1-import").on("click", function (e) {
-            displayLayer(2, "import_page.html", "数据导入", function () {
+            displayLayer(2, "import_page.html?method=import", "数据导入", function () {
                 initDOM();
             });
         });

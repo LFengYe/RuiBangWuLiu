@@ -1,0 +1,50 @@
+{
+    "control": {
+        "xcJSID": "现场结算单据号",
+        "xcJSDate": "现场结算日期",
+        "customerType": "客户类型,hidden,@终端客户",
+        "zdCustomerID": "终端客户ID,@table,@customerType:@zdcustomerName",
+        "xcJSProducerName": "制单人",
+        "xcJSProduceTime": "制单时间",
+        "xcJSRemark": "备注,string,500"
+    },
+    "mustwrite": ["xcJSID", "xcJSDate", "zdCustomerID", "xcJSProducerName", "xcJSProduceTime"],
+    "unique": [],
+    "primary": "xcJSID",
+    "titles": {
+        "xcJSID": "现场结算单据号,20%",
+        "xcJSDate": "现场结算日期,10%",
+        "zdCustomerID": "终端客户ID,10%",
+        "zdcustomerName": "终端客户姓名,10%",
+        "xcJSProducerName": "制单员,10%",
+        "xcJSProduceTime": "制单时间,10%",
+        "xcJSAuditStaffName": "审核员,10%",
+        "xcJSAuditTime": "审核时间,10%",
+        "xcJSRemark": "备注,10%"
+    },
+    "detailControl": {
+        "listNumber": "单内显示序号,hidden",
+        "xcJSID": "非计划出库单号,parent",
+        "customerType": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerType:@supplierName",
+        "partCode": "部品件号,@table:@partID,@partName,@partUnit,@autoStyling,@cfAddress",
+        "xcJSAmount": "结算数量,number",
+        "xcJSListRemark": "备注,string,500"
+    },
+    "detailMustwrite": ["xcJSID", "supplierID", "partCode", "xcJSAmount"],
+    "detailUnique": [],
+    "detailPrimary": "xcJSID,partCode",
+    "detailTitles": {
+        "listNumber": "单内显示序号,10%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "partID": "部品编号,10%",
+        "partName": "部品名称,10%",
+        "partCode": "部品件号,10%",
+        "partUnit": "部品单位,10%",
+        "autoStyling": "车型,10%",
+        "xcJSAmount": "结算数量,10%",
+        "xcJSListRemark": "备注,10%",
+        "xcJSID": "现场结算单据号,10%"
+    }
+}

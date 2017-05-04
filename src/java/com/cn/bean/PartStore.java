@@ -24,16 +24,18 @@ public class PartStore {
     
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
-    private String supplierName;
-    @FieldDescription(description = "部品代码")
-    private String partID;
-    @FieldDescription(description = "部品名称")
-    private String partName;
+//    @FieldDescription(description = "供应商名称")
+//    private String supplierName;
+//    @FieldDescription(description = "部品代码")
+//    private String partID;
+//    @FieldDescription(description = "部品名称")
+//    private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
-    @FieldDescription(description = "存放地址")
-    private String cFAddress;
+    @FieldDescription(description = "库房存放地址")
+    private String kfCFAddress;
+    @FieldDescription(description = "集配区存放地址")
+    private String jpqCFAddress;
     @FieldDescription(description = "备注")
     private String partStoreRemark;
 
@@ -45,30 +47,6 @@ public class PartStore {
         this.supplierID = supplierID;
     }
 
-    public String getSupplierName() {
-        return supplierName;
-    }
-
-    public void setSupplierName(String supplierName) {
-        this.supplierName = supplierName;
-    }
-
-    public String getPartID() {
-        return partID;
-    }
-
-    public void setPartID(String partID) {
-        this.partID = partID;
-    }
-
-    public String getPartName() {
-        return partName;
-    }
-
-    public void setPartName(String partName) {
-        this.partName = partName;
-    }
-
     public String getPartCode() {
         return partCode;
     }
@@ -77,19 +55,27 @@ public class PartStore {
         this.partCode = partCode;
     }
 
-    public String getCFAddress() {
-        return cFAddress;
-    }
-
-    public void setCFAddress(String cFAddress) {
-        this.cFAddress = cFAddress;
-    }
-
     public String getPartStoreRemark() {
         return partStoreRemark;
     }
 
     public void setPartStoreRemark(String partStoreRemark) {
         this.partStoreRemark = partStoreRemark;
+    }
+
+    public String getKfCFAddress() {
+        return kfCFAddress;
+    }
+
+    public void setKfCFAddress(String kfCFAddress) {
+        this.kfCFAddress = kfCFAddress;
+    }
+
+    public String getJpqCFAddress() {
+        return jpqCFAddress;
+    }
+
+    public void setJpqCFAddress(String jpqCFAddress) {
+        this.jpqCFAddress = jpqCFAddress;
     }
 }

@@ -22,38 +22,30 @@ public class SJOutWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "单内显示序号")
-    private String listNumber;
+//    @FieldDescription(description = "单内显示序号")
+//    private String listNumber;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+//    @FieldDescription(description = "供应商名称")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+//    @FieldDescription(description = "部品编号")
     private String partID;
-    @FieldDescription(description = "部品名称")
+//    @FieldDescription(description = "部品名称")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
-    @FieldDescription(description = "部品单位")
+//    @FieldDescription(description = "部品单位")
     private String partUnit;
     @FieldDescription(description = "送检出库数量")
     private String sjCKAmount;
     @FieldDescription(description = "备注")
     private String sjOutWareHouseListRemark;
-    @FieldDescription(description = "送检出库退库单号")
+//    @FieldDescription(description = "送检出库退库单号")
     private String sjOutWareHouseID;
-    @FieldDescription(description = "库管员")
+//    @FieldDescription(description = "库管员")
     private String wareHouseManagerName;
-
-    public String getListNumber() {
-        return listNumber;
-    }
-
-    public void setListNumber(String listNumber) {
-        this.listNumber = listNumber;
-    }
 
     public String getSupplierID() {
         return supplierID;

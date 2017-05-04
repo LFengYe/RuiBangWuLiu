@@ -2,14 +2,17 @@
     "control": {
         "djInWareHouseID": "待检入库单号",
         "customerType": "客户类型,hidden,@供应商",
-        "supplierID": "供应商代码,@table:@supplierName",
+        "supplierID": "供应商代码,@table,@customerType",
         "inboundBatch": "入库批次",
         "djRKProducerName": "制单人员姓名",
         "djRKProduceTime": "制单时间",
         "djINWareHousRemark": "备注,string,500"
     },
+    "operate": {
+        
+    },
     "mustwrite": ["djInWareHouseID", "supplierID", "inboundBatch", "djRKProducerName", "djRKProduceTime"],
-    "unique": ["djInWareHouseID", "inboundBatch"],
+    "unique": ["inboundBatch"],
     "primary": "djInWareHouseID",
     "titles": {
         "djInWareHouseID": "待检入库单号,15%",
@@ -24,25 +27,21 @@
         "djINWareHousRemark": "备注,5%"
     },
     "detailControl": {
-        "listNumber": "单内显示序号,hidden",
         "djInWareHouseID": "待检入库单号,parent",
         "inboundBatch": "入库批次,parent",
         "supplierID": "供应商代码,parent",
-        "supplierName": "供应商名称,parent",
-        "partCode": "部品件号,@table:@partID,@partName,@partUnit,@cfAddress,@autoStyling,@inboundPackageAmount",
-        "partState": "部品状态",
-        "inboundAmount": "入库数量,number",
         "inboundPackageAmount": "入库包装数量,hidden",
         "inboundBoxAmount": "入库箱数,calculate,inboundAmount,inboundPackageAmount,/",
+        "partState": "部品状态,@待检品",
+        "partCode": "部品件号,@table,@supplierID:@inboundPackageAmount",
+        "inboundAmount": "入库数量,number",
         "originalBatch": "原厂批次,string,12",
-        "djInWareHouseListRemark": "备注,string,500",
-        "jhBalance": "余数,hidden"
+        "djInWareHouseListRemark": "备注,string,500"
     },
     "detailMustwrite": ["djInWareHouseID", "supplierID", "partCode", "inboundBatch"],
     "detailUnique": [],
     "detailPrimary": "djInWareHouseID,inboundBatch,partCode",
     "detailTitles": {
-        "listNumber": "单内显示序号,10%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
         "partID": "部品编号,10%",
@@ -50,15 +49,13 @@
         "partCode": "部品件号,10%",
         "partUnit": "部品单位,10%",
         "partState": "部品状态,10%",
-        "autoStyling": "车型,10%",
+        "autoStylingName": "车型,10%",
         "inboundAmount": "入库数量,10%",
         "inboundBoxAmount": "入库箱数,10%",
-        "cfAddress": "存放地址,10%",
         "inboundBatch": "入库批次,10%",
         "originalBatch": "原厂批次,10%",
         "djInWareHouseListRemark": "备注,10%",
-        "djInWareHouseID": "待检入库单号,10%",
-        "jhBalance": "余数,10%"
+        "djInWareHouseID": "待检入库单号,10%"
     },
     "printArea": {
         "title": {"djInWareHouse":"100%,待检入库单"},

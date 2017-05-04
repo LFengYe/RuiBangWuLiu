@@ -23,6 +23,7 @@ public class Constants {
     
 //    public static final double factoryLatitude = 43.851625;
 //    public static final double factoryLongitude = 125.226824;
+    public static final boolean DEBUG_MODE = true;
     public static final int MAX_RECORD = 999999;
     
     /**抢单成功*/

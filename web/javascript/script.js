@@ -7,14 +7,12 @@ var winHeight = 0;
 function findDimensions() {
     if (window.innerWidth) {
         winWidth = window.innerWidth;
-    }
-    else if ((document.body) && (document.body.clientWidth)) {
+    } else if ((document.body) && (document.body.clientWidth)) {
         winWidth = document.body.clientWidth;
     }
     if (window.innerHeight) {
         winHeight = window.innerHeight;
-    }
-    else if ((document.body) && (document.body.clientHeight)) {
+    } else if ((document.body) && (document.body.clientHeight)) {
         winHeight = document.body.clientHeight;
     }
     if (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientWidth) {
@@ -22,13 +20,15 @@ function findDimensions() {
         winWidth = document.documentElement.clientWidth;
     }
 
-    if ($(".wc-menu")) {
-        //$(".wc-menu").css("width", 240);
-        $(".wc-menu").css("min-height", winHeight - 100);
+    if ($(".wc-wc-menu-parent")) {
+        $(".wc-wc-menu-parent").css("height", winHeight - 80);
     }
-    
+    if ($(".wc-menu")) {
+        $(".wc-menu").css("height", winHeight - 80);
+    }
+
     if ($(".wc-page")) {
-        $(".wc-page").css("min-height", winHeight - 36);
+        $(".wc-page").css("min-height", winHeight - 40);
     }
 }
 
@@ -55,7 +55,7 @@ function getCarYearCode(year) {
 function deepCopy(source) {
     var result = {};
     for (var key in source) {
-        result[key] = typeof source[key] === 'object' ? deepCoyp(source[key]): source[key];
+        result[key] = typeof source[key] === 'object' ? deepCoyp(source[key]) : source[key];
     }
     return result;
 }
@@ -215,20 +215,15 @@ function clearForm(formId) {
     for (var i = 0; i < formObj.elements.length; i++) {
         if (formObj.elements[i].type == "text") {
             formObj.elements[i].value = "";
-        }
-        else if (formObj.elements[i].type == "hidden") {
+        } else if (formObj.elements[i].type == "hidden") {
             formObj.elements[i].value = "";
-        }
-        else if (formObj.elements[i].type == "password") {
+        } else if (formObj.elements[i].type == "password") {
             formObj.elements[i].value = "";
-        }
-        else if (formObj.elements[i].type == "radio") {
+        } else if (formObj.elements[i].type == "radio") {
             formObj.elements[i].checked = false;
-        }
-        else if (formObj.elements[i].type == "checkbox") {
+        } else if (formObj.elements[i].type == "checkbox") {
             formObj.elements[i].checked = false;
-        }
-        else if (formObj.elements[i].type == "file") {
+        } else if (formObj.elements[i].type == "file") {
             //formObj.elements[i].select();
             //document.selection.clear();
             // for IE, Opera, Safari, Chrome
@@ -238,8 +233,7 @@ function clearForm(formId) {
             } else {
                 file.value = ""; // FF(包括3.5)
             }
-        }
-        else if (formObj.elements[i].type == "textarea") {
+        } else if (formObj.elements[i].type == "textarea") {
             formObj.elements[i].value = "";
         }
     }
@@ -258,20 +252,15 @@ function clearFormExceptHidden(formId) {
     for (var i = 0; i < formObj.elements.length; i++) {
         if (formObj.elements[i].type == "text") {
             formObj.elements[i].value = "";
-        }
-        else if (formObj.elements[i].type == "hidden") {
+        } else if (formObj.elements[i].type == "hidden") {
             formObj.elements[i].value = "";
-        }
-        else if (formObj.elements[i].type == "password") {
+        } else if (formObj.elements[i].type == "password") {
             formObj.elements[i].value = "";
-        }
-        else if (formObj.elements[i].type == "radio") {
+        } else if (formObj.elements[i].type == "radio") {
             formObj.elements[i].checked = false;
-        }
-        else if (formObj.elements[i].type == "checkbox") {
+        } else if (formObj.elements[i].type == "checkbox") {
             formObj.elements[i].checked = false;
-        }
-        else if (formObj.elements[i].type == "file") {
+        } else if (formObj.elements[i].type == "file") {
             //formObj.elements[i].select();
             //document.selection.clear();
             // for IE, Opera, Safari, Chrome
@@ -281,8 +270,7 @@ function clearFormExceptHidden(formId) {
             } else {
                 file.value = ""; // FF(包括3.5)
             }
-        }
-        else if (formObj.elements[i].type == "textarea") {
+        } else if (formObj.elements[i].type == "textarea") {
             formObj.elements[i].value = "";
         }
     }

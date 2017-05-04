@@ -92,16 +92,16 @@ public class CharactorFilter implements Filter {
         Throwable problem = null;
 
         try {
-
             HttpServletRequest servletRequest = (HttpServletRequest) request;
             HttpServletResponse servletResponse = (HttpServletResponse) response;
             HttpSession session = servletRequest.getSession();
+            //System.out.println(servletRequest.getServletPath());
             // 这里判断目录，后缀名，当然也可以写在web.xml中，用url-pattern进行拦截映射
             if ((!servletRequest.getServletPath().endsWith("login.html"))
-                    && (!servletRequest.getServletPath().endsWith("test.html"))
                     && (!servletRequest.getServletPath().endsWith(".js"))
-                    && (!servletRequest.getServletPath().endsWith(".do"))
                     && (!servletRequest.getServletPath().endsWith(".css"))
+                    && (!servletRequest.getServletPath().endsWith(".map"))
+                    && (!servletRequest.getServletPath().endsWith(".do"))
                     && (!servletRequest.getServletPath().startsWith("/assets/img"))) {
                 if (session.getAttribute("user") == null) {
                     session.invalidate();
@@ -110,7 +110,7 @@ public class CharactorFilter implements Filter {
                     out.println("<script language='javascript' type='text/javascript'>");
                     out.println("alert('未登录或登录已超时!请你重新登录!');window.parent.location.href='" + servletRequest.getContextPath() + "/login.html';");
                     out.println("</script>");
-                    System.out.println("未登录或登录已超时!请你重新登录!");
+                    //System.out.println("未登录或登录已超时!请你重新登录!");
                 } else {
                     chain.doFilter(servletRequest, servletResponse);
                 }

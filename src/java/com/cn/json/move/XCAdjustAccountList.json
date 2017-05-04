@@ -1,0 +1,41 @@
+{
+    "control": {
+        "tzYMonth": "返修入库单号",
+        "tzProduceTime": "制单时间",
+        "tzRemark": "备注,string,500"
+    },
+    "mustwrite": ["tzYMonth", "tzProduceTime"],
+    "unique": ["tzYMonth"],
+    "primary": "tzYMonth",
+    "titles": {
+        "tzYMonth": "调帐编号,30%",
+        "tzProduceTime": "制单时间,40%",
+        "tzRemark": "备注,30%"
+    },
+    "detailControl": {
+        "tzYMonth": "调帐编号,parent",
+        "supplierID": "供应商代码,parent",
+        "supplierName": "供应商名称,parent",
+        "partCode": "部品件号,@table,@supplierID:@partID,@partName,@partUnit,@partState,@inboundBatch,@fxCKAmount",
+        "fxCKAmount": "返修数量,hidden",
+        "fxRKAmount": "返修出库数量,check,小于,fxCKAmount",
+        "fxInWareHouseListRemark": "备注,string,500"
+    },
+    "detailMustwrite": ["fxOutWareHouseID", "supplierID", "partCode", "fxCKAmount"],
+    "detailUnique": [],
+    "detailPrimary": "fxOutWareHouseID,partCode",
+    "detailTitles": {
+        "tzYMonth": "调帐编号,10%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "partID": "部品编号,10%",
+        "partName": "部品名称,10%",
+        "partCode": "部品件号,10%",
+        "partUnit": "部品单位,10%",
+        "inboundBatch": "入库批次,10%",
+        "partUnit": "部品单位,10%",
+        "fxRKAmount": "返修入库数量,10%",
+        "partState": "部品状态,10%",
+        "fxInWareHouseListRemark": "备注,10%"
+    }
+}

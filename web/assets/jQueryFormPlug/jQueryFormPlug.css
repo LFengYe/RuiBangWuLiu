@@ -1,9 +1,9 @@
 .jQueryForm .input-area{
     overflow: hidden;
-    padding:25px;
+    padding:5px;
 }
 .jQueryForm .input-area div {
-    width: 300px;
+    width: 320px;
     height: 24px;
     margin: 5px;
     /*	float: left; */
@@ -19,7 +19,7 @@
 }
 
 .jQueryForm .input-area div input.input{
-    width: 150px;
+    width: 180px;
     margin-left: 20px;
     border-radius: 5px;
     position: relative;
@@ -33,7 +33,7 @@
     margin-right:5px;
 }
 .jQueryForm .input-area div select.select{
-    width: 150px;
+    width: 180px;
     margin-left: 20px;
     border-radius: 5px;
     position: relative;

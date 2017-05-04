@@ -23,43 +23,53 @@ public class PlatformUserInfo {
     }
     
     @FieldDescription(description = "用户名")
-    private String UserLoginAccount;
+    private String userLoginAccount;
     @FieldDescription(description = "密码")
-    private String UserLoginPassWord;
+    private String userLoginPassWord;
+    @FieldDescription(description = "公司编号")
+    private String companyID;
     @FieldDescription(description = "数据库名")
-    private String UserLoginDBName;
+    private String userLoginDBName;
     @FieldDescription(description = "备注")
-    private String UserInfoRemark;
+    private String userInfoRemark;
 
     public String getUserLoginAccount() {
-        return UserLoginAccount;
+        return userLoginAccount;
     }
 
     public void setUserLoginAccount(String UserLoginAccount) {
-        this.UserLoginAccount = UserLoginAccount;
+        this.userLoginAccount = UserLoginAccount;
     }
 
     public String getUserLoginPassWord() {
-        return UserLoginPassWord;
+        return userLoginPassWord;
     }
 
     public void setUserLoginPassWord(String UserLoginPassWord) {
-        this.UserLoginPassWord = UserLoginPassWord;
+        this.userLoginPassWord = UserLoginPassWord;
     }
 
     public String getUserLoginDBName() {
-        return UserLoginDBName;
+        return userLoginDBName;
     }
 
     public void setUserLoginDBName(String UserLoginDBName) {
-        this.UserLoginDBName = UserLoginDBName;
+        this.userLoginDBName = UserLoginDBName;
     }
 
     public String getUserInfoRemark() {
-        return UserInfoRemark;
+        return userInfoRemark;
     }
 
     public void setUserInfoRemark(String UserInfoRemark) {
-        this.UserInfoRemark = UserInfoRemark;
+        this.userInfoRemark = UserInfoRemark;
+    }
+
+    public String getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(String companyID) {
+        this.companyID = companyID;
     }
 }

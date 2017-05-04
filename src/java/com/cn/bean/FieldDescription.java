@@ -24,4 +24,6 @@ public @interface FieldDescription {
     String description() default "";
     
     String type() default "String";
+    
+    String operate() default "input";
 }

@@ -28,7 +28,7 @@ public class Customer {
     @FieldDescription(description = "客户名称简称")
     private String customerAbbName;
     @FieldDescription(description = "客户类型")
-    private String customerType;
+    private String customerTypeName;
     @FieldDescription(description = "经办人")
     private String customerManager;
     @FieldDescription(description = "经办人电话")
@@ -39,14 +39,18 @@ public class Customer {
     private String customerOfficeFax;
     @FieldDescription(description = "邮箱")
     private String customerEmail;
+    @FieldDescription(description = "接收短信号码")
+    private String smsNumbers;
+    @FieldDescription(description = "短信发送时间")
+    private String smsSendTime;
     @FieldDescription(description = "送货方式")
-    private String sHMethod;
+    private String shMethodName;
     @FieldDescription(description = "运输周期(小时)")
     private int transportCycle;
     @FieldDescription(description = "拼音助记")
     private String pinyinAbb;
     @FieldDescription(description = "备注")
-    private String cutomerRemark;
+    private String customerRemark;
 
     public String getCustomerID() {
         return customerID;
@@ -72,12 +76,12 @@ public class Customer {
         this.customerAbbName = customerAbbName;
     }
 
-    public String getCustomerType() {
-        return customerType;
+    public String getCustomerTypeName() {
+        return customerTypeName;
     }
 
-    public void setCustomerType(String customerType) {
-        this.customerType = customerType;
+    public void setCustomerTypeName(String customerTypeName) {
+        this.customerTypeName = customerTypeName;
     }
 
     public String getCustomerManager() {
@@ -120,14 +124,6 @@ public class Customer {
         this.customerEmail = customerEmail;
     }
 
-    public String getSHMethod() {
-        return sHMethod;
-    }
-
-    public void setSHMethod(String sHMethod) {
-        this.sHMethod = sHMethod;
-    }
-
     public int getTransportCycle() {
         return transportCycle;
     }
@@ -144,11 +140,35 @@ public class Customer {
         this.pinyinAbb = pinyinAbb;
     }
 
-    public String getCutomerRemark() {
-        return cutomerRemark;
+    public String getCustomerRemark() {
+        return customerRemark;
     }
 
-    public void setCutomerRemark(String cutomerRemark) {
-        this.cutomerRemark = cutomerRemark;
+    public void setCustomerRemark(String customerRemark) {
+        this.customerRemark = customerRemark;
+    }
+
+    public String getShMethodName() {
+        return shMethodName;
+    }
+
+    public void setShMethodName(String shMethodName) {
+        this.shMethodName = shMethodName;
+    }
+
+    public String getSmsNumbers() {
+        return smsNumbers;
+    }
+
+    public void setSmsNumbers(String smsNumbers) {
+        this.smsNumbers = smsNumbers;
+    }
+
+    public String getSmsSendTime() {
+        return smsSendTime;
+    }
+
+    public void setSmsSendTime(String smsSendTime) {
+        this.smsSendTime = smsSendTime;
     }
 }

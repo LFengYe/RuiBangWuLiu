@@ -1,0 +1,19 @@
+{
+    "control": {
+        "customerTypeName": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerTypeName",
+        "partCode": "部品件号,@table,@supplierID",
+        "employeeType": "雇员类型,hidden,@备货员",
+        "employeeName": "备货员,@table,@employeeType",
+        "remarker": "备注,string,500"
+    },
+    "mustwrite": ["supplierID","partCode","employeeName"],
+    "unique": [],
+    "primary": "supplierID,partCode",
+    "titles": {
+        "supplierID": "供应商代码,30%",
+        "partCode": "部品件号,30%",
+        "employeeName": "备货员,20%",
+        "remarker": "备注,20%"
+    }
+}

@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <title>睿邦物流管理系统登录</title>
         <link rel="stylesheet" href="assets/bootstrap/normalize.css" />
-        <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" media="screen" />
+        <!--<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css"/>-->
         <style>
             html,body{
                 height: 100%;
@@ -85,9 +86,10 @@
                     if (loginUser !== '' && pswd !== '') {
                         var obj = new Object();
                         obj.module = "userLogin";
-                        obj.operation = "login";
+                        obj.operation = "employeeLogin";
                         obj.username = loginUser;
                         obj.password = pswd;
+                        obj.type = "pc";
                         //登录
                         $.ajax({
                             type: "post",
@@ -95,6 +97,7 @@
                             data: JSON.stringify(obj),
                             dataType: "json",
                             success: function (data) {
+                                console.log(data);
                                 if (data.status !== 0) {
                                     alert(data.message);
                                 } else {

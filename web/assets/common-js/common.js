@@ -22,23 +22,24 @@ $(function () {
                 // console.log(module+"XXX"+url);
                 switch (type) {                                      //渲染对应的页面
                     case "page1":
-                        ajaxPage1();
+                        ajaxPage1(module);
                         break;
                     case "page2":
-                        ajaxPage2();
+                        ajaxPage2(module);
                         break;
                     case "page3":
-                        ajaxPage3();
+//                        console.log("page3:" + module);
+                        ajaxPage3(module);
                         break;
                 }
             }
         });
-        
+
         if (window.TableSelectPanel) {
             s = new stringSelectPanel([]);
             t = new TableSelectPanel({}, null);
             m = new TableMultiSelectPanel({}, null);
-            
+
             sp = new SelectPanelProxy(t, s, m);
         }
     }
@@ -60,19 +61,31 @@ function ajax(module, url, operation, data, successCallBack, failCallBack) {
         dataType: "json",
         success: function (data) {
             if (data) {
-                if (data.status !== 0) {
-                    alert(data.message);
-                    failCallBack();
-                } else {
+                if (data.status === 0) {
+                    if (data.message) {
+                        alert(data.message);
+                    }
                     if (data.data) {
                         successCallBack(JSON.parse(data.data));
                     } else {
                         successCallBack();
                     }
+                } else if (data.status === -99) {
+                    alert('由于您长时间没有操作,登陆已失效!请你重新登录!');
+                    window.parent.location.href = "login.html";
+                } else {
+                    alert(data.message);
+
+                    if (data.data) {
+                        console.log(data);
+                        failCallBack(JSON.parse(data.data));
+                    } else {
+                        failCallBack();
+                    }
                 }
             } else {
                 alert("服务器出错!");
-                //failCallBack();
+                failCallBack();
             }
         }
     });
@@ -92,4 +105,22 @@ function getLength(control) {
         titles[i] = txt + ',' + len;
     }
     return titles;
+}
+
+function disableKeys(event) {
+    var e = (document.all) ? window.event : event;
+    var evCode = (document.all) ? e.keyCode : e.which;
+    var srcElement = (document.all) ? e.srcElement : e.target;
+    if (evCode == 13) {
+        evCode = 9;
+    }
+    if (srcElement.type != "textarea" && srcElement.type != "text") {
+        if (evCode == 8) {
+            return false;
+        }
+    } else {
+        if (srcElement.readOnly) {
+            return false;
+        }
+    }
 }

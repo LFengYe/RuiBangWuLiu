@@ -1,11 +1,11 @@
 {
     "control": {
-        "customerType": "客户类别,string,5"
+        "customerTypeName": "客户类别,string,5"
     },
-    "mustwrite": ["customerType"],
-    "unique": ["customerType"],
-    "primary": "customerType",
+    "mustwrite": ["customerTypeName"],
+    "unique": ["customerTypeName"],
+    "primary": "customerTypeName",
     "titles": {
-        "customerType": "客户类别,100%"
+        "customerTypeName": "客户类别,100%"
     }
 }

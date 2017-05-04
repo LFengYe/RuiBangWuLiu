@@ -22,13 +22,23 @@ public class PartCategory {
     }
     
     @FieldDescription(description = "部品类别")
-    private String partCategory;
+    private String partCategoryName;
+    @FieldDescription(description = "库管员")
+    private String wareHouseManagerName;
 
-    public String getPartCategory() {
-        return partCategory;
+    public String getPartCategoryName() {
+        return partCategoryName;
     }
 
-    public void setPartCategory(String partCategory) {
-        this.partCategory = partCategory;
+    public void setPartCategoryName(String partCategoryName) {
+        this.partCategoryName = partCategoryName;
+    }
+
+    public String getWareHouseManagerName() {
+        return wareHouseManagerName;
+    }
+
+    public void setWareHouseManagerName(String wareHouseManagerName) {
+        this.wareHouseManagerName = wareHouseManagerName;
     }
 }

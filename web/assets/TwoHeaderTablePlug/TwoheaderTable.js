@@ -23,13 +23,14 @@
             //加载表头
             var title0 = this.title0;
             var title0_str = '';
-            var colspans, txt, width;
+            var colspans, rowspans, txt, width;
             this.arr = [];
             this.public_obj = {};
             for (var i in title0) {
                 txt = title0[i].split(',')[0];
                 colspans = parseInt(title0[i].split(',')[1]);
-                width = title0[i].split(',')[2];
+                rowspans = parseInt(title0[i].split(',')[2]);
+                width = title0[i].split(',')[3];
                 if (colspans > 1) {
                     for (var k = 0; k < colspans; k++) {
                         this.arr.push(i);
@@ -38,7 +39,10 @@
                 } else {
                     this.arr.push(i);
                     this.public_obj[i] = true;
-                    title0_str += "<td style='width:" + width + "' class='cols'  rowspan='2'>" + txt + "</td>";
+                    if (rowspans > 1)
+                        title0_str += "<td style='width:" + width + "' class='cols'  rowspan='" + rowspans + "'>" + txt + "</td>";
+                    else
+                        title0_str += "<td style='width:" + width + "'>" + txt + "</td>";
                 }
             }
             title0_str = "<tr>" + title0_str + "</tr>";
@@ -57,13 +61,14 @@
         },
         getTableDataDOM: function (datas) {
 
-            var data_str = '',
-                    result = '';
-
+            var data_str = '', result = '';
+            
+            console.log(this.arr);
+            console.log(datas);
             for (var i = 0; i < datas.length; i++) {
                 var k = 0;
                 for (var j in datas[i]) {
-                    data_str += "<td index = " + i + " name=" + this.arr[k] + ">" + datas[i][j] + "</td>";
+                    data_str += "<td index = " + i + " name=" + this.arr[k] + ">" + datas[i][this.arr[k]] + "</td>";
                     k++;
                 }
                 result += "<tr>" + data_str + "</tr>";

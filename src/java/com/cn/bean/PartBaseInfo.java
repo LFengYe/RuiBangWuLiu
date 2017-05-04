@@ -29,35 +29,23 @@ public class PartBaseInfo {
     @FieldDescription(description = "部品件号")
     private String partCode;
     @FieldDescription(description = "使用车型")
-    private String autoStyling;
+    private String autoStylingName;
+    @FieldDescription(description = "装配工位")
+    private String assemblingStation;
     @FieldDescription(description = "部品单位")
     private String partUnit;
     @FieldDescription(description = "单车用量")
     private int dCAmount;
-    @FieldDescription(description = "入库盛具")
-    private String inboundContainer;
-    @FieldDescription(description = "入库包装数量")
-    private int inboundPackageAmount;
-    @FieldDescription(description = "出库盛具")
-    private String outboundContainer;
-    @FieldDescription(description = "出库包装数量")
-    private int outboundPackageAmount;
-    @FieldDescription(description = "是否停用")
+//    @FieldDescription(description = "是否停用")
     private boolean disabled;
-    @FieldDescription(description = "拼音助计")
+//    @FieldDescription(description = "拼音助计")
     private String pinyinAbb;
     @FieldDescription(description = "部品分类")
-    private String partCategory;
-    @FieldDescription(description = "部品图片")
+    private String partCategoryName;
+//    @FieldDescription(description = "部品图片")
     private String partPicture;
     @FieldDescription(description = "备注")
     private String partBaseInfoRemark;
-    @FieldDescription(description = "配送地址1")
-    private String psAddress1;
-    @FieldDescription(description = "配送地址2")
-    private String pSAddress2;
-    @FieldDescription(description = "配送地址3")
-    private String pSAddress3;
 
     public String getPartID() {
         return partID;
@@ -83,12 +71,12 @@ public class PartBaseInfo {
         this.partCode = partCode;
     }
 
-    public String getAutoStyling() {
-        return autoStyling;
+    public String getAutoStylingName() {
+        return autoStylingName;
     }
 
-    public void setAutoStyling(String autoStyling) {
-        this.autoStyling = autoStyling;
+    public void setAutoStylingName(String autoStylingName) {
+        this.autoStylingName = autoStylingName;
     }
 
     public String getPartUnit() {
@@ -107,46 +95,6 @@ public class PartBaseInfo {
         this.dCAmount = dCAmount;
     }
 
-    public String getInboundContainer() {
-        return inboundContainer;
-    }
-
-    public void setInboundContainer(String inboundContainer) {
-        this.inboundContainer = inboundContainer;
-    }
-
-    public int getInboundPackageAmount() {
-        return inboundPackageAmount;
-    }
-
-    public void setInboundPackageAmount(int inboundPackageAmount) {
-        this.inboundPackageAmount = inboundPackageAmount;
-    }
-
-    public String getOutboundContainer() {
-        return outboundContainer;
-    }
-
-    public void setOutboundContainer(String outboundContainer) {
-        this.outboundContainer = outboundContainer;
-    }
-
-    public int getOutboundPackageAmount() {
-        return outboundPackageAmount;
-    }
-
-    public void setOutboundPackageAmount(int outboundPackageAmount) {
-        this.outboundPackageAmount = outboundPackageAmount;
-    }
-
-    public boolean getDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
     public String getPinyinAbb() {
         return pinyinAbb;
     }
@@ -155,12 +103,12 @@ public class PartBaseInfo {
         this.pinyinAbb = pinyinAbb;
     }
 
-    public String getPartCategory() {
-        return partCategory;
+    public String getPartCategoryName() {
+        return partCategoryName;
     }
 
-    public void setPartCategory(String partCategory) {
-        this.partCategory = partCategory;
+    public void setPartCategoryName(String partCategoryName) {
+        this.partCategoryName = partCategoryName;
     }
 
     public String getPartPicture() {
@@ -179,28 +127,28 @@ public class PartBaseInfo {
         this.partBaseInfoRemark = partBaseInfoRemark;
     }
 
-    public String getPsAddress1() {
-        return psAddress1;
+    public boolean getDisabled() {
+        return disabled;
     }
 
-    public void setPsAddress1(String pSAddress1) {
-        this.psAddress1 = pSAddress1;
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
-    public String getPSAddress2() {
-        return pSAddress2;
+    public String getAssemblingStation() {
+        return assemblingStation;
     }
 
-    public void setPSAddress2(String pSAddress2) {
-        this.pSAddress2 = pSAddress2;
+    public void setAssemblingStation(String assemblingStation) {
+        this.assemblingStation = assemblingStation;
     }
 
-    public String getPSAddress3() {
-        return pSAddress3;
+    public int getdCAmount() {
+        return dCAmount;
     }
 
-    public void setPSAddress3(String pSAddress3) {
-        this.pSAddress3 = pSAddress3;
+    public void setdCAmount(int dCAmount) {
+        this.dCAmount = dCAmount;
     }
 
 }

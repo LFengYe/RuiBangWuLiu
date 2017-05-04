@@ -4,7 +4,6 @@
 	list-style: none;
 }
 .jtb .wrapper{
-
 	font-family: "微软雅黑";
 }
 .jtb .wrapper .jtb-header{
@@ -70,10 +69,6 @@
 .jtb .jtb-page .page-info{
     
 }
-.jtb .clicked{
-	color: red;
-}
-.jtb .dbclicked{
-	color: #F1E7E7;
-    background-color: #ECB6B6 !important;
-}
+.jtb .clicked{color: red;}
+.jtb .dbclicked{color: white;background-color: #ECB6B6 !important;}
+.jtb .warning{color: white;background-color: red !important;}

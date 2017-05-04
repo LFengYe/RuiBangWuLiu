@@ -178,6 +178,7 @@ $.fn.insertInputForm = function (options) {
         },
         clearInputsArea: function () {
             for (var i in this.$inputs) {
+                //console.log(this.$inputs);
                 if (!this.$inputs.eq(i).hasClass("special") && !this.$inputs.eq(i).attr("type") === "hidden") {
                     this.$inputs.eq(i).val("");
                 }
@@ -228,8 +229,8 @@ $.fn.insertInputForm = function (options) {
         },
         inputAtuoToggle: function () {
             //绑定input对象enter键自动切换的事件~~~
-            this.on("keypress", "input", function (e) {
-                if (e.keyCode == "13") {
+            this.$inputs.keypress(function(e){
+                if (e.keyCode === 13) {
                     $(this).parent().next().children("input").trigger("focus");
                 }
             });
@@ -266,7 +267,7 @@ $.fn.insertInputForm = function (options) {
                         $rely = that.$inputs.filter("[name=" + relys[i] + "]");
                         if ($rely.val() == "") {
                             $rely.trigger("focus");
-                            alert(relys[i] + "不能为空");
+                            alert("【" + obj[relys[i]].split(",")[0] + "】不能为空");
                             return;
                         }
                         rely_obj[relys[i]] = $rely.val();
@@ -288,22 +289,26 @@ $.fn.insertInputForm = function (options) {
                     }
                     //进行ajax请求
                     options.requesFun(data, function (data) {
-                        //alert("成功!");
+                        console.log(options.tableInputCallBack);
                         if (options.tableInputCallBack) {
+                            alert("第三种");
                             options.selectpanel.reset(3, data, function (resarr) {
-                                $input.val(resarr[0][name]);
                                 options.tableInputCallBack(resarr);
                             });
                         } else {
-                            options.selectpanel.reset(2, data, function (obj) {
+                            options.selectpanel.reset(2, data, function (obj){
                                 $input.val(obj[name]);
-                                
-                                $(".parent").filter("[name=" + name + "]").val(obj[name]);
+                                $input.focus();
+                                if ($(".parent").filter("[name='" + name + "']")) {
+                                    $(".parent").filter("[name='" + name + "']").val(obj[name]);
+                                }
                                 for (var i = 0; i < arr.length; i++) {
                                     that.extraDatas[arr[i]] = obj[arr[i]];
-                                    $(".parent").filter("[name=" + arr[i] + "]").val(obj[arr[i]]);
-                                    if (that.$inputs.filter("[name=" + arr[i] + "]")) {
-                                        that.$inputs.filter("[name=" + arr[i] + "]").val(obj[arr[i]]);
+                                    if ($(".parent").filter("[name='" + arr[i] + "']")) {
+                                        $(".parent").filter("[name='" + arr[i] + "']").val(obj[arr[i]]);
+                                    }
+                                    if (that.$inputs.filter("[name='" + arr[i] + "']")) {
+                                        that.$inputs.filter("[name='" + arr[i] + "']").val(obj[arr[i]]);
                                     }
                                 }
                             });
@@ -316,7 +321,6 @@ $.fn.insertInputForm = function (options) {
                     if (arr.length == 1) {
                         that.formDisable([name]);
                     }
-                    
                     options.selectpanel.reset(1, arr, function (str) {
                         $input.val(str);
                     });
@@ -324,25 +328,35 @@ $.fn.insertInputForm = function (options) {
             });
             
             this.$inputs.filter(".check").on('blur', function() {
+                /*
                 var name = $(this).attr("name");
+                var obj = options.controls[name];
                 var value = $(this).val();
-                var check = options.controls[name].split(",");
-                var referenceObj = that.$inputs.filter("[name=" + check[3] + "]");
-                
-                if (check[2] == "小于") {
+                var check = obj.split(",").slice(2).map(function(i){
+                    return i.slice(1);
+                });
+                */
+                var name = $(this).attr("name");
+                var obj = options.controls[name];
+                var value = $(this).val();
+                var check = obj.split(",").slice(2).map(function(i){
+                    return i.slice(0);
+                });
+                var referenceObj = that.$inputs.filter("[name=" + check[1] + "]")
+                if (check[0] == "小于") {
                     if (eval(referenceObj.val()) < eval(value)) {
                         alert("值不能大于" + referenceObj.val());
-                        $(this).focus();
+                        //$(this).focus();
                         return ;
                     }
                 }
-                if (check[2] == "大于") {
+                if (check[0] == "大于") {
                     if (eval(referenceObj.val()) > eval(value)) {
                         alert("值不能小于" + referenceObj.val());
-                        $(this).focus();
                         return ;
                     }
                 }
+                
             });
         },
         specialInput: function() {

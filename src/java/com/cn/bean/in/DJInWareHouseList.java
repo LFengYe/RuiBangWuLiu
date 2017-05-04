@@ -22,48 +22,36 @@ public class DJInWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "单内显示序号")
-    private int listNumber;
+//    @FieldDescription(description = "单内显示序号")
+//    private int listNumber;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+//    @FieldDescription(description = "供应商名称")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+//    @FieldDescription(description = "部品编号")
     private String partID;
-    @FieldDescription(description = "部品名称")
+//    @FieldDescription(description = "部品名称")
     private String partName;
-    @FieldDescription(description = "部品件号")
+    @FieldDescription(description = "部品件号", operate = "import")
     private String partCode;
-    @FieldDescription(description = "部品单位")
+//    @FieldDescription(description = "部品单位")
     private String partUnit;
     @FieldDescription(description = "部品状态")
     private String partState;
-    @FieldDescription(description = "车型")
-    private String autoStyling;
-    @FieldDescription(description = "入库数量")
+//    @FieldDescription(description = "车型")
+    private String autoStylingName;
+    @FieldDescription(description = "入库数量", operate = "import")
     private int inboundAmount;
     @FieldDescription(description = "入库箱数")
     private int inboundBoxAmount;
-    @FieldDescription(description = "存放地址")
-    private String cfAddress;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
-    @FieldDescription(description = "原厂批次")
+    @FieldDescription(description = "原厂批次", operate = "import")
     private String originalBatch;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String djInWareHouseListRemark;
     @FieldDescription(description = "待检入库单号")
     private String djInWareHouseID;
-    @FieldDescription(description = "余额")
-    private int jhBalance;
-
-    public int getListNumber() {
-        return listNumber;
-    }
-
-    public void setListNumber(int listNumber) {
-        this.listNumber = listNumber;
-    }
 
     public String getSupplierID() {
         return supplierID;
@@ -121,12 +109,12 @@ public class DJInWareHouseList {
         this.partState = partState;
     }
 
-    public String getAutoStyling() {
-        return autoStyling;
+    public String getAutoStylingName() {
+        return autoStylingName;
     }
 
-    public void setAutoStyling(String autoStyling) {
-        this.autoStyling = autoStyling;
+    public void setAutoStylingName(String autoStylingName) {
+        this.autoStylingName = autoStylingName;
     }
 
     public int getInboundAmount() {
@@ -143,14 +131,6 @@ public class DJInWareHouseList {
 
     public void setInboundBoxAmount(int inboundBoxAmount) {
         this.inboundBoxAmount = inboundBoxAmount;
-    }
-
-    public String getCfAddress() {
-        return cfAddress;
-    }
-
-    public void setCfAddress(String cfAddress) {
-        this.cfAddress = cfAddress;
     }
 
     public String getInboundBatch() {
@@ -183,13 +163,5 @@ public class DJInWareHouseList {
 
     public void setDjInWareHouseID(String djInWareHouseID) {
         this.djInWareHouseID = djInWareHouseID;
-    }
-
-    public int getJhBalance() {
-        return jhBalance;
-    }
-
-    public void setJhBalance(int jhBalance) {
-        this.jhBalance = jhBalance;
     }
 }

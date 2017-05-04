@@ -1,43 +1,41 @@
 /*覆盖bootstrap样式*/
 .jmp .list-group{
-	margin-bottom: 0;
-	margin-top: 5px;
+    margin-bottom: 0;
+    margin-top: 5px;
 }
 .jmp .list-group-item{
-	cursor: pointer;
-	border:none;
-	background-color:#33363b;
-	transition:all .1s ease-in;
-	font-size: 16px;
+    cursor: pointer;
+    border:none;
+    background-color:#33363b;
+    transition:all .1s ease-in;
+    font-size: 16px;
 }
 .jmp .list-group-item span{
-	margin-right:5px;
+    margin-right:5px;
 }
 .jmp .jmp-list .jmp-title{
-	margin-left:0px;
-	transition:.1s ease-in;
+    margin-left:0px;
+    transition:.1s ease-in;
 }
 .jmp .jmp-list:hover .jmp-title{
-	margin-left:10px;
-	//background-color:#fff;
-	//color:black;
+    margin-left:10px;
 }
 .jmp .jmp-a {
-	/*text-indent:30px;*/
-	background-color:white;
+    /*text-indent:30px;*/
+    background-color:white;
 }
 .jmp .jmp-a.selected{
-	font-weight:600;
-	
+    font-weight:600;
+
 }
 .jmp .jmp-a:hover{
-	background-color:#212020;
-	
+    background-color:#212020;
+
 }
 .jmp .jmp-a:hover a{
-	color:white;
+    color:white;
 }
 .jmp .jmp-a a{
-	font-size:14px;
-	color:black;
+    font-size:14px;
+    color:black;
 }

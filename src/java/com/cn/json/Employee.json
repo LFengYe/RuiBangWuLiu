@@ -1,0 +1,22 @@
+{
+    "control": {
+        "employeeName": "雇员姓名,string,10",
+        "employeePassword": "雇员登录密码,string,64",
+        "employeeType": "雇员类型,@table:@employeeTypeCode",
+        "employeePhone": "雇员手机,string,11",
+        "employeeIdentityCard": "雇员身份证号,string,18",
+        "employeeRemark": "备注,string,500"
+    },
+    "mustwrite": ["employeeName", "employeeType"],
+    "unique": [],
+    "primary": "employeeName",
+    "titles": {
+        "employeeName": "雇员姓名,20%",
+        "employeePassword": "雇员登录密码,10%",
+        "employeeTypeCode": "雇员类型代码,10%",
+        "employeeType": "雇员类型,10%",
+        "employeePhone": "雇员手机,20%",
+        "employeeIdentityCard": "雇员身份证号,20%",
+        "employeeRemark": "备注,20%"
+    }
+}
