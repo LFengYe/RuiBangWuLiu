@@ -66,7 +66,8 @@
                     }
                 },
                 pageCallBack: function (pageIndex, keyword) {
-                    var obj = {"pageIndex": pageIndex, "pageSize": pageSize, "datas": keyword, "rely": "{}"};
+                    var tmp = JSON.parse(keyword);
+                    var obj = {"pageIndex": pageIndex, "pageSize": pageSize, "datas": tmp.keywords, "rely": "{}"};
                     ajaxData("request_page", obj, function (data) {
                         $tableBox.render(data.datas);
                         $tableBox.page(data.counts, pageIndex, pageSize);
@@ -75,7 +76,8 @@
                 },
                 searchCallBack: function (keyword) {
                     //console.log("search key:" + keyword);
-                    var obj = {"pageIndex": 1, "pageSize": pageSize, "datas": keyword, "rely": "{}"};
+                    var tmp = JSON.parse(keyword);
+                    var obj = {"pageIndex": 1, "pageSize": pageSize, "datas": tmp.keywords, "rely": "{}"};
                     ajaxData("request_page", obj, function (data) {
                         $tableBox.render(data.datas);
                         $tableBox.page(data.counts, 1, pageSize);
@@ -149,6 +151,7 @@
                 }
             }
             $tableBox.del2(arr);
+            selectedSet = [];
             $("#page1-delete").attr("disabled", false);
         });
         $("#page1-query").off("click");

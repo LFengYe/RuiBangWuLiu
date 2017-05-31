@@ -2,35 +2,37 @@
     /*text-align:center;*/
 }
 .tht .wrapper{
-    width: 100%;
+    /*width: 100%;*/
     padding: 10px 10px 10px 20px;
-    display: inline-block;
+    /*display: inline-block;*/
     font-size: 12px;
     font-family: "microsoft yahei";
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select:none;
+    /*-moz-user-select: none;*/
+    /*-ms-user-select: none;*/
+    /*-webkit-user-select: none;*/
+    /*-moz-user-select: none;*/
+    /*user-select:none;*/
     cursor: pointer;
 
 }
 
 
 .tht .tht-container{
-    display: table;
-    height: auto;
+    /*display: table;*/
+    height: 600px;
     text-align: center;
     border: 1px solid #999999;
-    /*border-bottom-width: 0;*/
-    overflow: hidden;
-    /*margin-top: 10px;*/
+    overflow-x: auto;
+    white-space: nowrap;
     margin:10px auto;
     width: 100%;
     border-radius: 5px 5px 15px 15px;
 }
 
-
+.tht .tht-container .tht-scroll {
+    overflow-x: auto;
+    white-space: nowrap;
+}
 
 
 .tht .tht-container  tr:nth-child(2) td,.tht  .tht-container  tr:nth-child(1) td{

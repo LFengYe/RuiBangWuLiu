@@ -21,9 +21,9 @@ public class PlatformRole {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "角色代码")
+    @FieldDescription(description = "角色代码", operate = "import")
     private String roleCode;
-    @FieldDescription(description = "角色名称")
+    @FieldDescription(description = "角色名称", operate = "import")
     private String roleName;
 
     public String getRoleCode() {

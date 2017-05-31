@@ -43,12 +43,16 @@ public class JHOutWareHouseList implements Comparable{
     private int jhCKAmount;
     @FieldDescription(description = "出库盛具", operate = "display")
     private String outboundContainerName;
+    @FieldDescription(description = "包装数量", operate = "display")
+    private int outboundPackageAmount;
     @FieldDescription(description = "盛具数量")
     private int containerAmount;
     @FieldDescription(description = "备注", operate = "import")
     private String jhOutWareHouseListRemark;
     @FieldDescription(description = "计划出库单号")
     private String jhOutWareHouseID;
+    @FieldDescription(description = "备注", operate = "display")
+    private int jhStatus;
 
     public String getSupplierID() {
         return supplierID;
@@ -166,5 +170,21 @@ public class JHOutWareHouseList implements Comparable{
     public int compareTo(Object o) {
         JHOutWareHouseList list = (JHOutWareHouseList) o;
         return this.inboundBatch.compareTo(list.getInboundBatch());
+    }
+
+    public int getOutboundPackageAmount() {
+        return outboundPackageAmount;
+    }
+
+    public void setOutboundPackageAmount(int outboundPackageAmount) {
+        this.outboundPackageAmount = outboundPackageAmount;
+    }
+
+    public int getJhStatus() {
+        return jhStatus;
+    }
+
+    public void setJhStatus(int jhStatus) {
+        this.jhStatus = jhStatus;
     }
 }

@@ -32,7 +32,7 @@ public class SJBackWareHouse {
     private String supplierName;
     @FieldDescription(description = "制单人员姓名")
     private String sjTKProducerName;
-    @FieldDescription(description = "制单时间")
+    @FieldDescription(description = "制单时间", type = "date")
     private String sjTKProduceTime;
     @FieldDescription(description = "审核人员姓名")
     private String sjTKAuditStaffName;

@@ -21,15 +21,15 @@ public class KCQuota {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "供应商代码")
+    @FieldDescription(description = "供应商代码", operate = "import")
     private String supplierID;
-    @FieldDescription(description = "部品件号")
+    @FieldDescription(description = "部品件号", operate = "import")
     private String partCode;
-    @FieldDescription(description = "定额上限")
+    @FieldDescription(description = "定额上限", operate = "import")
     private int kCHighBound;
-    @FieldDescription(description = "定额下限")
+    @FieldDescription(description = "定额下限", operate = "import")
     private int kCLowBound;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String kCQuotaRemark;
 
     public String getSupplierID() {

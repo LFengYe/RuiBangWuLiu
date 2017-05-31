@@ -1,0 +1,15 @@
+{
+    "titles": {
+        "djRKProduceTime": "入库时间,1,1,10%",
+        "djInWareHouseID": "入库单号,1,1,10%",
+        "outInType": "出入库类型,1,1,20%",
+        "outInWethod": "出入库方式,1,1,20%",
+        "partCode": "部品件号,1,1,10%",
+        "partID": "部品编号,1,1,20%",
+        "partName": "部品名称,1,1,20%",
+        "inboundBatch": "入库批次,1,1,10%",
+        "djRKAmount": "入库数量,1,1,10%",
+        "djRKProducerName": "制单人,1,1,10%",
+        "djInWareHouseListRemark": "备注,1,1,10%"
+    }
+}

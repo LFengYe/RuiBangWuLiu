@@ -38,7 +38,7 @@ public class JHOutWareHouse {
     private String jhShift;
     @FieldDescription(description = "计划出库制单人员姓名")
     private String jhCKProducerName;
-    @FieldDescription(description = "计划出库制单时间")
+    @FieldDescription(description = "计划出库制单时间", type = "date")
     private String jhCKProduceTime;
     @FieldDescription(description = "打印标志")
     private String printFlag;

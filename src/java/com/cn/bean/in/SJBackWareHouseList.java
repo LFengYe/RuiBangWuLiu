@@ -26,7 +26,7 @@ public class SJBackWareHouseList {
     }
 //    @FieldDescription(description = "单内显示序号")
     private int listNumber;
-//    @FieldDescription(description = "供应商代码")
+    @FieldDescription(description = "供应商代码")
     private String supplierID;
 //    @FieldDescription(description = "供应商名称")
     private String supplierName;
@@ -38,15 +38,17 @@ public class SJBackWareHouseList {
     private String partCode;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
+//    @FieldDescription(description = "送检返回最大数量")
+    private int sjCKAmount;
 //    @FieldDescription(description = "部品单位")
     private String partUnit;
     @FieldDescription(description = "送检退库数量")
     private int sjTKAmount;
     @FieldDescription(description = "备注")
     private String sjBackWareHouseListRemark;
-//    @FieldDescription(description = "送检出库退库单号")
+    @FieldDescription(description = "送检出库退库单号")
     private String sjBackWareHouseID;
-//    @FieldDescription(description = "库管员")
+    @FieldDescription(description = "库管员")
     private String wareHouseManagerName;
 
     public int getListNumber() {
@@ -143,5 +145,13 @@ public class SJBackWareHouseList {
 
     public void setWareHouseManagerName(String wareHouseManagerName) {
         this.wareHouseManagerName = wareHouseManagerName;
+    }
+
+    public int getSjCKAmount() {
+        return sjCKAmount;
+    }
+
+    public void setSjCKAmount(int sjCKAmount) {
+        this.sjCKAmount = sjCKAmount;
     }
 }

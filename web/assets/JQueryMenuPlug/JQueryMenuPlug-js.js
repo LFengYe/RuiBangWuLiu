@@ -44,7 +44,6 @@ $.fn.insertMenuPlug = function (options) {
             $(this).children('ul li').slideDown(1000);
         });
         this.find("li.jmp-list").click(function (e) {
-
             $(this).children("ul").slideToggle('1000').parent().siblings().children('ul').slideUp(500);
             e.stopPropagation();
         });

@@ -21,9 +21,9 @@ public class Container {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "盛具名称")
+    @FieldDescription(description = "盛具名称", operate = "import")
     private String containerName;
-    @FieldDescription(description = "盛具面积")
+    @FieldDescription(description = "盛具面积", operate = "import")
     private float containerArea;
 
     public String getContainerName() {

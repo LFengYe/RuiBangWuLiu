@@ -38,13 +38,13 @@ public class LHProgressList {
     @FieldDescription(description = "包装数量")
     private int packingAmount;
     @FieldDescription(description = "领货时间")
-    private int lhTime;
+    private String lhTime;
     @FieldDescription(description = "领货人")
-    private int lhStaffName;
+    private String lhStaffName;
     @FieldDescription(description = "计划出库单号")
-    private int jhOutWareHouseID;
+    private String jhOutWareHouseID;
     @FieldDescription(description = "备注")
-    private int lhProgressListRemark;
+    private String lhProgressListRemark;
 
     public String getSupplierID() {
         return supplierID;
@@ -110,35 +110,35 @@ public class LHProgressList {
         this.packingAmount = packingAmount;
     }
 
-    public int getLhTime() {
+    public String getLhTime() {
         return lhTime;
     }
 
-    public void setLhTime(int lhTime) {
+    public void setLhTime(String lhTime) {
         this.lhTime = lhTime;
     }
 
-    public int getLhStaffName() {
+    public String getLhStaffName() {
         return lhStaffName;
     }
 
-    public void setLhStaffName(int lhStaffName) {
+    public void setLhStaffName(String lhStaffName) {
         this.lhStaffName = lhStaffName;
     }
 
-    public int getJhOutWareHouseID() {
+    public String getJhOutWareHouseID() {
         return jhOutWareHouseID;
     }
 
-    public void setJhOutWareHouseID(int jhOutWareHouseID) {
+    public void setJhOutWareHouseID(String jhOutWareHouseID) {
         this.jhOutWareHouseID = jhOutWareHouseID;
     }
 
-    public int getLhProgressListRemark() {
+    public String getLhProgressListRemark() {
         return lhProgressListRemark;
     }
 
-    public void setLhProgressListRemark(int lhProgressListRemark) {
+    public void setLhProgressListRemark(String lhProgressListRemark) {
         this.lhProgressListRemark = lhProgressListRemark;
     }
     

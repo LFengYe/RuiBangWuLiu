@@ -33,6 +33,7 @@
                 findDimensions();
             };
             function displayLayer(type, content, title, callback) {
+                layer.closeAll();
                 layer.open({
                     type: type,
                     title: title,
@@ -72,7 +73,7 @@
         <div class="container-fluid wc-content no_print">
             <div class="row">
                 <div class="col-xs-4 col-sm-4 col-md-3 col-lg-2">
-                    <img class="img-logo" alt="" src="assets/img/rbwl_logo.png"/>
+                    <img class="img-logo" alt="" src="assets/img/睿博Logo.png"/>
                     <div class="wc-menu"></div>
                 </div>
                 <div class="col-xs-8 col-sm-8 col-md-9 col-lg-10">
@@ -123,29 +124,22 @@
                                     <div class="wc-page2-form wc-form ">
                                         <div class="wc-group">
                                             <label>关键字</label>
-                                            <input type="text" class="wc-control" placeholder="请输入关键词">
+                                            <input type="text" name="keywords" class="wc-control" placeholder="请输入关键词">
                                         </div>
                                         <div class="wc-group">
                                             <label>起始日期</label>
-                                            <input type="text" class="wc-control" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})"/>
+                                            <input type="text" name="startTime" class="wc-control start-time" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})"/>
                                         </div>
                                         <div class="wc-group">
                                             <label>终止日期</label>
-                                            <input type="text" class="wc-control" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
+                                            <input type="text" name="endTime" class="wc-control end-time" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
                                         </div>
                                         <button class="page2-query">查询</button>
+                                        <div class="page2-history checkbox"><label><input type="checkbox"/>查询历史记录</label></div>
                                         <button class="page2-addItem">添加</button>
+                                        <button class="page2-deleteItem">删除</button>
                                     </div>
                                     <div class="page2-show-table"><!--动态添加--></div>
-
-                                    <!--<div class="text-center">
-                                        <nav>
-                                            <ul class="pagination page2-pagination">
-                                                <li><a href="#" class="page2-left">&laquo;</a></li>
-                                                <li><a href="#" class="page2-right">&raquo;</a></li>
-                                            </ul>
-                                        </nav>
-                                    </div>-->
                                 </div>
                                 <div class="page2-detail-list">
                                     <div class="page2-main-input-box">
@@ -181,28 +175,40 @@
                                 <div class="page3-main-table">
                                     <div class="wc-page3-form wc-form">
                                         <div class="wc-group">
+                                            <label>部品状态</label>
+                                            <input type="hidden" name="partStatus" class="wc-control" value="良品">
+                                            <select>
+                                                <option>良品</option>
+                                                <option>不良品</option>
+                                                <option>待检品</option>
+                                                <option>返修品</option>
+                                            </select>
+                                        </div>
+                                        <div class="wc-group">
                                             <label>关键字</label>
-                                            <input type="text" class="wc-control" placeholder="请输入关键词">
+                                            <input type="text" name="keywords" class="wc-control" placeholder="请输入关键词">
                                         </div>
                                         <div class="wc-group">
                                             <label>起始日期</label>
-                                            <input type="text" class="wc-control" onfocus="WdatePicker({dateFmt: 'yyyy/MM/dd', maxDate: getMaxDate()})">
+                                            <input type="text" name="startTime" class="wc-control start-time" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
                                         </div>
                                         <div class="wc-group">
                                             <label>终止日期</label>
-                                            <input type="text" class="wc-control" onfocus="WdatePicker({dateFmt: 'yyyy/MM/dd', maxDate: getMaxDate()})">
+                                            <input type="text" name="endTime" class="wc-control end-time" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
                                         </div>
                                         <button class="page3-query">查询</button>
+                                        <button class="page3-export">导出</button>
                                     </div>
                                     <div class="page3-show-table"><!--动态添加--></div>
-                                    <div class="text-center">
+                                    
+<!--                                    <div class="text-center">
                                         <nav>
                                             <ul class="pagination page3-pagination">
                                                 <li><a href="#" class="page3-left">&laquo;</a></li>
                                                 <li><a href="#" class="page3-right">&raquo;</a></li>
                                             </ul>
                                         </nav>
-                                    </div>
+                                    </div>-->
 
                                 </div>
 
@@ -226,6 +232,7 @@
             </div>
         </div>
 
+        <!--打印区域-->
         <div class="print_area content_hidden" id="print_area">
             <div class="div_table_2">
                 <div class="div_row">
@@ -293,6 +300,7 @@
             </div>
         </div>
 
+        <!--导入回写数据-->
         <div class="no_print content_hidden">
             <input type="hidden" id="import_result" />
             <input type="hidden" id="import_return_data" />

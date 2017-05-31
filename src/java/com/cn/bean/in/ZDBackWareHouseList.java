@@ -22,22 +22,22 @@ public class ZDBackWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "单内显示序号")
-    private int listNumber;
     @FieldDescription(description = "供应商ID")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
-    @FieldDescription(description = "部品单位")
+    @FieldDescription(description = "部品单位", operate = "display")
     private String partUnit;
     @FieldDescription(description = "退库数量")
     private int zdTKAmount;
+//    @FieldDescription(description = "退库最大数量")
+    private int tkAmount;
     @FieldDescription(description = "退库部品入库选择批次")
     private String inboundBatch;
     @FieldDescription(description = "终端退库明细备注")
@@ -48,14 +48,6 @@ public class ZDBackWareHouseList {
     private String zdBackWareHouseID;
     @FieldDescription(description = "库管员")
     private String wareHouseManagerName;
-
-    public int getListNumber() {
-        return listNumber;
-    }
-
-    public void setListNumber(int listNumber) {
-        this.listNumber = listNumber;
-    }
 
     public String getSupplierID() {
         return supplierID;
@@ -151,5 +143,13 @@ public class ZDBackWareHouseList {
 
     public void setWareHouseManagerName(String wareHouseManagerName) {
         this.wareHouseManagerName = wareHouseManagerName;
+    }
+
+    public int getTkAmount() {
+        return tkAmount;
+    }
+
+    public void setTkAmount(int tkAmount) {
+        this.tkAmount = tkAmount;
     }
 }

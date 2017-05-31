@@ -21,7 +21,7 @@ public class SHMethod {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "送货方式")
+    @FieldDescription(description = "送货方式", operate = "import")
     private String shMethodName;
 
     public String getShMethodName() {

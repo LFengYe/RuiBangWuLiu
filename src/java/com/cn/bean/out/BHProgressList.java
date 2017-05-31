@@ -38,11 +38,13 @@ public class BHProgressList {
     @FieldDescription(description = "包装数量")
     private int packingAmount;
     @FieldDescription(description = "备货时间")
-    private int bhTime;
+    private String bhTime;
     @FieldDescription(description = "计划出库单号")
-    private int jhOutWareHouseID;
+    private String jhOutWareHouseID;
     @FieldDescription(description = "备注")
-    private int bhProgressListRemark;
+    private String bhProgressListRemark;
+    @FieldDescription(description = "备货状态")
+    private String bhStatus;
 
     public String getSupplierID() {
         return supplierID;
@@ -108,28 +110,36 @@ public class BHProgressList {
         this.packingAmount = packingAmount;
     }
 
-    public int getBhTime() {
+    public String getBhTime() {
         return bhTime;
     }
 
-    public void setBhTime(int bhTime) {
+    public void setBhTime(String bhTime) {
         this.bhTime = bhTime;
     }
 
-    public int getJhOutWareHouseID() {
+    public String getJhOutWareHouseID() {
         return jhOutWareHouseID;
     }
 
-    public void setJhOutWareHouseID(int jhOutWareHouseID) {
+    public void setJhOutWareHouseID(String jhOutWareHouseID) {
         this.jhOutWareHouseID = jhOutWareHouseID;
     }
 
-    public int getBhProgressListRemark() {
+    public String getBhProgressListRemark() {
         return bhProgressListRemark;
     }
 
-    public void setBhProgressListRemark(int bhProgressListRemark) {
+    public void setBhProgressListRemark(String bhProgressListRemark) {
         this.bhProgressListRemark = bhProgressListRemark;
+    }
+
+    public String getBhStatus() {
+        return bhStatus;
+    }
+
+    public void setBhStatus(String bhStatus) {
+        this.bhStatus = bhStatus;
     }
     
 }

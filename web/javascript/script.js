@@ -24,7 +24,7 @@ function findDimensions() {
         $(".wc-wc-menu-parent").css("height", winHeight - 80);
     }
     if ($(".wc-menu")) {
-        $(".wc-menu").css("height", winHeight - 80);
+        $(".wc-menu").css("height", winHeight - 100);
     }
 
     if ($(".wc-page")) {
@@ -93,7 +93,7 @@ function getNowDate() {
 //获取客户端当前日期
 function getNowDateShort() {
     var t = new Date;
-    var nowDate = [t.getYear(), t.getMonth() + 1, t.getDate()].join('/');
+    var nowDate = [t.getFullYear(), t.getMonth() + 1, t.getDate()].join('-');
     return nowDate;
 }
 //getMaxDate生成客户端本地时间
@@ -119,6 +119,20 @@ function stringToDate(strDate) {
     var fullTime = strDate.split(" ")[1].split(":");
 
     return new Date(fullDate[0], fullDate[1] - 1, fullDate[2], (fullTime[0] != null ? fullTime[0] : 0), (fullTime[1] != null ? fullTime[1] : 0), (fullTime[2] != null ? fullTime[2] : 0));
+}
+
+
+function serializeJqueryElement(jqEl) {
+    //console.log(jqEl);
+    var elements = jqEl.find("input");
+    var queryComponents = new Array();
+    //console.log(elements);
+    for (var i = 0; i < elements.length; i++) {
+        var queryComponent = serializeElement(elements[i]);
+        if (queryComponent)
+            queryComponents.push(queryComponent);
+    }
+    return '{' + queryComponents.join(',') + '}';
 }
 
 ///////获取指定form中的所有的<input>对象/////////
@@ -155,7 +169,6 @@ function input(element) {
 function serializeElement(element) {
     var method = element.tagName.toLowerCase();
     var parameter = input(element);
-
     if (parameter) {
         var key = (parameter[0]);
         if (key.length == 0)

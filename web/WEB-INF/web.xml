@@ -16,11 +16,14 @@
         <servlet-name>DataInterface</servlet-name>
         <servlet-class>com.cn.servlet.DataInterface</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AppInterface</servlet-name>
+        <servlet-class>com.cn.servlet.AppInterface</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DataInterface</servlet-name>
         <url-pattern>/action.do</url-pattern>
     </servlet-mapping>
-    
     <servlet>
         <servlet-name>UploadFileServlet</servlet-name>
         <servlet-class>com.cn.servlet.UploadFileServlet</servlet-class>
@@ -32,6 +35,10 @@
     <welcome-file-list>
         <welcome-file>login.html</welcome-file>
     </welcome-file-list>
+    <servlet-mapping>
+        <servlet-name>AppInterface</servlet-name>
+        <url-pattern>/app.do</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30

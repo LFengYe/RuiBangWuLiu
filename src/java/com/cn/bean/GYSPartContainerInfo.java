@@ -29,8 +29,10 @@ public class GYSPartContainerInfo {
     private String partName;
     @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-//    @FieldDescription(description = "库存数量", operate = "display")
-//    private String kcAmount;
+    @FieldDescription(description = "车型", operate = "display")
+    private String autoStylingName;
+    @FieldDescription(description = "部品单位", operate = "display")
+    private String partUnit;
     @FieldDescription(description = "入库盛具", operate = "import")
     private String inboundContainerName;
     @FieldDescription(description = "入库包装数量", operate = "import")
@@ -121,5 +123,21 @@ public class GYSPartContainerInfo {
 
     public void setPartID(String partID) {
         this.partID = partID;
+    }
+
+    public String getAutoStylingName() {
+        return autoStylingName;
+    }
+
+    public void setAutoStylingName(String autoStylingName) {
+        this.autoStylingName = autoStylingName;
+    }
+
+    public String getPartUnit() {
+        return partUnit;
+    }
+
+    public void setPartUnit(String partUnit) {
+        this.partUnit = partUnit;
     }
 }

@@ -50,6 +50,7 @@ public class CommonController {
      * @param operate
      * @param conn
      * @return 0 -- 操作成功 | -1 -- 操作失败 | 1 -- 传入参数错误 | 2 -- 传入数据为空
+     * @throws java.lang.Exception
      */
     public ArrayList<Integer> dataBaseOperate(String datas, String beanPackage, String tableName, String operate, Connection conn) throws Exception {
         ArrayList<Integer> results = new ArrayList<>();
@@ -83,10 +84,12 @@ public class CommonController {
                             builder.insert(builder.lastIndexOf(",)") + 1, "?,");
                         }
                     }
-                    builder.deleteCharAt(builder.indexOf((",)")));
-                    builder.deleteCharAt(builder.lastIndexOf(",)"));
+                    if (builder.indexOf(",)") != -1) {
+                        builder.deleteCharAt(builder.indexOf((",)")));
+                        builder.deleteCharAt(builder.lastIndexOf(",)"));
+                    }
                     String sql = builder.toString();
-                    System.out.println("add sql:" + sql);
+//                    System.out.println("add sql:" + sql);
 
                     conn.setAutoCommit(false);
                     statement = conn.prepareCall(sql);
@@ -135,6 +138,10 @@ public class CommonController {
                         if (!hasField(objClass, key)) {
                             continue;
                         }
+                        if (!isInput(objClass, key)) {
+                            continue;
+                        }
+                        
                         if (itemCount > 0) {
                             builder.append(",").append(key).append(" = ").append("?");
                         } else {
@@ -150,6 +157,9 @@ public class CommonController {
                         if (!hasField(objClass, key)) {
                             continue;
                         }
+                        if (!isInput(objClass, key)) {
+                            continue;
+                        }
                         if (itemCount > 0) {
                             builder.append(" and ").append(key).append(" = ").append("?");
                         } else {
@@ -159,7 +169,7 @@ public class CommonController {
                     }
 
                     String sql = builder.toString();
-                    System.out.println("update sql:" + sql);
+//                    System.out.println("update sql:" + sql);
 
                     conn.setAutoCommit(false);
                     statement = conn.prepareCall(sql);
@@ -177,6 +187,9 @@ public class CommonController {
                             if (!hasField(objClass, key)) {
                                 continue;
                             }
+                            if (!isInput(objClass, key)) {
+                                continue;
+                            }
                             try {
                                 setFieldValue(objClass, key, setObject.getString(key), statement, itemCount);
                             } catch (NoSuchFieldException ex) {
@@ -192,6 +205,9 @@ public class CommonController {
                         while (keysIterator.hasNext()) {
                             String key = keysIterator.next();
                             if (!hasField(objClass, key)) {
+                                continue;
+                            }
+                            if (!isInput(objClass, key)) {
                                 continue;
                             }
                             try {
@@ -223,6 +239,9 @@ public class CommonController {
                         if (!hasField(objClass, key)) {
                             continue;
                         }
+                        if (!isInput(objClass, key)) {
+                            continue;
+                        }
                         if (itemCount > 0) {
                             builder.append(" and ").append(key).append(" = ").append("?");
                         } else {
@@ -247,6 +266,9 @@ public class CommonController {
                         while (keysIterator.hasNext()) {
                             String key = keysIterator.next();
                             if (!hasField(objClass, key)) {
+                                continue;
+                            }
+                            if (!isInput(objClass, key)) {
                                 continue;
                             }
                             try {
@@ -345,7 +367,7 @@ public class CommonController {
      */
     public List<Object> dataBaseQuery(String type, String beanPackage, String tableName, String fields, String wherecase, int pageSize, int pageIndex, String orderField, int orderFlag,
             Connection conn) throws Exception {
-//        System.out.println("wherecase:" + wherecase);
+        //System.out.println("wherecase:" + wherecase);
         CallableStatement statement = null;
         ArrayList<Object> result;
         Class objClass = Class.forName(beanPackage + tableName);
@@ -399,6 +421,193 @@ public class CommonController {
             return result;
         } catch (SQLException ex) {
             logger.error("数据库执行出错", ex);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                logger.error("数据库关闭连接错误", ex);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @param proceduceName
+     * @param params
+     * @param conn
+     * @return
+     * @throws Exception 
+     */
+    public ArrayList<Integer> proceduceForUpdate(String proceduceName, JSONArray params, Connection conn) throws Exception {
+        CallableStatement statement = null;
+        ArrayList<Integer> results = new ArrayList<>();
+        try {
+            int[] exeResult = null;
+            //生产存储过程执行SQL语句
+            StringBuilder builder;
+            builder = new StringBuilder("{call " + proceduceName + "()}");
+            Iterator<String> keysIterator = params.getJSONObject(0).keySet().iterator();
+            while (keysIterator.hasNext()) {
+                if (builder.indexOf(",") == -1) {
+                    builder.insert(builder.indexOf("(") + 1, "?,");
+                } else {
+                    builder.insert(builder.indexOf(",)") + 1, "?,");
+                }
+                keysIterator.next();
+            }
+            if (builder.indexOf(",)") != -1)
+                builder.deleteCharAt(builder.indexOf(",)"));
+            String sql = builder.toString();
+            
+//            System.out.println("sql:" + sql);
+            conn.setAutoCommit(false);
+            //生产会话
+            statement = conn.prepareCall(sql);
+
+//            JSONArray array = JSONObject.parseArray(datas);
+            for (int i = 0; i < params.size(); i++) {
+                //设置存储过程参数值
+                JSONObject object = params.getJSONObject(i);
+                keysIterator = object.keySet().iterator();
+                while (keysIterator.hasNext()) {
+                    String key = keysIterator.next();
+                    String[] keyValue = object.getString(key).split(",");
+                    if (keyValue[0].compareToIgnoreCase("int") == 0) {
+                        statement.setInt(key, Integer.valueOf(keyValue[1]));
+                    }
+                    if (keyValue[0].compareToIgnoreCase("string") == 0) {
+                        statement.setString(key, keyValue[1]);
+                    }
+                }
+                statement.addBatch();
+            }
+            try {
+                exeResult = statement.executeBatch();
+                conn.commit();
+                results.add(0, 0);
+                if (exeResult != null) {
+                    for (int i = 0; i < exeResult.length; i++) {
+                        results.add(exeResult[i]);
+                    }
+                }
+                return results;
+            } catch(BatchUpdateException e) {
+                logger.error("批处理执行异常:" + e.getErrorCode() + "," + e.getMessage());
+                exeResult = e.getUpdateCounts();
+                results.add(0, e.getErrorCode());
+                if (exeResult != null) {
+                    for (int i = 0; i < exeResult.length; i++) {
+                        results.add(exeResult[i]);
+                    }
+                }
+                return results;
+            }
+        } catch (SQLException e) {
+            logger.error("数据库执行出错", e);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                logger.error("数据库关闭连接错误", ex);
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * 执行只有输入参数且返回结果集的存储过程
+     *
+     * @param proceduceName
+     * @param params 该参数与存储过程的输入参数对应, 如: 存储过程的输入参数为(params1 int, params2
+     * varchar(20)),则改参数为: {"params1": "int,params1Val", "params2":
+     * "string,params2Val"}
+     * @param className
+     * @param conn
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<Object> proceduceQuery(String proceduceName, JSONObject params, String className, Connection conn) throws Exception {
+        CallableStatement statement = null;
+        try {
+            //生产存储过程执行SQL语句
+            StringBuilder builder;
+            builder = new StringBuilder("{call " + proceduceName + "()}");
+            Iterator<String> keysIterator = params.keySet().iterator();
+            while (keysIterator.hasNext()) {
+                if (builder.indexOf(",") == -1) {
+                    builder.insert(builder.indexOf("(") + 1, "?,");
+                } else {
+                    builder.insert(builder.indexOf(",)") + 1, "?,");
+                }
+                keysIterator.next();
+            }
+            if (builder.indexOf(",)") != -1)
+                builder.deleteCharAt(builder.indexOf(",)"));
+            String sql = builder.toString();
+            
+//            System.out.println("sql:" + sql);
+            //生产会话
+            statement = conn.prepareCall(sql);
+
+            //设置存储过程参数值
+            keysIterator = params.keySet().iterator();
+            while (keysIterator.hasNext()) {
+                String key = keysIterator.next();
+                String[] keyValue = params.getString(key).split(",", 2);
+                //System.out.println(key + ":" + keyValue[1] + "," + keyValue[1].length());
+                if (keyValue[0].compareToIgnoreCase("int") == 0) {
+                    statement.setInt(key, Integer.valueOf(keyValue[1]));
+                }
+                if (keyValue[0].compareToIgnoreCase("string") == 0) {
+                    statement.setString(key, keyValue[1]);
+                }
+            }
+            
+            ResultSet set = statement.executeQuery();
+            Class objClass = Class.forName(className);
+            Method[] methods = objClass.getMethods();
+            ArrayList<Object> result = new ArrayList<>();
+            while (set.next()) {
+                Object object = objClass.newInstance();
+                for (Method method : methods) {
+                    String methodName = method.getName();
+                    if (methodName.startsWith("set") && !Modifier.isStatic(method.getModifiers())) {
+                        // 根据方法名字得到数据表格中字段的名字
+                        String columnName = methodName.substring(3, methodName.length());
+                        if (Units.isExistColumn(set, columnName)) {
+                            // 得到方法的参数类型
+                            Class[] parmts = method.getParameterTypes();
+                            if (parmts[0] == int.class) {
+                                method.invoke(object, set.getInt(columnName));
+                            } else if (parmts[0] == boolean.class) {
+                                method.invoke(object, set.getBoolean(columnName));
+                            } else if (parmts[0] == float.class) {
+                                method.invoke(object, set.getFloat(columnName));
+                            } else if (parmts[0] == double.class) {
+                                method.invoke(object, set.getDouble(columnName));
+                            } else {
+                                method.invoke(object, set.getString(columnName));
+                            }
+                        }
+                    }
+                }
+                result.add(object);
+            }
+            return result;
+        } catch (SQLException e) {
+            
+            logger.error("数据库执行出错" + e.getErrorCode(), e);
         } finally {
             try {
                 if (statement != null) {
@@ -537,7 +746,7 @@ public class CommonController {
                     if (result == null) {
                         result = "(" + field.getName() + " between '" + object.getString("start") + "' and '" + object.getString("end") + "')";
                     } else {
-                        result += " and " + "(" + field.getName() + " between '" + object.getString("start") + "' and '" + object.getString("end") + "')";
+                        result += " and (" + field.getName() + " between '" + object.getString("start") + "' and '" + object.getString("end") + "')";
                     }
                     continue;
                 }
@@ -564,7 +773,8 @@ public class CommonController {
         } else {
             result = commonResult;
         }
-
+        
+//        System.out.println("where date sql:" + result);
         return (result == null) ? "" : "(" + result + ")";
     }
 

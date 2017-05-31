@@ -1,29 +1,41 @@
 package com.cn.test;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.AreaLedIPInfo;
+import com.cn.bean.PartStore;
+import com.cn.bean.app.JHOutWareHouseList;
 import com.cn.controller.CommonController;
+import com.cn.servlet.DataInterface;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.ExportExcel;
+import com.cn.util.RedisAPI;
 import com.cn.util.Units;
 import com.listenvision.led;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 public class LedControl {
+    private static final Logger logger = Logger.getLogger(DataInterface.class);
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(Boolean.valueOf("0"));
-//        powerOnOffAllLed(0);
-//        setAllLed(2, 1);
+    
+    public static void main(String[] args) {
+        ArrayList supplierList = new ArrayList();
+        supplierList.add("121212");
+        supplierList.add("121212");
+        supplierList.add("121212");
+        String supplierStr = Arrays.toString(supplierList.toArray());
+        System.out.println(supplierStr.substring(1, supplierStr.length() - 1).replace(" ", ""));
     }
 
     public static void setC01Plan() throws Exception {
         AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
-        ledIPInfo.setIpAddress("192.168.10.46");
+        ledIPInfo.setIpAddress("192.168.10.167");
         ledIPInfo.setAddressCode("C-01");
         LedPlan plan = new LedPlan();
         plan.setSupplierName("四川泛华");
@@ -51,6 +63,37 @@ public class LedControl {
         partStatus.setInboundBatch("20170410122323");
         partStatus.setRejectReason("产品不合格");
         setLedPartStatus(ledIPInfo, partStatus, 2);
+    }
+
+    public static void setLedAreaCode(String partCode, String supplierID) {
+        //System.out.println("partStore:" + RedisAPI.get("partStore_" + supplierID + "_" + partCode));
+        PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + supplierID + "_" + partCode), PartStore.class);
+        //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
+        AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()), AreaLedIPInfo.class);
+        setLedAreaCode(ledIPInfo);
+    }
+
+    public static void setLedPlanList(JHOutWareHouseList list) {
+        try {
+            //System.out.println("partStore:" + RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode()));
+            PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode()), PartStore.class);
+            //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
+            AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()), AreaLedIPInfo.class);
+            LedPlan plan = new LedPlan();
+            plan.setPartCode(list.getPartCode());
+            plan.setPartName(list.getPartName());
+            plan.setSupplierID(list.getSupplierID());
+            plan.setSupplierName(list.getSupplierName());
+            plan.setPlanNum(String.valueOf(list.getJhCKAmount()));
+            plan.setInboundBatch(list.getInboundBatch());
+            plan.setAreaCode(partStore.getKfCFAddress());
+            plan.setContainer(list.getOutboundContainerName());
+            plan.setContainerAmount(String.valueOf(list.getOutboundPackageAmount()));
+            plan.setContainerBoxAmount(String.valueOf(list.getContainerAmount()));
+            setLedPlan(ledIPInfo, plan, 1);
+        } catch (Exception e) {
+            logger.error("设置Led信息出错!", e);
+        }
     }
 
     /**
@@ -156,10 +199,12 @@ public class LedControl {
             }
             count++;
         }
+        /*
         File file = new File(fileName);
         if (!file.delete()) {
             System.out.println(fileName + "删除失败!");
         }
+         */
     }
 
     /**
@@ -259,6 +304,7 @@ public class LedControl {
         String pngFilePath = filePath + nowTime + ".png";
         int[] fromIndex = {0, 0};
         int[] toIndex = {1, 5};
+        System.out.println("filePath:" + file.getAbsolutePath());
         DrawFromExcel.drawExcelToPNG(file.getAbsolutePath(), pngFilePath, fromIndex, toIndex);
         return pngFilePath;
     }

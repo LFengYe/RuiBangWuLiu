@@ -26,13 +26,13 @@ public class FXOutWareHouse {
     private String fxOutWareHouseID;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
     @FieldDescription(description = "返修出库部品状态")
     private String partState;
     @FieldDescription(description = "制单人员姓名")
     private String fxCKProducerName;
-    @FieldDescription(description = "制单时间")
+    @FieldDescription(description = "制单时间", type = "date")
     private String fxCKProduceTime;
     @FieldDescription(description = "审核人员姓名")
     private String fxCKAuditStaffName;

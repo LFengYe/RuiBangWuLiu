@@ -9,14 +9,39 @@ and open the template in the editor.
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="assets/jQuery/jquery-1.11.1.min.js" ></script>
+        <script type="text/javascript" src="javascript/script.js"></script>
         <style>
             .div_table{display: table;width: 100%;text-align: center;border: 1px solid;}
             .div_row{display: table-row;}
             .div_cell{display:block;float: left;border: 1px solid;height: 40px;line-height: 40px;}
             .div_cell_double{height: 80px;line-height: 80px;}
         </style>
+        <script type="text/javascript">
+            window.onload = function() {
+                console.log(serializeJqueryElement($(".page2-query").parent()));
+            };
+        </script>
     </head>
     <body>
+        <div class="wc-page2-form wc-form ">
+            <div class="wc-group">
+                <label>关键字</label>
+                <input type="text" name="keywords" class="wc-control" value="12" placeholder="请输入关键词">
+            </div>
+            <div class="wc-group">
+                <label>起始日期</label>
+                <input type="text" name="start_time" class="wc-control start-time" value="12" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})"/>
+            </div>
+            <div class="wc-group">
+                <label>终止日期</label>
+                <input type="text" name="end_time" class="wc-control end-time" value="12" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
+            </div>
+            <button class="page2-query">查询</button>
+            <div class="page2-history checkbox"><label><input type="checkbox"/>查询历史记录</label></div>
+            <button class="page2-addItem">添加</button>
+            <button class="page2-deleteItem">删除</button>
+        </div>
         <div class="div_table">
             <div class="div_row">
                 <div class="div_cell" style="width: 100%;">待检入库单</div>

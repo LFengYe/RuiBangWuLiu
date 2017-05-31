@@ -1,0 +1,11 @@
+{
+    "titles": {
+        "supplierID": "供应商编号,1,1,10%",
+        "supplierName": "供应商名称,1,1,10%",
+        "partID": "部品编号,1,1,20%",
+        "partName": "部品名称,1,1,30%",
+        "partCode": "部品件号,1,1,20%",
+        "kcBLpAmount": "不良品数量,1,1,10%",
+        "partState": "部品状态,1,1,10%"
+    }
+}

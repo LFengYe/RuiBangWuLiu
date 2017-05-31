@@ -22,7 +22,7 @@ public class PartStore {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "供应商代码")
+    @FieldDescription(description = "供应商代码", operate = "import")
     private String supplierID;
 //    @FieldDescription(description = "供应商名称")
 //    private String supplierName;
@@ -30,13 +30,13 @@ public class PartStore {
 //    private String partID;
 //    @FieldDescription(description = "部品名称")
 //    private String partName;
-    @FieldDescription(description = "部品件号")
+    @FieldDescription(description = "部品件号", operate = "import")
     private String partCode;
-    @FieldDescription(description = "库房存放地址")
+    @FieldDescription(description = "库房存放地址", operate = "import")
     private String kfCFAddress;
-    @FieldDescription(description = "集配区存放地址")
+    @FieldDescription(description = "集配区存放地址", operate = "import")
     private String jpqCFAddress;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String partStoreRemark;
 
     public String getSupplierID() {

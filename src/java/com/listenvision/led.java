@@ -1,10 +1,5 @@
 package com.listenvision;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.StringTokenizer;
-
 public class led {
 	
 	/*
@@ -319,8 +314,8 @@ public class led {
 	 ********************************************************************************************/
 	public native static int SetLedCommunicationParameter(String IpStr,String NewIp,String NewNetMask,String NewGateway,String NewMac);
         
-	static 
+	static
 	{
-		System.loadLibrary("src/java/lv_led(x64)");  
+		System.loadLibrary("lv_led(x64)");  
 	}
 }

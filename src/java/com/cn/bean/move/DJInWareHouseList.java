@@ -22,24 +22,24 @@ public class DJInWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-//    @FieldDescription(description = "单内显示序号")
-//    private int listNumber;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-//    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-//    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-//    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
-//    @FieldDescription(description = "部品单位")
+    @FieldDescription(description = "部品单位", operate = "display")
     private String partUnit;
-//    @FieldDescription(description = "部品状态")
+    @FieldDescription(description = "部品状态", operate = "display")
     private String partState;
-//    @FieldDescription(description = "车型")
+    @FieldDescription(description = "车型", operate = "display")
     private String autoStylingName;
+    @FieldDescription(description = "制单时间", type = "date")
+    private String djRKProduceTime;
     @FieldDescription(description = "入库数量")
     private int inboundAmount;
     @FieldDescription(description = "入库箱数")
@@ -54,6 +54,8 @@ public class DJInWareHouseList {
     private String inspectionTime;
     @FieldDescription(description = "检验员")
     private String inspectorName;
+    @FieldDescription(description = "检验结论")
+    private String inspectionResult;
     @FieldDescription(description = "待检入库单号")
     private String djInWareHouseID;
 
@@ -183,5 +185,21 @@ public class DJInWareHouseList {
 
     public void setInspectorName(String inspectorName) {
         this.inspectorName = inspectorName;
+    }
+
+    public String getDjRKProduceTime() {
+        return djRKProduceTime;
+    }
+
+    public void setDjRKProduceTime(String djRKProduceTime) {
+        this.djRKProduceTime = djRKProduceTime;
+    }
+
+    public String getInspectionResult() {
+        return inspectionResult;
+    }
+
+    public void setInspectionResult(String inspectionResult) {
+        this.inspectionResult = inspectionResult;
     }
 }

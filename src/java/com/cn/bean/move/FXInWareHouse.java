@@ -25,7 +25,7 @@ public class FXInWareHouse {
 private String fxInWareHouseID;
 @FieldDescription(description = "供应商代码")
 private String supplierID;
-@FieldDescription(description = "供应商名称") 
+@FieldDescription(description = "供应商名称", operate = "display")
 private String supplierName;
 @FieldDescription(description = "返修入库部品状态")
 private String partState;

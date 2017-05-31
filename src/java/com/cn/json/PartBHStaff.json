@@ -1,19 +1,22 @@
 {
     "control": {
-        "customerTypeName": "客户类型,hidden,@供应商",
-        "supplierID": "供应商代码,@table,@customerTypeName",
-        "partCode": "部品件号,@table,@supplierID",
-        "employeeType": "雇员类型,hidden,@备货员",
-        "employeeName": "备货员,@table,@employeeType",
+        "partCode": "部品件号,@table",
+        "bhEmployeeType": "雇员类型,hidden,@备货员",
+        "bhEmployeeName": "备货员,@table,@bhEmployeeType",
+        "lhEmployeeType": "雇员类型,hidden,@领货员",
+        "lhEmployeeName": "领货员,@table,@lhEmployeeType",
+        "psEmployeeType": "雇员类型,hidden,@配送员",
+        "psEmployeeName": "配送员,@table,@psEmployeeType",
         "remarker": "备注,string,500"
     },
-    "mustwrite": ["supplierID","partCode","employeeName"],
+    "mustwrite": ["partCode","bhEmployeeName", "lhEmployeeName", "psEmployeeName"],
     "unique": [],
-    "primary": "supplierID,partCode",
+    "primary": "partCode",
     "titles": {
-        "supplierID": "供应商代码,30%",
-        "partCode": "部品件号,30%",
-        "employeeName": "备货员,20%",
+        "partCode": "部品件号,20%",
+        "bhEmployeeName": "备货员,20%",
+        "lhEmployeeName": "领货员,20%",
+        "psEmployeeName": "配送员,20%",
         "remarker": "备注,20%"
     }
 }

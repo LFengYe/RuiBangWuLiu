@@ -22,21 +22,19 @@ public class XCJSList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "单内序号")
-    private int listNumber;
     @FieldDescription(description = "供应商ID")
     private String supplierID;
-    @FieldDescription(description = "供应商姓名")
+    @FieldDescription(description = "供应商姓名", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
-    @FieldDescription(description = "车型")
-    private String autoStyle;
-    @FieldDescription(description = "单位")
+    @FieldDescription(description = "车型", operate = "display")
+    private String autoStylingName;
+    @FieldDescription(description = "单位", operate = "display")
     private String partUnit;
     @FieldDescription(description = "结算数量")
     private int xcJSAmount;
@@ -44,14 +42,6 @@ public class XCJSList {
     private String xcJSID;
     @FieldDescription(description = "现场结算备注")
     private String xcJSListRemark;
-
-    public int getListNumber() {
-        return listNumber;
-    }
-
-    public void setListNumber(int listNumber) {
-        this.listNumber = listNumber;
-    }
 
     public String getSupplierID() {
         return supplierID;
@@ -93,12 +83,12 @@ public class XCJSList {
         this.partCode = partCode;
     }
 
-    public String getAutoStyle() {
-        return autoStyle;
+    public String getAutoStylingName() {
+        return autoStylingName;
     }
 
-    public void setAutoStyle(String autoStyle) {
-        this.autoStyle = autoStyle;
+    public void setAutoStylingName(String autoStylingName) {
+        this.autoStylingName = autoStylingName;
     }
 
     public String getPartUnit() {

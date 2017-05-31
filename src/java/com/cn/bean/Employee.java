@@ -22,19 +22,19 @@ public class Employee {
     }
 //    @FieldDescription(description = "雇员编号")
 //    private String employeeId;
-    @FieldDescription(description = "雇员姓名")
+    @FieldDescription(description = "雇员姓名", operate = "import")
     private String employeeName;
-    @FieldDescription(description = "雇员登录密码")
+    @FieldDescription(description = "雇员登录密码", operate = "import")
     private String employeePassword;
-    @FieldDescription(description = "雇员类型代码")
+    @FieldDescription(description = "雇员类型代码", operate = "import")
     private String employeeTypeCode;
-    @FieldDescription(description = "雇员类型")
+    @FieldDescription(description = "雇员类型", operate = "import")
     private String employeeType;
-    @FieldDescription(description = "雇员手机")
+    @FieldDescription(description = "雇员手机", operate = "import")
     private String employeePhone;
-    @FieldDescription(description = "雇员身份证号")
+    @FieldDescription(description = "雇员身份证号", operate = "import")
     private String employeeIdentityCard;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String employeeRemark;
 
     public String getEmployeeName() {

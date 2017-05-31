@@ -30,11 +30,11 @@ public class XCJS {
     private String xcJSDate;
     @FieldDescription(description = "终端客户ID")
     private String zdCustomerID;
-    @FieldDescription(description = "终端客户姓名")
+    @FieldDescription(description = "终端客户姓名", operate = "display")
     private String zdcustomerName;
     @FieldDescription(description = "现场结算制单员")
     private String xcJSProducerName;
-    @FieldDescription(description = "现场结算制单时间")
+    @FieldDescription(description = "现场结算制单时间", type = "date")
     private String xcJSProduceTime;
     @FieldDescription(description = "现场结算审核员")
     private String xcJSAuditStaffName;

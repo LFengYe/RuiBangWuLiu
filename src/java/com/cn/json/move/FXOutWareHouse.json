@@ -1,16 +1,17 @@
 {
     "control": {
         "fxOutWareHouseID": "返修出库单号",
+        "supplierName": "供应商名称,hidden",
         "customerType": "客户类型,hidden,@供应商",
-        "supplierID": "供应商代码,@table:@supplierName",
-        "partState": "部品状态,select,不良品,良品",
         "fxCKProducerName": "制单人",
         "fxCKProduceTime": "制单时间",
+        "partState": "部品状态,select,不良品,良品",
+        "supplierID": "供应商代码,@table:@supplierName",
         "fxOutWareHouseRemark": "备注,string,500"
     },
     "mustwrite": ["fxOutWareHouseID", "supplierID", "fxCKProducerName", "fxCKProduceTime"],
-    "unique": ["fxOutWareHouseID"],
-    "primary": "fxOutWareHouseID",
+    "unique": [],
+    "primary": "fxOutWareHouseID,supplierID,partState",
     "titles": {
         "fxOutWareHouseID": "返修出库单号,10%",
         "supplierID": "供应商代码,10%",
@@ -24,29 +25,27 @@
         "fxOutWareHouseRemark": "备注,10%"
     },
     "detailControl": {
-        "listNumber": "单内显示序号,hidden",
+        "fxOutWareHouseID": "返修出库单号,parent",
         "supplierID": "供应商代码,parent",
         "supplierName": "供应商名称,parent",
-        "partCode": "部品件号,@table,@supplierID:@partID,@partName,@partUnit,@partState,@inboundBatch,@fxAmount",
+        "partState": "部品状态,parent,@不良品",
         "fxAmount": "返修数量,hidden",
+        "inboundBatch": "入库批次,hidden",
+        "partCode": "部品件号,@table,@supplierID,@partState:@partID,@partName,@inboundBatch,@fxAmount,@wareHouseManagerName",
         "fxCKAmount": "返修出库数量,check,小于,fxAmount",
-        "fxOutWareHouseListRemark": "备注,string,500",
-        "fxOutWareHouseID": "返修出库单号,parent"
+        "fxOutWareHouseListRemark": "备注,string,500"
     },
     "detailMustwrite": ["fxOutWareHouseID", "supplierID", "partCode", "fxCKAmount"],
     "detailUnique": [],
-    "detailPrimary": "fxOutWareHouseID,partCode",
+    "detailPrimary": "fxOutWareHouseID,partCode,supplierID,inboundBatch",
     "detailTitles": {
-        "listNumber": "单内显示序号,10%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
         "partID": "部品编号,10%",
         "partName": "部品名称,10%",
         "partCode": "部品件号,10%",
         "inboundBatch": "入库批次,10%",
-        "partUnit": "部品单位,10%",
         "fxCKAmount": "返修出库数量,10%",
-        "partState": "部品状态,10%",
         "fxOutWareHouseListRemark": "备注,10%",
         "fxOutWareHouseID": "返修出库单号,10%",
         "wareHouseManagerName": "库管员,10%"

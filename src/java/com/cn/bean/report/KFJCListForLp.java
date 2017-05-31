@@ -3,30 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.cn.bean.base;
+package com.cn.bean.report;
 
 /**
  *
  * @author LFeng
  */
-public class LPKCList {
-    private static int recordCount;
-
-    public static int getRecordCount() {
-        return recordCount;
-    }
-
-    public static void setRecordCount(int aRecordCount) {
-        recordCount = aRecordCount;
-    }
-    
-    private String supplierID;//供应商ID
+public class KFJCListForLp {
+    private String supplierID;
     private String supplierName;
     private String partID;
     private String partName;
-    private String partCode;//件号
-    private String inboundBatch;//入库批次
-    private int lpAmount;//良品数量
+    private String partCode;
+    private String inboundBatch;
+    private String kcLpAmount;
+    private String partState;
 
     public String getSupplierID() {
         return supplierID;
@@ -34,30 +25,6 @@ public class LPKCList {
 
     public void setSupplierID(String supplierID) {
         this.supplierID = supplierID;
-    }
-
-    public String getPartCode() {
-        return partCode;
-    }
-
-    public void setPartCode(String partCode) {
-        this.partCode = partCode;
-    }
-
-    public String getInboundBatch() {
-        return inboundBatch;
-    }
-
-    public void setInboundBatch(String inboundBatch) {
-        this.inboundBatch = inboundBatch;
-    }
-
-    public int getLpAmount() {
-        return lpAmount;
-    }
-
-    public void setLpAmount(int lpAmount) {
-        this.lpAmount = lpAmount;
     }
 
     public String getSupplierName() {
@@ -83,4 +50,37 @@ public class LPKCList {
     public void setPartName(String partName) {
         this.partName = partName;
     }
+
+    public String getPartCode() {
+        return partCode;
+    }
+
+    public void setPartCode(String partCode) {
+        this.partCode = partCode;
+    }
+
+    public String getInboundBatch() {
+        return inboundBatch;
+    }
+
+    public void setInboundBatch(String inboundBatch) {
+        this.inboundBatch = inboundBatch;
+    }
+
+    public String getKcLpAmount() {
+        return kcLpAmount;
+    }
+
+    public void setKcLpAmount(String kcLpAmount) {
+        this.kcLpAmount = kcLpAmount;
+    }
+
+    public String getPartState() {
+        return partState;
+    }
+
+    public void setPartState(String partState) {
+        this.partState = partState;
+    }
+    
 }

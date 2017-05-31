@@ -1,7 +1,7 @@
 (function ($) {
     var _funs_ = {
         getDOM: function () {
-            var htmlStr = '<div class="wrapper"><div class="jtb-header"><span>查询条件:</span><input placeholder="查询条件" class="wc-control" /><button class="LocalFilter">查询</button></div>';
+            var htmlStr = '<div class="wrapper"><div class="jtb-header"><span>查询条件:</span><input name="keywords" placeholder="查询条件" class="wc-control" /><button class="LocalFilter">查询</button></div>';
             htmlStr += '<div class="jtb-container"><div class="jtb-scroll"></div></div>';
             htmlStr += '<div class="jtb-page"><div class="page"></div><div class="page-info"></div></div>';
             htmlStr += '</div>';
@@ -20,13 +20,13 @@
             }
             this.$container = this.find(".jtb-scroll").append(result);
             this.$header = this.find(".jtb-header");
-
+            
             this.addClass("jtb");
             !this.isLocalSearch && this.$header.hide();
             return this;
         },
         getTableDataDOM: function (datas) {
-            this.datas = datas;
+            //this.datas = datas;
             this.$container.find("ul").html("");
             var obj = null;
             for (var i = 0; i < datas.length; i++) {
@@ -51,7 +51,12 @@
                 jump: function (obj, first) {
                     if (!first) {
                         that.pageIndex = obj.curr;
-                        var keyWord = that.find(".LocalFilter").prev().val();
+                        var keyWord;
+                        if (that.isLocalSearch)
+                            keyWord = serializeJqueryElement(that.find(".LocalFilter").parent());
+                        else
+                            keyWord = serializeJqueryElement($(".page2-container .wc-page2-form"));
+                        //console.log(keyWord);
                         if (that.pageCallBack) {
                             that.pageCallBack(obj.curr, keyWord);
                         }
@@ -90,13 +95,16 @@
              });
              */
             this.find(".jtb-header button").click(function (e) {
-                var keyWord = $(this).prev().val();
+                //var keyWord = $(this).prev().val();
+                var keyWord = serializeJqueryElement(that.find(".LocalFilter").parent());
                 if (that.searchCallBack) {
                     that.searchCallBack(keyWord);
                     return;
                 }
             }).prev().focus(function (e) {
                 $(this).val("");
+                _funs_.getTableDataDOM.call(that, that.datas);
+                that.filterState = false;
             });
             this.find(".jtb-header button").prev().keypress(function(event) {
                 switch(event.keyCode) {
@@ -107,26 +115,6 @@
                     }
                 }
             });
-        },
-        dataFilter: function (data) {
-            this.afterFilter = [];
-            var str = '';                  //保证元组不重复
-            var that = this;
-            this.$container.find('li:contains("' + data + '")').each(function () {
-                var eq = $(this).index();
-                if (str.indexOf(eq) < 0) {
-                    str += eq;
-                    that.afterFilter.push([eq, that.datas[eq]]);
-                }
-
-            });
-            this.$container.find("ul").html('');
-            var arr = this.afterFilter.map(function (it) {
-                return it[1];
-            });
-            _funs_.getTableDataDOM.call(this, arr);
-            this.filterState = true;        //表示数据筛选状态
-            return this;
         }
     };
 
@@ -151,13 +139,12 @@
             }
             _funs_.getTableDataDOM.call(this, this.datas);
         },
-        del2: function (arr) {   		//删除多个   
+        del2: function (arr) {   		//删除多个
             var index, set = this.datas;
             this.datas = [];
             for (var i = 0; i < arr.length; i++) {
                 index = arr[i];
                 set[index] = null;
-
             }
             for (var j = 0; j < set.length; j++) {
                 set[j] && this.datas.push(set[j]);
@@ -174,6 +161,26 @@
                 this.datas.splice(index, 1, obj);
             }
             _funs_.getTableDataDOM.call(this, this.datas);
+        },
+        dataFilter: function (data) {
+            this.afterFilter = [];
+            var str = '';                  //保证元组不重复
+            var that = this;
+            this.$container.find('li:contains("' + data + '")').each(function () {
+                var eq = $(this).index();
+                if (str.indexOf(eq) < 0) {
+                    str += eq;
+                    that.afterFilter.push([eq, that.datas[eq]]);
+                }
+
+            });
+            this.$container.find("ul").html('');
+            var arr = this.afterFilter.map(function (it) {
+                return it[1];
+            });
+            _funs_.getTableDataDOM.call(this, arr);
+            this.filterState = true;        //表示数据筛选状态
+            return this;
         },
         render: function (data) {
             this.datas = data;
@@ -206,6 +213,7 @@
                 var primaryIsRepeat = true;
                 for (var index = 0; index < this.primary.length; index++) {
                     var pri = this.primary[index];
+                    //console.log("data:" + this.datas[i][pri] + ",obj:" + obj[pri]);
                     if (this.datas[i][pri] != obj[pri]) {
                         primaryIsRepeat = false;
                         break;
@@ -217,6 +225,9 @@
                 }
             }
             return true;
+        },
+        headerFocus: function() {
+            this.$header.find("input").trigger("focus");
         }
     };
 
@@ -248,6 +259,7 @@
         _funs_.getPageInfo.call(this);
         _funs_.bindEvt.call(this);
         $.extend(this, _interface);
+        
         return this;
     };
 })(window.jQuery);

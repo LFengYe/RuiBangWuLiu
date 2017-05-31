@@ -19,11 +19,11 @@ public class AreaLedIPInfo {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "仓位编码")
+    @FieldDescription(description = "仓位编码", operate = "import")
     private String addressCode;
-    @FieldDescription(description = "IP地址")
+    @FieldDescription(description = "IP地址", operate = "import")
     private String ipAddress;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String remarker;
 
     public String getAddressCode() {

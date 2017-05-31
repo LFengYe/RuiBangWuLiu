@@ -19,6 +19,7 @@ html,body{
 
 /*左侧菜单   */
 .wc-content .img-logo{
+    height: 80px;
     width:200px;
     margin-top:-20px;
 }
@@ -157,7 +158,9 @@ html,body{
 }
 .wc-page2-form .query{}
 .wc-page2-form .page2-query{}
-.wc-page2-form .page2-addItem{
+.wc-page2-form .page2-history{display: none;}
+.wc-page2-form .page2-addItem,
+.wc-page2-form .page2-deleteItem{
     float:right;
     margin-right: 10px;
 }

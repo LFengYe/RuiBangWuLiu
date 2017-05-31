@@ -62,15 +62,17 @@
         getTableDataDOM: function (datas) {
 
             var data_str = '', result = '';
-            
-            console.log(this.arr);
-            console.log(datas);
             for (var i = 0; i < datas.length; i++) {
+                /*
                 var k = 0;
                 for (var j in datas[i]) {
                     data_str += "<td index = " + i + " name=" + this.arr[k] + ">" + datas[i][this.arr[k]] + "</td>";
                     k++;
                 }
+                */
+               for (var k = 0; k < this.arr.length;k++) {
+                   data_str += "<td index = " + i + " name=" + this.arr[k] + ">" + datas[i][this.arr[k]] + "</td>";
+               }
                 result += "<tr>" + data_str + "</tr>";
                 data_str = '';
             }
@@ -104,9 +106,27 @@
             });
         },
         getRowData: function (index) {
+        },
+        dataFilter: function (data) {
+            this.afterFilter = [];
+            var str = '';                  //保证元组不重复
+            var that = this;
+            this.$container.find('li:contains("' + data + '")').each(function () {
+                var eq = $(this).index();
+                if (str.indexOf(eq) < 0) {
+                    str += eq;
+                    that.afterFilter.push([eq, that.datas[eq]]);
+                }
 
+            });
+            this.$container.find("ul").html('');
+            var arr = this.afterFilter.map(function (it) {
+                return it[1];
+            });
+            _funs_.getTableDataDOM.call(this, arr);
+            this.filterState = true;        //表示数据筛选状态
+            return this;
         }
-
     };
 
     var _interface = {

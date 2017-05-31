@@ -22,15 +22,15 @@ public class PlatformUserInfo {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "用户名")
+    @FieldDescription(description = "用户名", operate = "import")
     private String userLoginAccount;
-    @FieldDescription(description = "密码")
+    @FieldDescription(description = "密码", operate = "import")
     private String userLoginPassWord;
-    @FieldDescription(description = "公司编号")
+    @FieldDescription(description = "公司编号", operate = "import")
     private String companyID;
-    @FieldDescription(description = "数据库名")
+    @FieldDescription(description = "数据库名", operate = "import")
     private String userLoginDBName;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String userInfoRemark;
 
     public String getUserLoginAccount() {

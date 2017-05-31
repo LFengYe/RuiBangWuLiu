@@ -22,42 +22,30 @@ public class FXInWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "单内显示序号")
-    private int listNumber;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
     @FieldDescription(description = "入库部品原入库批次")
     private String inboundBatch;
-    @FieldDescription(description = "部品单位 ")
+    @FieldDescription(description = "部品单位", operate = "display")
     private String partUnit;
     @FieldDescription(description = "返修入库数量")
     private int fxRKAmount;
-    @FieldDescription(description = "部品状态")
-    private String partState;
+    @FieldDescription(description = "返修出库数量(最大返修入库数量)", operate = "display")
+    private int fxCKAmount;
     @FieldDescription(description = "备注")
     private String fxInWareHouseListRemark;
-    @FieldDescription(description = "方便付老师处理用,不参与报表统计")
-    private String newInboundBatch;
     @FieldDescription(description = "返修入库单号")
     private String fxInWareHouseID;
     @FieldDescription(description = "库管员姓名")
     private String wareHouseManagerName;
-
-    public int getListNumber() {
-        return listNumber;
-    }
-
-    public void setListNumber(int listNumber) {
-        this.listNumber = listNumber;
-    }
 
     public String getSupplierID() {
         return supplierID;
@@ -123,28 +111,12 @@ public class FXInWareHouseList {
         this.fxRKAmount = fxRKAmount;
     }
 
-    public String getPartState() {
-        return partState;
-    }
-
-    public void setPartState(String partState) {
-        this.partState = partState;
-    }
-
     public String getFxInWareHouseListRemark() {
         return fxInWareHouseListRemark;
     }
 
     public void setFxInWareHouseListRemark(String fxInWareHouseListRemark) {
         this.fxInWareHouseListRemark = fxInWareHouseListRemark;
-    }
-
-    public String getNewInboundBatch() {
-        return newInboundBatch;
-    }
-
-    public void setNewInboundBatch(String newInboundBatch) {
-        this.newInboundBatch = newInboundBatch;
     }
 
     public String getFxInWareHouseID() {
@@ -161,5 +133,13 @@ public class FXInWareHouseList {
 
     public void setWareHouseManagerName(String wareHouseManagerName) {
         this.wareHouseManagerName = wareHouseManagerName;
+    }
+
+    public int getFxCKAmount() {
+        return fxCKAmount;
+    }
+
+    public void setFxCKAmount(int fxCKAmount) {
+        this.fxCKAmount = fxCKAmount;
     }
 }

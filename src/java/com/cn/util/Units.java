@@ -507,6 +507,12 @@ public class Units {
         return false;
     }
 
+    public static String getSubJsonStr(String jsonStr, String itemName) {
+        JSONObject obj = new JSONObject();
+        obj.put(itemName, JSONObject.parseObject(jsonStr).getString(itemName));
+        return obj.toJSONString();
+    }
+    
     /**
      * 指定文件的内容作为字符串返回
      *

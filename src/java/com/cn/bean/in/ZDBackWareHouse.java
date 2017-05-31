@@ -26,15 +26,15 @@ public class ZDBackWareHouse {
     private String zdBackWareHouseID;
     @FieldDescription(description = "终端客户代码")
     private String zdCustomerID;
-    @FieldDescription(description = "终端客户名称")
+    @FieldDescription(description = "终端客户名称", operate = "display")
     private String zdCustomerName;
     @FieldDescription(description = "原存放区域")
-    private String ycFArea;
+    private String ycFLocation;
     @FieldDescription(description = "退库类型")
     private String zdTKType;
     @FieldDescription(description = "终端退库制单员姓名")
     private String zdTKProducerName;
-    @FieldDescription(description = "终端退库制单时间")
+    @FieldDescription(description = "终端退库制单时间", type = "date")
     private String zdTKProduceTime;
     @FieldDescription(description = "终端退库审核员姓名")
     private String zdTKAuditStaffName;
@@ -69,12 +69,12 @@ public class ZDBackWareHouse {
         this.zdCustomerName = zdCustomerName;
     }
 
-    public String getYcFArea() {
-        return ycFArea;
+    public String getYcFLocation() {
+        return ycFLocation;
     }
 
-    public void setYcFArea(String ycFArea) {
-        this.ycFArea = ycFArea;
+    public void setYcFLocation(String ycFLocation) {
+        this.ycFLocation = ycFLocation;
     }
 
     public String getZdTKType() {

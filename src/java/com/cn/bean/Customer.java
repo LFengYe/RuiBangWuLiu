@@ -21,35 +21,35 @@ public class Customer {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "客户代码")
+    @FieldDescription(description = "客户代码", operate = "import")
     private String customerID;
-    @FieldDescription(description = "客户名称")
+    @FieldDescription(description = "客户名称", operate = "import")
     private String customerName;
-    @FieldDescription(description = "客户名称简称")
+    @FieldDescription(description = "客户名称简称", operate = "import")
     private String customerAbbName;
-    @FieldDescription(description = "客户类型")
+    @FieldDescription(description = "客户类型", operate = "import")
     private String customerTypeName;
-    @FieldDescription(description = "经办人")
+    @FieldDescription(description = "经办人", operate = "import")
     private String customerManager;
-    @FieldDescription(description = "经办人电话")
+    @FieldDescription(description = "经办人电话", operate = "import")
     private String customerManagerPhone;
-    @FieldDescription(description = "办公电话")
+    @FieldDescription(description = "办公电话", operate = "import")
     private String customerOfficePhone;
-    @FieldDescription(description = "传真")
+    @FieldDescription(description = "传真", operate = "import")
     private String customerOfficeFax;
-    @FieldDescription(description = "邮箱")
+    @FieldDescription(description = "邮箱", operate = "import")
     private String customerEmail;
-    @FieldDescription(description = "接收短信号码")
+    @FieldDescription(description = "接收短信号码", operate = "import")
     private String smsNumbers;
-    @FieldDescription(description = "短信发送时间")
+    @FieldDescription(description = "短信发送时间", operate = "import")
     private String smsSendTime;
-    @FieldDescription(description = "送货方式")
+    @FieldDescription(description = "送货方式", operate = "import")
     private String shMethodName;
-    @FieldDescription(description = "运输周期(小时)")
+    @FieldDescription(description = "运输周期(小时)", operate = "import")
     private int transportCycle;
-    @FieldDescription(description = "拼音助记")
+    @FieldDescription(description = "拼音助记", operate = "import")
     private String pinyinAbb;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String customerRemark;
 
     public String getCustomerID() {

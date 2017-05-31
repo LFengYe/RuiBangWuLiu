@@ -6,6 +6,7 @@
     var $mainTable = $(".page3-container .page3-main-table");
     var $pageTurn = $(".page3-container .page3-pagination li a");
     var $search = $(".page3-container .page3-query");
+    var $export = $(".page3-container .page3-export");
 
 
     var OPERATION = {
@@ -22,17 +23,20 @@
 
     var pageIndex = 1;
 
-    var request = {
-        startIndex: 1,
-        endIndex: 30,
-        dataType: "2013-3-7&2013-3-18" | "关键字"
-    };
-
     function initDOM() {
-        ajaxData(OPERATION.CREATE, {}, function (arr) {
-            console.log(arr);
+        $(".start-time").val("");
+        $(".end-time").val("");
+        var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
+        var request = {};
+        request.type = "create";
+        if (tmp.startTime && tmp.endTime) {
+            request.start = tmp.startTime;
+            request.end = tmp.endTime;
+        }
+        ajaxData(OPERATION.CREATE, request, function (arr) {
             $mainTableBox.html("");
-            $("<div></div>").appendTo($mainTableBox).insertTwoHeaderTable({
+            //$("<div></div>").appendTo($mainTableBox).insertTwoHeaderTable({
+            $mainTableBox.insertTwoHeaderTable({
                 title0: arr.titles,
                 title1: null,
                 datas: arr.datas,
@@ -49,15 +53,6 @@
                     });
                 }
             });
-            /*
-             console.log(arr);
-             var data;
-             $mainTableBox.html("");
-             for (var i = 0; i < arr.length; i++) {
-             data = arr[i];
-             
-             }
-             */
         }, function () {
 
         });
@@ -69,41 +64,32 @@
             $detailList.hide();
             $mainTable.show();
         });
-        $search.click(function (e) {
-            var $dateInputs = $(".page3-container .wc-page3-form input");
-            var key = $dateInputs.eq(0).val();
-            var start = $dateInputs.eq(1).val();
-            var end = $dateInputs.eq(2).val();
-            if (start != "" && end != "") {
-                request.dataType = start + "&" + end;
-            } else {
-                request.dataType = '';
+        $export.click(function (e) {
+            var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
+            var request = {};
+            request.type = "export";
+            if (tmp.startTime && tmp.endTime) {
+                request.start = tmp.startTime;
+                request.end = tmp.endTime;
             }
-            request.dataType += "|" + key;
-            request.startIndex = 1;
-            request.endIndex = maxInpage;
-
-            ajaxData(OPERATION.REQUEST_PAGE, request, function (data) {
-                $mainTableBox.render(data);
+            ajaxData("create", request, function (data) {
+                location.href = data.fileUrl;
             }, function () {
             });
-
         });
-        $pageTurn.click(function (e) {
-            if ($(this).hasClass("page3-left")) {
-                if (pageIndex >= 2) {
-                    pageIndex--;
-                }
-            } else if ($(this).hasClass("page3-right")) {
-                pageIndex++;
+        $search.click(function (e) {
+            var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
+            var request = {};
+            request.type = "search";
+            if (tmp.startTime && tmp.endTime) {
+                request.start = tmp.startTime;
+                request.end = tmp.endTime;
+                //request = {start: tmp.startTime, end: tmp.endTime};
             }
-            request.startIndex = (pageIndex - 1) * maxInpage + 1;
-            request.endIndex = request.startIndex + maxInpage - 1;
-            ajaxData(OPERATION.REQUEST_PAGE, request, function (data) {
-                $mainTableBox.render(data);
-            }, function () {
-                pageIndex--;                  //请求不到数据时,将页数恢复原值
-            });
+            ajaxData("create", request, function(data) {
+                console.log(data);
+                $mainTableBox.render(data.datas);
+            }, function(){});
         });
     }
 

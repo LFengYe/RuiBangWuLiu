@@ -5,6 +5,7 @@
  */
 package com.cn.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.Customer;
 import com.cn.bean.GYSPartContainerInfo;
@@ -20,7 +21,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -166,7 +166,7 @@ public class JHOutWareHouseController {
                 }
                 
                 if (isAllEnough) {
-                    //RedisAPI.set(jhOutWareHouse.getJhOutWareHouseID(), JSONObject.toJSONString(importResult));
+                    RedisAPI.set(jhOutWareHouse.getJhOutWareHouseID(), JSONObject.toJSONString(completeResult));
                     return completeResult;
                 } else {
                     return importResult;
@@ -212,7 +212,6 @@ public class JHOutWareHouseController {
      * @throws java.lang.Exception
      */
     public ArrayList<LPKCListInfo> getLPKCData(String beginDate, String endDate, String lastJZYMonth) throws Exception {
-
         CallableStatement statement = null;
         Connection conn = null;
         DatabaseOpt opt = new DatabaseOpt();
@@ -279,14 +278,135 @@ public class JHOutWareHouseController {
         return null;
     }
     
-    
-    public void partitionPackage(String jhOutWareHouseID) throws Exception {
+    /**
+     * 计划分包
+     * @param jhOutWareHouseID 
+     * @return  
+     * @throws java.lang.Exception 
+     */
+    public ArrayList<Integer> jhPartitionPackage(String jhOutWareHouseID) throws Exception {
+        JSONArray params = new JSONArray();
         DatabaseOpt opt = new DatabaseOpt();
         CommonController commonController = new CommonController();
-        List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.out.", "JHOutWareHouseList", "*", "", Integer.MAX_VALUE, 1, "JHOutWareHouseID", 1, opt.getConnect());
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            
+
+        List<JHOutWareHouseList> res = JSONObject.parseArray(RedisAPI.get(jhOutWareHouseID), JHOutWareHouseList.class);
+        /*
+        if (res == null || res.isEmpty()) {
+            JSONObject params1 = new JSONObject();
+            params1.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+            res = commonController.proceduceQuery("tbGetJHOutWareListSum", params1, "com.cn.bean.out.JHOutWareHouseList", opt.getConnect());
         }
+        */
+        if (res != null && !res.isEmpty()) {
+            Iterator<JHOutWareHouseList> iterator = res.iterator();
+            JHOutWareHouseList oldList = null;
+            int oldPackingNum = 0;
+            boolean isFull = true;
+            while (iterator.hasNext()) {
+                JHOutWareHouseList list = iterator.next();
+                GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(list.getSupplierID() + "_" + list.getPartCode()), GYSPartContainerInfo.class);
+                
+                //新计划初始化参数
+                if (oldList != null && !(oldList.getSupplierID().compareTo(list.getSupplierID()) == 0)
+                        && !(oldList.getPartCode().compareTo(list.getPartCode()) == 0)) {
+                    isFull = true;
+                    oldPackingNum = 0;
+                }
+                int containerAmount;
+                int tmpJhCkAmount;
+                //计算当前批次需要分包的计划数量
+                if (isFull) {
+                    tmpJhCkAmount = list.getJhCKAmount();
+                } else {
+                    //同一计划, 不同批次, 若上一批次最后一箱不满, 将上一批次最后一箱填满, 本批次计划数量减去上一个批次最后一包空余数量
+                    //先取出上批次最后一箱数据, 再增加本批次填满数据
+                    JSONObject preLastObj = params.getJSONObject(params.size() - 1);
+                    tmpJhCkAmount = list.getJhCKAmount() - containerInfo.getOutboundPackageAmount() + Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1]);
+                    
+                    JSONObject object = new JSONObject();
+                    object.put("SupplierID", "string," + list.getSupplierID());
+                    object.put("PartCode", "string," + list.getPartCode());
+                    object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+                    object.put("PackingNumber", "int," + oldPackingNum);
+                    object.put("InBoundBatch", "string," + list.getInboundBatch());
+                    object.put("PackingAmount", "int," + (containerInfo.getOutboundPackageAmount() - Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1])));
+                    params.add(object);
+                }
+                //计算当前批次计划是否能完全分包
+                if (tmpJhCkAmount % containerInfo.getOutboundPackageAmount() == 0) {
+                    containerAmount = tmpJhCkAmount / containerInfo.getOutboundPackageAmount();
+                    isFull = true;
+                } else {
+                    containerAmount = (tmpJhCkAmount / containerInfo.getOutboundPackageAmount() + 1);
+                    isFull = false;
+                }
+                //计划明细分包
+                for (int i = 0; i < containerAmount; i++) {
+                    JSONObject object = new JSONObject();
+                    object.put("SupplierID", "string," + list.getSupplierID());
+                    object.put("PartCode", "string," + list.getPartCode());
+                    object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+                    object.put("PackingNumber", "int," + (i + 1 + oldPackingNum));
+                    object.put("InBoundBatch", "string," + list.getInboundBatch());
+                    
+                    if (i == containerAmount - 1 && !isFull) {
+                        int packAmount = list.getJhCKAmount() - (containerInfo.getOutboundPackageAmount() * i);
+                        object.put("PackingAmount", "int," + packAmount);
+                    } else {
+                        object.put("PackingAmount", "int," + containerInfo.getOutboundPackageAmount());
+                    }
+                    params.add(object);
+//                    System.out.println("json params:" + object.toJSONString());
+                }
+                
+                oldPackingNum += containerAmount;
+                oldList = list;
+            }
+            return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, opt.getConnect());
+        }
+        return null;
+    }
+    
+    public ArrayList<Integer> jhPartitionPackageHasBatch(String jhOutWareHouseID) throws Exception {
+        JSONArray params = new JSONArray();
+        DatabaseOpt opt = new DatabaseOpt();
+        CommonController commonController = new CommonController();
+        JSONObject params1 = new JSONObject();
+        params1.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+        List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.out.", "JHOutWareHouseList", "*", "", 0, Integer.MAX_VALUE, "JHOutWareHouseID", 0, opt.getConnect());
+        if (res != null && !res.isEmpty()) {
+            Iterator iterator = res.iterator();
+            while (iterator.hasNext()) {
+                JHOutWareHouseList list = (JHOutWareHouseList) iterator.next();
+                GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(list.getSupplierID() + "_" + list.getPartCode()), GYSPartContainerInfo.class);
+//                System.out.println("containerInfo:" + JSONObject.toJSONString(containerInfo));
+                int containerAmount; boolean isFull = false;
+                if (list.getJhCKAmount() % containerInfo.getOutboundPackageAmount() == 0) {
+                    containerAmount = list.getJhCKAmount() / containerInfo.getOutboundPackageAmount();
+                    isFull = true;
+                } else {
+                    containerAmount = (list.getJhCKAmount() / containerInfo.getOutboundPackageAmount() + 1);
+                }
+                //计划明细分包
+                for (int i = 0; i < containerAmount; i++) {
+                    JSONObject object = new JSONObject();
+                    object.put("SupplierID", "string," + list.getSupplierID());
+                    object.put("PartCode", "string," + list.getPartCode());
+                    object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+                    object.put("PackingNumber", "int," + (i + 1));
+
+                    if (i == containerAmount - 1 && !isFull) {
+                        int packAmount = list.getJhCKAmount() - (containerInfo.getOutboundPackageAmount() * i);
+                        object.put("PackingAmount", "int," + packAmount);
+                    } else {
+                        object.put("PackingAmount", "int," + containerInfo.getOutboundPackageAmount());
+                    }
+                    params.add(object);
+//                    System.out.println("json params:" + object.toJSONString());
+                }
+            }
+            return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, opt.getConnect());
+        }
+        return null;
     }
 }

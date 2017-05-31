@@ -22,22 +22,23 @@ public class BPTHOutWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "单内显示序号")
-    private int listNumber;
+    
     @FieldDescription(description = "供应商ID")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
-    @FieldDescription(description = "部品单位")
+    @FieldDescription(description = "部品单位", operate = "display")
     private String partUnit;
     @FieldDescription(description = "退货出库数量")
     private int thCKAmount;
+    @FieldDescription(description = "最大退货数量", operate = "display")
+    private int thAmount;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
     @FieldDescription(description = "备注")
@@ -48,14 +49,6 @@ public class BPTHOutWareHouseList {
     private String bpTHOutWareHoseID;
     @FieldDescription(description = "库管员")
     private String wareHouseManagername;
-
-    public int getListNumber() {
-        return listNumber;
-    }
-
-    public void setListNumber(int listNumber) {
-        this.listNumber = listNumber;
-    }
 
     public String getSupplierID() {
         return supplierID;
@@ -151,5 +144,13 @@ public class BPTHOutWareHouseList {
 
     public void setWareHouseManagername(String wareHouseManagername) {
         this.wareHouseManagername = wareHouseManagername;
+    }
+
+    public int getThAmount() {
+        return thAmount;
+    }
+
+    public void setThAmount(int thAmount) {
+        this.thAmount = thAmount;
     }
 }

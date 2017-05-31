@@ -21,7 +21,7 @@ public class AutoStyling {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "车型名称")
+    @FieldDescription(description = "车型名称", operate = "import")
     private String autoStylingName;
 
     public String getAutoStylingName() {

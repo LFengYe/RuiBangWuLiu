@@ -26,7 +26,7 @@ public class DJInWareHouseList {
 //    private int listNumber;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-//    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
 //    @FieldDescription(description = "部品编号")
     private String partID;
@@ -44,6 +44,8 @@ public class DJInWareHouseList {
     private int inboundAmount;
     @FieldDescription(description = "入库箱数")
     private int inboundBoxAmount;
+//    @FieldDescription(description = "入库包装数量")
+    private int inboundPackageAmount;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
     @FieldDescription(description = "原厂批次", operate = "import")
@@ -163,5 +165,13 @@ public class DJInWareHouseList {
 
     public void setDjInWareHouseID(String djInWareHouseID) {
         this.djInWareHouseID = djInWareHouseID;
+    }
+
+    public int getInboundPackageAmount() {
+        return inboundPackageAmount;
+    }
+
+    public void setInboundPackageAmount(int inboundPackageAmount) {
+        this.inboundPackageAmount = inboundPackageAmount;
     }
 }

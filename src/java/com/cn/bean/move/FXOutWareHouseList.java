@@ -23,40 +23,30 @@ public class FXOutWareHouseList {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "单内显示序号")
-    private int listNumber;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
     @FieldDescription(description = "出库返修部品原入库批次")
     private String inboundBatch;
-    @FieldDescription(description = "部品单位")
+    @FieldDescription(description = "部品单位", operate = "display")
     private String partUnit;
     @FieldDescription(description = "返修出库数量")
     private int fxCKAmount;
-    @FieldDescription(description = "部品状态")
-    private String partState;
+    @FieldDescription(description = "返修最大数量", operate = "display")
+    private int fxAmount;
     @FieldDescription(description = "备注")
     private String fxOutWareHouseListRemark;
     @FieldDescription(description = "返修出库入库单号")
     private String fxOutWareHouseID;
     @FieldDescription(description = "库管员姓名")
     private String wareHouseManagerName;
-
-    public int getListNumber() {
-        return listNumber;
-    }
-
-    public void setListNumber(int listNumber) {
-        this.listNumber = listNumber;
-    }
 
     public String getSupplierID() {
         return supplierID;
@@ -122,14 +112,6 @@ public class FXOutWareHouseList {
         this.fxCKAmount = fxCKAmount;
     }
 
-    public String getPartState() {
-        return partState;
-    }
-
-    public void setPartState(String partState) {
-        this.partState = partState;
-    }
-
     public String getFxOutWareHouseListRemark() {
         return fxOutWareHouseListRemark;
     }
@@ -152,5 +134,13 @@ public class FXOutWareHouseList {
 
     public void setWareHouseManagerName(String wareHouseManagerName) {
         this.wareHouseManagerName = wareHouseManagerName;
+    }
+
+    public int getFxAmount() {
+        return fxAmount;
+    }
+
+    public void setFxAmount(int fxAmount) {
+        this.fxAmount = fxAmount;
     }
 }

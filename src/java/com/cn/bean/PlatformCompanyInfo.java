@@ -22,29 +22,29 @@ public class PlatformCompanyInfo {
         recordCount = aRecordCount;
     }
 
-    @FieldDescription(description = "公司编号")
+    @FieldDescription(description = "公司编号", operate = "import")
     private String companyID;
-    @FieldDescription(description = "公司名称")
+    @FieldDescription(description = "公司名称", operate = "import")
     private String companyName;
-    @FieldDescription(description = "名称缩写")
+    @FieldDescription(description = "名称缩写", operate = "import")
     private String companyNameAPP;
-    @FieldDescription(description = "公司地址")
+    @FieldDescription(description = "公司地址", operate = "import")
     private String companyAddress;
-    @FieldDescription(description = "法人姓名")
+    @FieldDescription(description = "法人姓名", operate = "import")
     private String legalPersonName;
-    @FieldDescription(description = "法人电话")
+    @FieldDescription(description = "法人电话", operate = "import")
     private String legalPersonPhone;
-    @FieldDescription(description = "联系人姓名")
+    @FieldDescription(description = "联系人姓名", operate = "import")
     private String contactPersonName;
-    @FieldDescription(description = "联系人电话")
+    @FieldDescription(description = "联系人电话", operate = "import")
     private String contactPersonPhone;
-    @FieldDescription(description = "公司代码")
+    @FieldDescription(description = "公司代码", operate = "import")
     private String companyCode;
-    @FieldDescription(description = "是否停办业务")
+    @FieldDescription(description = "是否停办业务", operate = "import")
     private boolean businessState;
-    @FieldDescription(description = "公司网址")
+    @FieldDescription(description = "公司网址", operate = "import")
     private String companyWebSite;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String companyRemark;
 
     public String getCompanyID() {

@@ -20,6 +20,7 @@ SelectPanel.prototype.reset = function (data, fun) {
 };
 SelectPanel.prototype.show = function () {
     displayLayer(1, this.$container, '选择信息');
+    this.$container.headerFocus();
 //    this.$container.show(500);
 };
 SelectPanel.prototype.initDOM = function () {
@@ -65,7 +66,6 @@ function TableSelectPanel(data, callBackfun) {
     };
     $.extend(data, _default_);
     SelectPanel.call(this, data, callBackfun);
-
 }
 extend(TableSelectPanel, SelectPanel);
 TableSelectPanel.prototype.render = function () {
@@ -83,7 +83,9 @@ TableSelectPanel.prototype.render = function () {
             console.log(obj);
         },
         pageCallBack: function (pageIndex, keyword) {
-            var obj = {"pageIndex": pageIndex, "pageSize": that.pageSize, "datas": keyword, "target": that.data.target, "rely": that.data.rely};
+            console.log(keyword);
+            var tmp = JSON.parse(keyword);
+            var obj = {"pageIndex": pageIndex, "pageSize": that.pageSize, "datas": tmp.keywords, "target": that.data.target, "rely": that.data.rely};
             ajaxData("request_table", obj, function (data) {
                 that.$container.render(data.datas);
                 that.$container.page(data.counts, pageIndex, that.pageSize);
@@ -91,7 +93,9 @@ TableSelectPanel.prototype.render = function () {
             });
         },
         searchCallBack: function (keyword) {
-            var obj = {"pageIndex": 1, "pageSize": that.pageSize, "datas": keyword, "target": that.data.target, "rely": that.data.rely};
+            console.log(keyword);
+            var tmp = JSON.parse(keyword);
+            var obj = {"pageIndex": 1, "pageSize": that.pageSize, "datas": tmp.keywords, "target": that.data.target, "rely": that.data.rely};
             ajaxData("request_table", obj, function (data) {
                 that.$container.render(data.datas);
                 that.$container.page(data.counts, 1, that.pageSize);
@@ -100,9 +104,9 @@ TableSelectPanel.prototype.render = function () {
         },
         isLocalSearch: true
     });
+    //this.$container.headerFocus();
 };
 TableSelectPanel.prototype.bindClickEvt = function () {
-
 };
 
 //extends TableSelectPanel
@@ -115,10 +119,12 @@ function TableMultiSelectPanel(data, callBackfun) {
     $.extend(data, _default_);
     SelectPanel.call(this, data, callBackfun);
 }
-extend(TableMultiSelectPanel, TableSelectPanel);
+extend(TableMultiSelectPanel, SelectPanel);
 TableMultiSelectPanel.prototype.render = function () {
     this.resSet = {};
     var that = this;
+    //console.log(this.data);
+    
     this.$container.insertTable({
         titles: this.data.titles, //表头  
         datas: this.data.datas, //数据源
@@ -132,13 +138,15 @@ TableMultiSelectPanel.prototype.render = function () {
         dbclickRowCallBack: function (index, obj) {
             console.log(obj);
         },
+        searchCallBack: function(keyword) {
+            that.$container.dataFilter(keyword);
+        },
         isLocalSearch: true
     });
-    this.$container.append("<button class='btn btn-info my-sure'>确定</button>");
+    this.$container.find(".jtb-header .LocalFilter").after("<button class='btn btn-info my-sure'>保存</button>");
 };
 TableMultiSelectPanel.prototype.bindClickEvt = function () {
     var that = this;
-
     this.$container.find(".my-sure").on("click", function (e) {
         var resArr = [];
         for (var ele in that.resSet) {
@@ -181,7 +189,6 @@ SelectPanelProxy.prototype.reset = function (type, data, callback) {
             this.tableselet.show();
             break;
         case 3:
-            console.log(3);
             this.multiselet.reset(data, callback);
             this.multiselet.show();
             break;

@@ -22,6 +22,7 @@ $.fn.insertInputForm = function (options) {
         selectpanel: null
     };
     options = $.extend(_default_, options);
+    //console.log(options.tableInputCallBack);
     var _pro_ = {
         getDOM: function () {
             var inputResult = "";
@@ -34,6 +35,8 @@ $.fn.insertInputForm = function (options) {
                         var value = controls[i].split("@")[1];
                         if (controls[i].split(',')[1] === 'hidden') {
                             inputResult += "<input class='input' type='hidden' name='" + i + "' value='" + value + "'/>";
+                        } else if(controls[i].split(',')[1] === 'parent') {
+                            inputResult += "<input class='input parent' type='hidden' name='" + i + "' value='" + value + "'/>";
                         } else {
                             inputResult += "<div><span>" + txt + "</span>:<input class='event special input' name='" + i + "' value='" + value + "'></div>";
                         }
@@ -41,7 +44,7 @@ $.fn.insertInputForm = function (options) {
                         inputResult += "<div><span>" + txt + "</span>:<input class='event input' name='" + i + "'/></div>";
                     }
                 } else if (controls[i].split(',')[1] === 'date') {
-                    inputResult += "<div><span>" + txt + "</span>:<input class='input' type='text' onfocus='WdatePicker({dateFmt: \"yyyy/MM/dd HH:mm:ss\"})' name='" + i + "' value='" + getMaxDate() + "'/></div>";
+                    inputResult += "<div><span>" + txt + "</span>:<input class='input' type='text' onfocus='WdatePicker({dateFmt: \"yyyy-MM-dd HH:mm:ss\"})' name='" + i + "' value='" + getMaxDate() + "'/></div>";
                 } else if (controls[i].split(',')[1] === 'bool') {
                     inputResult += "<div><span>" + txt + "</span>:<input class='radio' type='radio' name='" + i + "' value='1' />是<input  class='radio' type='radio' name='" + i + "' value='2'/>否</div>";
                 } else if (controls[i].split(',')[1] === 'img') {
@@ -52,10 +55,10 @@ $.fn.insertInputForm = function (options) {
                     inputResult += "<input class='input' type='hidden' name='" + i + "'/>";
                 } else if (controls[i].split(',')[1] === 'select') {
                     var selects = controls[i].split(",").slice(2);
-                    
+
                     inputResult += "<div><span>" + txt + "</span>:<input class='input' type='hidden' name='" + i + "' value='" + selects[0] + "'/>";
                     inputResult += "<select class='select'>";
-                    
+
                     for (var str in selects) {
                         inputResult += "<option value='" + selects[str] + "'>" + selects[str] + "</option>";
                     }
@@ -71,48 +74,92 @@ $.fn.insertInputForm = function (options) {
                     inputResult += "<div><span>" + txt + "</span>:<input class='input' name='" + i + "'/></div>";
                 }
             }
-            
+
             this.html("<div class='input-area'>" + inputResult + "</div>").addClass("jQueryForm");
-            
+
             this.$inputs = this.find(".input-area input.input");
             this.$radios = this.find(".input-area input.radio");
             this.$select = this.find(".input-area select");
             this.$calculate = this.find(".input-area input.calculate");
+            this.$check = this.find(".input-area .check");
             this.parent = this.find(".input-area input.parent");
             //将只有一个选项的输入框默认输入这个选项
 
         },
-        calculateValue: function() {
+        checkValue: function () {
+            for (var i = 0; i < this.$check.length; i++) {
+                var item = this.$check[i];
+                var name = item.name;
+                var value = item.value;
+
+                var obj = options.controls[name];
+                var check = obj.split(",").slice(0).map(function (i) {
+                    return i.slice(0);
+                });
+                var referenceObj = this.$inputs.filter("[name=" + check[3] + "]");
+                if (check[2] === "小于") {
+                    if (eval(referenceObj.val()) < eval(value)) {
+                        alert(check[0] + "值不能大于" + referenceObj.val());
+                        this.$check.filter("[name=" + check[1] + "]").focus();
+                        return false;
+                    }
+                }
+                if (check[2] === "大于") {
+                    if (eval(referenceObj.val()) > eval(value)) {
+                        alert(check[0] + "值不能小于" + referenceObj.val());
+                        return false;
+                    }
+                }
+            }
+            return true;
+        },
+        calculateValue: function () {
             for (var i = 0; i < this.$calculate.length; i++) {
                 var item = this.$calculate[i];
                 var calFields = options.controls[item.name].split(',');
                 var firstFieldVal = this.$inputs.filter("[name=" + calFields[2] + "]").val();
                 var secondFieldVal = this.$inputs.filter("[name=" + calFields[3] + "]").val();
-                if (calFields[4] === "/")
-                    item.value = Math.ceil(firstFieldVal / secondFieldVal);
-                if (calFields[4] === "*")
-                    item.value = Math.ceil(firstFieldVal * secondFieldVal);
-                if (calFields[4] === "+")
-                    item.value = Math.ceil(firstFieldVal + secondFieldVal);
-                if (calFields[4] === "-")
-                    item.value = Math.ceil(firstFieldVal - secondFieldVal);
-                //console.log("name:" + item.name + ",value:" + item.value);
+                if (firstFieldVal && secondFieldVal) {
+                    if (calFields[4] === "/")
+                        item.value = Math.ceil(firstFieldVal / secondFieldVal);
+                    if (calFields[4] === "*")
+                        item.value = Math.ceil(firstFieldVal * secondFieldVal);
+                    if (calFields[4] === "+")
+                        item.value = Math.ceil(firstFieldVal + secondFieldVal);
+                    if (calFields[4] === "-")
+                        item.value = Math.ceil(firstFieldVal - secondFieldVal);
+                } else {
+                    alert("计算[" + calFields[0] + "]值出现错误!");
+                    return false;
+                }
             }
+            return true;
         },
-        parentFieldValue: function(parent) {
+        parentFieldValue: function (parent) {
             var obj = parent.getInputValObj(true);
             for (var i = 0; i < this.parent.length; i++) {
                 var item = this.parent[i];
                 item.value = obj[item.name];
-                //console.log("name:" + item.name + ",value:" + item.value);
+                var specialItem = options.controls[item.name].split(',');
+                if (specialItem[2] && obj[specialItem[2]]) {
+                    item.value = obj[specialItem[2]];
+                }
             }
         },
         lastInputEnter: function () {
             this.$inputs.last().bind("keypress", function (e) {
                 if (e.keyCode == "13") {
+                    $(this).blur();
                     options.lastInputCallBack();
                 }
             });
+        },
+        getFirstInput: function() {
+            for (var i = 0; i < $(this.$inputs).length; i++) {
+                if (!($(this.$inputs[i]).hasClass("special")) && !($(this.$inputs[i]).attr("type") === "hidden")) {
+                    return $(this.$inputs[i]);
+                }
+            }
         },
         getInputValObj: function (containHidden) {
             var obj = {};
@@ -151,7 +198,14 @@ $.fn.insertInputForm = function (options) {
         },
         objInInputs: function (obj) {
             for (var i in obj) {
-                this.$inputs.filter("[name='" + i + "']").val(obj[i]);
+                if (obj[i]) {
+                    this.$inputs.filter("[name='" + i + "']").val(obj[i]);
+                }
+                
+                var selectInput = this.$inputs.filter("[name='" + i + "']").next("select");
+                if (selectInput && obj[i]) {
+                    selectInput.val(obj[i]);
+                }
             }
             return this;
         },
@@ -168,6 +222,7 @@ $.fn.insertInputForm = function (options) {
             for (var j = 0; j < options.mustWrite.length; j++) {
                 var $input = this.$inputs.filter("[name=" + options.mustWrite[j] + "]");
                 if ($input.val() == '') {
+                    $input.focus();
                     var name = options.mustWrite[j];
                     var mm = options.controls[name].split(',')[0];
                     alert(mm + "必填！");
@@ -177,10 +232,9 @@ $.fn.insertInputForm = function (options) {
             return flag;
         },
         clearInputsArea: function () {
-            for (var i in this.$inputs) {
-                //console.log(this.$inputs);
-                if (!this.$inputs.eq(i).hasClass("special") && !this.$inputs.eq(i).attr("type") === "hidden") {
-                    this.$inputs.eq(i).val("");
+            for (var i = 0; i < $(this.$inputs).length; i++) {
+                if (!($(this.$inputs[i]).hasClass("special")) && !($(this.$inputs[i]).attr("type") === "hidden")) {
+                    $(this.$inputs[i]).val("");
                 }
             }
             return this;
@@ -229,15 +283,22 @@ $.fn.insertInputForm = function (options) {
         },
         inputAtuoToggle: function () {
             //绑定input对象enter键自动切换的事件~~~
-            this.$inputs.keypress(function(e){
+            this.$inputs.keypress(function (e) {
                 if (e.keyCode === 13) {
                     $(this).parent().next().children("input").trigger("focus");
                 }
             });
         },
         formDisable: function (arr) {
-            if (arguments.length == 0) {
+            if (!arr) {
                 this.$inputs.attr("disabled", "disabled");
+                for (var i = 0; i < this.$inputs.length; i++) {
+                    var selectInput = $(this.$inputs[i]).next("select");
+                    console.log(selectInput);
+                    if (selectInput) {
+                        selectInput.attr("disabled", "disabled");
+                    }
+                }
             } else {
                 for (var i = 0; i < arr.length; i++) {
                     this.$inputs.filter("[name=" + arr[i] + "]").attr("disabled", "disabled");
@@ -247,6 +308,13 @@ $.fn.insertInputForm = function (options) {
         },
         RemoveformDisable: function () {
             this.$inputs.removeAttr("disabled");
+            for (var i = 0; i < this.$inputs.length; i++) {
+                var selectInput = $(this.$inputs[i]).next("select");
+                console.log(selectInput);
+                if (selectInput) {
+                    selectInput.attr("disabled", false);
+                }
+            }
         },
         EvtInputFocus: function () {
             this.extraDatas = {};
@@ -289,14 +357,12 @@ $.fn.insertInputForm = function (options) {
                     }
                     //进行ajax请求
                     options.requesFun(data, function (data) {
-                        console.log(options.tableInputCallBack);
                         if (options.tableInputCallBack) {
-                            alert("第三种");
                             options.selectpanel.reset(3, data, function (resarr) {
                                 options.tableInputCallBack(resarr);
                             });
                         } else {
-                            options.selectpanel.reset(2, data, function (obj){
+                            options.selectpanel.reset(2, data, function (obj) {
                                 $input.val(obj[name]);
                                 $input.focus();
                                 if ($(".parent").filter("[name='" + name + "']")) {
@@ -326,42 +392,43 @@ $.fn.insertInputForm = function (options) {
                     });
                 }
             });
-            
-            this.$inputs.filter(".check").on('blur', function() {
-                /*
-                var name = $(this).attr("name");
-                var obj = options.controls[name];
-                var value = $(this).val();
-                var check = obj.split(",").slice(2).map(function(i){
-                    return i.slice(1);
-                });
-                */
-                var name = $(this).attr("name");
-                var obj = options.controls[name];
-                var value = $(this).val();
-                var check = obj.split(",").slice(2).map(function(i){
-                    return i.slice(0);
-                });
-                var referenceObj = that.$inputs.filter("[name=" + check[1] + "]")
-                if (check[0] == "小于") {
-                    if (eval(referenceObj.val()) < eval(value)) {
-                        alert("值不能大于" + referenceObj.val());
-                        //$(this).focus();
-                        return ;
-                    }
+            this.$inputs.filter(".event").bind('keypress', function(e){
+                if (e.keyCode === 13 && !$(this).val()) {
+                    $(this).trigger('click');
                 }
-                if (check[0] == "大于") {
-                    if (eval(referenceObj.val()) > eval(value)) {
-                        alert("值不能小于" + referenceObj.val());
-                        return ;
-                    }
-                }
-                
             });
+            /*
+             this.$inputs.filter(".check").on('blur', function() {
+             var name = $(this).attr("name");
+             var obj = options.controls[name];
+             var value = $(this).val();
+             var check = obj.split(",").slice(2).map(function(i){
+             return i.slice(0);
+             });
+             var referenceObj = that.$inputs.filter("[name=" + check[1] + "]")
+             if (check[0] == "小于") {
+             if (eval(referenceObj.val()) < eval(value)) {
+             alert("值不能大于" + referenceObj.val());
+             //$(this).focus();
+             return ;
+             }
+             }
+             if (check[0] == "大于") {
+             if (eval(referenceObj.val()) > eval(value)) {
+             alert("值不能小于" + referenceObj.val());
+             return ;
+             }
+             }  
+             });
+             */
         },
-        specialInput: function() {
-            this.$select.on("change", function() {
+        specialInput: function () {
+            this.$select.on("change", function () {
                 $(this).prev().val($(this).val());
+                //console.log($(this).prev().attr("name"));
+                if ($(".parent").filter("[name='" + $(this).prev().attr("name") + "']")) {
+                    $(".parent").filter("[name='" + $(this).prev().attr("name") + "']").val($(this).val());
+                }
             });
             this.$inputs.filter(".special").attr("disabled", "disabled");
         }

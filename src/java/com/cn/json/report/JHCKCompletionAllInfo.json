@@ -1,0 +1,26 @@
+{
+    "titles": {
+        "zdCustomerID": "终端客户编号,1,1,10%",
+        "zdCustomerName": "终端客户,1,1,10%",
+        "jhType": "计划类型,1,1,10%",
+        "jhProduceTime": "制单时间,1,1,10%",
+        "jhDemandTime": "计划需求时间,1,1,10%",
+        "bhStaffName": "备货员,1,1,10%",
+        "supplierID": "供应商编号,1,1,10%",
+        "supplierName": "供应商,1,1,10%",
+        "partName": "部品名称,1,1,10%",
+        "partCode": "部品件号,1,1,10%",
+        "partUnit": "部品单位,1,1,10%",
+        "jhTotal": "计划总数,1,1,10%",
+        "jhOutWareHouseListRemark": "备注,1,1,10%",
+        "bhTotal": "已备货,1,1,10%",
+        "wbHTotal": "未备货,1,1,10%",
+        "bhTime": "备货完成时间,1,1,10%",
+        "lhTotal": "已领货,1,1,10%",
+        "wlHTotal": "未领货,1,1,10%",
+        "lhTime": "领货完成时间,1,1,10%",
+        "sxTotal": "已上线,1,1,10%",
+        "wsXTotal": "未上线,1,1,10%",
+        "sxTime": "上线完成时间,1,1,10%"
+    }
+}

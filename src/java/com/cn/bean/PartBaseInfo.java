@@ -22,29 +22,29 @@ public class PartBaseInfo {
         recordCount = aRecordCount;
     }
 
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "import")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "import")
     private String partName;
-    @FieldDescription(description = "部品件号")
+    @FieldDescription(description = "部品件号", operate = "import")
     private String partCode;
-    @FieldDescription(description = "使用车型")
+    @FieldDescription(description = "使用车型", operate = "import")
     private String autoStylingName;
-    @FieldDescription(description = "装配工位")
+    @FieldDescription(description = "装配工位", operate = "import")
     private String assemblingStation;
-    @FieldDescription(description = "部品单位")
+    @FieldDescription(description = "部品单位", operate = "import")
     private String partUnit;
-    @FieldDescription(description = "单车用量")
+    @FieldDescription(description = "单车用量", operate = "import")
     private int dCAmount;
 //    @FieldDescription(description = "是否停用")
     private boolean disabled;
 //    @FieldDescription(description = "拼音助计")
     private String pinyinAbb;
-    @FieldDescription(description = "部品分类")
+    @FieldDescription(description = "部品分类", operate = "import")
     private String partCategoryName;
 //    @FieldDescription(description = "部品图片")
     private String partPicture;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String partBaseInfoRemark;
 
     public String getPartID() {

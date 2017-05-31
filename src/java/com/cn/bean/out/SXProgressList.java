@@ -38,13 +38,13 @@ public class SXProgressList {
     @FieldDescription(description = "包装数量")
     private int packingAmount;
     @FieldDescription(description = "领货时间")
-    private int sxTime;
+    private String sxTime;
     @FieldDescription(description = "领货人")
-    private int sxStaffName;
+    private String sxStaffName;
     @FieldDescription(description = "计划出库单号")
-    private int jhOutWareHouseID;
+    private String jhOutWareHouseID;
     @FieldDescription(description = "备注")
-    private int sxProgressListRemark;
+    private String sxProgressListRemark;
 
     public String getSupplierID() {
         return supplierID;
@@ -110,35 +110,35 @@ public class SXProgressList {
         this.packingAmount = packingAmount;
     }
 
-    public int getSxTime() {
+    public String getSxTime() {
         return sxTime;
     }
 
-    public void setSxTime(int sxTime) {
+    public void setSxTime(String sxTime) {
         this.sxTime = sxTime;
     }
 
-    public int getSxStaffName() {
+    public String getSxStaffName() {
         return sxStaffName;
     }
 
-    public void setSxStaffName(int sxStaffName) {
+    public void setSxStaffName(String sxStaffName) {
         this.sxStaffName = sxStaffName;
     }
 
-    public int getJhOutWareHouseID() {
+    public String getJhOutWareHouseID() {
         return jhOutWareHouseID;
     }
 
-    public void setJhOutWareHouseID(int jhOutWareHouseID) {
+    public void setJhOutWareHouseID(String jhOutWareHouseID) {
         this.jhOutWareHouseID = jhOutWareHouseID;
     }
 
-    public int getSxProgressListRemark() {
+    public String getSxProgressListRemark() {
         return sxProgressListRemark;
     }
 
-    public void setSxProgressListRemark(int sxProgressListRemark) {
+    public void setSxProgressListRemark(String sxProgressListRemark) {
         this.sxProgressListRemark = sxProgressListRemark;
     }
 }

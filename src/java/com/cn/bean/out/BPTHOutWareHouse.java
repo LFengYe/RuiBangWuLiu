@@ -26,15 +26,15 @@ public class BPTHOutWareHouse {
     private String bpTHOutWareHoseID;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
     @FieldDescription(description = "部品状态")
     private String thPartState;
-    @FieldDescription(description = "库管员姓名")
+    @FieldDescription(description = "库管员姓名", operate = "display")
     private String wareHouseManagerName;
     @FieldDescription(description = "制单员姓名")
     private String bpTHProducerName;
-    @FieldDescription(description = "制单时间")
+    @FieldDescription(description = "制单时间", type = "date")
     private String bpTHProduceTime;
     @FieldDescription(description = "审核员姓名")
     private String bpTHAuditStaffName;

@@ -23,19 +23,19 @@ public class PlatFormDataBaseInfo {
     }
 
     private String dataBaseID;
-    @FieldDescription(description = "公司编号")
+    @FieldDescription(description = "公司编号", operate = "import")
     private String companyID;
-    @FieldDescription(description = "公司名称")
+    @FieldDescription(description = "公司名称", operate = "import")
     private String companyName;
-    @FieldDescription(description = "工作数据库")
+    @FieldDescription(description = "工作数据库", operate = "import")
     private String masterDataBaseName;
-    @FieldDescription(description = "工作服务器")
+    @FieldDescription(description = "工作服务器", operate = "import")
     private String masterDataBaseServer;
-    @FieldDescription(description = "历史数据库")
+    @FieldDescription(description = "历史数据库", operate = "import")
     private String historyDataBaseName;
-    @FieldDescription(description = "历史服务器")
+    @FieldDescription(description = "历史服务器", operate = "import")
     private String historyDataBaseServer;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String dataBaseInfoRemark;
 
     public String getDataBaseID() {

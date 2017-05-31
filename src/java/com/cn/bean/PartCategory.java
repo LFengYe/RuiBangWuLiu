@@ -21,9 +21,9 @@ public class PartCategory {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "部品类别")
+    @FieldDescription(description = "部品类别", operate = "import")
     private String partCategoryName;
-    @FieldDescription(description = "库管员")
+    @FieldDescription(description = "库管员", operate = "import")
     private String wareHouseManagerName;
 
     public String getPartCategoryName() {

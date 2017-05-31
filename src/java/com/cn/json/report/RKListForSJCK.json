@@ -1,0 +1,17 @@
+{
+    "titles": {
+        "sjCKAuditTime": "审核时间,1,1,20%",
+        "sjOutWareHouseID": "送检出库单号,1,1,20%",
+        "outInType": "出入库类型,1,1,20%",
+        "outInWethod": "出入库方式,1,1,20%",
+        "supplierID": "供应商编号,1,1,20%",
+        "supplierName": "供应商名称,1,1,20%",
+        "partCode": "部品件号,1,1,20%",
+        "partID": "部品编号,1,1,20%",
+        "partName": "部品名称,1,1,20%",
+        "inboundBatch": "入库批次,1,1,20%",
+        "sjCKAmount": "出库数量,1,1,20%",
+        "sjCKProducerName": "制单员,1,1,20%",
+        "sjOutWareHouseListRemark": "备注,1,1,20%"
+    }
+}

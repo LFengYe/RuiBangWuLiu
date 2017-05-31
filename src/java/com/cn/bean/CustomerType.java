@@ -21,7 +21,7 @@ public class CustomerType {
         recordCount = aRecordCount;
     }
     
-    @FieldDescription(description = "客户类别")
+    @FieldDescription(description = "客户类别", operate = "import")
     private String customerTypeName;
 
     public String getCustomerTypeName() {

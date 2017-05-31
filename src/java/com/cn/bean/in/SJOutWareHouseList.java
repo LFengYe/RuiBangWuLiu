@@ -36,15 +36,17 @@ public class SJOutWareHouseList {
     private String partCode;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
+    @FieldDescription(description = "入库数量(最大送检出库数)", operate = "display")
+    private int inboundAmount;
 //    @FieldDescription(description = "部品单位")
     private String partUnit;
     @FieldDescription(description = "送检出库数量")
     private String sjCKAmount;
     @FieldDescription(description = "备注")
     private String sjOutWareHouseListRemark;
-//    @FieldDescription(description = "送检出库退库单号")
+    @FieldDescription(description = "送检出库退库单号")
     private String sjOutWareHouseID;
-//    @FieldDescription(description = "库管员")
+    @FieldDescription(description = "库管员")
     private String wareHouseManagerName;
 
     public String getSupplierID() {
@@ -133,5 +135,13 @@ public class SJOutWareHouseList {
 
     public void setWareHouseManagerName(String wareHouseManagerName) {
         this.wareHouseManagerName = wareHouseManagerName;
+    }
+
+    public int getInboundAmount() {
+        return inboundAmount;
+    }
+
+    public void setInboundAmount(int inboundAmount) {
+        this.inboundAmount = inboundAmount;
     }
 }

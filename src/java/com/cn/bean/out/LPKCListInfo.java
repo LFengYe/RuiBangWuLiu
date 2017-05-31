@@ -27,6 +27,8 @@ public class LPKCListInfo {
     private String partID;
     private String inboundBatch;//入库批次
     private int lpAmount;//良品数量
+    private String outboundContainerName;
+    private int outboundPackageAmount;
 
     public String getSupplierID() {
         return supplierID;
@@ -82,5 +84,21 @@ public class LPKCListInfo {
 
     public void setPartID(String partID) {
         this.partID = partID;
+    }
+
+    public String getOutboundContainerName() {
+        return outboundContainerName;
+    }
+
+    public void setOutboundContainerName(String outboundContainerName) {
+        this.outboundContainerName = outboundContainerName;
+    }
+
+    public int getOutboundPackageAmount() {
+        return outboundPackageAmount;
+    }
+
+    public void setOutboundPackageAmount(int outboundPackageAmount) {
+        this.outboundPackageAmount = outboundPackageAmount;
     }
 }

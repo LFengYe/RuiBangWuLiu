@@ -1,15 +1,15 @@
 {
     "control": {
         "djInWareHouseID": "待检入库单号",
-        "customerType": "客户类型,hidden,@供应商",
-        "supplierID": "供应商代码,@table,@customerType",
+        "supplierName": "供应商名称,hidden",
         "inboundBatch": "入库批次",
         "djRKProducerName": "制单人员姓名",
         "djRKProduceTime": "制单时间",
+        "customerTypeName": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerTypeName:@supplierName",
         "djINWareHousRemark": "备注,string,500"
     },
     "operate": {
-        
     },
     "mustwrite": ["djInWareHouseID", "supplierID", "inboundBatch", "djRKProducerName", "djRKProduceTime"],
     "unique": ["inboundBatch"],
@@ -30,17 +30,18 @@
         "djInWareHouseID": "待检入库单号,parent",
         "inboundBatch": "入库批次,parent",
         "supplierID": "供应商代码,parent",
+        "supplierName": "供应商名称,parent",
         "inboundPackageAmount": "入库包装数量,hidden",
         "inboundBoxAmount": "入库箱数,calculate,inboundAmount,inboundPackageAmount,/",
         "partState": "部品状态,@待检品",
-        "partCode": "部品件号,@table,@supplierID:@inboundPackageAmount",
+        "partCode": "部品件号,@table,@supplierID:@partName,@partID,@autoStylingName,@partUnit,@inboundPackageAmount",
         "inboundAmount": "入库数量,number",
         "originalBatch": "原厂批次,string,12",
         "djInWareHouseListRemark": "备注,string,500"
     },
     "detailMustwrite": ["djInWareHouseID", "supplierID", "partCode", "inboundBatch"],
     "detailUnique": [],
-    "detailPrimary": "djInWareHouseID,inboundBatch,partCode",
+    "detailPrimary": "djInWareHouseID,partCode",
     "detailTitles": {
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
@@ -76,9 +77,8 @@
             "pageInfo":"35%,第 1 页共 1 页"
             },
         "datasTitle": {
-            "listNumber": "10%,序号",
-            "partName":"15%,部品名称",
-            "partCode":"15%,部品件号",
+            "partName":"20%,部品名称",
+            "partCode":"20%,部品件号",
             "partUnit":"5%,单位",
             "inboundAmount":"10%,入库数量",
             "originalBatch":"15%,原厂批次",

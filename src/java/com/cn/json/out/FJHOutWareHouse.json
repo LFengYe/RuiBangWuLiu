@@ -1,14 +1,13 @@
 {
     "control": {
         "fjhOutWareHouseID": "非计划出库单号",
-        "customerType": "客户类型,hidden,@非终端客户",
-        "fzdCustomerID": "非终端客户代码,@table,@customerType:@fzdCustomerName",
-        "fhStaffName": "发货人,@table",
         "fjhCKProducerName": "制单人",
         "fjhCKProduceTime": "制单时间",
+        "customerType": "客户类型,hidden,@非终端客户",
+        "fzdCustomerID": "非终端客户代码,@table,@customerType:@fzdCustomerName",
         "fjhOutWareHouseRemark": "备注,string,500"
     },
-    "mustwrite": ["fjhOutWareHouseID", "fzdCustomerID", "fhstaffName", "fjhCKProducerName", "fjhCKProduceTime"],
+    "mustwrite": ["fjhOutWareHouseID", "fzdCustomerID", "fjhCKProducerName", "fjhCKProduceTime"],
     "unique": [],
     "primary": "fjhOutWareHouseID",
     "titles": {
@@ -22,22 +21,20 @@
         "fjhOutWareHouseRemark": "备注,10%"
     },
     "detailControl": {
-        "listNumber": "单内显示序号,hidden",
         "fjhOutWareHouseID": "非计划出库单号,parent",
         "fzdCustomerID": "非终端客户代码,parent",
         "fzdCustomerName": "非终端客户名称,parent",
-        "customerType": "客户类型,hidden,@供应商",
-        "supplierID": "供应商代码,@table,@customerType:@supplierName",
-        "partCode": "部品件号,@table:@partID,@partName,@partUnit,@autoStyling,@cfAddress",
-        "fjhCKAmount": "出库数量,number",
-        "fjhCKTime": "出库时间",
+        "customerTypeName": "客户类型,hidden,@供应商",
+        "lpAmount": "良品数量,hidden",
+        "supplierID": "供应商代码,@table,@customerTypeName:@supplierName",
+        "partCode": "部品件号,@table,@supplierID:@partID,@partName,@lpAmount",
+        "fjhCKAmount": "出库数量,check,小于,lpAmount",
         "fjhOutWareHouseListRemark": "备注,string,500"
     },
-    "detailMustwrite": ["fjhOutWareHouseID", "fzdCustomerID", "supplierID", "partCode", "fjhCKAmount", "fjhCKTime"],
-    "detailUnique": ["partCode"],
-    "detailPrimary": "fjhOutWareHouseID,partCode",
+    "detailMustwrite": ["fjhOutWareHouseID", "supplierID", "partCode", "fjhCKAmount"],
+    "detailUnique": [],
+    "detailPrimary": "fjhOutWareHouseID,SupplierID,partCode",
     "detailTitles": {
-        "listNumber": "单内显示序号,10%",
         "fzdCustomerID": "非终端客户代码,10%",
         "fzdCustomerName": "非终端客户名称,10%",
         "supplierID": "供应商代码,10%",
@@ -46,7 +43,7 @@
         "partName": "部品名称,10%",
         "partCode": "部品件号,10%",
         "partUnit": "部品单位,10%",
-        "autoStyling": "车型,10%",
+        "autoStylingName": "车型,10%",
         "fjhCKAmount": "出库数量,10%",
         "fjhCKTime": "出库时间,10%",
         "fjhOutWareHouseListRemark": "备注,10%",

@@ -22,13 +22,13 @@ public class ExemptionInfo {
         recordCount = aRecordCount;
     }
 
-    @FieldDescription(description = "供应商代码")
+    @FieldDescription(description = "供应商代码", operate = "import")
     private String supplierID;
-    @FieldDescription(description = "部品件号")
+    @FieldDescription(description = "部品件号", operate = "import")
     private String partCode;
-    @FieldDescription(description = " 免检标志")
+    @FieldDescription(description = " 免检标志", operate = "import")
     private String exemptionFlag;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String exemptionInfoRemark;
 
     public String getSupplierID() {
