@@ -3,8 +3,9 @@
         "fjhOutWareHouseID": "非计划出库单号",
         "fjhCKProducerName": "制单人",
         "fjhCKProduceTime": "制单时间",
-        "customerType": "客户类型,hidden,@非终端客户",
-        "fzdCustomerID": "非终端客户代码,@table,@customerType:@fzdCustomerName",
+        "customerTypeName": "客户类型,hidden,@非终端客户",
+        "fzdCustomerID": "非终端客户代码,@table,@customerTypeName:@fzdCustomerName",
+        "fhStaffName": "发货人姓名,string,10",
         "fjhOutWareHouseRemark": "备注,string,500"
     },
     "mustwrite": ["fjhOutWareHouseID", "fzdCustomerID", "fjhCKProducerName", "fjhCKProduceTime"],

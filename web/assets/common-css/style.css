@@ -138,7 +138,7 @@ html,body{
 /*公共样式*/
 .wc-form  .wc-group{
     float:left;
-    margin-right:20px;
+    margin-left:20px;
 }
 
 .wc-form  .wc-group  input.wc-control {

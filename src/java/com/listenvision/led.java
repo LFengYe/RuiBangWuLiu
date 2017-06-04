@@ -316,6 +316,6 @@ public class led {
         
 	static
 	{
-		System.loadLibrary("lv_led(x64)");  
+		System.loadLibrary("lv_led(x64)");
 	}
 }

@@ -1,0 +1,22 @@
+{
+    "titles": {
+        "supplierID": "供应商代码,1,1,10%,false",
+        "supplierName": "供应商,1,1,10%,false",
+        "partID": "部品编号,1,1,10%,false",
+        "partName": "部品名称,1,1,10%,false",
+        "partCode": "部品件号,1,1,10%,false",
+        "jhck1": "一工厂计划出库,1,1,10%,true",
+        "lsdh1": "一工厂临时调货,1,1,10%,true",
+        "jpsx1": "一工厂集配上线,1,1,10%,true",
+        "jhck2": "二工厂计划出库,1,1,10%,true",
+        "lsdh2": "二工厂临时调货,1,1,10%,true",
+        "jpsx2": "二工厂集配上线,1,1,10%,true",
+        "jhck3": "三工厂计划出库,1,1,10%,true",
+        "lsdh3": "三工厂临时调货,1,1,10%,true",
+        "jpsx3": "三工厂集配上线,1,1,10%,true",
+        "fjhck": "非计划出库,1,1,10%,true",
+        "lpfxck": "良品返修出库,1,1,10%,true",
+        "blpfxck": "不良品返修出库,1,1,10%,true",
+        "ckTotal": "出库总数,1,1,10%,true"
+    }
+}

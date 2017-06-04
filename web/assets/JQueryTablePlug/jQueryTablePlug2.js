@@ -1,14 +1,19 @@
 (function ($) {
     var _funs_ = {
         getDOM: function () {
-            var htmlStr = '<div class="wrapper"><div class="jtb-header"><span>查询条件:</span><input name="keywords" placeholder="查询条件" class="wc-control" /><button class="LocalFilter">查询</button></div>';
+            var htmlStr = '<div class="wrapper"><div class="jtb-header">';
+            htmlStr += '<span>查询条件:</span><input name="keywords" placeholder="查询条件" class="wc-control" /><button class="LocalFilter">查询</button>';
+            //htmlStr += '<button class="select-all">全选</button>';
+            htmlStr += '</div>';
             htmlStr += '<div class="jtb-container"><div class="jtb-scroll"></div></div>';
+            htmlStr += '<div class="select-all"><button class="">全选</button></div>';
             htmlStr += '<div class="jtb-page"><div class="page"></div><div class="page-info"></div></div>';
             htmlStr += '</div>';
             this.html(htmlStr);
 
             //加载表头
             var result = '', txt = '', width = '', totalWidth = 0;
+            //result += '<div class="col" name="checkbox"><h5>选择</h5><div class="inner"><ul></ul></div></div>';
             for (var i in this.titles) {
                 txt = this.titles[i].split(',')[0];
                 width = this.titles[i].split(',')[this.titles[i].split(',').length - 1];
@@ -17,11 +22,16 @@
                     result += '<div class="col" name="' + i + '" style="display:none;"><h5>' + txt + '</h5><div class="inner"><ul></ul></div></div>';
                 else
                     result += '<div class="col" name="' + i + '" style="width:' + width + ';"><h5>' + txt + '</h5><div class="inner"><ul></ul></div></div>';
+                if (i === "checkbox") {
+                    this.isAllSelect = true;
+                }
             }
             this.$container = this.find(".jtb-scroll").append(result);
             this.$header = this.find(".jtb-header");
+            this.$selectAll = this.find(".select-all");
             
             this.addClass("jtb");
+            !this.isAllSelect && this.$selectAll.hide();
             !this.isLocalSearch && this.$header.hide();
             return this;
         },
@@ -32,6 +42,10 @@
             for (var i = 0; i < datas.length; i++) {
                 obj = datas[i];
                 for (var k in this.titles) {
+                    if (k === "checkbox") {
+                        this.$container.children("div[name='" + k + "']").find("ul").append("<li><input type='checkbox' index='" + i + "'/></li>");
+                        continue;
+                    }
                     if (obj[k])
                         this.$container.children("div[name='" + k + "']").find("ul").append("<li>" + obj[k] + "</li>");
                     else
@@ -84,7 +98,16 @@
                 that.filterState && that.dbclickRowCallBack(index, that.afterFilter[index]);
                 !that.filterState && that.dbclickRowCallBack(index, that.datas[index]);
                 that.$container.find("ul li:nth-child(" + (index + 1) + ")").toggleClass("dbclicked");
+            }).on("click", "input[type='checkbox']", function() {
+                var index = $(this).attr("index");
+                var selected = $(this).is(':checked');
+                //console.log("index:" + index);
+                that.checkBoxCallBack(index, selected, that.datas[index]);
+                
+                //that.filterState && that.checkBoxCallBack(index, selected, that.afterFilter[index]);
+                //!that.filterState && that.checkBoxCallBack(index, selected, that.datas[index]);
             });
+            
             /* 本地数据筛选
              this.find(".jtb-header button").click(function (e) {
              var keyWord = $(this).prev().val();
@@ -94,6 +117,25 @@
              that.filterState = false;
              });
              */
+            this.find(".select-all button").click(function(){
+                var checkBoxs = that.$container.find("input[type='checkbox']");
+                var text = $(this).html();
+                if (text === "全选") {
+                    for (var i = 0; i < checkBoxs.length; i++) {
+                        if (!$(checkBoxs[i]).is(':checked')) {
+                            $(checkBoxs[i]).trigger('click');
+                        }
+                    }
+                    $(this).html("取消全选");
+                } else {
+                    for (var i = 0; i < checkBoxs.length; i++) {
+                        if ($(checkBoxs[i]).is(':checked')) {
+                            $(checkBoxs[i]).trigger('click');
+                        }
+                    }
+                    $(this).html("全选");
+                }
+            });
             this.find(".jtb-header button").click(function (e) {
                 //var keyWord = $(this).prev().val();
                 var keyWord = serializeJqueryElement(that.find(".LocalFilter").parent());
@@ -228,6 +270,31 @@
         },
         headerFocus: function() {
             this.$header.find("input").trigger("focus");
+        },
+        getSelectedItem: function() {
+            var arr = [];
+            var checkBoxs = this.$container.find("input[type='checkbox']");
+            for (var i = 0; i < checkBoxs.length; i++) {
+                if ($(checkBoxs[i]).is(':checked')) {
+                    var obj = this.datas[$(checkBoxs[i]).attr("index")];
+                    var whereObj = {};
+                    for (var proIndex in this.primary) {
+                        var proName = this.primary[proIndex];
+                        whereObj[proName] = obj[proName];
+                    }
+                    arr.push(whereObj);
+                }
+            }
+            console.log(arr);
+            return arr;
+        },
+        setData: function(data) {
+            for (var index in data) {
+                for (var i = 0; i < this.datas.length; i++) {
+                    this.datas[i][index] = data[index];
+                }
+            }
+            this.render(this.datas);
         }
     };
 
@@ -247,7 +314,11 @@
             },
             searchCallBack: function (keyword) {
             },
+            checkBoxCallBack: function(index, selected, obj) {
+                
+            },
             isLocalSearch: true,
+            isAllSelect: false,
             pageIndex: 1,
             pageSize: 15,
             isDialog: false,

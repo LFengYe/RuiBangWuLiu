@@ -24,7 +24,7 @@ public class AdjustAccount {
     }
     @FieldDescription(description = "调帐编号")
     private String tzYMonth;
-    @FieldDescription(description = "调帐制单时间")
+    @FieldDescription(description = "调帐制单时间", type = "date")
     private String tzProduceTime;
     @FieldDescription(description = "调账备注")
     private String tzRemark;

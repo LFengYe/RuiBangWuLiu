@@ -36,6 +36,7 @@
     "detailUnique": [],
     "detailPrimary": "sjBackWareHouseID,inboundBatch,partCode",
     "detailTitles": {
+        "checkbox": "选择,5%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
         "partID": "部品编号,10%",

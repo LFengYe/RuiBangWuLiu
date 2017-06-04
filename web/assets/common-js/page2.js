@@ -22,6 +22,7 @@
     var $print = $("#page2-print");
     var $import = $("#page2-import");
     var $confirm = $("#page2-confirm");
+    var $auditItem = $("#page2-auditItem");
     //var $search_on_keyword = $(".page2-container .page2-keyword-query button");
 
     var OPERATION = {
@@ -48,6 +49,7 @@
     var oriObj = null;
 
     var mainCancelRows = [];
+    var checkSelected = [];
     var cancelRows = {};
     var whereObj = {};
     var submitDatas = {
@@ -70,6 +72,7 @@
         oriObj = null;
 
         mainCancelRows = [];
+        checkSelected = [];
         cancelRows = {};
         whereObj = {};
         submitDatas = {
@@ -87,6 +90,20 @@
     }
 
     function bindEvt(moudle) {
+        $auditItem.off("click");
+        $auditItem.on("click", function(e){
+            var arr = $chidTableBox.getSelectedItem();
+            if (arr && arr.length > 0) {
+                ajaxData("auditItem", {datas: arr}, function(data) {
+                    if (data) {
+                        $chidTableBox.setData(data);
+                    }
+                });
+            } else {
+                alert("未选中数据!");
+            }
+        });
+        
         $history.find(":checkbox").off("click");
         $history.find(":checkbox").click(function (e) {
             //console.log($(this).is(':checked'));
@@ -537,6 +554,18 @@
                         $chidTableBox.render(data.datas);
                     }, function () {
                     });
+                },
+                checkBoxCallBack: function (index, selected, obj) {
+                    if (selected) {
+                        whereObj = {};
+                        for (var proIndex in detailPrimary) {
+                            var proName = detailPrimary[proIndex];
+                            whereObj[proName] = obj[proName];
+                        }
+                        checkSelected.push(whereObj);
+                    } else {
+                        checkSelected.splice(index, 1);
+                    }
                 }
             });
             $printArea.createPrintArea({
@@ -591,6 +620,7 @@
             $modify.attr("disabled", "disabled");
             $cancel.attr("disabled", "disabled");
             $import.attr("disabled", "disabled");
+            $print.attr("disabled", false);
         } else if (moudle === "待检审核" || moudle === "备货确认" ||
                 moudle === "领货确认" || moudle === "配送确认") {
             $addItem.css("display", "none");
@@ -606,6 +636,7 @@
             $modify.attr("disabled", "disabled");
             $cancel.attr("disabled", "disabled");
             $import.attr("disabled", "disabled");
+            $print.attr("disabled", false);
         } else if (moudle === "计划出库" || moudle === "临时调货" ||
                 moudle === "非生产领料") {
             $addItem.css("display", "inline-block");
@@ -621,6 +652,7 @@
             !type ? $modify.attr("disabled", false) : $modify.attr("disabled", "disabled");
             !type ? $cancel.attr("disabled", false) : $cancel.attr("disabled", "disabled");
             $import.attr("disabled", false);
+            $print.attr("disabled", false);
         } else {
             $addItem.css("display", "inline-block");
             $("#page2-submit").css("display", "inline-block");
@@ -634,7 +666,8 @@
             $add.attr("disabled", false);
             $modify.attr("disabled", false);
             $cancel.attr("disabled", false);
-            $import.attr("disabled", "disabled");
+            $import.attr("disabled", false);
+            $print.attr("disabled", false);
         }
         if (moudle === "待检入库")
             $audit.css("display", "none");
@@ -646,8 +679,13 @@
             $("#page2-submit").css("display", "none");
             $audit.css("display", "none");
             $inspection.css("display", "none");
-            $childINputBox.hide();
-            $childINputBox.next().hide();
+            //$childINputBox.hide();
+            //$childINputBox.next().hide();
+            $add.attr("disabled", "disabled");
+            $modify.attr("disabled", "disabled");
+            $cancel.attr("disabled", "disabled");
+            $import.attr("disabled", "disabled");
+            $print.attr("disabled", false);
         }
     }
 

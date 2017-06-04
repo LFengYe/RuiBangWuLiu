@@ -5,6 +5,7 @@
  */
 package com.cn.servlet;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.*;
 import com.cn.bean.in.*;
@@ -66,11 +67,12 @@ import com.cn.bean.report.RKListForSJCK;
 import com.cn.bean.report.RKListForSJTK;
 import com.cn.bean.report.SFCTotalData;
 import com.cn.bean.report.THListForBPTH;
-*/
+ */
 import com.cn.controller.CommonController;
 import com.cn.controller.InWareHouseController;
 import com.cn.controller.JHOutWareHouseController;
 import com.cn.controller.PlatformUserInfoController;
+import com.cn.test.LedControl;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.ExportExcel;
 import com.cn.util.RedisAPI;
@@ -172,6 +174,8 @@ public class DataInterface extends HttpServlet {
             }
 
             logger.info("初始化成功!导入部品信息" + partBaseInfo.size() + "条,导入客户信息" + customerList.size() + "条,导入部品盛具信息" + containerInfoList.size() + "条");
+
+            //LedControl.setC01Plan();
         } catch (Exception e) {
             logger.error("初始化出错!", e);
         }
@@ -855,12 +859,27 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "importDetail": {
-                            ArrayList<Object> importData = importDetailData(detail, "com.cn.bean.in.", "DJInWareHouseList", importPath + fileName);
+                            ArrayList<Object> importData = commonController.importData("com.cn.bean.in.", "DJInWareHouseList", importPath + fileName);
+                            //ArrayList<Object> importData = importDetailData(detail, "com.cn.bean.in.", "DJInWareHouseList", importPath + fileName);
+                            //System.out.println("import:" + JSONObject.toJSONString(importData));
+                            DJInWareHouse dJInWareHouse = JSONObject.parseObject(item, DJInWareHouse.class);
                             if (importData != null) {
                                 Iterator iterator = importData.iterator();
                                 while (iterator.hasNext()) {
                                     DJInWareHouseList houseList = (DJInWareHouseList) iterator.next();
+                                    houseList.setSupplierID(dJInWareHouse.getSupplierID());
+                                    houseList.setDjInWareHouseID(dJInWareHouse.getDjInWareHouseID());
+                                    houseList.setInboundBatch(dJInWareHouse.getInboundBatch());
+                                    houseList.setPartState("待检品");
+
                                     GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(houseList.getSupplierID() + "_" + houseList.getPartCode()), GYSPartContainerInfo.class);
+                                    if (containerInfo != null) {
+                                        int packageAmount = containerInfo.getInboundPackageAmount();
+                                        int boxAmount = (houseList.getInboundAmount() % packageAmount == 0) ? (houseList.getInboundAmount() / packageAmount) : (houseList.getInboundAmount() / packageAmount + 1);
+                                        houseList.setInboundBoxAmount(boxAmount);
+                                    } else {
+                                        houseList.setInboundBoxAmount(999999);
+                                    }
                                 }
                                 int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "DJInWareHouse", "add", opt.getConnect()).get(0);
                                 if (result == 0) {
@@ -897,13 +916,6 @@ public class DataInterface extends HttpServlet {
                                 //json = createOperateWithFilter(20, "view", "com/cn/json/in/", "com.cn.bean.in.", "DJInWareHouse", "", "DJInWareHouseID", opt.getConnect());
                                 json = createOperateOnDate(20, "view", "com/cn/json/in/", "com.cn.bean.in.", "DJInWareHouse", datas, rely, "", "DJInWareHouseID", opt.getConnect());
                             }
-                            /*
-                             json = Units.insertStr(json, "\\\"待检入库单号\\", ",@DJRK-" + Units.getNowTimeNoSeparator());
-                             json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
-                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
-                             json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
-                             json = Units.insertStr(json, "\\\"部品状态\\", ",@待检");
-                             */
                             break;
                         }
                         case "request_detail": {
@@ -964,15 +976,20 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "audit": {
-                            JSONObject obj = new JSONObject();
-                            obj.put("djRKAuditStaffName", session.getAttribute("user"));
-                            obj.put("djRKAuditTime", Units.getNowTime());
-                            String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
-                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.in.", "DJInWareHouse", "update", opt.getConnect());
+                            DJInWareHouse dJInWareHouse = JSONObject.parseObject(datas, DJInWareHouse.class);
+                            JSONObject proParams = new JSONObject();
+                            //obj.put("djRKAuditStaffName", session.getAttribute("user"));
+                            //obj.put("djRKAuditTime", Units.getNowTime());
+                            proParams.put("DJInWareHouseID", "string," + dJInWareHouse.getDjInWareHouseID());
+                            proParams.put("DJRKAuditStaffName", "string," + session.getAttribute("user"));
+                            //String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
+                            //ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.in.", "DJInWareHouse", "update", opt.getConnect());
                             //System.out.println(Arrays.toString(updateResult.toArray()));
+                            JSONArray jsonParams = new JSONArray();
+                            jsonParams.add(proParams);
+                            ArrayList<Integer> updateResult = commonController.proceduceForUpdate("tbDJInWareHouseAudit", jsonParams, opt.getConnect());
                             if (updateResult.get(0) == 0) {
-                                json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
-                                System.out.println(json);
+                                json = Units.objectToJson(0, "审核成功!",null);
                             } else {
                                 json = Units.objectToJson(-1, "审核失败!", null);
                             }
@@ -1124,6 +1141,37 @@ public class DataInterface extends HttpServlet {
                             }
                             break;
                         }
+                        case "auditItem": {
+                            JSONArray arrayParam = JSONArray.parseArray(datas);
+                            String sjOutWareHouseID = arrayParam.getJSONObject(0).getString("sjOutWareHouseID");
+                            String mainTabWhereSql = "SJOutWareHouseID = '" + sjOutWareHouseID + "'";
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "SJOutWareHouse", "*", mainTabWhereSql, 11, 1, "SJOutWareHouseID", 0, opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                SJOutWareHouse sJOutWareHouse = (SJOutWareHouse) list.get(0);
+                                JSONArray updateArray = new JSONArray();
+                                if (!Units.strIsEmpty(sJOutWareHouse.getSjCKAuditTime())) {
+                                    for (int i = 0; i < arrayParam.size(); i++) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        updateArray.add(obj);
+                                        updateArray.add(arrayParam.getJSONObject(i));
+                                    }
+                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.in.", "SJOutWareHouseList", "update", opt.getConnect()).get(0);
+                                    if (result == 0) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                                    } else {
+                                        json = Units.objectToJson(-1, "审核失败!", null);
+                                    }
+                                } else {
+                                    json = Units.objectToJson(-1, "单据未审核, 先审核单据才能审核明细!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "输入参数错误!", null);
+                            }
+                            break;
+                        }
                         case "submit": {
                             String operate = paramsJson.getString("operate");
                             if (operate.compareToIgnoreCase("add") == 0) {
@@ -1223,6 +1271,37 @@ public class DataInterface extends HttpServlet {
                                 } else {
                                     json = Units.objectToJson(-1, "删除操作失败!", null);
                                 }
+                            }
+                            break;
+                        }
+                        case "auditItem": {
+                            JSONArray arrayParam = JSONArray.parseArray(datas);
+                            String sjBackWareHouseID = arrayParam.getJSONObject(0).getString("sjBackWareHouseID");
+                            String mainTabWhereSql = "SJBackWareHouseID = '" + sjBackWareHouseID + "'";
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "SJBackWareHouse", "*", mainTabWhereSql, 11, 1, "SJBackWareHouseID", 0, opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                SJBackWareHouse sJOutWareHouse = (SJBackWareHouse) list.get(0);
+                                JSONArray updateArray = new JSONArray();
+                                if (!Units.strIsEmpty(sJOutWareHouse.getSjTKAuditTime())) {
+                                    for (int i = 0; i < arrayParam.size(); i++) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        updateArray.add(obj);
+                                        updateArray.add(arrayParam.getJSONObject(i));
+                                    }
+                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.in.", "SJBackWareHouseList", "update", opt.getConnect()).get(0);
+                                    if (result == 0) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                                    } else {
+                                        json = Units.objectToJson(-1, "审核失败!", null);
+                                    }
+                                } else {
+                                    json = Units.objectToJson(-1, "单据未审核, 先审核单据才能审核明细!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "输入参数错误!", null);
                             }
                             break;
                         }
@@ -1381,6 +1460,37 @@ public class DataInterface extends HttpServlet {
                             json = Units.insertStr(json, "\\\"终端退库单据号\\", ",@ZDTK-" + Units.getNowTimeNoSeparator());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            break;
+                        }
+                        case "auditItem": {
+                            JSONArray arrayParam = JSONArray.parseArray(datas);
+                            String zdBackWareHouseID = arrayParam.getJSONObject(0).getString("zdBackWareHouseID");
+                            String mainTabWhereSql = "ZDBackWareHouseID = '" + zdBackWareHouseID + "'";
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "ZDBackWareHouse", "*", mainTabWhereSql, 11, 1, "ZDBackWareHouseID", 0, opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                ZDBackWareHouse sJOutWareHouse = (ZDBackWareHouse) list.get(0);
+                                JSONArray updateArray = new JSONArray();
+                                if (!Units.strIsEmpty(sJOutWareHouse.getZdTKAuditTime())) {
+                                    for (int i = 0; i < arrayParam.size(); i++) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        updateArray.add(obj);
+                                        updateArray.add(arrayParam.getJSONObject(i));
+                                    }
+                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.in.", "ZDBackWareHouseList", "update", opt.getConnect()).get(0);
+                                    if (result == 0) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                                    } else {
+                                        json = Units.objectToJson(-1, "审核失败!", null);
+                                    }
+                                } else {
+                                    json = Units.objectToJson(-1, "单据未审核, 先审核单据才能审核明细!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "输入参数错误!", null);
+                            }
                             break;
                         }
                         case "request_detail": {
@@ -1746,10 +1856,41 @@ public class DataInterface extends HttpServlet {
                             }
                             break;
                         }
+                        case "auditItem": {
+                            JSONArray arrayParam = JSONArray.parseArray(datas);
+                            String fxOutWareHouseID = arrayParam.getJSONObject(0).getString("fxOutWareHouseID");
+                            String mainTabWhereSql = "FXOutWareHouseID = '" + fxOutWareHouseID + "'";
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "FXOutWareHouse", "*", mainTabWhereSql, 11, 1, "FXOutWareHouseID", 0, opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                FXOutWareHouse sJOutWareHouse = (FXOutWareHouse) list.get(0);
+                                JSONArray updateArray = new JSONArray();
+                                if (!Units.strIsEmpty(sJOutWareHouse.getFxCKAuditTime())) {
+                                    for (int i = 0; i < arrayParam.size(); i++) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        updateArray.add(obj);
+                                        updateArray.add(arrayParam.getJSONObject(i));
+                                    }
+                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.in.", "FXOutWareHouseList", "update", opt.getConnect()).get(0);
+                                    if (result == 0) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                                    } else {
+                                        json = Units.objectToJson(-1, "审核失败!", null);
+                                    }
+                                } else {
+                                    json = Units.objectToJson(-1, "单据未审核, 先审核单据才能审核明细!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "输入参数错误!", null);
+                            }
+                            break;
+                        }
                         case "request_detail": {
                             //json = queryOperate("com.cn.bean.move.", "view", "FXOutWareHouseList", "FXOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
-                            String djInWareHouseID = JSONObject.parseObject(rely).getString("fxOutWareHouseID");
-                            String mainTabWhereSql = "FXOutWareHouseID = '" + djInWareHouseID + "'";
+                            String fxOutWareHouseID = JSONObject.parseObject(rely).getString("fxOutWareHouseID");
+                            String mainTabWhereSql = "FXOutWareHouseID = '" + fxOutWareHouseID + "'";
                             List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXOutWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "FXOutWareHouseID", 0, opt.getConnect());
                             if (list != null && list.size() > 0) {
                                 FXOutWareHouse fXOutWareHouse = (FXOutWareHouse) list.get(0);
@@ -1916,6 +2057,37 @@ public class DataInterface extends HttpServlet {
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
                             break;
                         }
+                        case "auditItem": {
+                            JSONArray arrayParam = JSONArray.parseArray(datas);
+                            String fxInWareHouseID = arrayParam.getJSONObject(0).getString("fxInWareHouseID");
+                            String mainTabWhereSql = "FXInWareHouseID = '" + fxInWareHouseID + "'";
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "FXInWareHouse", "*", mainTabWhereSql, 11, 1, "FXInWareHouseID", 0, opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                FXInWareHouse fXInWareHouse = (FXInWareHouse) list.get(0);
+                                JSONArray updateArray = new JSONArray();
+                                if (!Units.strIsEmpty(fXInWareHouse.getFxRKAuditTime())) {
+                                    for (int i = 0; i < arrayParam.size(); i++) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        updateArray.add(obj);
+                                        updateArray.add(arrayParam.getJSONObject(i));
+                                    }
+                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.in.", "FXInWareHouseList", "update", opt.getConnect()).get(0);
+                                    if (result == 0) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                                    } else {
+                                        json = Units.objectToJson(-1, "审核失败!", null);
+                                    }
+                                } else {
+                                    json = Units.objectToJson(-1, "单据未审核, 先审核单据才能审核明细!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "输入参数错误!", null);
+                            }
+                            break;
+                        }
                         case "request_detail": {
                             //json = queryOperate("com.cn.bean.move.", "view", "FXInWareHouseList", "FXInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             String djInWareHouseID = JSONObject.parseObject(rely).getString("fxInWareHouseID");
@@ -1981,7 +2153,7 @@ public class DataInterface extends HttpServlet {
                             obj.put("fxRKAuditStaffName", session.getAttribute("user"));
                             obj.put("fxRKAuditTime", Units.getNowTime());
                             String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
-                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.in.", "FXInWareHouse", "update", opt.getConnect());
+                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.move.", "FXInWareHouse", "update", opt.getConnect());
                             if (updateResult.get(0) == 0) {
                                 json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
                             } else {
@@ -2071,11 +2243,11 @@ public class DataInterface extends HttpServlet {
 
                 //<editor-fold desc="库房调账">
                 case "库房调账": {
-                    String whereCase = "TZYMonth in (select TZYMonth from tblXCAdjustAccountList)";
+                    String whereCase = "TZYMonth in (select TZYMonth from tblKFAdjustAccountList)";
                     switch (operation) {
                         case "create": {
                             //json = createOperateWithFilter(20, "table", "com/cn/json/move/", "com.cn.bean.move.", "AdjustAccount", "TZYMonth in (select TZYMonth from tblXCAdjustAccountList)", "TZYMonth", opt.getConnect());
-                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "AdjustAccount", datas, rely, whereCase, "TZYMonth", opt.getConnect());
+                            json = createOperateOnDate(20, "table", "com/cn/json/move/", "com.cn.bean.move.", "AdjustAccount", datas, rely, whereCase, "TZYMonth", opt.getConnect());
                             json = Units.insertStr(json, "\\\"调帐编号\\", ",@" + Units.getNowTimeNoSeparator());
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
                             break;
@@ -2087,7 +2259,7 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = queryOperate("com.cn.bean.move.", "table", "KFAdjustAccountList", "TZYMonth", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.move.", "view", "KFAdjustAccountList", "TZYMonth", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "request_page": {
@@ -2260,17 +2432,18 @@ public class DataInterface extends HttpServlet {
                             break;
                         }
                         case "confirm": {
+                            int result;
+                            JHOutWareHouseController controller = new JHOutWareHouseController();
+                            ArrayList<Integer> res = controller.jhPartitionPackage(JSONObject.parseObject(datas).getString("jhOutWareHouseID"));
+                            if (res != null) {
+                                result = res.get(0);
+                            } else {
+                                result = -1;
+                            }
                             JSONObject obj = new JSONObject();
                             obj.put("jhConfirm", "true");
-                            int result = commonController.dataBaseOperate("[" + obj.toJSONString() + "," + datas + "]", "com.cn.bean.out.", "JHOutWareHouse", "update", opt.getConnect()).get(0);
+                            result = commonController.dataBaseOperate("[" + obj.toJSONString() + "," + datas + "]", "com.cn.bean.out.", "JHOutWareHouse", "update", opt.getConnect()).get(0);
                             if (result == 0) {
-                                JHOutWareHouseController controller = new JHOutWareHouseController();
-                                ArrayList<Integer> res = controller.jhPartitionPackage(JSONObject.parseObject(datas).getString("jhOutWareHouseID"));
-                                if (res != null) {
-                                    result = res.get(0);
-                                } else {
-                                    result = -1;
-                                }
                                 if (result == 0) {
                                     json = Units.objectToJson(0, "确认成功!", null);
                                 } else if (result == 2627) {
@@ -2353,7 +2526,7 @@ public class DataInterface extends HttpServlet {
                             json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
                             json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
-                            json = Units.insertStr(json, "\\\"计划类型\\", ",@正常计划");
+                            json = Units.insertStr(json, "\\\"计划类型\\", ",@紧急计划");
                             break;
                         }
                         case "add": {
@@ -2362,7 +2535,7 @@ public class DataInterface extends HttpServlet {
                             json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
                             json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
-                            json = Units.insertStr(json, "\\\"计划类型\\", ",@正常计划");
+                            json = Units.insertStr(json, "\\\"计划类型\\", ",@紧急计划");
                             json = Units.insertStr(json, "\\\"失败原因,0%\\", ",10%");
                             break;
                         }
@@ -2543,21 +2716,16 @@ public class DataInterface extends HttpServlet {
                         case "create": {
                             //json = createOperateWithFilter(20, "view", "com/cn/json/out/", "com.cn.bean.out.", "JHOutWareHouse", whereCase, "JHOutWareHouseID", opt.getConnect());
                             json = createOperateOnDate(20, "view", "com/cn/json/out/", "com.cn.bean.out.", "FJHOutWareHouse", datas, rely, "", "FJHOutWareHouseID", opt.getConnect());
-                            json = Units.insertStr(json, "\\\"计划出库单号\\", ",@FJHCK-" + Units.getNowTimeNoSeparator());
-                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"非计划出库单号\\", ",@FJHCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
-                            json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
-                            json = Units.insertStr(json, "\\\"计划类型\\", ",@正常计划");
                             break;
                         }
                         case "add": {
                             json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/out/", "FJHOutWareHouse.json"));
-                            json = Units.insertStr(json, "\\\"计划出库单号\\", ",@FJHCK-" + Units.getNowTimeNoSeparator());
-                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"非计划出库单号\\", ",@FJHCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
-                            json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
-                            json = Units.insertStr(json, "\\\"计划类型\\", ",@正常计划");
-                            json = Units.insertStr(json, "\\\"失败原因,0%\\", ",10%");
                             break;
                         }
                         case "request_detail": {
@@ -2678,7 +2846,7 @@ public class DataInterface extends HttpServlet {
                         }
                         case "submit": {
                             ArrayList<Object> submitData = new ArrayList<>();
-                            submitData.addAll(JSONObject.parseArray(details, JHOutWareHouseList.class));
+                            submitData.addAll(JSONObject.parseArray(details, FJHOutWareHouseList.class));
 
                             JHOutWareHouseController controller = new JHOutWareHouseController();
                             ArrayList<JHOutWareHouseList> result = controller.importData(submitData, item);
@@ -2888,6 +3056,37 @@ public class DataInterface extends HttpServlet {
                             json = Units.insertStr(json, "\\\"退货出库单据号\\", ",@THCK-" + Units.getNowTimeNoSeparator());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            break;
+                        }
+                        case "auditItem": {
+                            JSONArray arrayParam = JSONArray.parseArray(datas);
+                            String bpTHOutWareHoseID = arrayParam.getJSONObject(0).getString("bpTHOutWareHoseID");
+                            String mainTabWhereSql = "BPTHOutWareHoseID = '" + bpTHOutWareHoseID + "'";
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "BPTHOutWareHouse", "*", mainTabWhereSql, 11, 1, "BPTHOutWareHoseID", 0, opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                BPTHOutWareHouse fXInWareHouse = (BPTHOutWareHouse) list.get(0);
+                                JSONArray updateArray = new JSONArray();
+                                if (!Units.strIsEmpty(fXInWareHouse.getBpTHAuditTime())) {
+                                    for (int i = 0; i < arrayParam.size(); i++) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        updateArray.add(obj);
+                                        updateArray.add(arrayParam.getJSONObject(i));
+                                    }
+                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.in.", "BPTHOutWareHouseList", "update", opt.getConnect()).get(0);
+                                    if (result == 0) {
+                                        JSONObject obj = new JSONObject();
+                                        obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                        json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                                    } else {
+                                        json = Units.objectToJson(-1, "审核失败!", null);
+                                    }
+                                } else {
+                                    json = Units.objectToJson(-1, "单据未审核, 先审核单据才能审核明细!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "输入参数错误!", null);
+                            }
                             break;
                         }
                         case "request_detail": {
@@ -3133,7 +3332,7 @@ public class DataInterface extends HttpServlet {
                             JSONObject obj = JSONObject.parseObject(datas);
                             obj.put("djRKAuditStaffName", session.getAttribute("user"));
                             obj.put("djRKAuditTime", Units.getNowTime());
-                            System.out.println("auditInfo:" + obj.toJSONString());
+                            //System.out.println("auditInfo:" + obj.toJSONString());
                             json = Units.objectToJson(0, "审核成功!", null);
                             break;
                         }
@@ -3868,11 +4067,14 @@ public class DataInterface extends HttpServlet {
                 case "部品收发存总表": {
                     switch (operation) {
                         case "create": {
-                            String result = Units.returnFileContext(path + "com/cn/json/report/", "SFCTotalData.json");
                             JSONObject proParams = new JSONObject();
-                            List<Object> list = commonController.proceduceQuery("spGetSFCTotalData", proParams, "com.cn.bean.report.SFCTotalData", opt.getConnect());
-                            if (list != null && list.size() > 0) {
-                                for (Object obj : list) {
+                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("Endtime", "string," + end);
+                            }
+                            json = reportOperate(operateType, "spGetSFCTotalData", "SFCTotalData", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
                                     SFCTotalData data = (SFCTotalData) obj;
                                     PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
@@ -3884,15 +4086,19 @@ public class DataInterface extends HttpServlet {
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
-                                StringBuffer buffer = new StringBuffer(result);
-                                buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
-                                result = buffer.toString();
-                            }
-                            json = Units.objectToJson(0, "", result);
+                            });
+                            break;
+                        }
+                        case "request_detail": {
+                            
                             break;
                         }
                         case "export": {
                             JSONObject proParams = new JSONObject();
+                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("Endtime", "string," + end);
+                            }
                             List<Object> list = commonController.proceduceQuery("spGetSFCTotalData", proParams, "com.cn.bean.report.SFCTotalData", opt.getConnect());
                             if (list != null && list.size() > 0) {
                                 for (Object obj : list) {
@@ -4104,7 +4310,7 @@ public class DataInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,良品" );
+                            proParams.put("PartState", "string,良品");
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
@@ -4127,13 +4333,13 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="返修不良品入库_spGetRKListForFxpRK(不良品)">
                 case "返修不良品入库": {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,不良品" );
+                            proParams.put("PartState", "string,不良品");
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
@@ -4156,13 +4362,13 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="良品返修出库_spGetCKListForFxpCK(良品)">
                 case "良品返修出库": {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,良品" );
+                            proParams.put("PartState", "string,良品");
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
@@ -4185,13 +4391,13 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="不良品返修出库_spGetCKListForFxpCK(不良品)">
                 case "不良品返修出库": {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,不良品" );
+                            proParams.put("PartState", "string,不良品");
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
@@ -4214,7 +4420,7 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="计划出库报表_spGetCKListForZCJHCK">
                 case "计划出库报表": {
                     switch (operation) {
@@ -4234,7 +4440,7 @@ public class DataInterface extends HttpServlet {
 
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                     data.setSupplierName(customer.getCustomerAbbName());
-                                    
+
                                     customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
                                     data.setZdCustomerName(customer.getCustomerAbbName());
                                 }
@@ -4245,7 +4451,7 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="临时调货报表_spGetCKListForLSDHCK">
                 case "临时调货报表": {
                     switch (operation) {
@@ -4265,7 +4471,7 @@ public class DataInterface extends HttpServlet {
 
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                     data.setSupplierName(customer.getCustomerAbbName());
-                                    
+
                                     customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
                                     data.setZdCustomerName(customer.getCustomerAbbName());
                                 }
@@ -4296,7 +4502,7 @@ public class DataInterface extends HttpServlet {
 
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                     data.setSupplierName(customer.getCustomerAbbName());
-                                    
+
                                     customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
                                     data.setZdCustomerName(customer.getCustomerAbbName());
                                 }
@@ -4307,13 +4513,13 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="退货出库报表_spGetTHListForBPTH">
                 case "退货出库报表": {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,良品");
+                            proParams.put("PartState", "string," + paramsJson.getString("partStatus"));
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
@@ -4336,7 +4542,7 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="非生产领料报表_spGetCKListForFJHCK">
                 case "非生产领料报表": {
                     switch (operation) {
@@ -4356,7 +4562,7 @@ public class DataInterface extends HttpServlet {
 
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                     data.setSupplierName(customer.getCustomerAbbName());
-                                    
+
                                     customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getFzDCustomerName()), Customer.class);
                                     data.setFzDCustomerName(customer.getCustomerAbbName());
                                 }
@@ -4368,8 +4574,7 @@ public class DataInterface extends HttpServlet {
                 }
                 //</editor-fold>
                 //</editor-fold>
-                
-                
+
                 //<editor-fold desc="部品库存明细">
                 //<editor-fold desc="良品库存报表_spGetKFJCListForLp">
                 case "良品库存报表": {
@@ -4426,9 +4631,235 @@ public class DataInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
+
+                //<editor-fold desc="待检库存报表_spGetKFJCListForDjp">
+                case "待检库存报表": {
+                    switch (operation) {
+                        case "create": {
+                            JSONObject proParams = new JSONObject();
+                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("Endtime", "string," + end);
+                            }
+                            //TODO spGetKFJCListForDjp存储过程执行出错
+                            json = reportOperate(operateType, "spGetKFJCListForDjp", "KFJCListForDjp", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFJCListForDjp data = (KFJCListForDjp) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="送检品库存报表_spGetKFJCListForSjp">
+                case "送检品库存报表": {
+                    switch (operation) {
+                        case "create": {
+                            JSONObject proParams = new JSONObject();
+                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("Endtime", "string," + end);
+                            }
+                            //TODO spGetKFJCListForDjp存储过程执行出错
+                            json = reportOperate(operateType, "spGetKFJCListForSjp", "KFJCListForSjp", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFJCListForSjp data = (KFJCListForSjp) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="返修品库存报表_spGetKFJCListForFxp">
+                case "返修品库存报表": {
+                    switch (operation) {
+                        case "create": {
+                            JSONObject proParams = new JSONObject();
+                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("Endtime", "string," + end);
+                            }
+                            //TODO spGetKFJCListForDjp存储过程执行出错
+                            json = reportOperate(operateType, "spGetKFJCListForFxp", "KFJCListForFxp", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFJCListForFxp data = (KFJCListForFxp) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
                 //</editor-fold>
 
                 //<editor-fold desc="分录报表">
+                //<editor-fold desc="库存期初分录_spGetKFQCFenLuData">
+                case "库存期初分录": {
+                    switch (operation) {
+                        case "create": {
+                            JSONObject proParams = new JSONObject();
+                            json = reportOperate(operateType, "spGetKFQCFenLuData", "KFQCFenLuData", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFQCFenLuData data = (KFQCFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="部品退库分录_spGetTKFenLuData">
+                case "部品退库分录": {
+                    switch (operation) {
+                        case "create": {
+                            JSONObject proParams = new JSONObject();
+                            json = reportOperate(operateType, "spGetTKFenLuData", "TKFenLuData", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    TKFenLuData data = (TKFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="部品计划出库分录_spGetCKFenLuData">
+                case "部品计划出库分录": {
+                    switch (operation) {
+                        case "create": {
+                            JSONObject proParams = new JSONObject();
+                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("Endtime", "string," + end);
+                            }
+
+                            json = reportOperate(operateType, "spGetCKFenLuData", "CKFenLuData", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    CKFenLuData data = (CKFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                        case "request_detail": {
+                            if (paramsJson.getString("name").compareTo("jhck2") == 0) {
+                                JSONObject proParams = new JSONObject();
+                                if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                    proParams.put("BeginTime", "string," + start);
+                                    proParams.put("Endtime", "string," + end);
+                                }
+                                JSONObject dataJson = JSONObject.parseObject(datas);
+                                proParams.put("ZDCustomerID", "string,9998");
+                                proParams.put("PartCode", "string," + dataJson.getString("partCode"));
+                                proParams.put("SupplierID", "string," + dataJson.getString("supplierID"));
+
+                                json = reportOperate(operateType, "spGetCKDetailListForZCJHCK", "CKListForZCJHCK", proParams, new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        CKListForZCJHCK data = (CKListForZCJHCK) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+
+                                        customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
+                                        data.setZdCustomerName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            if (paramsJson.getString("name").compareTo("lsdh1") == 0) {
+                                
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="部品入库分录_spGetRKFenLuData">
+                case "部品入库分录": {
+                    switch (operation) {
+                        case "create": {
+                            JSONObject proParams = new JSONObject();
+                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("Endtime", "string," + end);
+                            }
+
+                            json = reportOperate(operateType, "spGetRKFenLuData", "RKFenLuData", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    RKFenLuData data = (RKFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
                 //</editor-fold>
             }
 

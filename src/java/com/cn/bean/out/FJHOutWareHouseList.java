@@ -22,8 +22,10 @@ public class FJHOutWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "单内显示序号")
+    @FieldDescription(description = "行号")
     private int listNumber;
+    @FieldDescription(description = "失败原因")
+    private String failedReason;
     @FieldDescription(description = "非终端客户")
     private String fzdCustomerID;
     @FieldDescription(description = "非终端客户")
@@ -43,9 +45,9 @@ public class FJHOutWareHouseList {
     @FieldDescription(description = "部品单位")
     private String partUnit;
     @FieldDescription(description = "车型")
-    private String autoStyling;
+    private String autoStylingName;
     @FieldDescription(description = "数量")
-    private String fjhCKAmount;
+    private int fjhCKAmount;
     @FieldDescription(description = "非计划出库完成时间")
     private String fjhCKTime;
     @FieldDescription(description = "备注")
@@ -56,14 +58,6 @@ public class FJHOutWareHouseList {
     private String wareHouseManagerName;
     @FieldDescription(description = "存放地址")
     private String cfAddress;
-
-    public int getListNumber() {
-        return listNumber;
-    }
-
-    public void setListNumber(int listNumber) {
-        this.listNumber = listNumber;
-    }
 
     public String getFzdCustomerID() {
         return fzdCustomerID;
@@ -137,19 +131,19 @@ public class FJHOutWareHouseList {
         this.partUnit = partUnit;
     }
 
-    public String getAutoStyling() {
-        return autoStyling;
+    public String getAutoStylingName() {
+        return autoStylingName;
     }
 
-    public void setAutoStyling(String autoStyling) {
-        this.autoStyling = autoStyling;
+    public void setAutoStylingName(String autoStylingName) {
+        this.autoStylingName = autoStylingName;
     }
 
-    public String getFjhCKAmount() {
+    public int getFjhCKAmount() {
         return fjhCKAmount;
     }
 
-    public void setFjhCKAmount(String fjhCKAmount) {
+    public void setFjhCKAmount(int fjhCKAmount) {
         this.fjhCKAmount = fjhCKAmount;
     }
 
@@ -191,5 +185,21 @@ public class FJHOutWareHouseList {
 
     public void setCfAddress(String cfAddress) {
         this.cfAddress = cfAddress;
+    }
+
+    public String getFailedReason() {
+        return failedReason;
+    }
+
+    public void setFailedReason(String failedReason) {
+        this.failedReason = failedReason;
+    }
+
+    public int getListNumber() {
+        return listNumber;
+    }
+
+    public void setListNumber(int listNumber) {
+        this.listNumber = listNumber;
     }
 }

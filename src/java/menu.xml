@@ -69,8 +69,8 @@
             <three  hypelnk="page3"  id="1050203" text="待检库存报表" url="spGetKFJCListForDjp"></three>
             <three  hypelnk="page3"  id="1050204" text="送检品库存报表" url="spGetKFJCListForSjp"></three>
             <three  hypelnk="page3"  id="1050205" text="返修品库存报表" url="spGetKFJCListForFxp"></three>
-            <three  hypelnk="page3"  id="1050206" text="待检品盈亏" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050207" text="良品盈亏" url="aaa.ashx"></three>
+            <!--<three  hypelnk="page3"  id="1050206" text="待检品盈亏" url="aaa.ashx"></three>-->
+            <!--<three  hypelnk="page3"  id="1050207" text="良品盈亏" url="aaa.ashx"></three>-->
             <three  hypelnk="page3"  id="1050208" text="不良品盈亏" url="aaa.ashx"></three>
             <three  hypelnk="page3"  id="1050209" text="返修品盈亏" url="aaa.ashx"></three>
             <three  hypelnk="page3"  id="1050210" text="线旁盈亏" url="aaa.ashx"></three>

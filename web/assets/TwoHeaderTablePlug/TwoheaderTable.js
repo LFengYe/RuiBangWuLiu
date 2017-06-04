@@ -7,8 +7,7 @@
         clickRowCallBack: function (index, obj) {
             console.log(index);
         },
-        dbclickRowCallBack: function (index, obj) {
-            console.log(obj);
+        dbclickRowCallBack: function (name, obj) {
         }
     };
     
@@ -31,6 +30,10 @@
                 colspans = parseInt(title0[i].split(',')[1]);
                 rowspans = parseInt(title0[i].split(',')[2]);
                 width = title0[i].split(',')[3];
+                console.log(title0[i].split(',')[4]);
+                if (title0[i].split(',')[4] === "false") {
+                    this.public_obj[i] = true;
+                }
                 if (colspans > 1) {
                     for (var k = 0; k < colspans; k++) {
                         this.arr.push(i);
@@ -38,7 +41,6 @@
                     title0_str += "<td style='width:" + width + "'  colspan='" + colspans + "'>" + txt + "</td>";
                 } else {
                     this.arr.push(i);
-                    this.public_obj[i] = true;
                     if (rowspans > 1)
                         title0_str += "<td style='width:" + width + "' class='cols'  rowspan='" + rowspans + "'>" + txt + "</td>";
                     else
@@ -63,14 +65,7 @@
 
             var data_str = '', result = '';
             for (var i = 0; i < datas.length; i++) {
-                /*
-                var k = 0;
-                for (var j in datas[i]) {
-                    data_str += "<td index = " + i + " name=" + this.arr[k] + ">" + datas[i][this.arr[k]] + "</td>";
-                    k++;
-                }
-                */
-               for (var k = 0; k < this.arr.length;k++) {
+               for (var k = 0; k < this.arr.length; k++) {
                    data_str += "<td index = " + i + " name=" + this.arr[k] + ">" + datas[i][this.arr[k]] + "</td>";
                }
                 result += "<tr>" + data_str + "</tr>";
@@ -84,9 +79,9 @@
             var that = this;
             this.$container.find("tr:gt(1)").children("td").dblclick(function (e) {
                 var name = $(this).attr("name");
-
+                
+                console.log(that.public_obj[name]);
                 if (that.public_obj[name]) {
-
                     return;
                 }
                 var index = $(this).attr("index");
@@ -94,15 +89,15 @@
                 var obj = that.datas[index];
 
                 var obj2 = {};
-                for (var i in  that.public_obj) {
+                for (var i in that.public_obj) {
                     obj2[i] = obj[i];
-
                 }
-                //console.log(obj[name]);
-                obj2[name] = $(this).text();
-//				console.log(obj2);
-                that.dbclickRowCallBack(index, obj2);
+                //obj2[name] = $(this).text();
+                console.log(obj2);
+                that.dbclickRowCallBack(name, obj2);
 
+            });
+            this.$container.find("td").click(function() {
             });
         },
         getRowData: function (index) {

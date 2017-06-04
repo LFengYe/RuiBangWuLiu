@@ -160,6 +160,7 @@
                                         <button class="button btn" id="page2-modify">修改</button>
                                         <button class="button btn" id="page2-cancel">删除</button>
                                         <button class="button btn" id="page2-print">打印</button>
+                                        <button class="button btn" id="page2-auditItem">审核</button>
                                         <button class="button btn" id="page2-import">导入</button>
                                         <button class="button btn" id="page2-export" style="display: none;">导出</button>
                                     </div>
@@ -173,11 +174,11 @@
                         <div id="page3" style="display: none;" class="page">
                             <div class="page3-container">
                                 <div class="page3-main-table">
-                                    <div class="wc-page3-form wc-form">
+                                    <div class="wc-form wc-page3-form">
                                         <div class="wc-group">
                                             <label>部品状态</label>
                                             <input type="hidden" name="partStatus" class="wc-control" value="良品">
-                                            <select>
+                                            <select id="partStatusSelect">
                                                 <option>良品</option>
                                                 <option>不良品</option>
                                                 <option>待检品</option>

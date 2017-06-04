@@ -18,24 +18,41 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 public class LedControl {
+
     private static final Logger logger = Logger.getLogger(DataInterface.class);
 
-    
-    public static void main(String[] args) {
-        ArrayList supplierList = new ArrayList();
-        supplierList.add("121212");
-        supplierList.add("121212");
-        supplierList.add("121212");
-        String supplierStr = Arrays.toString(supplierList.toArray());
-        System.out.println(supplierStr.substring(1, supplierStr.length() - 1).replace(" ", ""));
+    public static void main(String[] args) throws Exception {
+        setC01Plan();
+    }
+
+    public static void setImage(AreaLedIPInfo ledIPInfo, String fileName) throws Exception {
+        String filePath = "exportFile/" + fileName;
+        int count = 0;
+        while (true) {
+            int hProgram;
+            hProgram = led.CreateProgram(544, 32, 1);
+            led.AddProgram(hProgram, 1, 0, 0);
+            led.AddImageTextArea(hProgram, 1, 1, 0, 0, 544, 32, 0);
+            led.AddFileToImageTextArea(hProgram, 1, 1, filePath, 6, 5, 15);
+            led.SetBasicInfo(ledIPInfo.getIpAddress(), 1, 544, 32);
+            led.SetOEDA(ledIPInfo.getIpAddress(), 0, 1);
+            int result = led.NetWorkSend(ledIPInfo.getIpAddress(), hProgram);
+            led.DeleteProgram(hProgram);
+            if (result == 0 || count >= 5) {
+                System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
+                break;
+            }
+            count++;
+        }
     }
 
     public static void setC01Plan() throws Exception {
         AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
-        ledIPInfo.setIpAddress("192.168.10.167");
+        ledIPInfo.setIpAddress("192.168.10.148");
         ledIPInfo.setAddressCode("C-01");
         LedPlan plan = new LedPlan();
         plan.setSupplierName("四川泛华");
@@ -43,11 +60,11 @@ public class LedControl {
         plan.setPartName("驾驶室线束总成");
         plan.setPartCode("4010010-KA04R-C4D0");
         plan.setInboundBatch("20170110122323");
-        plan.setPlanNum("200");
+        plan.setPlanNum("5");
         plan.setContainer("料架");
-        plan.setContainerAmount("40");
-        plan.setContainerBoxAmount("5");
-        setLedPlan(ledIPInfo, plan, 1);
+        plan.setContainerAmount("20");
+        plan.setContainerBoxAmount("15");
+        setLedPlan(ledIPInfo, plan, 2);
     }
 
     public static void setC01PartStauts() throws Exception {
@@ -57,7 +74,7 @@ public class LedControl {
         LedPartStatus partStatus = new LedPartStatus();
         partStatus.setPartStatus("禁用");
         partStatus.setSupplierName("成都天兴");
-        partStatus.setSupplierID("2026");
+        partStatus.setSupplierID("5");
         partStatus.setPartName("车速里程表传感器");
         partStatus.setPartCode("3820020-KD01");
         partStatus.setInboundBatch("20170410122323");

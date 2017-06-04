@@ -27,10 +27,16 @@ public class KFAdjustAccountList {
     private String tzYMonth;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
+    @FieldDescription(description = "供应商名称", operate = "display")
+    private String supplierName;
     @FieldDescription(description = "部品件号")
     private String partCode;
+    @FieldDescription(description = "部品编号", operate = "display")
+    private String partID;
+    @FieldDescription(description = "部品名称", operate = "display")
+    private String partName;
     @FieldDescription(description = "部品批次")
-    private String inBoundBatch;
+    private String inboundBatch;
     @FieldDescription(description = "部品状态")
     private String partState;
     @FieldDescription(description = "账面结存")
@@ -68,12 +74,12 @@ public class KFAdjustAccountList {
         this.partCode = partCode;
     }
 
-    public String getInBoundBatch() {
-        return inBoundBatch;
+    public String getInboundBatch() {
+        return inboundBatch;
     }
 
-    public void setInBoundBatch(String inBoundBatch) {
-        this.inBoundBatch = inBoundBatch;
+    public void setInboundBatch(String inboundBatch) {
+        this.inboundBatch = inboundBatch;
     }
 
     public String getPartState() {
@@ -122,5 +128,29 @@ public class KFAdjustAccountList {
 
     public void setKfTZListRemark(String kfTZListRemark) {
         this.kfTZListRemark = kfTZListRemark;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
+    }
+
+    public String getPartID() {
+        return partID;
+    }
+
+    public void setPartID(String partID) {
+        this.partID = partID;
+    }
+
+    public String getPartName() {
+        return partName;
+    }
+
+    public void setPartName(String partName) {
+        this.partName = partName;
     }
 }

@@ -11,6 +11,8 @@ import com.cn.bean.Customer;
 import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
 import com.cn.bean.base.CustomPredicate;
+import com.cn.bean.out.FJHOutWareHouse;
+import com.cn.bean.out.FJHOutWareHouseList;
 import com.cn.bean.out.JHOutWareHouse;
 import com.cn.bean.out.JHOutWareHouseList;
 import com.cn.bean.out.LPKCListInfo;
@@ -118,7 +120,7 @@ public class JHOutWareHouseController {
                      * 符合筛选条件库存列表的总库存数量是否满足计划出库数量
                      */
                     int ckAmount = item.getJhCKAmount();
-                    System.out.println("kc:" + kcCount + ",ckAmount:" + ckAmount);
+                    //System.out.println("kc:" + kcCount + ",ckAmount:" + ckAmount);
                     if (kcCount >= ckAmount) {
                         //库存能够满足计划
                         item.setListNumber(0);
@@ -178,6 +180,144 @@ public class JHOutWareHouseController {
         return null;
     }
 
+    public ArrayList<FJHOutWareHouseList> importFJHData(List<Object> importData, String jhInfo) {
+        try {
+            FJHOutWareHouse fjhOutWareHouse = JSONObject.parseObject(jhInfo, FJHOutWareHouse.class);
+            /**
+             * 当前库存列表
+             */
+            ArrayList<LPKCListInfo> kcAmount = getLPKCData(null, null, null);
+            /**
+             * 处理之后的计划明细
+             */
+            ArrayList<FJHOutWareHouseList> importResult = new ArrayList<>();
+            /**
+             * 分解完成的计划明细
+             */
+            ArrayList<FJHOutWareHouseList> completeResult = new ArrayList<>();
+
+            if (importData != null && importData.size() > 0) {
+                /**
+                 * 是否满足全部计划
+                 */
+                boolean isAllEnough = true;
+                Iterator<Object> it = importData.iterator();
+                while (it.hasNext()) {
+                    /**
+                     * 将导入的数据转成计划明细对象
+                     */
+                    FJHOutWareHouseList item = (FJHOutWareHouseList) it.next();
+                    /**
+                     * 获取该计划明细对应的部品基础信息
+                     */
+                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + item.getPartCode()), PartBaseInfo.class);
+                    if (baseInfo == null) {
+                        item.setListNumber(-2);//没有对应件号
+                        item.setFailedReason("没有该件号");
+                        importResult.add(item);
+                        isAllEnough = false;
+                        continue;
+                    }
+                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + item.getSupplierID()), Customer.class);
+                    if (customer == null) {
+                        item.setListNumber(-3);//没有供应商信息
+                        item.setFailedReason("没有该供应商");
+                        importResult.add(item);
+                        isAllEnough = false;
+                        continue;
+                    }
+                    /**
+                     * 获取该计划明细对应的部品盛具信息
+                     */
+                    GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(item.getSupplierID() + "_" + item.getPartCode()), GYSPartContainerInfo.class);
+                    if (containerInfo == null) {
+                        item.setListNumber(-4);//没有出库盛具信息
+                        item.setFailedReason("没有出库盛具信息");
+                        importResult.add(item);
+                        isAllEnough = false;
+                        continue;
+                    }
+                    /**
+                     * 该计划明细的筛选字符串(供应商ID + 逗号 + 件号)
+                     */
+                    String filterStr = item.getSupplierID() + "," + item.getPartCode();
+                    /**
+                     * 谓语对象, 用户筛选库存列表
+                     */
+                    CustomPredicate predicate = new CustomPredicate(filterStr);
+                    CustomPredicate.setKcCount(0);//部件编号对应库存总量初始化
+                    //Predicate<LPKCList> predicate = (LPKCList input) -> (input.getSupplierID() + "," + input.getPartCode()).compareToIgnoreCase(filterStr) == 0;
+                    /**
+                     * 符合筛选条件的库存列表
+                     */
+                    int kcCount = 0;
+                    ArrayList<LPKCListInfo> subKCAmount = new ArrayList<>();
+                    kcCount = getSubLPKCList(kcAmount, item.getSupplierID(), item.getPartCode(), subKCAmount);
+//                    ArrayList<LPKCListInfo> subKCAmount = (ArrayList<LPKCListInfo>) Collections2.filter(kcAmount, predicate);
+                    /**
+                     * 符合筛选条件库存列表的总库存数量是否满足计划出库数量
+                     */
+                    int ckAmount = item.getFjhCKAmount();
+                    //System.out.println("kc:" + kcCount + ",ckAmount:" + ckAmount);
+                    if (kcCount >= ckAmount) {
+                        //库存能够满足计划
+                        item.setListNumber(0);
+                        
+                        Iterator<LPKCListInfo> iterator = subKCAmount.iterator();
+                        while (ckAmount > 0) {
+                            LPKCListInfo lpkcl = iterator.next();
+                            FJHOutWareHouseList detail = new FJHOutWareHouseList();
+                            detail.setListNumber(completeResult.size() + 1);
+                            detail.setSupplierID(item.getSupplierID());
+                            detail.setSupplierName(customer.getCustomerAbbName());
+                            detail.setPartCode(item.getPartCode());
+                            detail.setPartID(baseInfo.getPartID());
+                            detail.setPartName(baseInfo.getPartName());
+                            detail.setAutoStylingName(baseInfo.getAutoStylingName());
+                            detail.setInboundBatch(lpkcl.getInboundBatch());
+                            if (ckAmount > lpkcl.getLpAmount()) {
+                                detail.setFjhCKAmount(lpkcl.getLpAmount());
+                                //detail.setContainerAmount((lpkcl.getLpAmount() % containerInfo.getOutboundPackageAmount() == 0) ? (lpkcl.getLpAmount() / containerInfo.getOutboundPackageAmount()) : (lpkcl.getLpAmount() / containerInfo.getOutboundPackageAmount() + 1));//containerAmount当一个批次不满一个盛具如何处理, 待解决
+                            } else {
+                                detail.setFjhCKAmount(ckAmount);
+                                //detail.setContainerAmount((ckAmount % containerInfo.getOutboundPackageAmount() == 0) ? (ckAmount / containerInfo.getOutboundPackageAmount()) : (ckAmount / containerInfo.getOutboundPackageAmount() + 1));//containerAmount当一个批次不满一个盛具如何处理, 待解决
+//                                break;
+                            }
+                            //detail.setOutboundContainerName(containerInfo.getOutboundContainerName());
+                            //detail.setJhOutWareHouseListRemark(item.getFjhOutWareHouseListRemark());
+                            //detail.setJhOutWareHouseID(fjhOutWareHouse.getFjhOutWareHouseID());
+
+                            completeResult.add(detail);
+                            ckAmount -= lpkcl.getLpAmount();
+                        }
+//                        return completeResult;
+                    } else {
+                        item.setListNumber(-1);//库存不能够满足计划
+                        item.setFailedReason("库存不足");
+                        isAllEnough = false;
+                    }
+                    item.setSupplierName(customer.getCustomerAbbName());
+                    item.setPartID(baseInfo.getPartID());
+                    item.setPartName(baseInfo.getPartName());
+                    item.setAutoStylingName(baseInfo.getAutoStylingName());
+                    //item.setOutboundContainerName(containerInfo.getOutboundContainerName());
+                    item.setFjhOutWareHouseID(fjhOutWareHouse.getFjhOutWareHouseID());
+                    importResult.add(item);
+                }
+                
+                if (isAllEnough) {
+                    RedisAPI.set(fjhOutWareHouse.getFjhOutWareHouseID(), JSONObject.toJSONString(completeResult));
+                    return completeResult;
+                } else {
+                    return importResult;
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("计划导入异常!", ex);
+        }
+        return null;
+    }
+    
     /**
      * 获取给定的厂家与产品的良品库存列表
      * @param kcAmount
@@ -362,6 +502,7 @@ public class JHOutWareHouseController {
                 oldPackingNum += containerAmount;
                 oldList = list;
             }
+            System.out.println("part parasm:" + params.toJSONString());
             return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, opt.getConnect());
         }
         return null;

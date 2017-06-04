@@ -294,7 +294,7 @@ $.fn.insertInputForm = function (options) {
                 this.$inputs.attr("disabled", "disabled");
                 for (var i = 0; i < this.$inputs.length; i++) {
                     var selectInput = $(this.$inputs[i]).next("select");
-                    console.log(selectInput);
+                    //console.log(selectInput);
                     if (selectInput) {
                         selectInput.attr("disabled", "disabled");
                     }
@@ -310,7 +310,7 @@ $.fn.insertInputForm = function (options) {
             this.$inputs.removeAttr("disabled");
             for (var i = 0; i < this.$inputs.length; i++) {
                 var selectInput = $(this.$inputs[i]).next("select");
-                console.log(selectInput);
+                //console.log(selectInput);
                 if (selectInput) {
                     selectInput.attr("disabled", false);
                 }
