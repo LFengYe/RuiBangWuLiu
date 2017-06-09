@@ -169,7 +169,7 @@ public class CommonController {
                     }
 
                     String sql = builder.toString();
-//                    System.out.println("update sql:" + sql);
+                    System.out.println("update sql:" + sql);
 
                     conn.setAutoCommit(false);
                     statement = conn.prepareCall(sql);
@@ -367,7 +367,7 @@ public class CommonController {
      */
     public List<Object> dataBaseQuery(String type, String beanPackage, String tableName, String fields, String wherecase, int pageSize, int pageIndex, String orderField, int orderFlag,
             Connection conn) throws Exception {
-        //System.out.println("wherecase:" + wherecase);
+        System.out.println("wherecase:" + wherecase);
         CallableStatement statement = null;
         ArrayList<Object> result;
         Class objClass = Class.forName(beanPackage + tableName);
@@ -436,6 +436,20 @@ public class CommonController {
         return null;
     }
 
+    /**
+     * 
+     * @param proceduceName
+     * @param params
+     * @param conn
+     * @return
+     * @throws Exception 
+     */
+    public ArrayList<Integer> proceduceForUpdate(String proceduceName, JSONObject params, Connection conn) throws Exception {
+        JSONArray array = new JSONArray();
+        array.add(params);
+        return proceduceForUpdate(proceduceName, array, conn);
+    }
+    
     /**
      * 
      * @param proceduceName
@@ -825,7 +839,7 @@ public class CommonController {
                 menuJson += "},";
             } else {
                 menuJson += "\"" + element.attributeValue("text") + "\":";
-                menuJson += "\"" + element.attributeValue("hypelnk") + ",action.do," + element.attributeValue("id") + "\",";
+                menuJson += "\"" + element.attributeValue("hypelnk") + "," + element.attributeValue("url") + "," + element.attributeValue("id") + "\",";
             }
         }
         return menuJson;

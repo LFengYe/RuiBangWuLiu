@@ -42,6 +42,8 @@ public class DJInWareHouse {
     private String printFlag;
     @FieldDescription(description = "备注")
     private String djINWareHousRemark;
+    @FieldDescription(description = "明细中入库总数", operate = "display")
+    private int inboundCount;
 
     public String getDjInWareHouseID() {
         return djInWareHouseID;
@@ -121,5 +123,13 @@ public class DJInWareHouse {
 
     public void setDjINWareHousRemark(String djINWareHousRemark) {
         this.djINWareHousRemark = djINWareHousRemark;
+    }
+
+    public int getInboundCount() {
+        return inboundCount;
+    }
+
+    public void setInboundCount(int inboundCount) {
+        this.inboundCount = inboundCount;
     }
 }

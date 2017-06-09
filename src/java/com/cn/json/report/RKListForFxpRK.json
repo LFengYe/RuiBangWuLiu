@@ -1,17 +1,17 @@
 {
     "titles": {
-        "fxRKAuditTime": "入库审核时间,1,1,10%", 
-        "fxInWareHouseID": "入库单号,1,1,10%", 
-        "outInType": "出入库类型,1,1,10%", 
-        "outInMethod": "出入库方式,1,1,10%", 
-        "supplierID": "供应商编号,1,1,10%",
-        "supplierName": "供应商名称,1,1,10%",
-        "partCode": "部品件号,1,1,10%", 
-        "partName": "部品名称,1,1,10%",
-        "partId": "部品编号,1,1,10%",
-        "inboundBatch": "入库批次,1,1,10%", 
-        "fxRKAmount": "返修入库数量,1,1,10%",
-        "fxRKProducerName": "制单人,1,1,10%",
-        "fxInWareHouseListRemark": "备注,1,1,10%"
+        "fxRKAuditTime": "入库审核时间,1,1,10%,false", 
+        "fxInWareHouseID": "入库单号,1,1,10%,false", 
+        "outInType": "出入库类型,1,1,10%,false", 
+        "outInMethod": "出入库方式,1,1,10%,false", 
+        "supplierID": "供应商编号,1,1,10%,false",
+        "supplierName": "供应商名称,1,1,10%,false",
+        "partCode": "部品件号,1,1,10%,false", 
+        "partName": "部品名称,1,1,10%,false",
+        "partId": "部品编号,1,1,10%,false",
+        "inboundBatch": "入库批次,1,1,10%,false", 
+        "fxRKAmount": "返修入库数量,1,1,10%,false",
+        "fxRKProducerName": "制单人,1,1,10%,false",
+        "fxInWareHouseListRemark": "备注,1,1,10%,false"
     }
 }

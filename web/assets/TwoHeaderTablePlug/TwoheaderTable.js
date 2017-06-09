@@ -30,7 +30,7 @@
                 colspans = parseInt(title0[i].split(',')[1]);
                 rowspans = parseInt(title0[i].split(',')[2]);
                 width = title0[i].split(',')[3];
-                console.log(title0[i].split(',')[4]);
+                //console.log(title0[i].split(',')[4]);
                 if (title0[i].split(',')[4] === "false") {
                     this.public_obj[i] = true;
                 }

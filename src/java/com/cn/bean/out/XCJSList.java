@@ -22,7 +22,7 @@ public class XCJSList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "供应商ID")
+    @FieldDescription(description = "供应商ID", operate = "import")
     private String supplierID;
     @FieldDescription(description = "供应商姓名", operate = "display")
     private String supplierName;
@@ -30,17 +30,17 @@ public class XCJSList {
     private String partID;
     @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
-    @FieldDescription(description = "部品件号")
+    @FieldDescription(description = "部品件号", operate = "import")
     private String partCode;
     @FieldDescription(description = "车型", operate = "display")
     private String autoStylingName;
     @FieldDescription(description = "单位", operate = "display")
     private String partUnit;
-    @FieldDescription(description = "结算数量")
+    @FieldDescription(description = "结算数量", operate = "import")
     private int xcJSAmount;
     @FieldDescription(description = "现场结算单据号")
     private String xcJSID;
-    @FieldDescription(description = "现场结算备注")
+    @FieldDescription(description = "现场结算备注", operate = "import")
     private String xcJSListRemark;
 
     public String getSupplierID() {

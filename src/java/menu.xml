@@ -1,124 +1,125 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <menu text="权限"  id="0000000">
-    <first hypelnk=""  id="000" text="平台管理" url="">
-        <second hypelnk="page1" id="00001" text="注册公司" url="funinfo_page1.ashx"/>
-        <second hypelnk="page1" id="00002" text="注册数据库" url="funinfo_page1.ashx"/>
-        <second hypelnk="page1" id="00003" text="注册平台用户" url="funinfo_page1.ashx"/>
-        <second hypelnk="page1" id="00004" text="定义角色" url="funinfo_page1.ashx"/>
-        <second hypelnk="page1" id="00005" text="定义角色权限" url="funinfo_page1.ashx"/>
-        <second hypelnk="page1" id="00006" text="定义用户角色" url="funinfo_page1.ashx"/>
+    <first hypelnk=""  id="000" text="平台管理" url="base.do">
+        <second hypelnk="page1" id="00001" text="注册公司" url="base.do"/>
+        <second hypelnk="page1" id="00002" text="注册数据库" url="base.do"/>
+        <second hypelnk="page1" id="00003" text="注册平台用户" url="base.do"/>
+        <second hypelnk="page1" id="00004" text="定义角色" url="base.do"/>
+        <second hypelnk="page1" id="00005" text="定义角色权限" url="base.do"/>
+        <second hypelnk="page1" id="00006" text="定义用户角色" url="base.do"/>
     </first>
-    <first hypelnk=""  id="101" text="调货计划管理" url="">
-        <second  hypelnk="page2"  id="10101" text="调货计划下达" url="input_single.ashx"></second >
-        <second hypelnk="page2"  id="10102" text="送货计划查询" url=""></second >
+    <first hypelnk=""  id="101" text="调货计划管理" url="action.do">
+        <second  hypelnk="page2"  id="10101" text="调货计划下达" url="action.do"></second>
+        <second hypelnk="page2"  id="10102" text="送货计划查询" url="action.do"></second>
     </first>
-    <first   hypelnk=""  id="102" text="部品入库管理" url="">
-        <second  hypelnk="page2"  id="10201" text="待检入库" url="" table="tblDJInWareHouse"></second >
-        <second  hypelnk="page2"  id="10202" text="待检审核" url="aaa.ashx"></second >
-        <second  hypelnk="page2"  id="10203" text="送检出库" url="aaa.ashx" module="tblSJOutWareHouse"></second >
-        <second  hypelnk="page2"  id="10204" text="送检返回" url="aaa.ashx" module="tblSJBackWareHouse"></second >
-        <second  hypelnk="page2"  id="10205" text="终端退库" url="aaa.ashx" module="tblZDBackWareHouse"></second >
-    </first >
-    <first   hypelnk=""  id="103" text="部品移库管理" url="">
-        <second  hypelnk="page2"  id="10301" text="报检信息" url="aaa.ashx" module=""></second >
-        <second  hypelnk="page2"  id="10302" text="返修出库" url="aaa.ashx" module="tblFXOutWareHouse"></second >
-        <second  hypelnk="page2"  id="10303" text="返修入库" url="aaa.ashx" module="tblFXInWareHouse"></second >
-        <!--<second  hypelnk="page2"  id="10304" text="现场调账" url="aaa.ashx" module=""></second>-->
-        <second hypelnk="page2"  id="10305" text="库房调账" url="aaa.ashx" module="">
+    <first   hypelnk=""  id="102" text="部品入库管理" url="in.do">
+        <second  hypelnk="page2"  id="10201" text="待检入库" url="in.do"></second >
+        <second  hypelnk="page2"  id="10202" text="待检审核" url="in.do"></second >
+        <second  hypelnk="page2"  id="10203" text="送检出库" url="in.do"></second >
+        <second  hypelnk="page2"  id="10204" text="送检返回" url="in.do"></second >
+        <second  hypelnk="page2"  id="10205" text="终端退库" url="in.do"></second >
+    </first>
+    <first   hypelnk=""  id="103" text="部品移库管理" url="move.do">
+        <second  hypelnk="page2"  id="10301" text="报检信息" url="move.do"></second >
+        <second  hypelnk="page2"  id="10302" text="返修出库" url="move.do"></second >
+        <second  hypelnk="page2"  id="10303" text="返修入库" url="move.do"></second >
+        <!--<second  hypelnk="page2"  id="10304" text="现场调账" url="move.do"></second>-->
+        <second hypelnk="page2"  id="10305" text="库房调账" url="move.do">
         </second>
     </first >
-    <first   hypelnk=""  id="104" text="部品出库管理" url="">
-        <second hypelnk="page2"  id="10401" text="计划出库" url=""></second >
-        <second hypelnk="page2"  id="10412" text="临时调货" url=""></second >
-        <second hypelnk="page2"  id="10402" text="非生产领料" url=""></second>
-        <second hypelnk="page2"  id="10403" text="现场结算" url="aaa.ashx"></second>
-        <second hypelnk="page2"  id="10404" text="部品退货" url="aaa.ashx"></second>
-        <second hypelnk="page2"  id="10405" text="备货确认" url="aaa.ashx"></second>
-        <second hypelnk="page2"  id="10406" text="领货确认" url="aaa.ashx"></second>
-        <second hypelnk="page2"  id="10407" text="配送确认" url="aaa.ashx"></second>
-        <second hypelnk="page3"  id="10408" text="良品库存" url="aaa.ashx"></second>
-        <second hypelnk="page2"  id="10409" text="排序卡打印" url="aaa.ashx"></second>
-        <second hypelnk="page3"  id="10410" text="送货清单" url="aaa.ashx"></second>
-        <second hypelnk="page1"  id="10411" text="下线信息" url="aaa.ashx"></second>
+    <first   hypelnk=""  id="104" text="部品出库管理" url="out.do">
+        <second hypelnk="page2"  id="10401" text="计划出库" url="out.do"></second >
+        <second hypelnk="page2"  id="10412" text="临时调货" url="out.do"></second >
+        <second hypelnk="page2"  id="10402" text="非生产领料" url="out.do"></second>
+        <second hypelnk="page2"  id="10403" text="现场结算" url="out.do"></second>
+        <second hypelnk="page2"  id="10404" text="部品退货" url="out.do"></second>
+        <second hypelnk="page2"  id="10405" text="备货确认" url="out.do"></second>
+        <second hypelnk="page2"  id="10406" text="领货确认" url="out.do"></second>
+        <second hypelnk="page2"  id="10407" text="配送确认" url="out.do"></second>
+        <second hypelnk="page3"  id="10408" text="良品库存" url="out.do"></second>
+        <second hypelnk="page2"  id="10409" text="排序卡打印" url="out.do"></second>
+        <second hypelnk="page3"  id="10410" text="送货清单" url="out.do"></second>
+        <second hypelnk="page1"  id="10411" text="下线信息" url="out.do"></second>
     </first>
-    <first  hypelnk=""  id="105" text="数据报表管理" url="">
-        <second hypelnk=""  id="10501" text="部品出入库明细" url="">
-            <three  hypelnk="page3"  id="1050101" text="待检入库报表" url="spGetRKListForDjpRK"></three>
-            <three  hypelnk="page3"  id="1050102" text="送检出库报表" url="spGetRKListForSJCK"></three>
-            <three  hypelnk="page3"  id="1050103" text="送检返回报表" url="spGetRKListForSJTK"></three>
-            <three  hypelnk="page3"  id="1050104" text="良品入库报表" url="spGetRKListForLpRK"></three>
-            <three  hypelnk="page3"  id="1050105" text="不良品入库报表" url="spGetRKListForBLpRK"></three>
-            <three  hypelnk="page3"  id="1050108" text="返修良品入库" url="spGetRKListForFxpRK(良品)"></three>
-            <three  hypelnk="page3"  id="1050109" text="返修不良品入库" url="spGetRKListForFxpRK(不良品)"></three>
-            <three  hypelnk="page3"  id="1050106" text="良品返修出库" url="spGetCKListForFxpCK(良品)"></three>
-            <three  hypelnk="page3"  id="1050107" text="不良品返修出库" url="spGetCKListForFxpCK(不良品)"></three>
-            <three  hypelnk="page3"  id="1050110" text="计划出库报表" url="spGetCKListForZCJHCK"></three>
-            <three  hypelnk="page3"  id="" text="临时调货报表" url="spGetCKListForLSDHCK"></three>
-            <three  hypelnk="page3"  id="1050111" text="配送上线报表" url="spGetCKListForJPSX"></three>
-            <three  hypelnk="page3"  id="1050112" text="非生产领料报表" url="spGetCKListForFJHCK"></three>
-            <three  hypelnk="page3"  id="1050113" text="退货出库报表" url="spGetTHListForBPTH"></three>
-            <three  hypelnk="page3"  id="1050114" text="终端良品退库" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050115" text="终端不良品退库" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050116" text="调货计划明细" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050117" text="供应商送货明细" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050118" text="发货出库明细" url="aaa.ashx"></three>
+    <first  hypelnk=""  id="105" text="数据报表管理" url="report.do">
+        <second hypelnk=""  id="10501" text="部品出入库明细" url="report.do">
+            <three  hypelnk="page3"  id="1050101" text="待检入库报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050102" text="送检出库报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050103" text="送检返回报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050104" text="良品入库报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050105" text="不良品入库报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050108" text="返修良品入库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050109" text="返修不良品入库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050106" text="良品返修出库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050107" text="不良品返修出库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050110" text="计划出库报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050119" text="临时调货报表" url="report.do" info="临时调货数量 - 良品退库 - 不良品退库 总数"></three>
+            <three  hypelnk="page3"  id="1050119" text="现场结算报表" url="report.do" info="出库数量 +  临时调货 + 非生产领料 - 退库 - 结算"></three>
+            <three  hypelnk="page3"  id="1050111" text="配送上线报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050112" text="非生产领料报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050113" text="退货出库报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050114" text="终端良品退库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050115" text="终端不良品退库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050116" text="调货计划明细" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050117" text="供应商送货明细" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050118" text="发货出库明细" url="report.do"></three>
         </second>
-        <second hypelnk=""  id="10502" text="部品库存明细" url="">
-            <three  hypelnk="page3"  id="1050201" text="良品库存报表" url="spGetKFJCListForLp"></three>
-            <three  hypelnk="page3"  id="1050202" text="不良品库存报表" url="spGetKFJCListForBLp"></three>
-            <three  hypelnk="page3"  id="1050203" text="待检库存报表" url="spGetKFJCListForDjp"></three>
-            <three  hypelnk="page3"  id="1050204" text="送检品库存报表" url="spGetKFJCListForSjp"></three>
-            <three  hypelnk="page3"  id="1050205" text="返修品库存报表" url="spGetKFJCListForFxp"></three>
-            <!--<three  hypelnk="page3"  id="1050206" text="待检品盈亏" url="aaa.ashx"></three>-->
-            <!--<three  hypelnk="page3"  id="1050207" text="良品盈亏" url="aaa.ashx"></three>-->
-            <three  hypelnk="page3"  id="1050208" text="不良品盈亏" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050209" text="返修品盈亏" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050210" text="线旁盈亏" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050211" text="集配区盈亏" url="aaa.ashx"></three>
+        <second hypelnk=""  id="10502" text="部品库存明细" url="report.do">
+            <three  hypelnk="page3"  id="1050201" text="良品库存报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050202" text="不良品库存报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050203" text="待检库存报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050204" text="送检品库存报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050205" text="返修品库存报表" url="report.do"></three>
+            <!--<three  hypelnk="page3"  id="1050206" text="待检品盈亏" url="report.do"></three>-->
+            <!--<three  hypelnk="page3"  id="1050207" text="良品盈亏" url="report.do"></three>-->
+            <three  hypelnk="page3"  id="1050208" text="不良品盈亏" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050209" text="返修品盈亏" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050210" text="线旁盈亏" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050211" text="集配区盈亏" url="report.do"></three>
         </second>
-        <second hypelnk="page3"  id="10503" text="部品收发存总表" url="spGetSFCTotalData"></second>
-        <second hypelnk="page3"  id="10504" text="部品计划完成情况" url="spGETJHCKCompletionAllInfo"></second>
-        <second hypelnk="page3"  id="10505" text="部品报警明细表" url="spGetKCAlertListData"></second>
-        <second hypelnk="page3"  id="10506" text="盘点报表" url="aaa.ashx"></second>
+        <second hypelnk="page3"  id="10503" text="部品收发存总表" url="report.do"></second>
+        <second hypelnk="page3"  id="10504" text="部品计划完成情况" url="report.do"></second>
+        <second hypelnk="page3"  id="10505" text="部品报警明细表" url="report.do"></second>
+        <second hypelnk="page3"  id="10506" text="盘点报表" url="report.do"></second>
         
-        <second hypelnk=""  id="10507" text="分录报表" url="">
-            <three  hypelnk="page3"  id="1050701"  text="库存期初分录" url="spGetKFQCFenLuData"></three>
-            <three  hypelnk="page3"  id="1050702" text="部品退库分录" url="spGetTKFenLuData"></three>
-            <three  hypelnk="page3"  id="1050703" text="部品退货分录" url="spGetTHFenLuData"></three>
-            <three  hypelnk="page3"  id="1050704" text="部品计划出库分录" url="spGetCKFenLuData"></three>
-            <three  hypelnk="page3"  id="1050705" text="部品入库分录" url="spGetRKFenLuData"></three>
-            <three  hypelnk="page3"  id="1050706" text="库房结存分录" url="spGetKFJCFenLuData"></three>
-            <three  hypelnk="page3"  id="1050707" text="现场期初分录" url="spGetXCQCFenLuData"></three>
-            <three  hypelnk="page3"  id="1050708" text="现场结存分录" url="spGetXCJCFenLuData"></three>
-            <three  hypelnk="page3"  id="1050709" text="库房盈亏分录" url="aaa.ashx"></three>
-            <three  hypelnk="page3"  id="1050710" text="现场盈亏分录" url="aaa.ashx"></three>
+        <second hypelnk=""  id="10507" text="分录报表" url="report.do">
+            <three  hypelnk="page3"  id="1050701"  text="库存期初分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050702" text="部品退库分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050703" text="部品退货分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050704" text="部品计划出库分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050705" text="部品入库分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050706" text="库房结存分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050707" text="现场期初分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050708" text="现场结存分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050709" text="库房盈亏分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050710" text="现场盈亏分录" url="report.do"></three>
         </second>
     </first>
-    <first  hypelnk=""  id="106" text="基础信息管理" url="">
-        <second hypelnk="page1"  id="10601" text="部品档案" url="funinfo_page1.ashx" table="tblPartBaseInfo"></second>
-        <second hypelnk="page1"  id="10602" text="客户档案" url="aaa.ashx" table="tblCustomer"></second>
-        <second hypelnk="page1"  id="10603" text="员工档案" url="aaa.ashx" table="tblEmployee"></second>
-        <second hypelnk="page1"  id="10604" text="部品存放地址" url="aaa.ashx" table="tblPartStore"></second>
-        <second hypelnk="page1"  id="10605" text="盛具档案" url="aaa.ashx" table="tblContainer"></second>
-        <second hypelnk="page1"  id="10606" text="部品类别" url="aaa.ashx" table="tblPartCategory"></second>
-        <second hypelnk="page1"  id="10607" text="车型档案" url="aaa.ashx" table="tblAutoStyling"></second>
-        <second hypelnk="page1"  id="10608" text="客户类别" url="aaa.ashx" table="tblCustomerType"></second>
-        <second hypelnk="page1"  id="10609" text="送货方式" url="aaa.ashx" table="tblSHMethod"></second>
-        <second hypelnk="page1"  id="10610" text="库存安全" url="aaa.ashx" table="tblKCQuota"></second>
-        <second hypelnk="page1"  id="10611" text="签约面积" url="aaa.ashx" table="tblGYSContractAreaInfo"></second>
-        <second hypelnk="page1"  id="10612" text="出入库盛具" table="tblGYSPartContainerInfo"></second>
-        <second hypelnk="page1"  id="10613" text="免检信息" url="aaa.ashx" table="tblExemptionInfo"></second>
-        <second hypelnk="page1"  id="10614" text="显示屏档案" url="aaa.ashx" table="tblAreaLedIPInfo"></second>
-        <second hypelnk="page1"  id="10615" text="备货员档案" url="aaa.ashx" table=""></second>
+    <first  hypelnk=""  id="106" text="基础信息管理" url="base.do">
+        <second hypelnk="page1"  id="10601" text="部品档案" url="base.do"></second>
+        <second hypelnk="page1"  id="10602" text="客户档案" url="base.do"></second>
+        <second hypelnk="page1"  id="10603" text="员工档案" url="base.do"></second>
+        <second hypelnk="page1"  id="10604" text="部品存放地址" url="base.do"></second>
+        <second hypelnk="page1"  id="10605" text="盛具档案" url="base.do"></second>
+        <second hypelnk="page1"  id="10606" text="部品类别" url="base.do"></second>
+        <second hypelnk="page1"  id="10607" text="车型档案" url="base.do"></second>
+        <second hypelnk="page1"  id="10608" text="客户类别" url="base.do"></second>
+        <second hypelnk="page1"  id="10609" text="送货方式" url="base.do"></second>
+        <second hypelnk="page1"  id="10610" text="库存安全" url="base.do"></second>
+        <second hypelnk="page1"  id="10611" text="签约面积" url="base.do"></second>
+        <second hypelnk="page1"  id="10612" text="出入库盛具" url="base.do" table="tblGYSPartContainerInfo"></second>
+        <second hypelnk="page1"  id="10613" text="免检信息" url="base.do"></second>
+        <second hypelnk="page1"  id="10614" text="显示屏档案" url="base.do"></second>
+        <second hypelnk="page1"  id="10615" text="备货员档案" url="base.do"></second>
     </first>
-    <first hypelnk=""  id="107" text="系统设置" url="">
-        <second hypelnk=""  id="10701" text="用户管理" url="aaa.ashx"></second>
-        <second hypelnk=""  id="10702" text="结账管理" url="aaa.ashx"></second>
-        <second hypelnk=""  id="10703" text="数据备份与还原" url="aaa.ashx"></second>
-        <second hypelnk=""  id="10704" text="系统参数设置" url="aaa.ashx"></second>
-        <second hypelnk=""  id="10705" text="操作日志" url="aaa.ashx"></second>
-        <second hypelnk=""  id="10706" text="权限设置" url="aaa.ashx"></second>
-        <second hypelnk=""  id="10707" text="结转管理" url="aaa.ashx"></second>
-        <second hypelnk=""  id="10708" text="修改密码" url="aaa.ashx"></second>
+    <first hypelnk=""  id="107" text="系统设置" url="action.do">
+        <second hypelnk=""  id="10701" text="用户管理" url="action.do"></second>
+        <second hypelnk=""  id="10702" text="结账管理" url="action.do"></second>
+        <second hypelnk=""  id="10703" text="数据备份与还原" url="action.do"></second>
+        <second hypelnk=""  id="10704" text="系统参数设置" url="action.do"></second>
+        <second hypelnk=""  id="10705" text="操作日志" url="action.do"></second>
+        <second hypelnk=""  id="10706" text="权限设置" url="action.do"></second>
+        <second hypelnk=""  id="10707" text="结转管理" url="action.do"></second>
+        <second hypelnk=""  id="10708" text="修改密码" url="action.do"></second>
     </first>
 </menu>

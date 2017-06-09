@@ -22,58 +22,40 @@ public class FJHOutWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "行号")
+    @FieldDescription(description = "行号", operate = "display")
     private int listNumber;
-    @FieldDescription(description = "失败原因")
+    @FieldDescription(description = "失败原因", operate = "display")
     private String failedReason;
-    @FieldDescription(description = "非终端客户")
-    private String fzdCustomerID;
-    @FieldDescription(description = "非终端客户")
-    private String fzdCustomerName;
-    @FieldDescription(description = "供应商代码")
+//    @FieldDescription(description = "非终端客户")
+//    private String fzdCustomerID;
+//    @FieldDescription(description = "非终端客户")
+//    private String fzdCustomerName;
+    @FieldDescription(description = "供应商代码", operate = "import")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
-    @FieldDescription(description = "部品件号")
+    @FieldDescription(description = "部品件号", operate = "import")
     private String partCode;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
-    @FieldDescription(description = "部品单位")
+    @FieldDescription(description = "部品单位", operate = "display")
     private String partUnit;
-    @FieldDescription(description = "车型")
+    @FieldDescription(description = "车型", operate = "display")
     private String autoStylingName;
-    @FieldDescription(description = "数量")
+    @FieldDescription(description = "数量", operate = "import")
     private int fjhCKAmount;
     @FieldDescription(description = "非计划出库完成时间")
     private String fjhCKTime;
-    @FieldDescription(description = "备注")
+    @FieldDescription(description = "备注", operate = "import")
     private String fjhOutWareHouseListRemark;
     @FieldDescription(description = "非计划出库单号")
     private String fjhOutWareHouseID;
     @FieldDescription(description = "库管员")
     private String wareHouseManagerName;
-    @FieldDescription(description = "存放地址")
-    private String cfAddress;
-
-    public String getFzdCustomerID() {
-        return fzdCustomerID;
-    }
-
-    public void setFzdCustomerID(String fzdCustomerID) {
-        this.fzdCustomerID = fzdCustomerID;
-    }
-
-    public String getFzdCustomerName() {
-        return fzdCustomerName;
-    }
-
-    public void setFzdCustomerName(String fzdCustomerName) {
-        this.fzdCustomerName = fzdCustomerName;
-    }
 
     public String getSupplierID() {
         return supplierID;
@@ -177,14 +159,6 @@ public class FJHOutWareHouseList {
 
     public void setWareHouseManagerName(String wareHouseManagerName) {
         this.wareHouseManagerName = wareHouseManagerName;
-    }
-
-    public String getCfAddress() {
-        return cfAddress;
-    }
-
-    public void setCfAddress(String cfAddress) {
-        this.cfAddress = cfAddress;
     }
 
     public String getFailedReason() {

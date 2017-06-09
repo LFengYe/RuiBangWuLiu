@@ -240,12 +240,12 @@ public class JHOutWareHouseController {
                     /**
                      * 该计划明细的筛选字符串(供应商ID + 逗号 + 件号)
                      */
-                    String filterStr = item.getSupplierID() + "," + item.getPartCode();
+//                    String filterStr = item.getSupplierID() + "," + item.getPartCode();
                     /**
                      * 谓语对象, 用户筛选库存列表
                      */
-                    CustomPredicate predicate = new CustomPredicate(filterStr);
-                    CustomPredicate.setKcCount(0);//部件编号对应库存总量初始化
+//                    CustomPredicate predicate = new CustomPredicate(filterStr);
+//                    CustomPredicate.setKcCount(0);//部件编号对应库存总量初始化
                     //Predicate<LPKCList> predicate = (LPKCList input) -> (input.getSupplierID() + "," + input.getPartCode()).compareToIgnoreCase(filterStr) == 0;
                     /**
                      * 符合筛选条件的库存列表
@@ -284,8 +284,8 @@ public class JHOutWareHouseController {
 //                                break;
                             }
                             //detail.setOutboundContainerName(containerInfo.getOutboundContainerName());
-                            //detail.setJhOutWareHouseListRemark(item.getFjhOutWareHouseListRemark());
-                            //detail.setJhOutWareHouseID(fjhOutWareHouse.getFjhOutWareHouseID());
+                            detail.setFjhOutWareHouseListRemark(item.getFjhOutWareHouseListRemark());
+                            detail.setFjhOutWareHouseID(fjhOutWareHouse.getFjhOutWareHouseID());
 
                             completeResult.add(detail);
                             ckAmount -= lpkcl.getLpAmount();
@@ -442,13 +442,14 @@ public class JHOutWareHouseController {
             JHOutWareHouseList oldList = null;
             int oldPackingNum = 0;
             boolean isFull = true;
+            
             while (iterator.hasNext()) {
                 JHOutWareHouseList list = iterator.next();
                 GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(list.getSupplierID() + "_" + list.getPartCode()), GYSPartContainerInfo.class);
                 
                 //新计划初始化参数
-                if (oldList != null && !(oldList.getSupplierID().compareTo(list.getSupplierID()) == 0)
-                        && !(oldList.getPartCode().compareTo(list.getPartCode()) == 0)) {
+                if (oldList != null && (!(oldList.getSupplierID().compareTo(list.getSupplierID()) == 0)
+                        || !(oldList.getPartCode().compareTo(list.getPartCode()) == 0))) {
                     isFull = true;
                     oldPackingNum = 0;
                 }
@@ -496,13 +497,12 @@ public class JHOutWareHouseController {
                         object.put("PackingAmount", "int," + containerInfo.getOutboundPackageAmount());
                     }
                     params.add(object);
-//                    System.out.println("json params:" + object.toJSONString());
                 }
                 
                 oldPackingNum += containerAmount;
                 oldList = list;
             }
-            System.out.println("part parasm:" + params.toJSONString());
+            //System.out.println("part parasm:" + params.toJSONString());
             return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, opt.getConnect());
         }
         return null;

@@ -44,6 +44,8 @@ public class BPTHOutWareHouse {
     private String printFlag;
     @FieldDescription(description = "备注")
     private String bpTHOutWareHouseRemark;
+    @FieldDescription(description = "单据中所有明细退货出库总数", operate = "display")
+    private int thCKCount;
 
     public String getBpTHOutWareHoseID() {
         return bpTHOutWareHoseID;
@@ -131,5 +133,13 @@ public class BPTHOutWareHouse {
 
     public void setBpTHOutWareHouseRemark(String bpTHOutWareHouseRemark) {
         this.bpTHOutWareHouseRemark = bpTHOutWareHouseRemark;
+    }
+
+    public int getThCKCount() {
+        return thCKCount;
+    }
+
+    public void setThCKCount(int thCKCount) {
+        this.thCKCount = thCKCount;
     }
 }

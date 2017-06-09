@@ -101,4 +101,8 @@ public class LPKCListInfo {
     public void setOutboundPackageAmount(int outboundPackageAmount) {
         this.outboundPackageAmount = outboundPackageAmount;
     }
+    
+    public String getType() {
+        return this.supplierID + "_" + this.partCode;
+    }
 }

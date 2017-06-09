@@ -43,8 +43,15 @@ public class BHProgressList {
     private String jhOutWareHouseID;
     @FieldDescription(description = "备注")
     private String bhProgressListRemark;
-    @FieldDescription(description = "备货状态")
-    private String bhStatus;
+    @FieldDescription(description = "操作人员")
+    private String bhStaffName;
+    
+    @FieldDescription(description = "完成时间", operate = "display")
+    private String finishTime;
+    @FieldDescription(description = "备注", operate = "display")
+    private String progressListRemark;
+    @FieldDescription(description = "操作人员", operate = "display")
+    private String staffName;
 
     public String getSupplierID() {
         return supplierID;
@@ -110,20 +117,20 @@ public class BHProgressList {
         this.packingAmount = packingAmount;
     }
 
-    public String getBhTime() {
-        return bhTime;
-    }
-
-    public void setBhTime(String bhTime) {
-        this.bhTime = bhTime;
-    }
-
     public String getJhOutWareHouseID() {
         return jhOutWareHouseID;
     }
 
     public void setJhOutWareHouseID(String jhOutWareHouseID) {
         this.jhOutWareHouseID = jhOutWareHouseID;
+    }
+
+    public String getBhTime() {
+        return bhTime;
+    }
+
+    public void setBhTime(String bhTime) {
+        this.bhTime = bhTime;
     }
 
     public String getBhProgressListRemark() {
@@ -134,12 +141,36 @@ public class BHProgressList {
         this.bhProgressListRemark = bhProgressListRemark;
     }
 
-    public String getBhStatus() {
-        return bhStatus;
+    public String getBhStaffName() {
+        return bhStaffName;
     }
 
-    public void setBhStatus(String bhStatus) {
-        this.bhStatus = bhStatus;
+    public void setBhStaffName(String bhStaffName) {
+        this.bhStaffName = bhStaffName;
+    }
+
+    public String getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(String finishTime) {
+        this.finishTime = finishTime;
+    }
+
+    public String getProgressListRemark() {
+        return progressListRemark;
+    }
+
+    public void setProgressListRemark(String progressListRemark) {
+        this.progressListRemark = progressListRemark;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
     
 }

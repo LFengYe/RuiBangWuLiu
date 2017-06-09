@@ -53,6 +53,8 @@ public class JHOutWareHouseList implements Comparable{
     private String jhOutWareHouseID;
     @FieldDescription(description = "备注", operate = "display")
     private int jhStatus;
+    @FieldDescription(description = "制单时间", type = "date", operate = "display")
+    private String jhCKProduceTime;
 
     public String getSupplierID() {
         return supplierID;
@@ -186,5 +188,13 @@ public class JHOutWareHouseList implements Comparable{
 
     public void setJhStatus(int jhStatus) {
         this.jhStatus = jhStatus;
+    }
+
+    public String getJhCKProduceTime() {
+        return jhCKProduceTime;
+    }
+
+    public void setJhCKProduceTime(String jhCKProduceTime) {
+        this.jhCKProduceTime = jhCKProduceTime;
     }
 }

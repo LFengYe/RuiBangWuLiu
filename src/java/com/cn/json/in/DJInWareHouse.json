@@ -84,6 +84,23 @@
             "originalBatch":"15%,原厂批次",
             "result":"15%,检验结论",
             "djInWareHouseListRemark":"15%,备注"
+        },
+        "rows3": {
+            "inboundCountName":"10%,总计",
+            "inboundCount":"90%"
+        },
+        "rows4": {
+            "supplierSignName": "10%,供应商",
+            "supplierSign": "15%",
+            "wareHouseManagerSignName": "10%,库管员",
+            "wareHouseManagerSign": "15%",
+            "auditSignName": "10%,审核人",
+            "auditSign": "15%",
+            "inspectSignName": "10%,检验人",
+            "inspectSign": "15%"
+        },
+        "rows5": {
+            "remark": "100%,备注: 白 --> 存根; 红色 --> 客户; 蓝 --> 库房; 绿色 --> 检验; 黄 --> 返回"
         }
     }
 }
