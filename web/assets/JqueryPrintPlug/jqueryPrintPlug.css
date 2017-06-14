@@ -16,9 +16,9 @@ and open the template in the editor.
 .div_table_2{display: table;width: 90%;text-align: center;border-top: 1px solid;border-right: 1px solid;margin: 0px;padding: 0px;}
 .div_table_2 .col{display: inline-block;text-align: center;font-size: 12px;height: auto;}
 .div_table_2 .col ul{margin: 0px;padding: 0px;}
-.div_table_2 .col ul li{text-align: center;height: 40px;line-height: 40px;border-top: 1px solid;overflow: hidden;white-space:nowrap;}
+.div_table_2 .col ul li{text-align: center;height: 20px;line-height: 20px;border-top: 1px solid;overflow: hidden;white-space:nowrap;}
 .div_row{display: table-row;}
-.div_cell{display: table-cell;float: left;height: 40px;line-height: 40px;border-bottom: 1px solid;white-space: nowrap;}
-.div_cell .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
-.div_cell .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
-.div_cell_double{height: 80px;line-height: 80px;}
+.div_cell{display: table-cell;float: left;height: 20px;line-height: 20px;border-bottom: 1px solid;white-space: nowrap;}
+.div_cell .cell_separate{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: right;}
+.div_cell .cell_start{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: left;}
+.div_cell_double{height: 40px;line-height: 40px;}

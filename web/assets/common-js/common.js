@@ -19,7 +19,6 @@ $(function () {
                 $("#" + type).fadeIn(500).siblings(".page").hide();         //页面切换
                 localStorage.setItem("module", module);             //重置module  URL的值
                 localStorage.setItem("url", url);
-                // console.log(module+"XXX"+url);
                 switch (type) {                                      //渲染对应的页面
                     case "page1":
                         ajaxPage1(module);

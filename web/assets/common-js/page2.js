@@ -277,16 +277,16 @@
                     if (data) {
                         $chidTableBox.render(data);
                     } else {
-                        $("#page2-return").trigger("click");
                         initDOM(moudle);
+                        $("#page2-return").trigger("click");
                     }
                 }, function (data) {
                     importSuccess = false;
                     if (data) {
                         $chidTableBox.render(data);
                     } else {
-                        $("#page2-return").trigger("click");
                         initDOM(moudle);
+                        $("#page2-return").trigger("click");
                     }
                 });
             }
@@ -302,6 +302,7 @@
                     submitDatas.update = [];
                     $("#page2-return").trigger("click");
                 }, function () {
+                    $("#page2-return").trigger("click");
                 });
             }
         });
@@ -471,7 +472,7 @@
                         var proName = primary[proIndex];
                         whereObj[proName] = maps[proName];
                     }
-                    ajaxData(OPERATION.REQUEST_DETAIL, {rely: whereObj, pageSize: detailPageSize, pageIndex: minPageIndex}, function (data) {
+                    ajaxData(OPERATION.REQUEST_DETAIL, {rely: whereObj, pageSize: detailPageSize, pageIndex: minPageIndex, isHistory: isHistory}, function (data) {
                         operate = "modify";
                         $mainInputBox.objInInputs(maps);
                         if (moudle === "报检信息") {
@@ -559,7 +560,7 @@
                 },
                 searchCallBack: function (keyword) {
                     var tmp = JSON.parse(keyword);
-                    var obj = {"pageIndex": minPageIndex, "pageSize": detailPageSize, "datas": tmp.keywords, "rely": whereObj};
+                    var obj = {"pageIndex": minPageIndex, "pageSize": detailPageSize, "datas": tmp.keywords, "rely": whereObj, isHistory: isHistory};
                     ajaxData(OPERATION.REQUEST_DETAIL, obj, function (data) {
                         $chidTableBox.render(data.datas);
                     }, function () {
@@ -724,6 +725,8 @@
             case "终端退库":
             case "返修出库":
             case "返修入库":
+            case "分装入库":
+            case "分装出库":
             {
                 $addItem.css("display", "inline-block");
                 $("#page2-submit").css("display", "inline-block");
@@ -835,7 +838,7 @@
             },
             searchCallBack: function (keyword) {
                 var tmp = JSON.parse(keyword);
-                var obj = {"pageIndex": minPageIndex, "pageSize": detailPageSize, "datas": tmp.keywords, "rely": whereObj};
+                var obj = {"pageIndex": minPageIndex, "pageSize": detailPageSize, "datas": tmp.keywords, "rely": whereObj, isHistory: isHistory};
                 ajaxData(OPERATION.REQUEST_DETAIL, obj, function (data) {
                     $chidTableBox.render(data.datas);
                 }, function () {

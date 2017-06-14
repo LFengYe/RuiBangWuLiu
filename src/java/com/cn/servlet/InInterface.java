@@ -8,6 +8,7 @@ package com.cn.servlet;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.ClassDescription;
+import com.cn.bean.Customer;
 import com.cn.bean.FieldDescription;
 import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
@@ -233,11 +234,16 @@ public class InInterface extends HttpServlet {
                                 if (result == 0) {
                                     result = commonController.dataBaseOperate(details, "com.cn.bean.in.", "DJInWareHouseList", "add", opt.getConnect()).get(0);
                                     if (result == 0) {
-                                        json = Units.objectToJson(0, "数据添加成功!", queryOperate("com.cn.bean.in.", "view", "DJInWareHouse", "DJInWareHouseID", "", item, true, opt.getConnect(), 10, 1));
+                                        json = Units.objectToJson(0, "数据添加成功!", null);
+                                    } else if (result == 2627) {
+                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect()).get(0);
+                                        json = Units.objectToJson(-1, "明细中件号有重复!", null);
                                     } else {
                                         commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect()).get(0);
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
+                                } else if (result == 2627) {
+                                    json = Units.objectToJson(-1, "数据以保存, 请勿重复提交!", null);
                                 } else {
                                     json = Units.objectToJson(-1, "数据添加失败!", null);
                                 }
@@ -274,9 +280,10 @@ public class InInterface extends HttpServlet {
                         case "importDetail": {
                             ArrayList<Object> importData = commonController.importData("com.cn.bean.in.", "DJInWareHouseList", importPath + fileName);
                             //ArrayList<Object> importData = importDetailData(detail, "com.cn.bean.in.", "DJInWareHouseList", importPath + fileName);
-                            //System.out.println("import:" + JSONObject.toJSONString(importData));
+
                             DJInWareHouse dJInWareHouse = JSONObject.parseObject(item, DJInWareHouse.class);
                             if (importData != null) {
+                                boolean importSuccess = true;
                                 Iterator iterator = importData.iterator();
                                 while (iterator.hasNext()) {
                                     DJInWareHouseList houseList = (DJInWareHouseList) iterator.next();
@@ -285,27 +292,66 @@ public class InInterface extends HttpServlet {
                                     houseList.setInboundBatch(dJInWareHouse.getInboundBatch());
                                     houseList.setPartState("待检品");
 
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + houseList.getPartCode()), PartBaseInfo.class);
+                                    //System.out.println("partBaseInfo_" + houseList.getPartCode() + "baseInfo:" + JSONObject.toJSONString(baseInfo));
+                                    if (baseInfo != null) {
+                                        houseList.setPartID(baseInfo.getPartID());
+                                        houseList.setPartName(baseInfo.getPartName());
+                                        houseList.setPartUnit(baseInfo.getPartUnit());
+                                        houseList.setAutoStylingName(baseInfo.getAutoStylingName());
+                                    } else {
+                                        houseList.setFailedReason("缺失件号信息!");
+                                        importSuccess = false;
+                                        continue;
+                                    }
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + houseList.getSupplierID()), Customer.class);
+                                    if (customer != null) {
+                                        houseList.setSupplierName(customer.getCustomerAbbName());
+                                    } else {
+                                        houseList.setFailedReason("缺失供应商信息!");
+                                        importSuccess = false;
+                                        continue;
+                                    }
+
                                     GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(houseList.getSupplierID() + "_" + houseList.getPartCode()), GYSPartContainerInfo.class);
                                     if (containerInfo != null) {
                                         int packageAmount = containerInfo.getInboundPackageAmount();
-                                        int boxAmount = (houseList.getInboundAmount() % packageAmount == 0) ? (houseList.getInboundAmount() / packageAmount) : (houseList.getInboundAmount() / packageAmount + 1);
-                                        houseList.setInboundBoxAmount(boxAmount);
+                                        if (packageAmount > 0) {
+                                            int boxAmount = (houseList.getInboundAmount() % packageAmount == 0) ? (houseList.getInboundAmount() / packageAmount) : (houseList.getInboundAmount() / packageAmount + 1);
+                                            houseList.setInboundBoxAmount(boxAmount);
+                                        } else {
+                                            houseList.setFailedReason("缺失入库盛具信息!");
+                                            importSuccess = false;
+                                        }
                                     } else {
-                                        houseList.setInboundBoxAmount(999999);
+                                        houseList.setFailedReason("缺失入库盛具信息!");
+                                        importSuccess = false;
                                     }
                                 }
-                                int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "DJInWareHouse", "add", opt.getConnect()).get(0);
-                                if (result == 0) {
-                                    result = commonController.dataBaseOperate(JSONObject.toJSONString(importData), "com.cn.bean.in.", "DJInWareHouseList", "add", opt.getConnect()).get(0);
+
+                                if (importSuccess) {
+                                    int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "DJInWareHouse", "add", opt.getConnect()).get(0);
                                     if (result == 0) {
-                                        json = Units.objectToJson(0, "数据添加成功!", queryOperate("com.cn.bean.in.", "view", "DJInWareHouse", "DJInWareHouseID", "", item, true, opt.getConnect(), importData.size(), 1));
+                                        //System.out.println("import:" + JSONObject.toJSONString(importData));
+                                        result = commonController.dataBaseOperate(JSONObject.toJSONString(importData, Units.features), "com.cn.bean.in.", "DJInWareHouseList", "add", opt.getConnect()).get(0);
+                                        if (result == 0) {
+                                            json = Units.objectToJson(0, "数据添加成功!", JSONObject.toJSONString(importData));
+                                        } else if (result == 2627) {
+                                            json = Units.objectToJson(-1, "明细中件号有重复!", null);
+                                        } else {
+                                            json = Units.objectToJson(-1, "明细添加失败!", null);
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect());
+                                        }
+                                    } else if (result == 2627) {
+                                        json = Units.objectToJson(-1, "数据以保存, 请勿重复提交!", null);
                                     } else {
-                                        json = Units.objectToJson(-1, "明细添加失败!", null);
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect());
+                                        json = Units.objectToJson(-1, "数据添加失败!", null);
                                     }
                                 } else {
-                                    json = Units.objectToJson(-1, "数据添加失败!", null);
+                                    json = Units.objectToJson(-1, "数据添加失败!", JSONObject.toJSONString(importData));
                                 }
+
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或格式不正确!", null);
                             }
@@ -999,9 +1045,9 @@ public class InInterface extends HttpServlet {
                                 json = queryOperate(target, "com.cn.bean.", "table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("partCode") == 0) {
-                                String[] keys = {"partCode", "partID", "partName", "tkAmount"};
-                                String[] keysName = {"部品件号", "部品代码", "部品名称", "退库数量"};
-                                int[] keysWidth = {20, 30, 30, 20};
+                                String[] keys = {"partCode", "partID", "partName", "tkAmount", "inboundBatch"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "退库数量", "入库批次"};
+                                int[] keysWidth = {20, 20, 20, 20, 20};
 
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
@@ -1017,21 +1063,10 @@ public class InInterface extends HttpServlet {
                                             PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + zdtk.getPartCode()), PartBaseInfo.class);
                                             zdtk.setPartID(baseInfo.getPartID());
                                             zdtk.setPartName(baseInfo.getPartName());
-                                            zdtk.setInboundBatch(controller.getSupplierInboundBatch(proParams.getString("SupplierID")));
-                                            /*
-                                            if (minInboundBatchMap.containsKey(zdtk.getPartCode())
-                                                    && minInboundBatchMap.get(zdtk.getPartCode()) != null) {
-                                                zdtk.setInboundBatch((String) minInboundBatchMap.get(zdtk.getPartCode()));
-                                            } else {
-                                                //TODO 这种生成批次的方式不对
-                                                zdtk.setInboundBatch(Units.getNowTimeNoSeparator());
-                                            }
-                                             */
-//                                            PartCategory category = JSONObject.parseObject(RedisAPI.get("partCategory_" + baseInfo.getPartCategoryName()), PartCategory.class);
-//                                            zdtk.setWareHouseManagerName(category.getWareHouseManagerName());
+                                            zdtk.setInboundBatch(controller.getSupplierInboundBatch(JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID")));
                                         }
 
-                                        String[] fieldsName = {"partCode", "partID", "partName", "jpqJCAmount"};
+                                        String[] fieldsName = {"partCode", "partID", "partName", "jpqJCAmount", "inboundBatch"};
                                         json = getSpecialTableJsonStr(list, "com.cn.bean.pro.JPQJCForZDTK", keys, keysName, keysWidth, fieldsName, target, rely);
                                     } else {
                                         json = Units.objectToJson(-1, "数据为空!", null);
@@ -1047,21 +1082,10 @@ public class InInterface extends HttpServlet {
                                             PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + zdtk.getPartCode()), PartBaseInfo.class);
                                             zdtk.setPartID(baseInfo.getPartID());
                                             zdtk.setPartName(baseInfo.getPartName());
-                                            zdtk.setInboundBatch(controller.getSupplierInboundBatch(proParams.getString("SupplierID")));
-                                            /*
-                                            if (minInboundBatchMap.containsKey(zdtk.getPartCode())
-                                                    && minInboundBatchMap.get(zdtk.getPartCode()) != null) {
-                                                zdtk.setInboundBatch((String) minInboundBatchMap.get(zdtk.getPartCode()));
-                                            } else {
-                                                //TODO 这种生成批次的方式不对
-                                                zdtk.setInboundBatch(Units.getNowTimeNoSeparator());
-                                            }
-                                             */
-//                                            PartCategory category = JSONObject.parseObject(RedisAPI.get("partCategory_" + baseInfo.getPartCategoryName()), PartCategory.class);
-//                                            zdtk.setWareHouseManagerName(category.getWareHouseManagerName());
+                                            zdtk.setInboundBatch(controller.getSupplierInboundBatch(JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID")));
                                         }
 
-                                        String[] fieldsName = {"partCode", "partID", "partName", "xpJCAmount"};
+                                        String[] fieldsName = {"partCode", "partID", "partName", "xpJCAmount", "inboundBatch"};
                                         json = getSpecialTableJsonStr(list, "com.cn.bean.pro.XPJCForZDTK", keys, keysName, keysWidth, fieldsName, target, rely);
                                     } else {
                                         json = Units.objectToJson(-1, "数据为空!", null);

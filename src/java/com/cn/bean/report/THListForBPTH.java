@@ -5,24 +5,39 @@
  */
 package com.cn.bean.report;
 
+import com.cn.bean.FieldDescription;
+
 /**
  *
  * @author LFeng
  */
 public class THListForBPTH {
 
+    @FieldDescription(description = "审核时间")
     private String bpTHAuditTime;
+    @FieldDescription(description = "退货出库单号")
     private String bpTHOutWareHoseID;
+    @FieldDescription(description = "出入库类型")
     private String outInType;
+    @FieldDescription(description = "出入库方式")
     private String outInMethod;
+    @FieldDescription(description = "供应商代码")
     private String supplierID;
+    @FieldDescription(description = "供应商名称")
     private String supplierName;
+    @FieldDescription(description = "部品件号")
     private String partCode;
+    @FieldDescription(description = "部品名称")
     private String partName;
+    @FieldDescription(description = "部品编号")
     private String partID;
+    @FieldDescription(description = "入库批次")
     private String inboundBatch;
+    @FieldDescription(description = "退货出库数量")
     private String thCKAmount;
+    @FieldDescription(description = "制单人")
     private String bpTHProducerName;
+    @FieldDescription(description = "备注")
     private String bpTHOutWareHouseListRemark;
 
     public String getBpTHAuditTime() {

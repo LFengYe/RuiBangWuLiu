@@ -7,7 +7,7 @@
     var $pageTurn = $(".page3-container .page3-pagination li a");
     var $search = $(".page3-container .page3-query");
     var $export = $(".page3-container .page3-export");
-
+    var $keysword = $(".page3-container .wc-page3-form");
 
     var OPERATION = {
         CREATE: "create",
@@ -16,11 +16,8 @@
     };
 
     $detailList.hide();
-
     var maxInpage = 20;
-
     var dataType = "";
-
     var pageIndex = 1;
 
     function initDOM(moudle) {
@@ -48,10 +45,21 @@
                 title0: arr.titles,
                 title1: null,
                 datas: arr.datas,
-                dbclickRowCallBack: function (name, maps) {
+                dbclickRowCallBack: function (module, maps) {
                     //$mainInputBox.objInInputs(maps);
-                    request.name = name;
+                    //request.name = name;
                     request.datas = maps;
+                    ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
+                        $chidTableBox.insertTwoHeaderTable({
+                            title0: data.titles,
+                            title1: null,
+                            datas: data.datas
+                        });
+                        $detailList.show();
+                        $mainTable.hide();
+                    }, function () {
+                    });
+                    /*
                     ajaxData(OPERATION.REQUEST_DETAIL, request, function (data) {
                         $chidTableBox.insertTable({
                             titles: data.titles,
@@ -61,6 +69,7 @@
                         $mainTable.hide();
                     }, function () {
                     });
+                    */
                 }
             });
         }, function () {

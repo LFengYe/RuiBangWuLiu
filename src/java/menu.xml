@@ -28,11 +28,14 @@
         </second>
     </first >
     <first   hypelnk=""  id="104" text="部品出库管理" url="out.do">
-        <second hypelnk="page2"  id="10401" text="计划出库" url="out.do"></second >
-        <second hypelnk="page2"  id="10412" text="临时调货" url="out.do"></second >
+        <second hypelnk="page2"  id="10401" text="计划出库" url="out.do"></second>
+        <second hypelnk="page2"  id="10414" text="总成计划" url="out.do"></second>
+        <second hypelnk="page2"  id="10412" text="临时调货" url="out.do"></second>
         <second hypelnk="page2"  id="10402" text="非生产领料" url="out.do"></second>
         <second hypelnk="page2"  id="10403" text="现场结算" url="out.do"></second>
         <second hypelnk="page2"  id="10404" text="部品退货" url="out.do"></second>
+        <second hypelnk="page2"  id="10412" text="分装入库" url="out.do"></second>
+        <second hypelnk="page2"  id="10413" text="分装出库" url="out.do"></second>
         <second hypelnk="page2"  id="10405" text="备货确认" url="out.do"></second>
         <second hypelnk="page2"  id="10406" text="领货确认" url="out.do"></second>
         <second hypelnk="page2"  id="10407" text="配送确认" url="out.do"></second>
@@ -42,6 +45,13 @@
         <second hypelnk="page1"  id="10411" text="下线信息" url="out.do"></second>
     </first>
     <first  hypelnk=""  id="105" text="数据报表管理" url="report.do">
+        <second text="部品期初明细" url="report.do">
+            <three text="待检品期初报表" module="spGetKFQCDjpList" url="report.do"></three>
+            <three text="送检品期初报表" module="spGetKFQCSjpList" url="report.do"></three>
+            <three text="良品期初报表" module="spGetKFQCLpList" url="report.do"></three>
+            <three text="不良品期初报表" module="spGetKFQCBLpList" url="report.do"></three>
+            <three text="返修品期初报表" module="spGetKFQCFXpList" url="report.do"></three>
+        </second>
         <second hypelnk=""  id="10501" text="部品出入库明细" url="report.do">
             <three  hypelnk="page3"  id="1050101" text="待检入库报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050102" text="送检出库报表" url="report.do"></three>
@@ -50,11 +60,10 @@
             <three  hypelnk="page3"  id="1050105" text="不良品入库报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050108" text="返修良品入库" url="report.do"></three>
             <three  hypelnk="page3"  id="1050109" text="返修不良品入库" url="report.do"></three>
+            
             <three  hypelnk="page3"  id="1050106" text="良品返修出库" url="report.do"></three>
             <three  hypelnk="page3"  id="1050107" text="不良品返修出库" url="report.do"></three>
             <three  hypelnk="page3"  id="1050110" text="计划出库报表" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050119" text="临时调货报表" url="report.do" info="临时调货数量 - 良品退库 - 不良品退库 总数"></three>
-            <three  hypelnk="page3"  id="1050119" text="现场结算报表" url="report.do" info="出库数量 +  临时调货 + 非生产领料 - 退库 - 结算"></three>
             <three  hypelnk="page3"  id="1050111" text="配送上线报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050112" text="非生产领料报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050113" text="退货出库报表" url="report.do"></three>
@@ -83,6 +92,8 @@
         <second hypelnk="page3"  id="10506" text="盘点报表" url="report.do"></second>
         
         <second hypelnk=""  id="10507" text="分录报表" url="report.do">
+            <!--<three  hypelnk="page3"  id="" text="" url="report.do" info="临时调货数量 - 良品退库 - 不良品退库"></three>-->
+            <!--<three  hypelnk="page3"  id="" text="" url="report.do" info="出库数量 +  临时调货 + 非生产领料 - 退库 - 结算"></three>-->
             <three  hypelnk="page3"  id="1050701"  text="库存期初分录" url="report.do"></three>
             <three  hypelnk="page3"  id="1050702" text="部品退库分录" url="report.do"></three>
             <three  hypelnk="page3"  id="1050703" text="部品退货分录" url="report.do"></three>

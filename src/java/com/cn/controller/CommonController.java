@@ -89,7 +89,7 @@ public class CommonController {
                         builder.deleteCharAt(builder.lastIndexOf(",)"));
                     }
                     String sql = builder.toString();
-//                    System.out.println("add sql:" + sql);
+                    //System.out.println("add sql:" + sql);
 
                     conn.setAutoCommit(false);
                     statement = conn.prepareCall(sql);
@@ -367,7 +367,7 @@ public class CommonController {
      */
     public List<Object> dataBaseQuery(String type, String beanPackage, String tableName, String fields, String wherecase, int pageSize, int pageIndex, String orderField, int orderFlag,
             Connection conn) throws Exception {
-        System.out.println("wherecase:" + wherecase);
+        //System.out.println("wherecase:" + wherecase);
         CallableStatement statement = null;
         ArrayList<Object> result;
         Class objClass = Class.forName(beanPackage + tableName);
@@ -652,6 +652,7 @@ public class CommonController {
             int fieldIndex) throws Exception {
 
         //String fieldType = objClass.getDeclaredField(fieldName).getGenericType().toString();
+        //System.out.println("fieldName:" + fieldName + ",fieldValue:" + fieldValue + ",fieldType:" + fieldType + ",fieldIndex:" + fieldIndex);
         if (objClass.getDeclaredField(fieldName).getType() == int.class) {
             statement.setInt(fieldIndex, Integer.valueOf(Units.strIsEmpty(fieldValue) ? ("0") : (fieldValue)));
         } else if (objClass.getDeclaredField(fieldName).getType() == float.class) {
@@ -659,7 +660,6 @@ public class CommonController {
         } else if (objClass.getDeclaredField(fieldName).getType() == double.class) {
             statement.setDouble(fieldIndex, Double.valueOf(Units.strIsEmpty(fieldValue) ? ("0") : (fieldValue)));
         } else if (objClass.getDeclaredField(fieldName).getType() == boolean.class) {
-//            System.out.println("fieldName:" + fieldName + ",fieldValue:" + fieldValue);
             statement.setString(fieldIndex, Boolean.valueOf(fieldValue) ? "1" : "0");
         } else {
             statement.setString(fieldIndex, Units.strIsEmpty(fieldValue) ? null : (fieldValue));

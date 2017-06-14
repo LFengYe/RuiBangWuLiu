@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.Customer;
 import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
+import com.cn.bean.PartBomInfo;
 import com.cn.bean.base.CustomPredicate;
 import com.cn.bean.out.FJHOutWareHouse;
 import com.cn.bean.out.FJHOutWareHouseList;
@@ -34,7 +35,7 @@ import org.apache.log4j.Logger;
 public class JHOutWareHouseController {
 
     private static final Logger logger = Logger.getLogger(JHOutWareHouseController.class);
-
+    
     /**
      * 导入计划明细
      *
@@ -319,6 +320,57 @@ public class JHOutWareHouseController {
     }
     
     /**
+     * 导入总成计划, 将总成计划根据BOM信息分解成明细计划
+     * @param importData
+     * @param jhInfo
+     * @return 
+     */
+    public ArrayList<Object> importZCData(List<Object> importData) {
+        try {
+            /**
+             * 分解完成的计划明细
+             */
+            ArrayList<Object> completeResult = new ArrayList<>();
+
+            if (importData != null && importData.size() > 0) {
+                Iterator<Object> it = importData.iterator();
+                while (it.hasNext()) {
+                    /**
+                     * 将导入的数据转成计划明细对象
+                     */
+                    JHOutWareHouseList item = (JHOutWareHouseList) it.next();
+                    /**
+                     * 获取该总成的Bom信息
+                     */
+                    String bomRedisKey = "bomInfo_" + item.getSupplierID() + "_" + item.getPartCode();
+                    List<String> bomInfos = RedisAPI.getSet(bomRedisKey);
+                    for (String str : bomInfos) {
+                        PartBomInfo bomInfo = JSONObject.parseObject(str, PartBomInfo.class);
+                        JHOutWareHouseList list = new JHOutWareHouseList();
+                        list.setSupplierID(bomInfo.getSupplierID());
+                        list.setPartCode(bomInfo.getDetailPartCode());
+                        list.setJhCKAmount(item.getJhCKAmount() * bomInfo.getDcAmount());
+                        list.setJhOutWareHouseListRemark(item.getJhOutWareHouseListRemark());
+                        completeResult.add(list);
+                    }
+                }
+                return completeResult;
+            }
+        } catch (Exception ex) {
+            logger.error("计划导入异常!", ex);
+        }
+        return null;
+    }
+    
+    /**
+     * 将总成计划写入分装表(分装入库和分装出库)
+     * @param houseList 
+     */
+    public void writeZCJHToFZ(JHOutWareHouseList houseList) {
+        
+    }
+    
+    /**
      * 获取给定的厂家与产品的良品库存列表
      * @param kcAmount
      * @param supplierID
@@ -508,7 +560,7 @@ public class JHOutWareHouseController {
         return null;
     }
     
-    public ArrayList<Integer> jhPartitionPackageHasBatch(String jhOutWareHouseID) throws Exception {
+    public ArrayList<Integer> jhPartitionPackageHasNoBatch(String jhOutWareHouseID) throws Exception {
         JSONArray params = new JSONArray();
         DatabaseOpt opt = new DatabaseOpt();
         CommonController commonController = new CommonController();

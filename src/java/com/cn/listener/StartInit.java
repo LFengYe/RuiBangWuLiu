@@ -10,6 +10,7 @@ import com.cn.bean.AreaLedIPInfo;
 import com.cn.bean.Customer;
 import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
+import com.cn.bean.PartBomInfo;
 import com.cn.bean.PartCategory;
 import com.cn.bean.PartStore;
 import com.cn.controller.CommonController;
@@ -38,6 +39,8 @@ public class StartInit implements ServletContextListener{
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
         try {
+            RedisAPI.flushDB();
+            
             /*导入部品基础信息到Redis中*/
             List<Object> partBaseInfo = commonController.dataBaseQuery("table", "com.cn.bean.", "PartBaseInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
             Iterator<Object> iterator = partBaseInfo.iterator();
@@ -77,12 +80,19 @@ public class StartInit implements ServletContextListener{
                 PartStore partStore = (PartStore) iterator4.next();
                 RedisAPI.set("partStore_" + partStore.getSupplierID() + "_" + partStore.getPartCode(), JSONObject.toJSONString(partStore));
             }
-
+            
             List<Object> partCategory = commonController.dataBaseQuery("table", "com.cn.bean.", "PartCategory", "*", "", Integer.MAX_VALUE, 1, "PartCategoryName", 0, opt.getConnect());
             Iterator<Object> iterator5 = partCategory.iterator();
             while (iterator5.hasNext()) {
                 PartCategory category = (PartCategory) iterator5.next();
                 RedisAPI.set("partCategory_" + category.getPartCategoryName(), JSONObject.toJSONString(category));
+            }
+            
+            List<Object> partBomInfo = commonController.dataBaseQuery("table", "com.cn.bean.", "PartBomInfo", "*", "", Integer.MAX_VALUE, 1, "SupplierID", 0, opt.getConnect());
+            Iterator<Object> iterator6 = partBomInfo.iterator();
+            while (iterator6.hasNext()) {
+                PartBomInfo bomInfo = (PartBomInfo) iterator6.next();
+                RedisAPI.push("bomInfo_" + bomInfo.getSupplierID() + "_" + bomInfo.getZcPartCode(), JSONObject.toJSONString(bomInfo));
             }
 
             //logger.info("初始化成功!导入部品信息" + partBaseInfo.size() + "条,导入客户信息" + customerList.size() + "条,导入部品盛具信息" + containerInfoList.size() + "条");

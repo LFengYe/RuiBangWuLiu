@@ -11,16 +11,16 @@
         "partName": "部品名称,1,1,10%,false",
         "partCode": "部品件号,1,1,10%,false",
         "partUnit": "部品单位,1,1,10%,false",
-        "jhTotal": "计划总数,1,1,10%,true",
+        "jhTotal": "计划总数,1,1,10%,false",
         "jhOutWareHouseListRemark": "备注,1,1,10%,false",
-        "bhTotal": "已备货,1,1,10%,true",
-        "wbHTotal": "未备货,1,1,10%,true",
+        "bhTotal": "已备货,1,1,10%,false",
+        "wbHTotal": "未备货,1,1,10%,false",
         "bhTime": "备货完成时间,1,1,10%,false",
-        "lhTotal": "已领货,1,1,10%,true",
-        "wlHTotal": "未领货,1,1,10%,true",
+        "lhTotal": "已领货,1,1,10%,false",
+        "wlHTotal": "未领货,1,1,10%,false",
         "lhTime": "领货完成时间,1,1,10%,false",
-        "sxTotal": "已上线,1,1,10%,true",
-        "wsXTotal": "未上线,1,1,10%,true",
+        "sxTotal": "已上线,1,1,10%,false",
+        "wsXTotal": "未上线,1,1,10%,false",
         "sxTime": "上线完成时间,1,1,10%,false"
     }
 }

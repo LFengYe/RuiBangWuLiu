@@ -1,14 +1,14 @@
 {
     "titles": {
-        "supplierID": "供应商代码,1,1,10%,false",
-        "supplierName": "供应商,1,1,10%,false",
-        "partID": "部品编号,1,1,10%,false",
-        "partName": "部品名称,1,1,10%,false",
-        "partCode": "部品件号,1,1,10%,false",
-        "djth": "待检退货,1,1,10%,true",
-        "lpth": "良品退货,1,1,10%,true",
-        "blpth": "不良品退货,1,1,10%,true",
-        "fxth": "返修退货,1,1,10%,true",
-        "thTotal": "退货总数,1,1,10%,true"
+        "supplierID": "供应商代码,1,1,20%,false",
+        "supplierName": "供应商,1,1,20%,false",
+        "partID": "部品编号,1,1,20%,false",
+        "partName": "部品名称,1,1,20%,false",
+        "partCode": "部品件号,1,1,20%,false",
+        "djth": "待检退货,1,1,20%,true",
+        "lpth": "良品退货,1,1,20%,true",
+        "blpth": "不良品退货,1,1,20%,true",
+        "fxth": "返修退货,1,1,20%,true",
+        "thTotal": "退货总数,1,1,20%,true"
     }
 }

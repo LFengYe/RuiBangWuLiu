@@ -12,6 +12,7 @@ import com.cn.bean.FieldDescription;
  * @author LFeng
  */
 public class FXInWareHouse {
+
     private static int recordCount;
 
     public static int getRecordCount() {
@@ -21,26 +22,26 @@ public class FXInWareHouse {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-@FieldDescription(description = "返修入库单号")
-private String fxInWareHouseID;
-@FieldDescription(description = "供应商代码")
-private String supplierID;
-@FieldDescription(description = "供应商名称", operate = "display")
-private String supplierName;
-@FieldDescription(description = "返修入库部品状态")
-private String partState;
-@FieldDescription(description = "制单人员姓名")
-private String fxRKProducerName;
-@FieldDescription(description = "制单时间")
-private String fxRKProduceTime;
-@FieldDescription(description = "审核人员姓名")
-private String fxRKAuditStaffName;
-@FieldDescription(description = "审核时间")
-private String fxRKAuditTime;
-@FieldDescription(description = "打印标志")
-private String printFlag;
-@FieldDescription(description = "备注")
-private String fxInWareHouseRemark;
+    @FieldDescription(description = "返修入库单号")
+    private String fxInWareHouseID;
+    @FieldDescription(description = "供应商代码")
+    private String supplierID;
+    @FieldDescription(description = "供应商名称", operate = "display")
+    private String supplierName;
+    @FieldDescription(description = "返修入库部品状态")
+    private String partState;
+    @FieldDescription(description = "制单人员姓名")
+    private String fxRKProducerName;
+    @FieldDescription(description = "制单时间")
+    private String fxRKProduceTime;
+    @FieldDescription(description = "审核人员姓名")
+    private String fxRKAuditStaffName;
+    @FieldDescription(description = "审核时间")
+    private String fxRKAuditTime;
+    @FieldDescription(description = "打印标志")
+    private String printFlag;
+    @FieldDescription(description = "备注")
+    private String fxInWareHouseRemark;
 
     public String getFxInWareHouseID() {
         return fxInWareHouseID;

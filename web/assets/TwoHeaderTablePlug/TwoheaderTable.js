@@ -7,7 +7,7 @@
         clickRowCallBack: function (index, obj) {
             console.log(index);
         },
-        dbclickRowCallBack: function (name, obj) {
+        dbclickRowCallBack: function (module, obj) {
         }
     };
     
@@ -22,7 +22,7 @@
             //加载表头
             var title0 = this.title0;
             var title0_str = '';
-            var colspans, rowspans, txt, width;
+            var colspans, rowspans, txt, width, detail;
             this.arr = [];
             this.public_obj = {};
             for (var i in title0) {
@@ -30,6 +30,7 @@
                 colspans = parseInt(title0[i].split(',')[1]);
                 rowspans = parseInt(title0[i].split(',')[2]);
                 width = title0[i].split(',')[3];
+                detail = title0[i].split(',')[5];
                 //console.log(title0[i].split(',')[4]);
                 if (title0[i].split(',')[4] === "false") {
                     this.public_obj[i] = true;
@@ -38,17 +39,17 @@
                     for (var k = 0; k < colspans; k++) {
                         this.arr.push(i);
                     }
-                    title0_str += "<td style='width:" + width + "'  colspan='" + colspans + "'>" + txt + "</td>";
+                    title0_str += "<td name='" + i + "' style='width:" + width + "'  colspan='" + colspans + "' detail='" + detail + "'>" + txt + "</td>";
                 } else {
                     this.arr.push(i);
                     if (rowspans > 1)
-                        title0_str += "<td style='width:" + width + "' class='cols'  rowspan='" + rowspans + "'>" + txt + "</td>";
+                        title0_str += "<td name='" + i + "' style='width:" + width + "' class='cols'  rowspan='" + rowspans + "' detail='" + detail + "'>" + txt + "</td>";
                     else
-                        title0_str += "<td style='width:" + width + "'>" + txt + "</td>";
+                        title0_str += "<td name='" + i + "' style='width:" + width + "' detail='" + detail + "'>" + txt + "</td>";
                 }
             }
             title0_str = "<tr>" + title0_str + "</tr>";
-
+            
             var title1_str = '', title1 = this.title1;
             for (var i in title1) {
                 title1_str += "<td>" + title1[i] + "</td>";
@@ -71,6 +72,8 @@
                 result += "<tr>" + data_str + "</tr>";
                 data_str = '';
             }
+            
+            result += "";
             this.$container.find("tr:gt(1)").remove();
             this.$container.append(result);
             _funs_.bindEvt.call(this);
@@ -79,8 +82,9 @@
             var that = this;
             this.$container.find("tr:gt(1)").children("td").dblclick(function (e) {
                 var name = $(this).attr("name");
+                var titleTd = that.$container.find("tr:eq(0)").children("td[name='" + name + "']");
+                var module = titleTd.attr("detail");
                 
-                console.log(that.public_obj[name]);
                 if (that.public_obj[name]) {
                     return;
                 }
@@ -93,8 +97,8 @@
                     obj2[i] = obj[i];
                 }
                 //obj2[name] = $(this).text();
-                console.log(obj2);
-                that.dbclickRowCallBack(name, obj2);
+                //console.log(obj2);
+                that.dbclickRowCallBack(module, obj2);
 
             });
             this.$container.find("td").click(function() {
@@ -132,6 +136,7 @@
     };
     
     $.fn.insertTwoHeaderTable = function (options) {
+        console.log(options);
         $.extend(this, _default, options);
         _funs_.getDOM.call(this);
         _funs_.getTableDataDOM.call(this, this.datas);

@@ -95,7 +95,7 @@ public class AppInterface extends HttpServlet {
                                         roleRight.stream().map((obj) -> (PlatformRoleRight) obj).forEach((right) -> {
                                             roleRightList.add(right.getRightCode());
                                         });
-                                        
+
                                         JSONObject object = new JSONObject();
                                         object.put("roleRightList", roleRightList);
                                         object.put("employee", employee);
@@ -189,24 +189,39 @@ public class AppInterface extends HttpServlet {
                                 Employee employee = (Employee) res.get(0);
                                 String employeeType = employee.getEmployeeType();
                                 if (employeeType.compareTo("仓管员") == 0) {
+                                    /*
                                     JSONObject proParam = new JSONObject();
                                     proParam.put("partCode", "string," + list.getPartCode());
                                     proParam.put("jhOutWareHouseID", "string," + list.getJhOutWareHouseID());
                                     proParam.put("supplierID", "string," + list.getSupplierID());
                                     proParam.put("inboundBatch", "string," + list.getInboundBatch());
                                     proParam.put("jhStatus", "int," + list.getJhStatus());
+                                    proParam.put("BHPackageAmount", "int," + list.getJhCKAmount());
 //                                    int result = commonController.dataBaseOperate("[{\"bhStatus\":\"1\"}," + proParam.toJSONString() + "]", "com.cn.bean.out.", "BHProgressList", "update", opt.getConnect()).get(0);
                                     JSONArray proParams = new JSONArray();
                                     proParams.add(proParam);
-                                    int result = commonController.proceduceForUpdate("tbConfirmBHListForKGY", proParams, opt.getConnect()).get(0);
+                                    //int result = commonController.proceduceForUpdate("tbConfirmBHListForKGY", proParams, opt.getConnect()).get(0);
+                                    */
+                                    ProcessListController controller = new ProcessListController();
+                                    int result = controller.bhConfirmForKGY(
+                                            paramsJson.getString("jhOutWareHouseID"),
+                                            paramsJson.getString("partCode"),
+                                            paramsJson.getString("supplierID"),
+                                            paramsJson.getString("inboundBatch"),
+                                            paramsJson.getIntValue("jhStatus"),
+                                            paramsJson.getIntValue("jhCKAmount"));
                                     if (result == 0) {
-                                        new Thread(){
-                                            @Override
-                                            public void run() {
-                                                LedControl.setLedPlanList(list);
-                                            }
-                                        }.start();
+                                        if (paramsJson.getIntValue("jhStatus") == 0) {
+                                            new Thread() {
+                                                @Override
+                                                public void run() {
+                                                    LedControl.setLedPlanList(list);
+                                                }
+                                            }.start();
+                                        }
                                         json = Units.objectToJson(0, "确认成功!", null);
+                                    } else if (result == 1) {
+                                        json = Units.objectToJson(1, "备货未完成!", null);
                                     } else {
                                         json = Units.objectToJson(-1, "确认失败!", null);
                                     }
@@ -222,7 +237,7 @@ public class AppInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "确认成功!", null);
                                     } else if (result == 1) {
-                                        new Thread(){
+                                        new Thread() {
                                             @Override
                                             public void run() {
                                                 LedControl.setLedAreaCode(list.getPartCode(), list.getSupplierID());

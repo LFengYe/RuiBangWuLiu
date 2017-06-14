@@ -9,11 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.Customer;
 import com.cn.bean.PartBaseInfo;
 import com.cn.bean.report.KFQCFenLuData;
-import com.cn.servlet.DataInterface;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.RedisAPI;
-import com.cn.util.Units;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +26,7 @@ public class ReportDetailController {
         DatabaseOpt opt = new DatabaseOpt();
         switch (name) {
             case "kfQC": {
+                
                 JSONObject proParams = new JSONObject();
                 proParams.put("PartCode", "string," + dataJson.getString("partCode"));
                 proParams.put("SupplierID", "string," + dataJson.getString("supplierID"));
@@ -50,4 +48,6 @@ public class ReportDetailController {
         }
         return json;
     }
+    
+    
 }

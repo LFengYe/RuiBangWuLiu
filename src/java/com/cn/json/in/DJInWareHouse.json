@@ -43,6 +43,7 @@
     "detailUnique": [],
     "detailPrimary": "djInWareHouseID,partCode",
     "detailTitles": {
+        "failedReason": "失败原因,10%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
         "partID": "部品编号,10%",

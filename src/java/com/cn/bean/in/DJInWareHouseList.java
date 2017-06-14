@@ -22,8 +22,8 @@ public class DJInWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-//    @FieldDescription(description = "单内显示序号")
-//    private int listNumber;
+    @FieldDescription(description = "失败原因")
+    private String failedReason;
     @FieldDescription(description = "供应商代码")
     private String supplierID;
     @FieldDescription(description = "供应商名称", operate = "display")
@@ -173,5 +173,13 @@ public class DJInWareHouseList {
 
     public void setInboundPackageAmount(int inboundPackageAmount) {
         this.inboundPackageAmount = inboundPackageAmount;
+    }
+
+    public String getFailedReason() {
+        return failedReason;
+    }
+
+    public void setFailedReason(String failedReason) {
+        this.failedReason = failedReason;
     }
 }
