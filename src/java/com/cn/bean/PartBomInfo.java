@@ -23,12 +23,12 @@ public class PartBomInfo {
     private String zcPartCode;
     @FieldDescription(description = "明细件号", operate = "import")
     private String detailPartCode;
-    @FieldDescription(description = "供应商", operate = "import")
-    private String supplierID;
+//    @FieldDescription(description = "供应商", operate = "import")
+//    private String supplierID;
     @FieldDescription(description = "单车用量", operate = "import")
     private int dcAmount;
     @FieldDescription(description = "备注", operate = "import")
-    private String remarker;
+    private String remark;
 
     public String getZcPartCode() {
         return zcPartCode;
@@ -46,14 +46,6 @@ public class PartBomInfo {
         this.detailPartCode = detailPartCode;
     }
 
-    public String getSupplierID() {
-        return supplierID;
-    }
-
-    public void setSupplierID(String supplierID) {
-        this.supplierID = supplierID;
-    }
-
     public int getDcAmount() {
         return dcAmount;
     }
@@ -62,11 +54,11 @@ public class PartBomInfo {
         this.dcAmount = dcAmount;
     }
 
-    public String getRemarker() {
-        return remarker;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setRemarker(String remarker) {
-        this.remarker = remarker;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

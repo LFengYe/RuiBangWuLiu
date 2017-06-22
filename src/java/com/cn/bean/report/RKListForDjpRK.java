@@ -15,6 +15,8 @@ public class RKListForDjpRK {
     private String djInWareHouseID;
     private String outInType;
     private String outInWethod;
+    private String supplierID;
+    private String supplierName;
     private String partCode;
     private String partID;
     private String partName;
@@ -109,5 +111,21 @@ public class RKListForDjpRK {
 
     public void setPartName(String partName) {
         this.partName = partName;
+    }
+
+    public String getSupplierID() {
+        return supplierID;
+    }
+
+    public void setSupplierID(String supplierID) {
+        this.supplierID = supplierID;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 }

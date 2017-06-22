@@ -26,10 +26,10 @@ public class ProcessListController {
      * @param supplierID
      * @param inboundBatch
      * @param jhStatus
-     * @param bhPackageAmount 备货包数
+     * @param remark
      * @return 
      */
-    public int bhConfirmForKGY(String jhOutWareHouseID, String PartCode, String supplierID, String inboundBatch, int jhStatus, int bhPackageAmount) {
+    public int bhConfirmForKGY(String jhOutWareHouseID, String PartCode, String supplierID, String inboundBatch, int jhStatus, String remark) {
         DatabaseOpt opt;
         Connection conn = null;
         CallableStatement statement = null;
@@ -42,7 +42,7 @@ public class ProcessListController {
             statement.setString("PartCode", PartCode);
             statement.setString("SupplierID", supplierID);
             statement.setString("InboundBatch", inboundBatch);
-            statement.setInt("BHPackageAmount", bhPackageAmount);
+            statement.setString("Remark", remark);
             statement.setInt("JHStatus", jhStatus);
             statement.registerOutParameter("result", Types.INTEGER);
             statement.executeUpdate();

@@ -90,7 +90,7 @@ public class MoveInterface extends HttpServlet {
             String details = paramsJson.getString("details");
             String detail = paramsJson.getString("detail");
             String fileName = paramsJson.getString("fileName");
-            String operateType = paramsJson.getString("type");
+            String clientType = paramsJson.getString("type");
             String start = paramsJson.getString("start");
             String end = paramsJson.getString("end");
             int isHistory = paramsJson.getIntValue("isHistory");
@@ -260,7 +260,7 @@ public class MoveInterface extends HttpServlet {
                             JSONArray arrayParam = JSONArray.parseArray(datas);
                             String fxOutWareHouseID = arrayParam.getJSONObject(0).getString("fxOutWareHouseID");
                             String mainTabWhereSql = "FXOutWareHouseID = '" + fxOutWareHouseID + "'";
-                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "FXOutWareHouse", "*", mainTabWhereSql, 11, 1, "FXOutWareHouseID", 0, opt.getConnect());
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXOutWareHouse", "*", mainTabWhereSql, 11, 1, "FXOutWareHouseID", 0, opt.getConnect());
                             if (list != null && list.size() > 0) {
                                 FXOutWareHouse sJOutWareHouse = (FXOutWareHouse) list.get(0);
                                 JSONArray updateArray = new JSONArray();
@@ -271,7 +271,7 @@ public class MoveInterface extends HttpServlet {
                                         updateArray.add(obj);
                                         updateArray.add(arrayParam.getJSONObject(i));
                                     }
-                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.in.", "FXOutWareHouseList", "update", opt.getConnect()).get(0);
+                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.move.", "FXOutWareHouseList", "update", opt.getConnect()).get(0);
                                     if (result == 0) {
                                         JSONObject obj = new JSONObject();
                                         obj.put("wareHouseManagerName", session.getAttribute("user"));
@@ -291,6 +291,7 @@ public class MoveInterface extends HttpServlet {
                             //json = queryOperate("com.cn.bean.move.", "view", "FXOutWareHouseList", "FXOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             String fxOutWareHouseID = JSONObject.parseObject(rely).getString("fxOutWareHouseID");
                             String mainTabWhereSql = "FXOutWareHouseID = '" + fxOutWareHouseID + "'";
+                            System.out.println("mainTabWhereSql:" + mainTabWhereSql);
                             List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXOutWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "FXOutWareHouseID", 0, opt.getConnect());
                             if (list != null && list.size() > 0) {
                                 FXOutWareHouse fXOutWareHouse = (FXOutWareHouse) list.get(0);
@@ -461,7 +462,7 @@ public class MoveInterface extends HttpServlet {
                             JSONArray arrayParam = JSONArray.parseArray(datas);
                             String fxInWareHouseID = arrayParam.getJSONObject(0).getString("fxInWareHouseID");
                             String mainTabWhereSql = "FXInWareHouseID = '" + fxInWareHouseID + "'";
-                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "FXInWareHouse", "*", mainTabWhereSql, 11, 1, "FXInWareHouseID", 0, opt.getConnect());
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXInWareHouse", "*", mainTabWhereSql, 11, 1, "FXInWareHouseID", 0, opt.getConnect());
                             if (list != null && list.size() > 0) {
                                 FXInWareHouse fXInWareHouse = (FXInWareHouse) list.get(0);
                                 JSONArray updateArray = new JSONArray();
@@ -472,7 +473,7 @@ public class MoveInterface extends HttpServlet {
                                         updateArray.add(obj);
                                         updateArray.add(arrayParam.getJSONObject(i));
                                     }
-                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.in.", "FXInWareHouseList", "update", opt.getConnect()).get(0);
+                                    int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.move.", "FXInWareHouseList", "update", opt.getConnect()).get(0);
                                     if (result == 0) {
                                         JSONObject obj = new JSONObject();
                                         obj.put("wareHouseManagerName", session.getAttribute("user"));

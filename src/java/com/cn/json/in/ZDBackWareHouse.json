@@ -41,7 +41,7 @@
     },
     "detailMustwrite": ["zdBackWareHouseID", "supplierID", "partCode", "inboundBatch", "zdTKAmount"],
     "detailUnique": [],
-    "detailPrimary": "zdBackWareHouseID,partCode,supplierID,inboundBatch",
+    "detailPrimary": "zdBackWareHouseID,partCode,supplierID,inboundBatch,ycFLocation",
     "detailTitles": {
         "checkbox": "选择,5%",
         "supplierID": "供应商ID,10%",

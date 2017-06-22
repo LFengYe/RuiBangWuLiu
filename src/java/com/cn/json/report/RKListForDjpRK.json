@@ -4,6 +4,8 @@
         "djInWareHouseID": "入库单号,1,1,20%,false",
         "outInType": "出入库类型,1,1,20%,false",
         "outInWethod": "出入库方式,1,1,20%,false",
+        "supplierID": "供应商代码,1,1,20%,false",
+        "supplierName": "供应商名称,1,1,20%,false",
         "partCode": "部品件号,1,1,20%,false",
         "partID": "部品编号,1,1,20%,false",
         "partName": "部品名称,1,1,20%,false",

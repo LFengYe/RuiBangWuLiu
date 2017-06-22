@@ -36,16 +36,16 @@ public class PartBaseInfo {
     private String partUnit;
     @FieldDescription(description = "单车用量", operate = "import")
     private int dCAmount;
+    @FieldDescription(description = "部品分类", operate = "import")
+    private String partCategoryName;
+    @FieldDescription(description = "备注", operate = "import")
+    private String partBaseInfoRemark;
 //    @FieldDescription(description = "是否停用")
     private boolean disabled;
 //    @FieldDescription(description = "拼音助计")
     private String pinyinAbb;
-    @FieldDescription(description = "部品分类", operate = "import")
-    private String partCategoryName;
 //    @FieldDescription(description = "部品图片")
     private String partPicture;
-    @FieldDescription(description = "备注", operate = "import")
-    private String partBaseInfoRemark;
 
     public String getPartID() {
         return partID;

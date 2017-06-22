@@ -1,5 +1,5 @@
 (function ($) {
-    
+
     var _default = {
         title0: {},
         title1: {},
@@ -10,14 +10,16 @@
         dbclickRowCallBack: function (module, obj) {
         }
     };
-    
+
     var _style = {
-        lineHeight: 33
+        lineHeight: 33,
+        widths: {},
+        colGroup: ""
     };
 
     var _funs_ = {
         getDOM: function () {
-            this.html('<div class="wrapper"><div class="tht-header"></div><div class="tht-container"></div></div>');
+            this.html('<div class="wrapper"><div class="tht-header"></div><table class="chromaTable"></table></div>');
 
             //加载表头
             var title0 = this.title0;
@@ -39,52 +41,59 @@
                     for (var k = 0; k < colspans; k++) {
                         this.arr.push(i);
                     }
-                    title0_str += "<td name='" + i + "' style='width:" + width + "'  colspan='" + colspans + "' detail='" + detail + "'>" + txt + "</td>";
+                    title0_str += "<th name='" + i + "' colspan='" + colspans + "' detail='" + detail + "'>" + txt + "</th>";
+//                    title0_str += "<td name='" + i + "' style='width:" + width + "'  colspan='" + colspans + "' detail='" + detail + "'>" + txt + "</td>";
+                    _style.colGroup += "<col width='" + width + "'></col>";
                 } else {
                     this.arr.push(i);
                     if (rowspans > 1)
-                        title0_str += "<td name='" + i + "' style='width:" + width + "' class='cols'  rowspan='" + rowspans + "' detail='" + detail + "'>" + txt + "</td>";
+                        title0_str += "<th name='" + i + "' class='cols'  rowspan='" + rowspans + "' detail='" + detail + "'>" + txt + "</th>";
+//                    title0_str += "<td name='" + i + "' style='width:" + width + "' class='cols'  rowspan='" + rowspans + "' detail='" + detail + "'>" + txt + "</td>";
                     else
-                        title0_str += "<td name='" + i + "' style='width:" + width + "' detail='" + detail + "'>" + txt + "</td>";
+                        title0_str += "<th name='" + i + "' detail='" + detail + "'>" + txt + "</th>";
+//                    title0_str += "<td name='" + i + "' style='width:" + width + "' detail='" + detail + "'>" + txt + "</td>";
+                    _style.colGroup += "<col width='" + width + "'></col>";
                 }
+                _style.widths[i] = width;
             }
-            title0_str = "<tr>" + title0_str + "</tr>";
-            
+            title0_str = "<thead><tr>" + title0_str + "</tr></thead>";
+
             var title1_str = '', title1 = this.title1;
             for (var i in title1) {
                 title1_str += "<td>" + title1[i] + "</td>";
             }
             title1_str = "<tr>" + title1_str + "</tr>";
             
-            this.$container = this.find(".tht-container").append(title0_str + title1_str);
-
+            this.$container = this.find(".chromaTable").append(title0_str);
             this.addClass("tht");
-
             return this;
         },
         getTableDataDOM: function (datas) {
-
             var data_str = '', result = '';
             for (var i = 0; i < datas.length; i++) {
-               for (var k = 0; k < this.arr.length; k++) {
-                   data_str += "<td index = " + i + " name=" + this.arr[k] + ">" + datas[i][this.arr[k]] + "</td>";
-               }
+                for (var k = 0; k < this.arr.length; k++) {
+                    data_str += "<td index ='" + i + "' name='" + this.arr[k] + "'>" + datas[i][this.arr[k]] + "</td>";
+                }
                 result += "<tr>" + data_str + "</tr>";
                 data_str = '';
             }
-            
-            result += "";
-            this.$container.find("tr:gt(1)").remove();
+            result = "<tbody>" + result + "</tbody>";
+            this.$container.find("tr:gt(0)").remove();
             this.$container.append(result);
+            this.$container.chromatable({
+                width: this.$container.width() + "px",
+                height: "600px",
+                scrolling: "yes"
+            });
             _funs_.bindEvt.call(this);
         },
         bindEvt: function () {
             var that = this;
-            this.$container.find("tr:gt(1)").children("td").dblclick(function (e) {
+            this.$container.find("tbody").find("tr").children("td").dblclick(function (e) {
                 var name = $(this).attr("name");
-                var titleTd = that.$container.find("tr:eq(0)").children("td[name='" + name + "']");
+                var titleTd = that.$container.find("thead").find("tr:eq(0)").children("th[name='" + name + "']");
                 var module = titleTd.attr("detail");
-                
+
                 if (that.public_obj[name]) {
                     return;
                 }
@@ -101,8 +110,6 @@
                 that.dbclickRowCallBack(module, obj2);
 
             });
-            this.$container.find("td").click(function() {
-            });
         },
         getRowData: function (index) {
         },
@@ -110,19 +117,28 @@
             this.afterFilter = [];
             var str = '';                  //保证元组不重复
             var that = this;
-            this.$container.find('li:contains("' + data + '")').each(function () {
+            for (var i = 0; i < this.datas.length; i++) {
+                var item = this.datas[i];
+                for (var index in item) {
+                    if (item[index].toString().toLowerCase().indexOf(data.toLowerCase()) >= 0) {
+                        this.afterFilter.push(item);
+                    }
+                }
+            }
+            /*this.$container.find("tbody").find('tr:contains("' + data + '")').each(function () {
                 var eq = $(this).index();
                 if (str.indexOf(eq) < 0) {
                     str += eq;
                     that.afterFilter.push([eq, that.datas[eq]]);
                 }
-
             });
+            return;
             this.$container.find("ul").html('');
             var arr = this.afterFilter.map(function (it) {
                 return it[1];
-            });
-            _funs_.getTableDataDOM.call(this, arr);
+            });*/
+            console.log(this.afterFilter);
+            _funs_.getTableDataDOM.call(this, this.afterFilter);
             this.filterState = true;        //表示数据筛选状态
             return this;
         }
@@ -132,15 +148,21 @@
         render: function (data) {
             this.datas = data;
             _funs_.getTableDataDOM.call(this, this.datas);
+        },
+        filter: function(keyword) {
+            if (keyword)
+                _funs_.dataFilter.call(this, keyword);
+            else
+                _funs_.getTableDataDOM.call(this, this.datas);
         }
     };
-    
+
     $.fn.insertTwoHeaderTable = function (options) {
-        console.log(options);
         $.extend(this, _default, options);
         _funs_.getDOM.call(this);
         _funs_.getTableDataDOM.call(this, this.datas);
         $.extend(this, _interface);
         return this;
     };
+
 })(window.jQuery);

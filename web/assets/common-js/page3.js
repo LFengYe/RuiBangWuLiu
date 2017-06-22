@@ -7,7 +7,7 @@
     var $pageTurn = $(".page3-container .page3-pagination li a");
     var $search = $(".page3-container .page3-query");
     var $export = $(".page3-container .page3-export");
-    var $keysword = $(".page3-container .wc-page3-form");
+    var $keysword = $(".page3-container").find("input[name='keywords']");
 
     var OPERATION = {
         CREATE: "create",
@@ -50,26 +50,16 @@
                     //request.name = name;
                     request.datas = maps;
                     ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
+                        console.log(data);
+                        $detailList.show();
+                        $mainTable.hide();
                         $chidTableBox.insertTwoHeaderTable({
                             title0: data.titles,
                             title1: null,
                             datas: data.datas
                         });
-                        $detailList.show();
-                        $mainTable.hide();
                     }, function () {
                     });
-                    /*
-                    ajaxData(OPERATION.REQUEST_DETAIL, request, function (data) {
-                        $chidTableBox.insertTable({
-                            titles: data.titles,
-                            datas: data.datas
-                        });
-                        $detailList.show();
-                        $mainTable.hide();
-                    }, function () {
-                    });
-                    */
                 }
             });
         }, function () {
@@ -125,6 +115,19 @@
                 console.log(data);
                 $mainTableBox.render(data.datas);
             }, function () {});
+        });
+        
+        $keysword.change(function(){
+            var keyword = $(this).val();
+            console.log(keyword);
+            $mainTableBox.filter(keyword);
+        });
+        $keysword.keypress(function(event) {
+            switch(event.keyCode) {
+                case 13:
+                    $(this).trigger('blur');
+                    break;
+            }
         });
     }
 

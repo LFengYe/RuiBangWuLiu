@@ -169,7 +169,7 @@ public class CommonController {
                     }
 
                     String sql = builder.toString();
-                    System.out.println("update sql:" + sql);
+                    //System.out.println("update sql:" + sql);
 
                     conn.setAutoCommit(false);
                     statement = conn.prepareCall(sql);
@@ -251,7 +251,7 @@ public class CommonController {
                     }
 
                     String sql = builder.toString();
-                    System.out.println("delete sql:" + sql);
+                    //System.out.println("delete sql:" + sql);
 
                     conn.setAutoCommit(false);
                     statement = conn.prepareCall(sql);
@@ -961,36 +961,40 @@ public class CommonController {
                     if (cell == null) {
                         field.set(object, 0);
                     } else {
-                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
-                        field.set(object, (int) row.getCell(templateDataIndex[j]).getNumericCellValue());
+//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
+                        field.set(object, Double.valueOf(Units.getStringCellValue(cell)).intValue());
                     }
                 } else if (field.getType() == float.class) {
                     if (cell == null) {
                         field.set(object, 0);
                     } else {
-                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
-                        field.set(object, (float) row.getCell(templateDataIndex[j]).getNumericCellValue());
+                        field.set(object, Double.valueOf(Units.getStringCellValue(cell)).floatValue());
+//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
+//                        field.set(object, (float) row.getCell(templateDataIndex[j]).getNumericCellValue());
                     }
                 } else if (field.getType() == double.class) {
                     if (cell == null) {
                         field.set(object, 0);
                     } else {
-                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
-                        field.set(object, row.getCell(templateDataIndex[j]).getNumericCellValue());
+                        field.set(object, Double.valueOf(Units.getStringCellValue(cell)));
+//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
+//                        field.set(object, row.getCell(templateDataIndex[j]).getNumericCellValue());
                     }
                 } else if (field.getType() == boolean.class) {
                     if (cell == null) {
                         field.set(object, false);
                     } else {
-                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_BOOLEAN);
-                        field.set(object, row.getCell(templateDataIndex[j]).getBooleanCellValue());
+                        field.set(object, Boolean.valueOf(Units.getStringCellValue(cell)));
+//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_BOOLEAN);
+//                        field.set(object, row.getCell(templateDataIndex[j]).getBooleanCellValue());
                     }
                 } else {
                     if (cell == null) {
                         field.set(object, "");
                     } else {
-                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_STRING);
-                        field.set(object, row.getCell(templateDataIndex[j]).getStringCellValue());
+                        field.set(object, Units.getStringCellValue(cell));
+//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_STRING);
+//                        field.set(object, row.getCell(templateDataIndex[j]).getStringCellValue());
                     }
 
                 }

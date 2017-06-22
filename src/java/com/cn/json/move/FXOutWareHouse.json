@@ -37,7 +37,7 @@
     },
     "detailMustwrite": ["fxOutWareHouseID", "supplierID", "partCode", "fxCKAmount"],
     "detailUnique": [],
-    "detailPrimary": "fxOutWareHouseID,partCode,supplierID,inboundBatch",
+    "detailPrimary": "fxOutWareHouseID,partCode,supplierID,inboundBatch,partState",
     "detailTitles": {
         "checkbox": "选择,5%",
         "supplierID": "供应商代码,10%",

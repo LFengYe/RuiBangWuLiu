@@ -1,0 +1,49 @@
+{
+    "control": {
+        "llJSID": "领料结算单据号",
+        "llJSProducerName": "制单人",
+        "llJSProduceTime": "制单时间",
+        "customerTypeName": "客户类型,hidden,@终端客户",
+        "zdCustomerID": "终端客户,@table,@customerTypeName:@zdcustomerName",
+        "llJSDate": "领料结算日期,date",
+        "llJSRemark": "备注,string,500"
+    },
+    "mustwrite": ["llJSID", "llJSDate", "zdCustomerID", "llJSProducerName", "llJSProduceTime"],
+    "unique": [],
+    "primary": "llJSID",
+    "titles": {
+        "llJSID": "领料结算单据号,20%",
+        "llJSDate": "领料结算日期,10%",
+        "zdCustomerID": "终端客户ID,10%",
+        "zdcustomerName": "终端客户姓名,10%",
+        "llJSProducerName": "制单员,10%",
+        "llJSProduceTime": "制单时间,10%",
+        "llJSAuditStaffName": "审核员,10%",
+        "llJSAuditTime": "审核时间,10%",
+        "llJSRemark": "备注,10%"
+    },
+    "detailControl": {
+        "listNumber": "单内显示序号,hidden",
+        "llJSID": "领料结算单据号,parent",
+        "customerTypeName": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerTypeName:@supplierName",
+        "partCode": "部品件号,@table,@supplierID:@partID,@partName,@partUnit,@autoStylingName,@cfAddress",
+        "llJSAmount": "结算数量,number",
+        "llJSListRemark": "备注,string,500"
+    },
+    "detailMustwrite": ["llJSID", "supplierID", "partCode", "llJSAmount"],
+    "detailUnique": [],
+    "detailPrimary": "llJSID,SupplierID,partCode",
+    "detailTitles": {
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "partID": "部品编号,10%",
+        "partName": "部品名称,10%",
+        "partCode": "部品件号,10%",
+        "partUnit": "部品单位,10%",
+        "autoStylingName": "车型,10%",
+        "llJSAmount": "结算数量,10%",
+        "llJSListRemark": "备注,10%",
+        "llJSID": "领料结算单据号,10%"
+    }
+}

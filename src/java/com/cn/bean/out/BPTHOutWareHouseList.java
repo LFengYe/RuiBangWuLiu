@@ -48,7 +48,7 @@ public class BPTHOutWareHouseList {
     @FieldDescription(description = "出库单据号")
     private String bpTHOutWareHoseID;
     @FieldDescription(description = "库管员")
-    private String wareHouseManagername;
+    private String wareHouseManagerName;
 
     public String getSupplierID() {
         return supplierID;
@@ -138,12 +138,12 @@ public class BPTHOutWareHouseList {
         this.bpTHOutWareHoseID = bpTHOutWareHoseID;
     }
 
-    public String getWareHouseManagername() {
-        return wareHouseManagername;
+    public String getWareHouseManagerName() {
+        return wareHouseManagerName;
     }
 
-    public void setWareHouseManagername(String wareHouseManagername) {
-        this.wareHouseManagername = wareHouseManagername;
+    public void setWareHouseManagerName(String wareHouseManagerName) {
+        this.wareHouseManagerName = wareHouseManagerName;
     }
 
     public int getThAmount() {

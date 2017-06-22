@@ -681,7 +681,28 @@
                 $auditItem.attr("disabled", false);
                 break;
             }
+            case "分装入库":
+            case "分装出库":
+            {
+                $addItem.css("display", "inline-block");
+                $("#page2-submit").css("display", "inline-block");
+                $audit.css("display", "none");
+                $inspection.css("display", "none");
+                $confirm.css("display", "none");
+                //$import.css("display", "none");
+                $deleteItem.css("display", "none");
+                $history.css("display", "inline-block");
+
+                $add.attr("disabled", "disabled");
+                $modify.attr("disabled", false);
+                $cancel.attr("disabled", "disabled");
+                $import.attr("disabled", "disabled");
+                $print.attr("disabled", "disabled");
+                $auditItem.attr("disabled", "disabled");
+                break;
+            }
             case "计划出库":
+            case "总成计划":
             case "临时调货":
             {
                 $addItem.css("display", "inline-block");
@@ -725,8 +746,6 @@
             case "终端退库":
             case "返修出库":
             case "返修入库":
-            case "分装入库":
-            case "分装出库":
             {
                 $addItem.css("display", "inline-block");
                 $("#page2-submit").css("display", "inline-block");

@@ -5,7 +5,6 @@
  */
 package com.cn.servlet;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.Customer;
 import com.cn.bean.Employee;
@@ -75,6 +74,23 @@ public class AppInterface extends HttpServlet {
             String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
             String importPath = getServletContext().getRealPath("/").replace("\\", "/") + "excelFile/";
 
+            /*验证是否登陆*/
+            if (!"userLogin".equals(module) && session.getAttribute("user") == null) {
+                session.invalidate();
+                json = Units.objectToJson(-99, "未登陆", null);
+                PrintWriter out = response.getWriter();
+                try {
+                    response.setContentType("text/html;charset=UTF-8");
+                    response.setHeader("Cache-Control", "no-store");
+                    response.setHeader("Pragma", "no-cache");
+                    response.setDateHeader("Expires", 0);
+                    out.print(json);
+                } finally {
+                    out.close();
+                }
+                return;
+            }
+            
             switch (module) {
                 //<editor-fold desc="用户登陆模板">
                 case "userLogin": {
@@ -189,19 +205,6 @@ public class AppInterface extends HttpServlet {
                                 Employee employee = (Employee) res.get(0);
                                 String employeeType = employee.getEmployeeType();
                                 if (employeeType.compareTo("仓管员") == 0) {
-                                    /*
-                                    JSONObject proParam = new JSONObject();
-                                    proParam.put("partCode", "string," + list.getPartCode());
-                                    proParam.put("jhOutWareHouseID", "string," + list.getJhOutWareHouseID());
-                                    proParam.put("supplierID", "string," + list.getSupplierID());
-                                    proParam.put("inboundBatch", "string," + list.getInboundBatch());
-                                    proParam.put("jhStatus", "int," + list.getJhStatus());
-                                    proParam.put("BHPackageAmount", "int," + list.getJhCKAmount());
-//                                    int result = commonController.dataBaseOperate("[{\"bhStatus\":\"1\"}," + proParam.toJSONString() + "]", "com.cn.bean.out.", "BHProgressList", "update", opt.getConnect()).get(0);
-                                    JSONArray proParams = new JSONArray();
-                                    proParams.add(proParam);
-                                    //int result = commonController.proceduceForUpdate("tbConfirmBHListForKGY", proParams, opt.getConnect()).get(0);
-                                    */
                                     ProcessListController controller = new ProcessListController();
                                     int result = controller.bhConfirmForKGY(
                                             paramsJson.getString("jhOutWareHouseID"),
@@ -209,9 +212,10 @@ public class AppInterface extends HttpServlet {
                                             paramsJson.getString("supplierID"),
                                             paramsJson.getString("inboundBatch"),
                                             paramsJson.getIntValue("jhStatus"),
-                                            paramsJson.getIntValue("jhCKAmount"));
+                                            paramsJson.getString("remark"));
                                     if (result == 0) {
-                                        if (paramsJson.getIntValue("jhStatus") == 0) {
+                                        if (paramsJson.getIntValue("jhStatus") == 0
+                                                || paramsJson.getIntValue("jhStatus") == -2) {
                                             new Thread() {
                                                 @Override
                                                 public void run() {
@@ -222,6 +226,8 @@ public class AppInterface extends HttpServlet {
                                         json = Units.objectToJson(0, "确认成功!", null);
                                     } else if (result == 1) {
                                         json = Units.objectToJson(1, "备货未完成!", null);
+                                    } else if (result == 2) {
+                                        json = Units.objectToJson(2, "存在未完成计划!", null);
                                     } else {
                                         json = Units.objectToJson(-1, "确认失败!", null);
                                     }
@@ -328,8 +334,14 @@ public class AppInterface extends HttpServlet {
                             break;
                         }
                         case "confirm": {
+                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + paramsJson.getString("partCode")), PartBaseInfo.class);
                             JSONObject updateObj = new JSONObject();
-                            updateObj.put("sxTime", Units.getNowTime());
+                            if (baseInfo.getAssemblingStation().compareTo("3") == 0) {
+                                    updateObj.put("fzTime", Units.getNowTime());
+                                } else {
+                                    updateObj.put("sxTime", Units.getNowTime());
+                                }
+                            //updateObj.put("sxTime", Units.getNowTime());
                             JSONObject whereObj = new JSONObject();
                             whereObj.put("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
                             whereObj.put("partCode", paramsJson.getString("partCode"));

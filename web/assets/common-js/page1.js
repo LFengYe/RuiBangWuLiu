@@ -19,7 +19,7 @@
         update: [],
         del: []
     };
-    
+
     var primary = [];
     var inputNames = {};
     var modifyRow = null;
@@ -45,7 +45,7 @@
                 },
                 selectpanel: sp  //选择框对象
             });
-            
+
             $tableBox.insertTable({
                 titles: data.titles,
                 datas: data.datas,
@@ -102,10 +102,16 @@
                     $("#page1-add").attr("disabled", false);
                     return false;
                 }
-                $tableBox.add(0, obj);
-                submitDatas.add.push(obj);
-                selectedSet = [];
-                $inputBox.clearInputsArea();
+                if ($inputBox.checkValue() && $inputBox.calculateValue()) {
+                    $tableBox.add(0, obj);
+                    submitDatas.add.push(obj);
+                    selectedSet = [];
+                    $inputBox.clearInputsArea();
+                }
+            } else {
+                if (modifyRow) {
+                    alert("当前修改状态, 请点击【修改】按钮");
+                }
             }
             $("#page1-add").attr("disabled", false);
         });
@@ -165,10 +171,8 @@
         });
         $("#page1-submit").off("click");
         $("#page1-submit").on("click", function (e) {
-            $("#page1-submit").attr("disabled", true);
             if (submitDatas.add.length == 0 && submitDatas.del.length == 0 && submitDatas.update.length == 0) {
                 alert("您当前没有新增任何信息");
-                $("#page1-submit").attr("disabled", false);
                 return;
             }
             ajaxData(OPERATION.SUBMIT, submitDatas, function (data) {
@@ -176,14 +180,12 @@
                 submitDatas.del = [];
                 submitDatas.update = [];
                 selectedSet = [];
-                $("#page1-submit").attr("disabled", false);
             }, function () {
                 submitDatas.add = [];
                 submitDatas.del = [];
                 submitDatas.update = [];
                 selectedSet = [];
                 //initDOM();
-                $("#page1-submit").attr("disabled", false);
             });
         });
         $("#page1-import").off("click");

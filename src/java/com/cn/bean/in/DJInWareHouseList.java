@@ -22,7 +22,7 @@ public class DJInWareHouseList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "失败原因")
+    @FieldDescription(description = "失败原因", operate = "display")
     private String failedReason;
     @FieldDescription(description = "供应商代码")
     private String supplierID;

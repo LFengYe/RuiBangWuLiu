@@ -5,6 +5,8 @@
  */
 package com.cn.bean.out;
 
+import com.cn.bean.FieldDescription;
+
 /**
  *
  * @author LFeng
@@ -20,14 +22,23 @@ public class LPKCListInfo {
         recordCount = aRecordCount;
     }
     
+    @FieldDescription(description = "供应商编号")
     private String supplierID;//供应商ID
+    @FieldDescription(description = "供应商名称")
     private String supplierName;
+    @FieldDescription(description = "部品件号")
     private String partCode;//件号
+    @FieldDescription(description = "部品名称")
     private String partName;
+    @FieldDescription(description = "部品编号")
     private String partID;
+    @FieldDescription(description = "入库批次")
     private String inboundBatch;//入库批次
+    @FieldDescription(description = "良品数量")
     private int lpAmount;//良品数量
+    @FieldDescription(description = "出库包装盛具")
     private String outboundContainerName;
+    @FieldDescription(description = "出库包装数量")
     private int outboundPackageAmount;
 
     public String getSupplierID() {

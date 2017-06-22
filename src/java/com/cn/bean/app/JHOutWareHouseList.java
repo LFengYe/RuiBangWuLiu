@@ -36,6 +36,7 @@ public class JHOutWareHouseList implements Comparable{
     private int jhCKAmount;
     private int bhFinishedAmount;
     private String bhEmployeeName;
+    private String assemblingStation;
     private String outboundContainerName;
     private int outboundPackageAmount;
     private int containerAmount;
@@ -233,5 +234,13 @@ public class JHOutWareHouseList implements Comparable{
 
     public void setJhStatusName(String jhStatusName) {
         this.jhStatusName = jhStatusName;
+    }
+
+    public String getAssemblingStation() {
+        return assemblingStation;
+    }
+
+    public void setAssemblingStation(String assemblingStation) {
+        this.assemblingStation = assemblingStation;
     }
 }

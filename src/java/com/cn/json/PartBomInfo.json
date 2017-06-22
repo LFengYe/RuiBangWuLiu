@@ -1,0 +1,17 @@
+{
+    "control": {
+        "zcPartCode": "总成件号,@table",
+        "detailPartCode": "部品件号,@table",
+        "dcAmount": "单车用量,number",
+        "remark": "备注,string,500"
+    },
+    "mustwrite": ["zcPartCode","detailPartCode","dcAmount"],
+    "unique": [],
+    "primary": "zcPartCode,detailPartCode",
+    "titles": {
+        "zcPartCode": "总成件号,30%",
+        "detailPartCode": "明细件号,30%",
+        "dcAmount": "单车用量,20%",
+        "remark": "备注,20%"
+    }
+}

@@ -95,7 +95,7 @@ public class ProcessList {
     }
 
     public int getOperate() {
-        return 2;
+        return -1;
     }
 
     public void setOperate(int operate) {

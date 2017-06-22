@@ -15,8 +15,6 @@
         <filter-name>CharactorFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
-    
     <servlet>
         <servlet-name>DataInterface</servlet-name>
         <servlet-class>com.cn.servlet.DataInterface</servlet-class>
@@ -49,12 +47,13 @@
         <servlet-name>UploadFileServlet</servlet-name>
         <servlet-class>com.cn.servlet.UploadFileServlet</servlet-class>
     </servlet>
-    
     <welcome-file-list>
         <welcome-file>login.html</welcome-file>
     </welcome-file-list>
-    
-    
+    <servlet>
+        <servlet-name>ContainerServlet</servlet-name>
+        <servlet-class>com.cn.servlet.ContainerServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AppInterface</servlet-name>
         <url-pattern>/app.do</url-pattern>
@@ -87,8 +86,10 @@
         <servlet-name>InInterface</servlet-name>
         <url-pattern>/in.do</url-pattern>
     </servlet-mapping>
-    
-    
+    <servlet-mapping>
+        <servlet-name>ContainerServlet</servlet-name>
+        <url-pattern>/container.do</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30

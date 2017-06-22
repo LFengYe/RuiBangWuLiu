@@ -35,8 +35,16 @@ public class TKFenLuData {
     private int blPJP2;
     @FieldDescription(description = "三工厂不良品退库")
     private int blPJP3;
-    @FieldDescription(description = "退货总数")
+    @FieldDescription(description = "退库总数")
     private int tkTotal;
+    @FieldDescription(description = "一工厂线旁退库")
+    private int xp1;
+    @FieldDescription(description = "二工厂线旁退库")
+    private int xp2;
+    @FieldDescription(description = "三工厂线旁退库")
+    private int xp3;
+    @FieldDescription(description = "退线旁总数")
+    private int tjPQTotal;
 
     public String getSupplierID() {
         return supplierID;
@@ -132,5 +140,37 @@ public class TKFenLuData {
 
     public void setTkTotal(int tkTotal) {
         this.tkTotal = tkTotal;
+    }
+
+    public int getXp1() {
+        return xp1;
+    }
+
+    public void setXp1(int xp1) {
+        this.xp1 = xp1;
+    }
+
+    public int getXp2() {
+        return xp2;
+    }
+
+    public void setXp2(int xp2) {
+        this.xp2 = xp2;
+    }
+
+    public int getXp3() {
+        return xp3;
+    }
+
+    public void setXp3(int xp3) {
+        this.xp3 = xp3;
+    }
+
+    public int getTjPQTotal() {
+        return tjPQTotal;
+    }
+
+    public void setTjPQTotal(int tjPQTotal) {
+        this.tjPQTotal = tjPQTotal;
     }
 }

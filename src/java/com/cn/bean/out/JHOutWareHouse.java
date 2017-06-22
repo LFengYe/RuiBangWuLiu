@@ -32,6 +32,8 @@ public class JHOutWareHouse {
     private String jhDemandTime;
     @FieldDescription(description = "计划类型")
     private String jhType;
+    @FieldDescription(description = "计划方式")
+    private String jhMethod;
     @FieldDescription(description = "备货人员姓名")
     private String bhStaffName;
     @FieldDescription(description = "计划班次")
@@ -141,5 +143,13 @@ public class JHOutWareHouse {
 
     public void setJhConfirm(boolean jhConfirm) {
         this.jhConfirm = jhConfirm;
+    }
+
+    public String getJhMethod() {
+        return jhMethod;
+    }
+
+    public void setJhMethod(String jhMethod) {
+        this.jhMethod = jhMethod;
     }
 }
