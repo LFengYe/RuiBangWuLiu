@@ -26,7 +26,7 @@
     var selectedSet = [];
     var pageSize = 15;
 
-    function initDOM() {
+    function initDOM(module) {
         ajaxData(OPERATION.CREATE, {}, function (data) {
             primary = data.primary.split(",");
             for (var i in data.control) {
@@ -85,13 +85,15 @@
                     });
                 }
             });
+            
+            moduleOperate(module);
         }, function () {
             $inputBox.html("");
             $tableBox.html("");
         });
     }
 
-    function bindEvt() {
+    function bindEvt(module) {
         $("#page1-add").off("click");
         $("#page1-add").on("click", function (e) {
             $("#page1-add").attr("disabled", true);
@@ -107,6 +109,9 @@
                     submitDatas.add.push(obj);
                     selectedSet = [];
                     $inputBox.clearInputsArea();
+                    if (module == "分装入库" || module == "分装出库") {
+                        $("#page1-submit").trigger("click");
+                    }
                 }
             } else {
                 if (modifyRow) {
@@ -180,12 +185,12 @@
                 submitDatas.del = [];
                 submitDatas.update = [];
                 selectedSet = [];
+                initDOM(module);
             }, function () {
                 submitDatas.add = [];
                 submitDatas.del = [];
                 submitDatas.update = [];
                 selectedSet = [];
-                //initDOM();
             });
         });
         $("#page1-import").off("click");
@@ -203,10 +208,34 @@
             });
         });
     }
-
-    ajaxPage1 = function () {
-        initDOM();
-        bindEvt();
+    
+    function moduleOperate(module) {
+        console.log(module);
+        switch(module) {
+            case "分装入库":
+            case "分装出库":
+                $("#page1-add").css("display", "inline-block");
+                $("#page1-modify").css("display", "none");
+                $("#page1-delete").css("display", "none");
+                $("#page1-query").css("display", "none");
+                $("#page1-submit").css("display", "none");
+                $("#page1-import").css("display", "none");
+                $("#page1-export").css("display", "none");
+                break;
+            default:
+                $("#page1-add").css("display", "inline-block");
+                $("#page1-modify").css("display", "inline-block");
+                $("#page1-delete").css("display", "inline-block");
+                $("#page1-query").css("display", "inline-block");
+                $("#page1-submit").css("display", "inline-block");
+                $("#page1-import").css("display", "inline-block");
+                $("#page1-export").css("display", "inline-block");
+        }
+    }
+    
+    ajaxPage1 = function (module) {
+        initDOM(module);
+        bindEvt(module);
     };
 })();
 

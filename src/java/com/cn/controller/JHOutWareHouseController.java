@@ -23,6 +23,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -80,7 +81,7 @@ public class JHOutWareHouseController {
                     /**
                      * 获取该计划明细对应的部品基础信息
                      */
-                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + item.getPartCode()), PartBaseInfo.class);
+                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + item.getPartCode().toLowerCase()), PartBaseInfo.class);
                     if (baseInfo == null) {
                         item.setListNumber(-2);//没有对应件号
                         item.setFailedReason("没有该件号");
@@ -99,7 +100,7 @@ public class JHOutWareHouseController {
                     /**
                      * 获取该计划明细对应的部品盛具信息
                      */
-                    GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(item.getSupplierID() + "_" + item.getPartCode()), GYSPartContainerInfo.class);
+                    GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(item.getSupplierID() + "_" + item.getPartCode().toLowerCase()), GYSPartContainerInfo.class);
                     if (containerInfo == null || containerInfo.getOutboundPackageAmount() <= 0) {
                         item.setListNumber(-4);//没有出库盛具信息
                         item.setFailedReason("出库盛具信息不正确");
@@ -219,7 +220,7 @@ public class JHOutWareHouseController {
                     /**
                      * 获取该计划明细对应的部品基础信息
                      */
-                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + item.getPartCode()), PartBaseInfo.class);
+                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + item.getPartCode().toLowerCase()), PartBaseInfo.class);
                     if (baseInfo == null) {
                         item.setListNumber(-2);//没有对应件号
                         item.setFailedReason("没有该件号");
@@ -238,7 +239,7 @@ public class JHOutWareHouseController {
                     /**
                      * 获取该计划明细对应的部品盛具信息
                      */
-                    GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(item.getSupplierID() + "_" + item.getPartCode()), GYSPartContainerInfo.class);
+                    GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(item.getSupplierID() + "_" + item.getPartCode().toLowerCase()), GYSPartContainerInfo.class);
                     if (containerInfo == null) {
                         item.setListNumber(-4);//没有出库盛具信息
                         item.setFailedReason("没有出库盛具信息");
@@ -338,12 +339,15 @@ public class JHOutWareHouseController {
         try {
             /**
              * 总成计划存入Redis, 确认计划时, 写入分装入库出库表
-             
-            JHOutWareHouse jhOutWareHouse = JSONObject.parseObject(jhInfo, JHOutWareHouse.class);
-            RedisAPI.set("ZCJH_" + jhOutWareHouse.getJhOutWareHouseID(), jhInfo);
-            RedisAPI.set("ZCJHDetail_" + jhOutWareHouse.getJhOutWareHouseID(), JSONObject.toJSONString(importData));
-            */
-            
+             *
+             * JHOutWareHouse jhOutWareHouse = JSONObject.parseObject(jhInfo,
+             * JHOutWareHouse.class); RedisAPI.set("ZCJH_" +
+             * jhOutWareHouse.getJhOutWareHouseID(), jhInfo);
+             * RedisAPI.set("ZCJHDetail_" +
+             * jhOutWareHouse.getJhOutWareHouseID(),
+             * JSONObject.toJSONString(importData));
+             */
+
             /**
              * 分解完成的计划明细
              */
@@ -360,10 +364,10 @@ public class JHOutWareHouseController {
                     /**
                      * 获取该总成的Bom信息
                      */
-                    String bomRedisKey = "bomInfo_" + item.getPartCode();
+                    String bomRedisKey = "bomInfo_" + item.getPartCode().toLowerCase();
                     List<String> bomInfos = RedisAPI.getSet(bomRedisKey);
                     if (bomInfos != null && bomInfos.size() > 0) {
-                        
+
                         for (String str : bomInfos) {
                             PartBomInfo bomInfo = JSONObject.parseObject(str, PartBomInfo.class);
                             if (detailMap.containsKey(item.getSupplierID() + "_" + bomInfo.getDetailPartCode())) {
@@ -417,7 +421,7 @@ public class JHOutWareHouseController {
                      * 将导入的数据转成计划明细对象
                      */
                     JHOutWareHouseList item = (JHOutWareHouseList) it.next();
-                    
+
                 }
             }
         } catch (Exception ex) {
@@ -480,7 +484,7 @@ public class JHOutWareHouseController {
                 object.setPartCode(set.getString("PartCode"));
                 object.setLpAmount(set.getInt("KFJCLp"));
                 object.setInboundBatch(set.getString("InboundBatch"));
-                PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + object.getPartCode()), PartBaseInfo.class);
+                PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + object.getPartCode().toLowerCase()), PartBaseInfo.class);
                 Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + object.getSupplierID()), Customer.class);
                 object.setSupplierName(customer.getCustomerAbbName());
                 object.setPartID(baseInfo.getPartID());
@@ -509,6 +513,7 @@ public class JHOutWareHouseController {
                  */
                 result.add(object);
             }
+            set.close();
             return result;
         } catch (SQLException ex) {
             logger.error("数据库执行出错", ex);
@@ -538,7 +543,7 @@ public class JHOutWareHouseController {
         JSONArray params = new JSONArray();
         DatabaseOpt opt = new DatabaseOpt();
         CommonController commonController = new CommonController();
-        
+
         List<JHOutWareHouseList> res = JSONObject.parseArray(RedisAPI.get(jhOutWareHouseID), JHOutWareHouseList.class);
         /*
         if (res == null || res.isEmpty()) {
@@ -555,7 +560,7 @@ public class JHOutWareHouseController {
 
             while (iterator.hasNext()) {
                 JHOutWareHouseList list = iterator.next();
-                GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(list.getSupplierID() + "_" + list.getPartCode()), GYSPartContainerInfo.class);
+                GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(list.getSupplierID() + "_" + list.getPartCode().toLowerCase()), GYSPartContainerInfo.class);
 
                 //新计划初始化参数
                 if (oldList != null && (!(oldList.getSupplierID().compareTo(list.getSupplierID()) == 0)
@@ -573,15 +578,26 @@ public class JHOutWareHouseController {
                     //先取出上批次最后一箱数据, 再增加本批次填满数据
                     JSONObject preLastObj = params.getJSONObject(params.size() - 1);
                     tmpJhCkAmount = list.getJhCKAmount() - containerInfo.getOutboundPackageAmount() + Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1]);
-
-                    JSONObject object = new JSONObject();
-                    object.put("SupplierID", "string," + list.getSupplierID());
-                    object.put("PartCode", "string," + list.getPartCode());
-                    object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
-                    object.put("PackingNumber", "int," + oldPackingNum);
-                    object.put("InBoundBatch", "string," + list.getInboundBatch());
-                    object.put("PackingAmount", "int," + (containerInfo.getOutboundPackageAmount() - Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1])));
-                    params.add(object);
+                    if (tmpJhCkAmount > 0) {//本批次计划数量能够填满上一批次最后一箱
+                        JSONObject object = new JSONObject();
+                        object.put("SupplierID", "string," + list.getSupplierID());
+                        object.put("PartCode", "string," + list.getPartCode());
+                        object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+                        object.put("PackingNumber", "int," + oldPackingNum);
+                        object.put("InBoundBatch", "string," + list.getInboundBatch());
+                        object.put("PackingAmount", "int," + (containerInfo.getOutboundPackageAmount() - Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1])));
+                        params.add(object);
+                    } else {
+                        JSONObject object = new JSONObject();
+                        object.put("SupplierID", "string," + list.getSupplierID());
+                        object.put("PartCode", "string," + list.getPartCode());
+                        object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+                        object.put("PackingNumber", "int," + oldPackingNum);
+                        object.put("InBoundBatch", "string," + list.getInboundBatch());
+                        object.put("PackingAmount", "int," + list.getJhCKAmount());
+                        params.add(object);
+                        tmpJhCkAmount = 0;
+                    }
                 }
                 //计算当前批次计划是否能完全分包
                 if (tmpJhCkAmount % containerInfo.getOutboundPackageAmount() == 0) {
@@ -629,7 +645,7 @@ public class JHOutWareHouseController {
             Iterator iterator = res.iterator();
             while (iterator.hasNext()) {
                 JHOutWareHouseList list = (JHOutWareHouseList) iterator.next();
-                GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(list.getSupplierID() + "_" + list.getPartCode()), GYSPartContainerInfo.class);
+                GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(list.getSupplierID() + "_" + list.getPartCode().toLowerCase()), GYSPartContainerInfo.class);
 //                System.out.println("containerInfo:" + JSONObject.toJSONString(containerInfo));
                 int containerAmount;
                 boolean isFull = false;
@@ -660,5 +676,34 @@ public class JHOutWareHouseController {
             return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, opt.getConnect());
         }
         return null;
+    }
+
+    public int getFZMaxOutboundMount(String partCode) {
+        CallableStatement statement = null;
+        Connection conn = null;
+        DatabaseOpt opt = new DatabaseOpt();
+//        Class objClass = Class.forName("com.cn.bean.base.LPKCList");
+        try {
+            conn = opt.getConnect();
+            statement = conn.prepareCall("{call tbFZOutMaxAmount(?, ?)}");
+            statement.setString("PartCode", partCode);
+            statement.registerOutParameter("OutAmount", Types.INTEGER);
+            statement.execute();
+            return statement.getInt("OutAmount");
+        } catch (SQLException ex) {
+            logger.error("数据库执行出错", ex);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                logger.error("数据库关闭连接错误", ex);
+            }
+        }
+        return 0;
     }
 }

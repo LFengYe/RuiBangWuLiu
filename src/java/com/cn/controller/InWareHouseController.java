@@ -39,7 +39,6 @@ public class InWareHouseController {
             ResultSet set = statement.executeQuery(sql);
             minInboundBatchMap = new HashMap<>();
             while (set.next()) {
-                System.out.println("***");
                 return set.getString("InboundBatch");
             }
         } catch (SQLException e) {

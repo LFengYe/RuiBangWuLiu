@@ -54,14 +54,14 @@ public class BaseInterface extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(BaseInterface.class);
 
-    private CommonController commonController;
-    private DatabaseOpt opt;
+//    private CommonController commonController;
+//    private DatabaseOpt opt;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        commonController = new CommonController();
-        opt = new DatabaseOpt();
+//        commonController = new CommonController();
+//        opt = new DatabaseOpt();
     }
 
     /**
@@ -79,11 +79,15 @@ public class BaseInterface extends HttpServlet {
         String uri = request.getRequestURI();
         String subUri = uri.substring(uri.lastIndexOf("/") + 1,
                 uri.lastIndexOf("."));
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
         String json = null;
-
+        //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
+        
         try {
-            System.out.println(subUri + ",params:" + params);
+            //System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
+            //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
             String rely = (paramsJson.getString("rely") == null) ? ("{}") : (paramsJson.getString("rely"));
@@ -102,13 +106,15 @@ public class BaseInterface extends HttpServlet {
             int isHistory = paramsJson.getIntValue("isHistory");
             int pageIndex = paramsJson.getIntValue("pageIndex");
             int pageSize = paramsJson.getIntValue("pageSize");
-
+            
+            //logger.info(Units.getIpAddress(request) + ",accept:" + module + ",time:" + (new Date().getTime()));
+            
             HttpSession session = request.getSession();
             String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
             String importPath = getServletContext().getRealPath("/").replace("\\", "/") + "excelFile/";
-
+            
             /*验证是否登陆*/
-            if (!"userLogin".equals(module) && session.getAttribute("user") == null) {
+            if ((!"userLogin".equals(module) || !"版本信息".equals(module)) && session.getAttribute("user") == null) {
                 session.invalidate();
                 json = Units.objectToJson(-99, "未登陆", null);
                 PrintWriter out = response.getWriter();
@@ -123,7 +129,7 @@ public class BaseInterface extends HttpServlet {
                 }
                 return;
             }
-
+            
             switch (module) {
                 /**
                  * ***************************************平台管理**************************************
@@ -190,7 +196,7 @@ public class BaseInterface extends HttpServlet {
                                 String[] keysName = {"公司编号", "公司名称"};
                                 int[] keysWidth = {50, 50};
                                 String[] fieldsName = {"companyID", "companyName"};
-                                System.out.println("datas:" + datas + ",pageSize:" + pageSize + ",pageIndex:" + pageIndex);
+                                //System.out.println("datas:" + datas + ",pageSize:" + pageSize + ",pageIndex:" + pageIndex);
                                 json = queryOperate(target, "com.cn.bean.", "table", "PlatformCompanyInfo", "CompanyID", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
@@ -394,6 +400,21 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "import": {
                             json = importData("com.cn.bean.", "PartBaseInfo", importPath + fileName, opt.getConnect());
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入部品基础信息到Redis中*/
+                                        List<Object> partBaseInfo = commonController.dataBaseQuery("table", "com.cn.bean.", "PartBaseInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
+                                        Iterator<Object> iterator = partBaseInfo.iterator();
+                                        while (iterator.hasNext()) {
+                                            PartBaseInfo baseInfo = (PartBaseInfo) iterator.next();
+                                            RedisAPI.set("partBaseInfo_" + baseInfo.getPartCode().toLowerCase(), JSONObject.toJSONString(baseInfo));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                         case "exportTemplate": {
@@ -412,13 +433,6 @@ public class BaseInterface extends HttpServlet {
                                 String[] fieldsName = {"autoStylingName"};
                                 json = queryOperate(target, "com.cn.bean.", "table", "AutoStyling", "AutoStylingName", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
-                            if (target.compareToIgnoreCase("partCategoryName") == 0) {
-                                String[] keys = {"partCategoryName"};
-                                String[] keysName = {"部品类别"};
-                                int[] keysWidth = {100};
-                                String[] fieldsName = {"partCategoryName"};
-                                json = queryOperate(target, "com.cn.bean.", "table", "PartCategory", "PartCategoryName", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
-                            }
                             break;
                         }
                         case "submit": {
@@ -432,7 +446,7 @@ public class BaseInterface extends HttpServlet {
                                         Iterator<Object> iterator = partBaseInfo.iterator();
                                         while (iterator.hasNext()) {
                                             PartBaseInfo baseInfo = (PartBaseInfo) iterator.next();
-                                            RedisAPI.set("partBaseInfo_" + baseInfo.getPartCode(), JSONObject.toJSONString(baseInfo));
+                                            RedisAPI.set("partBaseInfo_" + baseInfo.getPartCode().toLowerCase(), JSONObject.toJSONString(baseInfo));
                                         }
                                     } catch (Exception e) {
                                     }
@@ -458,6 +472,21 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "import": {
                             json = importData("com.cn.bean.", "Customer", importPath + fileName, opt.getConnect());
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入客户基础信息到Redis中*/
+                                        List<Object> customerList = commonController.dataBaseQuery("table", "com.cn.bean.", "Customer", "*", "", Integer.MAX_VALUE, 1, "CustomerID", 0, opt.getConnect());
+                                        Iterator<Object> iterator1 = customerList.iterator();
+                                        while (iterator1.hasNext()) {
+                                            Customer customer = (Customer) iterator1.next();
+                                            RedisAPI.set("customer_" + customer.getCustomerID(), JSONObject.toJSONString(customer));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                         case "exportTemplate": {
@@ -564,6 +593,21 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "import": {
                             json = importData("com.cn.bean.", "PartStore", importPath + fileName, opt.getConnect());
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入部品存放地址信息到Redis中*/
+                                        List<Object> partStoreList = commonController.dataBaseQuery("table", "com.cn.bean.", "PartStore", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
+                                        Iterator<Object> iterator4 = partStoreList.iterator();
+                                        while (iterator4.hasNext()) {
+                                            PartStore partStore = (PartStore) iterator4.next();
+                                            RedisAPI.set("partStore_" + partStore.getSupplierID() + "_" + partStore.getPartCode().toLowerCase(), JSONObject.toJSONString(partStore));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                         case "exportTemplate": {
@@ -585,7 +629,7 @@ public class BaseInterface extends HttpServlet {
                                         Iterator<Object> iterator4 = partStoreList.iterator();
                                         while (iterator4.hasNext()) {
                                             PartStore partStore = (PartStore) iterator4.next();
-                                            RedisAPI.set("partStore_" + partStore.getSupplierID() + "_" + partStore.getPartCode(), JSONObject.toJSONString(partStore));
+                                            RedisAPI.set("partStore_" + partStore.getSupplierID() + "_" + partStore.getPartCode().toLowerCase(), JSONObject.toJSONString(partStore));
                                         }
                                     } catch (Exception e) {
                                     }
@@ -629,6 +673,21 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "import": {
                             json = importData("com.cn.bean.", "GYSPartContainerInfo", importPath + fileName, opt.getConnect());
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入出入库盛具信息到Redis中*/
+                                        List<Object> containerInfoList = commonController.dataBaseQuery("table", "com.cn.bean.", "GYSPartContainerInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
+                                        Iterator<Object> iterator2 = containerInfoList.iterator();
+                                        while (iterator2.hasNext()) {
+                                            GYSPartContainerInfo containerInfo = (GYSPartContainerInfo) iterator2.next();
+                                            RedisAPI.set(containerInfo.getSupplierID() + "_" + containerInfo.getPartCode().toLowerCase(), JSONObject.toJSONString(containerInfo));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                         case "exportTemplate": {
@@ -650,7 +709,7 @@ public class BaseInterface extends HttpServlet {
                                         Iterator<Object> iterator2 = containerInfoList.iterator();
                                         while (iterator2.hasNext()) {
                                             GYSPartContainerInfo containerInfo = (GYSPartContainerInfo) iterator2.next();
-                                            RedisAPI.set(containerInfo.getSupplierID() + "_" + containerInfo.getPartCode(), JSONObject.toJSONString(containerInfo));
+                                            RedisAPI.set(containerInfo.getSupplierID() + "_" + containerInfo.getPartCode().toLowerCase(), JSONObject.toJSONString(containerInfo));
                                         }
                                     } catch (Exception e) {
                                     }
@@ -687,6 +746,13 @@ public class BaseInterface extends HttpServlet {
                                 int[] keysWidth = {100};
                                 String[] fieldsName = {"ContainerName"};
                                 json = queryOperate(target, "com.cn.bean.", "table", "Container", "ContainerName", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("partCategoryName") == 0) {
+                                String[] keys = {"partCategoryName"};
+                                String[] keysName = {"部品类别"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"partCategoryName"};
+                                json = queryOperate(target, "com.cn.bean.", "table", "PartCategory", "PartCategoryName", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
                         }
@@ -740,6 +806,21 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "import": {
                             json = importData("com.cn.bean.", "PartCategory", importPath + fileName, opt.getConnect());
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入部品分类信息到Redis中*/
+                                        List<Object> partCategory = commonController.dataBaseQuery("table", "com.cn.bean.", "PartCategory", "*", "", Integer.MAX_VALUE, 1, "PartCategoryName", 0, opt.getConnect());
+                                        Iterator<Object> iterator5 = partCategory.iterator();
+                                        while (iterator5.hasNext()) {
+                                            PartCategory category = (PartCategory) iterator5.next();
+                                            RedisAPI.set("partCategory_" + category.getPartCategoryName(), JSONObject.toJSONString(category));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                         case "exportTemplate": {
@@ -981,6 +1062,21 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "import": {
                             json = importData("com.cn.bean.", "AreaLedIPInfo", importPath + fileName, opt.getConnect());
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入存放地址信息到Redis中*/
+                                        List<Object> ledIpInfoList = commonController.dataBaseQuery("table", "com.cn.bean.", "AreaLedIPInfo", "*", "", Integer.MAX_VALUE, 1, "addressCode", 0, opt.getConnect());
+                                        Iterator<Object> iterator3 = ledIpInfoList.iterator();
+                                        while (iterator3.hasNext()) {
+                                            AreaLedIPInfo ledIpInfo = (AreaLedIPInfo) iterator3.next();
+                                            RedisAPI.set("ledIpInfo_" + ledIpInfo.getAddressCode().toLowerCase(), JSONObject.toJSONString(ledIpInfo));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                         case "exportTemplate": {
@@ -1002,7 +1098,7 @@ public class BaseInterface extends HttpServlet {
                                         Iterator<Object> iterator3 = ledIpInfoList.iterator();
                                         while (iterator3.hasNext()) {
                                             AreaLedIPInfo ledIpInfo = (AreaLedIPInfo) iterator3.next();
-                                            RedisAPI.set("ledIpInfo_" + ledIpInfo.getAddressCode(), JSONObject.toJSONString(ledIpInfo));
+                                            RedisAPI.set("ledIpInfo_" + ledIpInfo.getAddressCode().toLowerCase(), JSONObject.toJSONString(ledIpInfo));
                                         }
                                     } catch (Exception e) {
                                     }
@@ -1058,11 +1154,28 @@ public class BaseInterface extends HttpServlet {
                                 json = queryOperate(target, "com.cn.bean.", "table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                                 //System.out.println("json:" + json);
                             }
-                            if (target.compareToIgnoreCase("employeeName") == 0) {
-                                String[] keys = {"employeeName"};
+                            if (target.compareToIgnoreCase("bhEmployeeName") == 0) {
+                                String[] keys = {"bhEmployeeName"};
                                 String[] keysName = {"备货员"};
                                 int[] keysWidth = {100};
                                 String[] fieldsName = {"employeeName"};
+                                rely = rely.replace("bhEmployeeType", "employeeType");
+                                json = queryOperate(target, "com.cn.bean.", "table", "Employee", "EmployeeName", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("lhEmployeeName") == 0) {
+                                String[] keys = {"lhEmployeeName"};
+                                String[] keysName = {"领货员"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"employeeName"};
+                                rely = rely.replace("lhEmployeeType", "employeeType");
+                                json = queryOperate(target, "com.cn.bean.", "table", "Employee", "EmployeeName", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            if (target.compareToIgnoreCase("psEmployeeName") == 0) {
+                                String[] keys = {"psEmployeeName"};
+                                String[] keysName = {"配送员"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"employeeName"};
+                                rely = rely.replace("psEmployeeType", "employeeType");
                                 json = queryOperate(target, "com.cn.bean.", "table", "Employee", "EmployeeName", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             break;
@@ -1085,6 +1198,22 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "import": {
                             json = importData("com.cn.bean.", "PartBomInfo", importPath + fileName, opt.getConnect());
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入总成BOM信息到Redis中*/
+                                        List<Object> partBomInfo = commonController.dataBaseQuery("table", "com.cn.bean.", "PartBomInfo", "*", "", Integer.MAX_VALUE, 1, "ZCPartCode", 0, opt.getConnect());
+                                        RedisAPI.delKeys("bomInfo_*");
+                                        Iterator<Object> iterator6 = partBomInfo.iterator();
+                                        while (iterator6.hasNext()) {
+                                            PartBomInfo bomInfo = (PartBomInfo) iterator6.next();
+                                            RedisAPI.push("bomInfo_" + bomInfo.getZcPartCode().toLowerCase(), JSONObject.toJSONString(bomInfo));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                         case "exportTemplate": {
@@ -1103,10 +1232,11 @@ public class BaseInterface extends HttpServlet {
                                     try {
                                         /*导入总成BOM信息到Redis中*/
                                         List<Object> partBomInfo = commonController.dataBaseQuery("table", "com.cn.bean.", "PartBomInfo", "*", "", Integer.MAX_VALUE, 1, "ZCPartCode", 0, opt.getConnect());
+                                        RedisAPI.delKeys("bomInfo_*");
                                         Iterator<Object> iterator6 = partBomInfo.iterator();
                                         while (iterator6.hasNext()) {
                                             PartBomInfo bomInfo = (PartBomInfo) iterator6.next();
-                                            RedisAPI.push("bomInfo_" + bomInfo.getZcPartCode(), JSONObject.toJSONString(bomInfo));
+                                            RedisAPI.push("bomInfo_" + bomInfo.getZcPartCode().toLowerCase(), JSONObject.toJSONString(bomInfo));
                                         }
                                     } catch (Exception e) {
                                     }
@@ -1116,19 +1246,52 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "request_table": {
                             if (target.compareToIgnoreCase("zcPartCode") == 0) {
-                                String[] keys = {"partCode", "partID", "partName"};
+                                String[] keys = {"zcPartCode", "partID", "partName"};
                                 String[] keysName = {"部品件号", "部品代码", "部品名称"};
                                 int[] keysWidth = {40, 30, 30};
                                 String[] fieldsName = {"partCode", "partID", "partName"};
                                 json = queryOperate(target, "com.cn.bean.", "table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("detailPartCode") == 0) {
-                                String[] keys = {"partCode", "partID", "partName"};
+                                String[] keys = {"detailPartCode", "partID", "partName"};
                                 String[] keysName = {"部品件号", "部品代码", "部品名称"};
                                 int[] keysWidth = {40, 30, 30};
                                 String[] fieldsName = {"partCode", "partID", "partName"};
                                 json = queryOperate(target, "com.cn.bean.", "table", "PartBaseInfo", "PartCode", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
+                            //System.out.println("json:" + json);
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+                
+                //<editor-fold desc="版本信息">
+                case "版本信息": {
+                    switch (operation) {
+                        case "create": {
+                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "Version", "VarsionID", opt.getConnect());
+                            break;
+                        }
+                        case "request_page": {
+                            json = queryOperate("com.cn.bean.", "table", "Version", "VarsionID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "import": {
+                            json = importData("com.cn.bean.", "Version", importPath + fileName, opt.getConnect());
+                            break;
+                        }
+                        case "exportTemplate": {
+                            json = exportTemplate("com.cn.bean.", "Version", null);
+                            break;
+                        }
+                        case "export": {
+                            json = exportData("com.cn.bean.", "Version", (ArrayList<Object>) queryData("com.cn.bean.", "table", "Version", "VarsionID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            break;
+                        }
+                        case "submit": {
+                            json = submitOperate("com.cn.bean.", "Version", update, add, delete, "data");
                             break;
                         }
                     }
@@ -1138,6 +1301,7 @@ public class BaseInterface extends HttpServlet {
 
                 //</editor-fold>
             }
+            //logger.info(Units.getIpAddress(request) + ",response:" + module + ",time:" + (new Date().getTime()));
         } catch (Exception e) {
             logger.info(subUri);
             logger.error("错误信息:" + e.getMessage(), e);
@@ -1175,6 +1339,7 @@ public class BaseInterface extends HttpServlet {
      */
     private String createOperateWithFilter(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String whereCase, String orderField, Connection conn) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
@@ -1212,6 +1377,7 @@ public class BaseInterface extends HttpServlet {
     private String queryOperateWithFilter(String beanPackage, String type, String tableName, String orderField, String keyWord, String rely,
             String whereCase, boolean isAll, Connection conn, int pageSize, int pageIndex) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         String result = "{}";
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
@@ -1259,6 +1425,7 @@ public class BaseInterface extends HttpServlet {
             String orderField, String keyWord, String rely, boolean isAll, Connection conn, int pageSize, int pageIndex,
             String[] keys, String[] keysName, int[] keysWidth, String[] fieldsName) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
         List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);
@@ -1315,6 +1482,7 @@ public class BaseInterface extends HttpServlet {
      */
     private List<Object> queryData(String beanPackage, String type, String tableName, String orderField, String keyWord,
             Connection conn, int pageSize, int pageIndex) throws Exception {
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         return commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, "{}", true), pageSize, pageIndex, orderField, 0, conn);
     }
@@ -1332,6 +1500,8 @@ public class BaseInterface extends HttpServlet {
      * @throws InstantiationException
      */
     private String submitOperate(String beanPackage, String tableName, String update, String add, String delete, String connType) throws Exception {
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
         Connection conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
         if (!Units.strIsEmpty(update) && !(update.compareTo("[]") == 0)) {
             ArrayList<Integer> updateResult = commonController.dataBaseOperate(update, beanPackage, tableName, "update", conn);
@@ -1368,6 +1538,7 @@ public class BaseInterface extends HttpServlet {
      */
     private String importData(String beanPackage, String tableName, String fileName, Connection conn) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         //获取所有设置字段名称的字段
         Class objClass = Class.forName(beanPackage + tableName);
         Field[] fields = objClass.getDeclaredFields();
@@ -1439,26 +1610,30 @@ public class BaseInterface extends HttpServlet {
                     if (cell == null) {
                         field.set(object, 0);
                     } else {
-                        if (Units.strIsEmpty(Units.getCellValue(cell))) {
+                        if (Units.strIsEmpty(Units.getStringCellValue(cell))) {
                             field.set(object, 0);
                         } else {
-                            field.set(object, Integer.valueOf(Units.subZeroAndDot(Units.getCellValue(cell))));
+                            field.set(object, Double.valueOf(Units.getStringCellValue(cell)).intValue());
                         }
                     }
                 } else if (field.getType() == float.class) {
                     if (cell == null) {
                         field.set(object, 0);
                     } else {
-                        field.set(object, Float.valueOf(Units.getCellValue(cell)));
+                        if (Units.strIsEmpty(Units.getStringCellValue(cell))) {
+                            field.set(object, 0);
+                        } else {
+                            field.set(object, Double.valueOf(Units.getStringCellValue(cell)).floatValue());
+                        }
                     }
                 } else if (field.getType() == double.class) {
                     if (cell == null) {
-                        field.set(object, false);
+                        field.set(object, 0);
                     } else {
-                        if (Units.strIsEmpty(Units.getCellValue(cell))) {
+                        if (Units.strIsEmpty(Units.getStringCellValue(cell))) {
                             field.set(object, 0);
                         } else {
-                            field.set(object, Double.valueOf(Units.getCellValue(cell)));
+                            field.set(object, Double.valueOf(Units.getStringCellValue(cell)));
                         }
                     }
                 } else if (field.getType() == boolean.class) {
@@ -1468,14 +1643,14 @@ public class BaseInterface extends HttpServlet {
                         if (Units.strIsEmpty(Units.getCellValue(cell))) {
                             field.set(object, false);
                         } else {
-                            field.set(object, Boolean.valueOf(Units.getCellValue(cell)));
+                            field.set(object, Boolean.valueOf(Units.getStringCellValue(cell)));
                         }
                     }
                 } else {
                     if (cell == null) {
                         field.set(object, null);
                     } else {
-                        field.set(object, Units.getCellValue(cell));
+                        field.set(object, Units.getStringCellValue(cell));
                     }
                 }
             }

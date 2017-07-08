@@ -30,7 +30,7 @@
     "detailTitles": {
         "tzYMonth": "调帐编号,10%",
         "supplierID": "供应商代码,10%",
-        "partCode": "部品件号,10%",
+        "partCode": "部品件号,20%",
         "partState": "部品状态,10%",
         "accountBalance": "账面结存,10%",
         "realBalance": "实物结存,10%",

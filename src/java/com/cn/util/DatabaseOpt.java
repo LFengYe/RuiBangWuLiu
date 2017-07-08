@@ -10,15 +10,21 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import org.apache.tomcat.jdbc.pool.DataSource;
 
 /**
  *
  * @author LFeng
  */
 public class DatabaseOpt {
+
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(DatabaseOpt.class);
-    
-    
+
     public Connection getConnectBase() {
         try {
             Properties prop = new Properties();
@@ -36,18 +42,20 @@ public class DatabaseOpt {
         }
         return null;
     }
-    
+
     /**
      * 连接数据库
      *
      * @return
      */
     public Connection getConnect() {
+        /*
         try {
             Properties prop = new Properties();
             prop.load(DatabaseOpt.class.getClassLoader().getResourceAsStream("./config.properties"));
             Class.forName(prop.getProperty("driverName"));
             Connection connect = DriverManager.getConnection(prop.getProperty("url"), prop.getProperty("username"), prop.getProperty("password"));
+            logger.info("获取数据库连接成功");
             return connect;
         } catch (ClassNotFoundException ex) {
             logger.error("找不类名错误", ex);
@@ -57,9 +65,56 @@ public class DatabaseOpt {
             logger.error("SQL错误", ex);
         } finally {
         }
+         */
+ /*
+        //普通连接池
+        Context ctx;
+        try {
+            ctx = new InitialContext();
+            Context envctx = (Context) ctx.lookup("java:comp/env");
+            DataSource ds = (DataSource) envctx.lookup("jdbc/zcdb");
+            Connection conn = ds.getConnection();
+            return conn;
+        } catch (NamingException e) {
+            logger.error("NamingException", e);
+        } catch (SQLException e) {
+            logger.error("SQL错误", e);
+        } finally {
+            
+        }
+         */
+
+        //Tomcat jdbc pool连接池
+        Context ctx;
+        try {
+            ctx = new InitialContext();
+            Context envctx = (Context) ctx.lookup("java:comp/env");
+            DataSource ds = (DataSource) envctx.lookup("jdbc/TestDB");
+            Future<Connection> futrue = ds.getConnectionAsync();
+            while (!futrue.isDone()) {
+                System.out.println("Connection is not yet available. Do some background work");
+                try {
+                    Thread.sleep(100); //simulate work       
+                } catch (InterruptedException x) {
+                    Thread.currentThread().interrupted();
+                }
+            }
+            Connection conn = futrue.get();
+            return conn;
+        } catch (NamingException e) {
+            logger.error("NamingException", e);
+        } catch (SQLException e) {
+            logger.error("SQL错误", e);
+        } catch (InterruptedException ex) {
+            logger.error("InterruptedException", ex);
+        } catch (ExecutionException ex) {
+            logger.error("ExecutionException", ex);
+        } finally {
+
+        }
         return null;
     }
-    
+
     /*
     public Connection getConnect() {
         try {
@@ -76,8 +131,8 @@ public class DatabaseOpt {
         }
         return null;
     }
-    */
-    /*
+     */
+ /*
     public Connection getConnectWithDataSource() {
         try {
             Context initContext = new InitialContext();
@@ -93,7 +148,7 @@ public class DatabaseOpt {
         }
         return null;
     }
-    */
+     */
     /**
      * 获取Redis数据库连接
      */
@@ -102,5 +157,5 @@ public class DatabaseOpt {
         Jedis jedis = new Jedis(Constants.REDIS_HOST, Constants.REDIS_PORT);
         return jedis;
     }
-    */
+     */
 }

@@ -8,6 +8,7 @@ package com.cn.servlet;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.ClassDescription;
+import com.cn.bean.Employee;
 import com.cn.bean.PartBaseInfo;
 import com.cn.bean.move.FXInWareHouse;
 import com.cn.bean.move.FXInWareHouseList;
@@ -17,6 +18,7 @@ import com.cn.bean.pro.KFJCBLPForFXCK;
 import com.cn.bean.pro.KFJCFXPForFXRK;
 import com.cn.bean.pro.KFJCLPForFXCK;
 import com.cn.controller.CommonController;
+import com.cn.controller.CommonOperate;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.RedisAPI;
 import com.cn.util.Units;
@@ -44,9 +46,8 @@ public class MoveInterface extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(MoveInterface.class);
 
-    private CommonController commonController;
-    private DatabaseOpt opt;
-
+//    private CommonController commonController;
+//    private DatabaseOpt opt;
     /**
      *
      * @throws ServletException
@@ -54,8 +55,8 @@ public class MoveInterface extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        commonController = new CommonController();
-        opt = new DatabaseOpt();
+//        commonController = new CommonController();
+//        opt = new DatabaseOpt();
     }
 
     /**
@@ -74,10 +75,14 @@ public class MoveInterface extends HttpServlet {
         String subUri = uri.substring(uri.lastIndexOf("/") + 1,
                 uri.lastIndexOf("."));
         String json = null;
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
+        //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
 
         try {
             System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
+            //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
             String rely = (paramsJson.getString("rely") == null) ? ("{}") : (paramsJson.getString("rely"));
@@ -90,7 +95,7 @@ public class MoveInterface extends HttpServlet {
             String details = paramsJson.getString("details");
             String detail = paramsJson.getString("detail");
             String fileName = paramsJson.getString("fileName");
-            String clientType = paramsJson.getString("type");
+            String operateType = (paramsJson.getString("type") == null) ? ("") : paramsJson.getString("type");
             String start = paramsJson.getString("start");
             String end = paramsJson.getString("end");
             int isHistory = paramsJson.getIntValue("isHistory");
@@ -102,7 +107,8 @@ public class MoveInterface extends HttpServlet {
             String importPath = getServletContext().getRealPath("/").replace("\\", "/") + "excelFile/";
 
             /*验证是否登陆*/
-            if (!"userLogin".equals(module) && session.getAttribute("user") == null) {
+            if (!"userLogin".equals(module)
+                    && (session.getAttribute("user") == null || session.getAttribute("employee") == null)) {
                 session.invalidate();
                 json = Units.objectToJson(-99, "未登陆", null);
                 PrintWriter out = response.getWriter();
@@ -117,6 +123,7 @@ public class MoveInterface extends HttpServlet {
                 }
                 return;
             }
+            Employee employee = (Employee) session.getAttribute("employee");
 
             switch (module) {
                 /**
@@ -210,8 +217,14 @@ public class MoveInterface extends HttpServlet {
                 case "返修出库": {
                     switch (operation) {
                         case "create": {
-                            //json = createOperate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXOutWareHouse", "FXOutWareHouseID", opt.getConnect());
-                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXOutWareHouse", datas, rely, "", "FXOutWareHouseID", opt.getConnect());
+                            String whereCase = "exists (select * from tblFXOutWareHouseList list left join viewGYSPartContainerInfo gys"
+                                    + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
+                                    + " where list.FXOutWareHouseID = viewFXOutWareHouse.FXOutWareHouseID"
+                                    + " and list.WareHouseManagername is null"
+                                    + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
+                            whereCase = (operateType.compareTo("app") == 0) ? (whereCase) : ("");
+
+                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXOutWareHouse", datas, rely, whereCase, "FXOutWareHouseID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"返修出库单号\\", ",@FXCK-" + Units.getNowTimeNoSeparator());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
@@ -239,20 +252,10 @@ public class MoveInterface extends HttpServlet {
                         }
                         case "delete": {
                             if (!Units.strIsEmpty(delete)) {
-                                ArrayList<Integer> delResult = commonController.dataBaseOperate(delete, "com.cn.bean.move.", "FXOutWareHouse", "delete", opt.getConnect());
-                                if (delResult.get(0) == 0) {
-                                    json = Units.objectToJson(0, "删除操作成功!", null);
-                                } else if (delResult.get(0) == 547) {
-                                    int count = 0;
-                                    for (int i = 1; i < delResult.size(); i++) {
-                                        if (delResult.get(i) != 1) {
-                                            count++;
-                                        }
-                                    }
-                                    json = Units.objectToJson(-1, "有" + count + "条数据不能删除, 入库单下存在明细数据!", null);
-                                } else {
-                                    json = Units.objectToJson(-1, "删除操作失败!", null);
-                                }
+                                CommonOperate operate = new CommonOperate();
+                                json = operate.batchDeleteOperate(delete, "com.cn.bean.move.", "FXOutWareHouse", "FXOutWareHouseID", "fxCKAuditTime");
+                            } else {
+                                json = Units.objectToJson(-1, "未选中数据!", null);
                             }
                             break;
                         }
@@ -289,9 +292,16 @@ public class MoveInterface extends HttpServlet {
                         }
                         case "request_detail": {
                             //json = queryOperate("com.cn.bean.move.", "view", "FXOutWareHouseList", "FXOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            if (operateType.compareToIgnoreCase("app") == 0) {
+                                JSONObject obj = new JSONObject();
+                                obj.put("fxCKAuditStaffName", session.getAttribute("user"));
+                                obj.put("fxCKAuditTime", Units.getNowTime());
+                                String auditInfo = "[" + obj.toJSONString() + "," + rely + "]";
+                                ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.move.", "FXOutWareHouse", "update", opt.getConnect());
+                            }
                             String fxOutWareHouseID = JSONObject.parseObject(rely).getString("fxOutWareHouseID");
                             String mainTabWhereSql = "FXOutWareHouseID = '" + fxOutWareHouseID + "'";
-                            System.out.println("mainTabWhereSql:" + mainTabWhereSql);
+                            //System.out.println("mainTabWhereSql:" + mainTabWhereSql);
                             List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXOutWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "FXOutWareHouseID", 0, opt.getConnect());
                             if (list != null && list.size() > 0) {
                                 FXOutWareHouse fXOutWareHouse = (FXOutWareHouse) list.get(0);
@@ -321,6 +331,16 @@ public class MoveInterface extends HttpServlet {
                                 Class objClass = Class.forName("com.cn.bean.move." + "FXOutWareHouseList");
                                 Method method = objClass.getMethod("getRecordCount", null);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
+                                String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
+                                        + " gys.SupplierID = viewFXOutWareHouseList.SupplierID"
+                                        + " and gys.PartCode = viewFXOutWareHouseList.PartCode"
+                                        + " and viewFXOutWareHouseList.WareHouseManagername is null"
+                                        + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
+                                if (!Units.strIsEmpty(whereSql)) {
+                                    detailWhereCase = whereSql + " and " + detailWhereCase;
+                                }
+                                whereSql = (operateType.compareTo("app") == 0) ? (detailWhereCase) : (whereSql);
+
                                 List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.move.", "FXOutWareHouseList", "*", whereSql, pageSize, pageIndex, "FXOutWareHouseID", 0, opt.getConnect());
 
                                 String result = "{}";
@@ -377,18 +397,23 @@ public class MoveInterface extends HttpServlet {
                                 if (JSONObject.parseObject(paramsJson.getString("rely")).getString("partState").compareTo("良品") == 0) {
                                     List<Object> list = commonController.proceduceQuery("spGetKFJCLPListForFXCK", proParams, "com.cn.bean.pro.KFJCLPForFXCK", opt.getConnect());
                                     if (list != null && list.size() > 0) {
+                                        List<Object> filterList = new ArrayList<>();
                                         for (Object obj : list) {
+                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                                continue;
+                                            }
                                             KFJCLPForFXCK fxck = (KFJCLPForFXCK) obj;
-                                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + fxck.getPartCode()), PartBaseInfo.class);
+                                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + fxck.getPartCode().toLowerCase()), PartBaseInfo.class);
                                             fxck.setPartID(baseInfo.getPartID());
                                             fxck.setPartName(baseInfo.getPartName());
 
+                                            filterList.add(fxck);
 //                                            PartCategory category = JSONObject.parseObject(RedisAPI.get("partCategory_" + baseInfo.getPartCategoryName()), PartCategory.class);
 //                                            fxck.setWareHouseManagerName(category.getWareHouseManagerName());
                                         }
 
                                         String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfJCLp"};
-                                        json = getSpecialTableJsonStr(list, "com.cn.bean.pro.KFJCLPForFXCK", keys, keysName, keysWidth, fieldsName, target, rely);
+                                        json = getSpecialTableJsonStr(filterList, "com.cn.bean.pro.KFJCLPForFXCK", keys, keysName, keysWidth, fieldsName, target, rely);
                                     } else {
                                         json = Units.objectToJson(-1, "数据为空!", null);
                                     }
@@ -396,17 +421,22 @@ public class MoveInterface extends HttpServlet {
                                 if (JSONObject.parseObject(paramsJson.getString("rely")).getString("partState").compareTo("不良品") == 0) {
                                     List<Object> list = commonController.proceduceQuery("spGetKFJCBLPListForFXCK", proParams, "com.cn.bean.pro.KFJCBLPForFXCK", opt.getConnect());
                                     if (list != null && list.size() > 0) {
+                                        List<Object> filterList = new ArrayList<>();
                                         for (Object obj : list) {
+                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                                continue;
+                                            }
                                             KFJCBLPForFXCK fxck = (KFJCBLPForFXCK) obj;
-                                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + fxck.getPartCode()), PartBaseInfo.class);
+                                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + fxck.getPartCode().toLowerCase()), PartBaseInfo.class);
                                             fxck.setPartID(baseInfo.getPartID());
                                             fxck.setPartName(baseInfo.getPartName());
 
+                                            filterList.add(fxck);
 //                                            PartCategory category = JSONObject.parseObject(RedisAPI.get("partCategory_" + baseInfo.getPartCategoryName()), PartCategory.class);
 //                                            fxck.setWareHouseManagerName(category.getWareHouseManagerName());
                                         }
                                         String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "blPAmount"};
-                                        json = getSpecialTableJsonStr(list, "com.cn.bean.pro.KFJCBLPForFXCK", keys, keysName, keysWidth, fieldsName, target, rely);
+                                        json = getSpecialTableJsonStr(filterList, "com.cn.bean.pro.KFJCBLPForFXCK", keys, keysName, keysWidth, fieldsName, target, rely);
                                     } else {
                                         json = Units.objectToJson(-1, "数据为空!", null);
                                     }
@@ -444,8 +474,14 @@ public class MoveInterface extends HttpServlet {
                 case "返修入库": {
                     switch (operation) {
                         case "create": {
-                            //json = createOperate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXInWareHouse", "FXInWareHouseID", opt.getConnect());
-                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXInWareHouse", datas, rely, "", "FXInWareHouseID", opt.getConnect());
+                            String whereCase = "exists (select * from tblFXInWareHouseList list left join viewGYSPartContainerInfo gys"
+                                    + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
+                                    + " where list.FXInWareHouseID = viewFXInWareHouse.FXInWareHouseID"
+                                    + " and list.WareHouseManagername is null"
+                                    + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
+                            whereCase = (operateType.compareTo("app") == 0) ? (whereCase) : ("");
+
+                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXInWareHouse", datas, rely, whereCase, "FXInWareHouseID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"返修入库单号\\", ",@FXRK-" + Units.getNowTimeNoSeparator());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
@@ -490,6 +526,13 @@ public class MoveInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
+                            if (operateType.compareToIgnoreCase("app") == 0) {
+                                JSONObject obj = new JSONObject();
+                                obj.put("fxRKAuditStaffName", session.getAttribute("user"));
+                                obj.put("fxRKAuditTime", Units.getNowTime());
+                                String auditInfo = "[" + obj.toJSONString() + "," + rely + "]";
+                                ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.move.", "FXInWareHouse", "update", opt.getConnect());
+                            }
                             //json = queryOperate("com.cn.bean.move.", "view", "FXInWareHouseList", "FXInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             String djInWareHouseID = JSONObject.parseObject(rely).getString("fxInWareHouseID");
                             String mainTabWhereSql = "FXInWareHouseID = '" + djInWareHouseID + "'";
@@ -511,6 +554,16 @@ public class MoveInterface extends HttpServlet {
                                 Class objClass = Class.forName("com.cn.bean.move." + "FXInWareHouseList");
                                 Method method = objClass.getMethod("getRecordCount", null);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
+                                String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
+                                        + " gys.SupplierID = viewFXInWareHouseList.SupplierID"
+                                        + " and gys.PartCode = viewFXInWareHouseList.PartCode"
+                                        + " and viewFXInWareHouseList.WareHouseManagername is null"
+                                        + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
+                                if (!Units.strIsEmpty(whereSql)) {
+                                    detailWhereCase = whereSql + " and " + detailWhereCase;
+                                }
+                                whereSql = (operateType.compareTo("app") == 0) ? (detailWhereCase) : (whereSql);
+
                                 List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.move.", "FXInWareHouseList", "*", whereSql, pageSize, pageIndex, "FXInWareHouseID", 0, opt.getConnect());
 
                                 String result = "{}";
@@ -564,20 +617,10 @@ public class MoveInterface extends HttpServlet {
                         }
                         case "delete": {
                             if (!Units.strIsEmpty(delete)) {
-                                ArrayList<Integer> delResult = commonController.dataBaseOperate(delete, "com.cn.bean.move.", "FXInWareHouse", "delete", opt.getConnect());
-                                if (delResult.get(0) == 0) {
-                                    json = Units.objectToJson(0, "删除操作成功!", null);
-                                } else if (delResult.get(0) == 547) {
-                                    int count = 0;
-                                    for (int i = 1; i < delResult.size(); i++) {
-                                        if (delResult.get(i) != 1) {
-                                            count++;
-                                        }
-                                    }
-                                    json = Units.objectToJson(-1, "有" + count + "条数据不能删除, 入库单下存在明细数据!", null);
-                                } else {
-                                    json = Units.objectToJson(-1, "删除操作失败!", null);
-                                }
+                                CommonOperate operate = new CommonOperate();
+                                json = operate.batchDeleteOperate(delete, "com.cn.bean.move.", "FXInWareHouse", "FXInWareHouseID", "fxRKAuditTime");
+                            } else {
+                                json = Units.objectToJson(-1, "未选中数据!", null);
                             }
                             break;
                         }
@@ -619,18 +662,23 @@ public class MoveInterface extends HttpServlet {
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
                                 List<Object> list = commonController.proceduceQuery("spGetKFJCFxpListForFXRK", proParams, "com.cn.bean.pro.KFJCFXPForFXRK", opt.getConnect());
                                 if (list != null && list.size() > 0) {
+                                    List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                            continue;
+                                        }
                                         KFJCFXPForFXRK fxrk = (KFJCFXPForFXRK) obj;
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + fxrk.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + fxrk.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         fxrk.setPartID(baseInfo.getPartID());
                                         fxrk.setPartName(baseInfo.getPartName());
 
+                                        filterList.add(fxrk);
 //                                        PartCategory category = JSONObject.parseObject(RedisAPI.get("partCategory_" + baseInfo.getPartCategoryName()), PartCategory.class);
 //                                        fxrk.setWareHouseManagerName(category.getWareHouseManagerName());
                                     }
 
                                     String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "fxPAmount"};
-                                    json = getSpecialTableJsonStr(list, "com.cn.bean.pro.KFJCFXPForFXRK", keys, keysName, keysWidth, fieldsName, target, rely);
+                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.pro.KFJCFXPForFXRK", keys, keysName, keysWidth, fieldsName, target, rely);
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
@@ -724,6 +772,7 @@ public class MoveInterface extends HttpServlet {
             json = Units.objectToJson(-1, "输入参数错误!", e.toString());
         }
 
+        //logger.info(Units.getIpAddress(request) + "response:" + subUri + ",time:" + (new Date().getTime()));
         PrintWriter out = response.getWriter();
 
         try {
@@ -742,6 +791,7 @@ public class MoveInterface extends HttpServlet {
     private String createOperateOnDate(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String datas,
             String rely, String whereCase, String orderField, Connection conn) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
@@ -788,6 +838,7 @@ public class MoveInterface extends HttpServlet {
             String whereCase, boolean isAll, Connection conn, int pageSize, int pageIndex) throws Exception {
         String json;
         String result = "{}";
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
         String whereSql = commonController.getWhereSQLStr(objClass, keyWord, rely, isAll);
@@ -833,6 +884,7 @@ public class MoveInterface extends HttpServlet {
             boolean isAll, Connection conn, int pageSize, int pageIndex) throws Exception {
         String json;
         String result = "{}";
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
 
@@ -881,6 +933,7 @@ public class MoveInterface extends HttpServlet {
             String orderField, String keyWord, String rely, boolean isAll, Connection conn, int pageSize, int pageIndex,
             String[] keys, String[] keysName, int[] keysWidth, String[] fieldsName) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
         List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);
@@ -972,6 +1025,8 @@ public class MoveInterface extends HttpServlet {
      * @throws InstantiationException
      */
     private String submitOperate(String beanPackage, String tableName, String update, String add, String delete, String connType) throws Exception {
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
         Connection conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
         if (!Units.strIsEmpty(update) && !(update.compareTo("[]") == 0)) {
             ArrayList<Integer> updateResult = commonController.dataBaseOperate(update, beanPackage, tableName, "update", conn);

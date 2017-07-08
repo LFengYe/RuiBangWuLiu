@@ -36,8 +36,8 @@ public class PartBaseInfo {
     private String partUnit;
     @FieldDescription(description = "单车用量", operate = "import")
     private int dCAmount;
-    @FieldDescription(description = "部品分类", operate = "import")
-    private String partCategoryName;
+//    @FieldDescription(description = "部品分类", operate = "import")
+//    private String partCategoryName;
     @FieldDescription(description = "备注", operate = "import")
     private String partBaseInfoRemark;
 //    @FieldDescription(description = "是否停用")
@@ -103,6 +103,7 @@ public class PartBaseInfo {
         this.pinyinAbb = pinyinAbb;
     }
 
+    /*
     public String getPartCategoryName() {
         return partCategoryName;
     }
@@ -110,6 +111,7 @@ public class PartBaseInfo {
     public void setPartCategoryName(String partCategoryName) {
         this.partCategoryName = partCategoryName;
     }
+    */
 
     public String getPartPicture() {
         return partPicture;

@@ -9,7 +9,6 @@
         "dCAmount": "单车用量,number,6",
         "disabled": "是否停用,bool",
         "pinyinAbb": "拼音助计,string,100",
-        "partCategoryName": "部品分类,@table",
         "partPicture": "部品图片,string,100",
         "partBaseInfoRemark": "备注,string,500"
     },
@@ -19,14 +18,13 @@
     "titles": {
         "partID": "部品编号,10%",
         "partName": "部品名称,12%",
-        "partCode": "部品件号,15%",
+        "partCode": "部品件号,20%",
         "autoStylingName": "使用车型,8%",
         "assemblingStation": "装配工位,10%",
         "partUnit": "部品单位,6%",
         "dCAmount": "单车用量,6%",
         "disabled": "是否停用,5%",
         "pinyinAbb": "拼音助计,10%",
-        "partCategoryName": "部品分类,10%",
         "partPicture": "部品图片,12%",
         "partBaseInfoRemark": "备注,12%"
     }

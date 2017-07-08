@@ -6,6 +6,7 @@
 package com.cn.util;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
@@ -165,6 +166,33 @@ public class RedisAPI {
             logger.error("Redis配置文件读取错误", ex);
         }
         return null;
+    }
+    
+    public static void delKeys(String pattern) {
+        try {
+            Properties prop = new Properties();
+            prop.load(RedisAPI.class.getClassLoader().getResourceAsStream("./config.properties"));
+            JedisPool pool = null;
+            Jedis jedis = null;
+            try {
+                pool = getPool(prop.getProperty("REDIS_HOST"), Integer.valueOf(prop.getProperty("REDIS_PORT")));
+                jedis = pool.getResource();
+                Iterator<String> keyIterator = jedis.keys(pattern).iterator();
+                while (keyIterator.hasNext()) {
+                    jedis.del(keyIterator.next());
+                }
+            } catch (Exception e) {
+                //释放redis对象
+                if (null != pool)
+                    pool.returnBrokenResource(jedis);
+                logger.error("Redis写入出错", e);
+            } finally {
+                //返还到连接池
+                returnResource(pool, jedis);
+            }
+        } catch (IOException ex) {
+            logger.error("Redis配置文件读取错误", ex);
+        }
     }
     
     public static String flushDB(){

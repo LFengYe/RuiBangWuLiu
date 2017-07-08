@@ -23,6 +23,8 @@ public class AutoStyling {
     
     @FieldDescription(description = "车型名称", operate = "import")
     private String autoStylingName;
+    @FieldDescription(description = "排序", operate = "import")
+    private int orderFlag;
 
     public String getAutoStylingName() {
         return autoStylingName;
@@ -30,6 +32,14 @@ public class AutoStyling {
 
     public void setAutoStylingName(String AutoStyling) {
         this.autoStylingName = AutoStyling;
+    }
+
+    public int getOrderFlag() {
+        return orderFlag;
+    }
+
+    public void setOrderFlag(int orderFlag) {
+        this.orderFlag = orderFlag;
     }
     
 }

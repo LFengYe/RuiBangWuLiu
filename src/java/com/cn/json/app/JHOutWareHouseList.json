@@ -1,25 +1,17 @@
 {
     "titles": {
-        "jhType": "计划类型",
         "jhDemandTime": "计划需求日期",
         "supplierID": "供应商代码",
-        "supplierName": "供应商名称",
         "partName": "部品名称",
         "partCode": "部品件号",
-        "inboundBatch": "入库批次",
-        "zdCustomerName": "终端客户",
-        "bhEmployeeName": "备货员",
-        "assemblingStation": "工位地址",
-        "jhCKProducerName": "计划员",
-        "autoStylingName": "车型",
         "jhCKAmount": "计划数量",
+        "inboundBatch": "入库批次",
+        "bhEmployeeName": "备货员",
         "outboundContainerName": "出库盛具",
         "outboundPackageAmount": "包装数量",
         "containerAmount": "盛具数量",
         "bhFinishedAmount": "完成箱数",
-        "jhOutWareHouseID": "计划出库单号",
-        "jhOutWareHouseListRemark": "备注",
         "jhStatusName": "状态",
-        "jhStatus": "操作"
+        "jhOutWareHouseListRemark": "备注"
     }
 }

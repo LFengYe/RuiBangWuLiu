@@ -41,6 +41,8 @@ public class GYSPartContainerInfo {
     private String outboundContainerName;
     @FieldDescription(description = "出库包装数量", operate = "import")
     private int outboundPackageAmount;
+    @FieldDescription(description = "部品分类", operate = "import")
+    private String partCategoryName;
     @FieldDescription(description = "备注", operate = "import")
     private String gysPartContainerInfoRemark;
     
@@ -139,5 +141,13 @@ public class GYSPartContainerInfo {
 
     public void setPartUnit(String partUnit) {
         this.partUnit = partUnit;
+    }
+
+    public String getPartCategoryName() {
+        return partCategoryName;
+    }
+
+    public void setPartCategoryName(String partCategoryName) {
+        this.partCategoryName = partCategoryName;
     }
 }

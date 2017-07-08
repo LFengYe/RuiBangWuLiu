@@ -75,9 +75,7 @@ function ajax(module, url, operation, data, successCallBack, failCallBack) {
                     window.parent.location.href = "login.html";
                 } else {
                     alert(data.message);
-
                     if (data.data) {
-                        console.log(data);
                         failCallBack(JSON.parse(data.data));
                     } else {
                         failCallBack();

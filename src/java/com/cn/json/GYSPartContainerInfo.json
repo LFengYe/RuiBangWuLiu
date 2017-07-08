@@ -7,6 +7,7 @@
         "inboundPackageAmount": "入库包装数量,number",
         "outboundContainerName": "出库盛具,@table",
         "outboundPackageAmount": "出库包装数量,number",
+        "partCategoryName": "部品分类,@table",
         "gysPartContainerInfoRemark": "备注,string,500"
     },
     "mustwrite": ["supplierID","partCode","inboundContainerName","inboundPackageAmount","outboundContainerName", "outboundPackageAmount"],
@@ -19,6 +20,7 @@
         "inboundPackageAmount": "入库包装数量,10%",
         "outboundContainerName": "出库盛具,10%",
         "outboundPackageAmount": "出库包装数量,10%",
+        "partCategoryName": "部品分类,10%",
         "gysPartContainerInfoRemark": "备注,20%"
     }
 }

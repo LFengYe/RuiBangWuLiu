@@ -22,7 +22,7 @@ public class LLJSList {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    @FieldDescription(description = "供应商ID", operate = "import")
+    @FieldDescription(description = "供应商代码", operate = "import")
     private String supplierID;
     @FieldDescription(description = "供应商姓名", operate = "display")
     private String supplierName;
@@ -36,11 +36,11 @@ public class LLJSList {
     private String autoStylingName;
     @FieldDescription(description = "单位", operate = "display")
     private String partUnit;
-    @FieldDescription(description = "结算数量", operate = "import")
+    @FieldDescription(description = "数量", operate = "import")
     private int llJSAmount;
     @FieldDescription(description = "领料结算单据号")
     private String llJSID;
-    @FieldDescription(description = "领料结算备注", operate = "import")
+    @FieldDescription(description = "备注", operate = "import")
     private String llJSListRemark;
 
     public String getSupplierID() {

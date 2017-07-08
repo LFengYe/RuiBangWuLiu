@@ -60,6 +60,16 @@ function deepCopy(source) {
     return result;
 }
 
+function compareFunc(param1, param2) {
+    var value1 = Number(param1);
+    var value2 = Number(param2);
+    if (!isNaN(value1) && !isNaN(value2)) {
+        return value1 - value2;
+    } else {
+        return param1.localeCompare(param2);
+    }
+}
+
 //获取url中的参数
 function getUrlParam(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
@@ -94,6 +104,12 @@ function getNowDate() {
 function getNowDateShort() {
     var t = new Date;
     var nowDate = [t.getFullYear(), t.getMonth() + 1, t.getDate()].join('-');
+    return nowDate;
+}
+
+function getPreCarryOverDate() {
+    var t = new Date;
+    var nowDate = [t.getFullYear(), t.getMonth(), 28].join('-');
     return nowDate;
 }
 //getMaxDate生成客户端本地时间

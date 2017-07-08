@@ -13,6 +13,7 @@
     var $history = $(".page2-container .page2-history");
     var $addItem = $(".page2-container .page2-addItem");
     var $deleteItem = $(".page2-container .page2-deleteItem");
+    var $finishItem = $(".page2-container .page2-finishItem");
     var $audit = $("#page2-audit");
     var $inspection = $("#page2-inspection");
     var $search = $(".page2-container .page2-query");
@@ -62,7 +63,7 @@
     var isHistory = 0;
 
     function initData() {
-        $(".start-time").val(getNowDateShort() + ' 00:00:00');
+        $(".start-time").val(getPreCarryOverDate() + ' 00:00:00');
         $(".end-time").val(getNowDateShort() + ' 23:59:59');
         primary = [];
         detailPrimary = [];
@@ -192,6 +193,32 @@
                 $mainTableBox.del2(arr);
                 mainCancelRows = [];
             }, function (data) {
+            });
+        });
+        
+        $finishItem.off("click");
+        $finishItem.click(function () {
+            if (mainCancelRows.length === 0) {
+                alert("未选中行, 不能确认");
+                return;
+            }
+            var arr = [];
+            var submitDel = [];
+            for (var index in mainCancelRows) {
+                if (mainCancelRows[index]) {
+                    arr.push(index);
+                    var whereObj = new Object();
+                    for (var proIndex in primary) {
+                        var proName = primary[proIndex];
+                        whereObj[proName] = mainCancelRows[index][proName];
+                    }
+                    submitDel.push(whereObj);
+                }
+            }
+            ajaxData("finish", {del: submitDel}, function () {
+                mainCancelRows = [];
+            }, function () {
+                mainCancelRows = [];
             });
         });
 
@@ -417,12 +444,13 @@
             displayLayer(2, "import_page.html?method=importDetail&item=" + escape(JSON.stringify(item)) + "&detail=" + escape(JSON.stringify(child)),
                     "数据导入", function () {
                         $chidTableBox.render(JSON.parse($("#import_return_data").val()));
-                        var importRes = $("#import_result").val(0);
+                        var importRes = $("#import_result").val();
                         if (importRes === 0) {
                             importSuccess = true;
                         } else {
                             importSuccess = false;
                         }
+                        $("#import_return_data").val("");
                     });
         });
     }
@@ -632,6 +660,7 @@
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
                 $deleteItem.css("display", "none");
+                $finishItem.css("display", "none");
                 $history.css("display", "inline-block");
 
                 $add.attr("disabled", "disabled");
@@ -650,6 +679,7 @@
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
                 $deleteItem.css("display", "none");
+                $finishItem.css("display", "none");
                 $history.css("display", "inline-block");
 
                 $add.attr("disabled", "disabled");
@@ -672,6 +702,7 @@
                 //$import.css("display", "none");
                 $deleteItem.css("display", "none");
                 $history.css("display", "inline-block");
+                $finishItem.css("display", "none");
 
                 $add.attr("disabled", "disabled");
                 $modify.attr("disabled", "disabled");
@@ -691,6 +722,7 @@
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
                 $deleteItem.css("display", "none");
+                $finishItem.css("display", "none");
                 $history.css("display", "inline-block");
 
                 $add.attr("disabled", "disabled");
@@ -712,6 +744,7 @@
                 $confirm.css("display", "inline-block");
                 //$import.css("display", "inline-block");
                 $deleteItem.css("display", "inline-block");
+                $finishItem.css("display", "inline-block");
                 $history.css("display", "none");
 
                 !type ? $add.attr("disabled", false) : $add.attr("disabled", "disabled");
@@ -731,6 +764,7 @@
                 $confirm.css("display", "inline-block");
                 //$import.css("display", "inline-block");
                 $deleteItem.css("display", "inline-block");
+                $finishItem.css("display", "none");
                 $history.css("display", "none");
 
                 !type ? $add.attr("disabled", false) : $add.attr("disabled", "disabled");
@@ -754,12 +788,13 @@
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
                 $deleteItem.css("display", "inline-block");
+                $finishItem.css("display", "none");
                 $history.css("display", "none");
 
                 $add.attr("disabled", false);
                 $modify.attr("disabled", false);
                 $cancel.attr("disabled", false);
-                $import.attr("disabled", false);
+                $import.attr("disabled", "disabled");
                 $print.attr("disabled", false);
                 !type ? $auditItem.attr("disabled", "disabled") : $auditItem.attr("disabled", false);
                 break;
@@ -773,6 +808,7 @@
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
                 $deleteItem.css("display", "inline-block");
+                $finishItem.css("display", "none");
                 $history.css("display", "none");
 
                 $add.attr("disabled", false);

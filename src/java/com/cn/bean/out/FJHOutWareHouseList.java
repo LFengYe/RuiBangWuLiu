@@ -48,6 +48,8 @@ public class FJHOutWareHouseList {
     private String autoStylingName;
     @FieldDescription(description = "数量", operate = "import")
     private int fjhCKAmount;
+    //@FieldDescription(description = "良品数量(最大出库数量)", operate = "import")
+    private int lpAmount;
     @FieldDescription(description = "非计划出库完成时间")
     private String fjhCKTime;
     @FieldDescription(description = "备注", operate = "import")
@@ -175,5 +177,13 @@ public class FJHOutWareHouseList {
 
     public void setListNumber(int listNumber) {
         this.listNumber = listNumber;
+    }
+
+    public int getLpAmount() {
+        return lpAmount;
+    }
+
+    public void setLpAmount(int lpAmount) {
+        this.lpAmount = lpAmount;
     }
 }

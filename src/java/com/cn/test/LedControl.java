@@ -15,10 +15,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 public class LedControl {
@@ -84,18 +82,18 @@ public class LedControl {
 
     public static void setLedAreaCode(String partCode, String supplierID) {
         //System.out.println("partStore:" + RedisAPI.get("partStore_" + supplierID + "_" + partCode));
-        PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + supplierID + "_" + partCode), PartStore.class);
+        PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + supplierID + "_" + partCode.toLowerCase()), PartStore.class);
         //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
-        AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()), AreaLedIPInfo.class);
+        AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
         setLedAreaCode(ledIPInfo);
     }
 
     public static void setLedPlanList(JHOutWareHouseList list) {
         try {
             //System.out.println("partStore:" + RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode()));
-            PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode()), PartStore.class);
+            PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode().toLowerCase()), PartStore.class);
             //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
-            AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()), AreaLedIPInfo.class);
+            AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
             LedPlan plan = new LedPlan();
             plan.setPartCode(list.getPartCode());
             plan.setPartName(list.getPartName());

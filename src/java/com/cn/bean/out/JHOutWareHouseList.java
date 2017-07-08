@@ -39,7 +39,7 @@ public class JHOutWareHouseList implements Comparable{
     private String inboundBatch;
     @FieldDescription(description = "车型", operate = "display")
     private String autoStylingName;
-    @FieldDescription(description = "计划出库数量", operate = "import")
+    @FieldDescription(description = "数量", operate = "import")
     private int jhCKAmount;
     @FieldDescription(description = "出库盛具", operate = "display")
     private String outboundContainerName;
@@ -51,10 +51,12 @@ public class JHOutWareHouseList implements Comparable{
     private String jhOutWareHouseListRemark;
     @FieldDescription(description = "计划出库单号")
     private String jhOutWareHouseID;
-    @FieldDescription(description = "备注", operate = "display")
+    @FieldDescription(description = "状态", operate = "display")
     private int jhStatus;
     @FieldDescription(description = "制单时间", type = "date", operate = "display")
     private String jhCKProduceTime;
+    @FieldDescription(description = "计划需求时间", operate = "display")
+    private String jhDemandTime;
 
     public String getSupplierID() {
         return supplierID;
@@ -196,5 +198,13 @@ public class JHOutWareHouseList implements Comparable{
 
     public void setJhCKProduceTime(String jhCKProduceTime) {
         this.jhCKProduceTime = jhCKProduceTime;
+    }
+
+    public String getJhDemandTime() {
+        return jhDemandTime;
+    }
+
+    public void setJhDemandTime(String jhDemandTime) {
+        this.jhDemandTime = jhDemandTime;
     }
 }

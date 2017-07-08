@@ -10,21 +10,16 @@ import com.cn.bean.*;
 import com.cn.controller.CommonController;
 import com.cn.controller.PlatformUserInfoController;
 import com.cn.util.DatabaseOpt;
-import com.cn.util.ExportExcel;
 import com.cn.util.Units;
 import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -33,11 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -50,9 +40,8 @@ public class DataInterface extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(DataInterface.class);
 
-    private CommonController commonController;
-    private DatabaseOpt opt;
-
+//    private CommonController commonController;
+//    private DatabaseOpt opt;
     /**
      *
      * @throws ServletException
@@ -60,8 +49,8 @@ public class DataInterface extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        commonController = new CommonController();
-        opt = new DatabaseOpt();
+//        commonController = new CommonController();
+//        opt = new DatabaseOpt();
     }
 
     /**
@@ -80,10 +69,14 @@ public class DataInterface extends HttpServlet {
         String subUri = uri.substring(uri.lastIndexOf("/") + 1,
                 uri.lastIndexOf("."));
         String json = null;
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
+        //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
 
         try {
-            System.out.println(subUri + ",params:" + params);
+            //System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
+            //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
             String rely = (paramsJson.getString("rely") == null) ? ("{}") : (paramsJson.getString("rely"));
@@ -137,7 +130,7 @@ public class DataInterface extends HttpServlet {
                                 Employee employee = (Employee) res.get(0);
                                 if (employee.getEmployeePassword().compareTo(paramsJson.getString("password")) == 0) {
                                     session.setAttribute("user", paramsJson.getString("username"));
-//                                    System.out.println("username:" + session.getAttribute("user"));
+                                    session.setAttribute("employee", employee);
                                     String whereCase = "RoleCode in ('" + employee.getEmployeeTypeCode() + "')";
                                     List<Object> roleRight = commonController.dataBaseQuery("table", "com.cn.bean.", "PlatformRoleRight", "*", whereCase, Integer.MAX_VALUE, 1, "RoleCode", 0, opt.getConnectBase());
                                     if (roleRight != null && roleRight.size() > 0) {
@@ -161,7 +154,10 @@ public class DataInterface extends HttpServlet {
                                             json = Units.objectToJson(0, "登陆成功!", menuJson);
                                         }
                                         if (type.compareTo("app") == 0) {
-                                            json = Units.objectToJson(0, "登陆成功!", roleRightList);
+                                            JSONObject object = new JSONObject();
+                                            object.put("menuJson", menuJson);
+                                            object.put("employee", employee);
+                                            json = Units.objectToJson(0, "登陆成功!", object);
                                         }
                                     } else {
                                         json = Units.objectToJson(-1, "没有为用户分配权限!", null);
@@ -185,6 +181,7 @@ public class DataInterface extends HttpServlet {
                             switch (result) {
                                 case 0:
                                     session.setAttribute("user", paramsJson.getString("username"));
+                                    session.setAttribute("employee", null);
                                     /*获取用户角色信息*/
                                     String whereCase = "UserLoginAccount = '" + paramsJson.getString("username") + "'";
                                     List<Object> userRole = commonController.dataBaseQuery("table", "com.cn.bean.", "PlatformUserRole", "*", whereCase, Integer.MAX_VALUE, 1, "UserLoginAccount", 0, opt.getConnectBase());
@@ -366,6 +363,7 @@ public class DataInterface extends HttpServlet {
             logger.error("错误信息:" + e.getMessage(), e);
             json = Units.objectToJson(-1, "输入参数错误!", e.toString());
         }
+        //logger.info(Units.getIpAddress(request) + "response:" + subUri + ",time:" + (new Date().getTime()));
 
         PrintWriter out = response.getWriter();
 
@@ -398,6 +396,7 @@ public class DataInterface extends HttpServlet {
      */
     private String createOperateWithFilter(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String whereCase, String orderField, Connection conn) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
@@ -436,6 +435,7 @@ public class DataInterface extends HttpServlet {
             String whereCase, boolean isAll, Connection conn, int pageSize, int pageIndex) throws Exception {
         String json;
         String result = "{}";
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
         String whereSql = commonController.getWhereSQLStr(objClass, keyWord, rely, isAll);
@@ -482,6 +482,7 @@ public class DataInterface extends HttpServlet {
             String orderField, String keyWord, String rely, boolean isAll, Connection conn, int pageSize, int pageIndex,
             String[] keys, String[] keysName, int[] keysWidth, String[] fieldsName) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
         List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);

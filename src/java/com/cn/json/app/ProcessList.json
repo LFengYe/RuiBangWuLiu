@@ -8,7 +8,6 @@
         "autoStylingName": "车型",
         "packingNumber": "箱号",
         "packingAmount": "数量",
-        "jhOutWareHouseID": "计划单号",
-        "operate":"操作"
+        "jhOutWareHouseID": "计划单号"
     }
 }

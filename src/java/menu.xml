@@ -35,8 +35,8 @@
         <second hypelnk="page2"  id="10403" text="现场结算" url="out.do"></second>
         <second hypelnk="page2"  id="10416" text="领料结算" url="out.do"></second>
         <second hypelnk="page2"  id="10404" text="部品退货" url="out.do"></second>
-        <second hypelnk="page2"  id="10414" text="分装入库" url="out.do"></second>
-        <second hypelnk="page2"  id="10415" text="分装出库" url="out.do"></second>
+        <second hypelnk="page1"  id="10414" text="分装入库" url="out.do"></second>
+        <second hypelnk="page1"  id="10415" text="分装出库" url="out.do"></second>
         <second hypelnk="page2"  id="10405" text="备货确认" url="out.do"></second>
         <second hypelnk="page2"  id="10406" text="领货确认" url="out.do"></second>
         <second hypelnk="page2"  id="10407" text="配送确认" url="out.do"></second>
@@ -140,5 +140,45 @@
         <second hypelnk=""  id="10706" text="权限设置" url="action.do"></second>
         <second hypelnk=""  id="10707" text="结转管理" url="action.do"></second>
         <second hypelnk=""  id="10708" text="修改密码" url="action.do"></second>
+    </first>
+    <first hypelnk="app"  id="801" text="备货管理" url="app.do">
+        <second hypelnk="ic_stocking1"  id="8011" text="一工厂备货" url="app.do"></second>
+        <second hypelnk="ic_stocking2"  id="8012" text="二工厂备货" url="app.do"></second>
+        <second hypelnk="ic_stocking3"  id="8013" text="三工厂备货" url="app.do"></second>
+    </first>
+    <first hypelnk="app"  id="802" text="领货管理" url="app.do">
+        <second hypelnk="ic_picking1"  id="8021" text="一工厂领货" url="app.do"></second>
+        <second hypelnk="ic_picking2"  id="8022" text="二工厂领货" url="app.do"></second>
+        <second hypelnk="ic_picking3"  id="8023" text="三工厂领货" url="app.do"></second>
+    </first>
+    <first hypelnk="app"  id="803" text="配送管理" url="app.do">
+        <second hypelnk="ic_distribution1"  id="8031" text="一工厂配送" url="app.do"></second>
+        <second hypelnk="ic_distribution2"  id="8032" text="二工厂配送" url="app.do"></second>
+        <second hypelnk="ic_distribution3"  id="8033" text="三工厂配送" url="app.do"></second>
+    </first>
+    <first hypelnk="app"  id="804" text="库房作业管理" url="">
+        <second hypelnk="ic_out_finished"  id="8041" text="非生产领料" url="out.do"></second>
+        <second hypelnk="ic_return_goods"  id="8042" text="部品退货" url="out.do"></second>
+        <second hypelnk="ic_rework_out"  id="8045" text="返修出库" url="move.do"></second>
+        <second hypelnk="ic_rework_in"  id="8046" text="返修入库" url="move.do"></second>
+        <second hypelnk="ic_return_storehouse"  id="8047" text="终端退库" url="in.do"></second>
+        <second hypelnk="ic_inspection"  id="8048" text="报检信息" url="move.do"></second>
+    </first>
+    <first hypelnk="app"  id="805" text="报表查询" url="report.do">
+        <second hypelnk="ic_out_finished"  id="8052" text="部品计划完成情况" url="report.do"></second>
+        <second hypelnk="ic_stock_alarm"  id="8053" text="部品报警明细表" url="report.do"></second>
+        <second hypelnk="ic_send_check_in"  id="8054" text="良品入库报表" url="report.do"></second>
+        <second hypelnk="ic_rework_out"  id="8058" text="良品返修出库" url="report.do"></second>
+        <second hypelnk="ic_rework_out"  id="8059" text="不良品返修出库" url="report.do"></second>
+        <second hypelnk="ic_rework_in"  id="80510" text="返修良品入库" url="report.do"></second>
+        <second hypelnk="ic_rework_in"  id="80511" text="返修不良品入库" url="report.do"></second>
+        <second hypelnk="ic_return_storehouse"  id="8055" text="部品退库分录" url="report.do"></second>
+        <second hypelnk="ic_return_goods"  id="8056" text="退货出库报表" url="report.do"></second>
+        <second hypelnk="ic_stock_inquiry"  id="8057" text="良品库存报表" url="report.do"></second>
+        <second hypelnk="ic_inspection"  id="8051" text="报检信息查询" url="report.do"></second>
+    </first>
+    <first hypelnk="app"  id="806" text="系统设置" url="app.do">
+        <second hypelnk="ic_system_setting"  id="8061" text="修改密码" url=""></second>
+        <second hypelnk="ic_user_manager"  id="8062" text="参数设置" url=""></second>
     </first>
 </menu>

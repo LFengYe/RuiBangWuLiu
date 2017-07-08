@@ -36,7 +36,7 @@ public class ProcessListController {
         
         try {
             opt = new DatabaseOpt();
-            conn = opt.getConnect();
+            conn = opt.getConnect();//获取数据库连接
             statement = conn.prepareCall("{call tbConfirmBHListForKGY(?, ?, ?, ?, ?, ?, ?)}");
             statement.setString("JHOutWareHouseID", jhOutWareHouseID);
             statement.setString("PartCode", PartCode);
@@ -50,6 +50,7 @@ public class ProcessListController {
         } catch (SQLException ex) {
             logger.error("数据库执行出错", ex);
         } finally {
+            //关闭数据库连接
             try {
                 if (statement != null) {
                     statement.close();

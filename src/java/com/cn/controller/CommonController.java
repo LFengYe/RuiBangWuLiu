@@ -24,6 +24,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -413,11 +414,10 @@ public class CommonController {
                         }
                     }
                 }
-
                 result.add(object);
             }
             objClass.getMethod("setRecordCount", int.class).invoke(null, statement.getInt("recordCount"));
-
+            set.close();
             return result;
         } catch (SQLException ex) {
             logger.error("数据库执行出错", ex);
@@ -618,6 +618,7 @@ public class CommonController {
                 }
                 result.add(object);
             }
+            set.close();
             return result;
         } catch (SQLException e) {
             
@@ -791,6 +792,30 @@ public class CommonController {
 //        System.out.println("where date sql:" + result);
         return (result == null) ? "" : "(" + result + ")";
     }
+    
+    public String getWhereSQLStrWithArray(JSONArray array) {
+        String result = null;
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject obj = array.getJSONObject(i);
+            Iterator iterator = obj.entrySet().iterator();
+            String item = null;
+            while (iterator.hasNext()) {
+                Map.Entry<String, String> entry = (Map.Entry<String, String>) iterator.next();
+                if (item != null) {
+                    item += " and " + entry.getKey() + " = '" + entry.getValue() + "'";
+                } else {
+                    item = entry.getKey() + " = '" + entry.getValue() + "'";
+                }
+            }
+            
+            if (result != null) {
+                result += " or (" + item + ")";
+            } else {
+                result = "(" + item + ")";
+            }
+        }
+        return result;
+    }
 
     /**
      * 获取不同类型字段名的SQL字符串
@@ -923,7 +948,7 @@ public class CommonController {
 
         Row headerRow = sheet.getRow(0);
         //如果第一行标题行为空或上传数据列数和类的字段描述长度不一致, 返回数据格式不正确
-//        System.out.println("cells num:" + headerRow.getPhysicalNumberOfCells() + ",des size:" + fieldDes.size());
+        //System.out.println("cells num:" + headerRow.getPhysicalNumberOfCells() + ",des size:" + fieldDes.size());
         if (headerRow == null || headerRow.getPhysicalNumberOfCells() != fieldDes.size()) {
             //json = Units.objectToJson(-1, "上传数据格式不正确, 请先下载模板, 按照模板格式录入数据", null);
             return null;
@@ -949,52 +974,60 @@ public class CommonController {
             if (row == null) {
                 continue;
             }
+            if (Units.isEmptyRowForExcel(row)) {
+                continue;
+            }
 
             Object object = objClass.newInstance();
             for (int j = 0; j < accessFields.size(); j++) {
                 Field field = accessFields.get(j);
                 field.setAccessible(true);
                 Cell cell = row.getCell(templateDataIndex[j]);
-//                String fieldType = field.getGenericType().toString();
-
                 if (field.getType() == int.class) {
                     if (cell == null) {
                         field.set(object, 0);
                     } else {
-//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
-                        field.set(object, Double.valueOf(Units.getStringCellValue(cell)).intValue());
+                        if (Units.strIsEmpty(Units.getStringCellValue(cell))) {
+                            field.set(object, 0);
+                        } else {
+                            field.set(object, Double.valueOf(Units.getStringCellValue(cell)).intValue());
+                        }
                     }
                 } else if (field.getType() == float.class) {
                     if (cell == null) {
                         field.set(object, 0);
                     } else {
-                        field.set(object, Double.valueOf(Units.getStringCellValue(cell)).floatValue());
-//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
-//                        field.set(object, (float) row.getCell(templateDataIndex[j]).getNumericCellValue());
+                        if (Units.strIsEmpty(Units.getStringCellValue(cell))) {
+                            field.set(object, 0);
+                        } else {
+                            field.set(object, Double.valueOf(Units.getStringCellValue(cell)).floatValue());
+                        }
                     }
                 } else if (field.getType() == double.class) {
                     if (cell == null) {
                         field.set(object, 0);
                     } else {
-                        field.set(object, Double.valueOf(Units.getStringCellValue(cell)));
-//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_NUMERIC);
-//                        field.set(object, row.getCell(templateDataIndex[j]).getNumericCellValue());
+                        if (Units.strIsEmpty(Units.getStringCellValue(cell))) {
+                            field.set(object, 0);
+                        } else {
+                            field.set(object, Double.valueOf(Units.getStringCellValue(cell)));
+                        }
                     }
                 } else if (field.getType() == boolean.class) {
                     if (cell == null) {
                         field.set(object, false);
                     } else {
-                        field.set(object, Boolean.valueOf(Units.getStringCellValue(cell)));
-//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_BOOLEAN);
-//                        field.set(object, row.getCell(templateDataIndex[j]).getBooleanCellValue());
+                        if (Units.strIsEmpty(Units.getStringCellValue(cell))) {
+                            field.set(object, false);
+                        } else {
+                            field.set(object, Boolean.valueOf(Units.getStringCellValue(cell)));
+                        }
                     }
                 } else {
                     if (cell == null) {
                         field.set(object, "");
                     } else {
                         field.set(object, Units.getStringCellValue(cell));
-//                        row.getCell(templateDataIndex[j]).setCellType(Cell.CELL_TYPE_STRING);
-//                        field.set(object, row.getCell(templateDataIndex[j]).getStringCellValue());
                     }
 
                 }

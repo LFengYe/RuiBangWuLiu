@@ -38,14 +38,13 @@ public class AppInterface extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(DataInterface.class);
 
-    private CommonController commonController;
-    private DatabaseOpt opt;
-
+//    private CommonController commonController;
+//    private DatabaseOpt opt;
     @Override
     public void init() throws ServletException {
         super.init();
-        commonController = new CommonController();
-        opt = new DatabaseOpt();
+//        commonController = new CommonController();
+//        opt = new DatabaseOpt();
     }
 
     /**
@@ -63,9 +62,11 @@ public class AppInterface extends HttpServlet {
         String uri = request.getRequestURI();
         String subUri = uri.substring(uri.lastIndexOf("/") + 1,
                 uri.lastIndexOf("."));
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
         String json = null;
         try {
-            System.out.println(subUri + ",params:" + params);
+            //System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
@@ -75,7 +76,8 @@ public class AppInterface extends HttpServlet {
             String importPath = getServletContext().getRealPath("/").replace("\\", "/") + "excelFile/";
 
             /*验证是否登陆*/
-            if (!"userLogin".equals(module) && session.getAttribute("user") == null) {
+            if (!"userLogin".equals(module)
+                    && (session.getAttribute("user") == null || session.getAttribute("employee") == null)) {
                 session.invalidate();
                 json = Units.objectToJson(-99, "未登陆", null);
                 PrintWriter out = response.getWriter();
@@ -90,7 +92,9 @@ public class AppInterface extends HttpServlet {
                 }
                 return;
             }
-            
+            Employee employee = (Employee) session.getAttribute("employee");
+            System.out.println("employee:" + JSONObject.toJSONString(employee));
+
             switch (module) {
                 //<editor-fold desc="用户登陆模板">
                 case "userLogin": {
@@ -101,9 +105,10 @@ public class AppInterface extends HttpServlet {
                             List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.", "Employee", "*", whereSql, 1, 1, "EmployeeName", 1, opt.getConnect());
                             String type = paramsJson.getString("type");
                             if (res != null && res.size() > 0) {
-                                Employee employee = (Employee) res.get(0);
+                                Employee loginEmp = (Employee) res.get(0);
                                 if (employee.getEmployeePassword().compareTo(paramsJson.getString("password")) == 0) {
                                     session.setAttribute("user", paramsJson.getString("username"));
+                                    session.setAttribute("employee", loginEmp);
                                     String whereCase = "RoleCode in ('" + employee.getEmployeeTypeCode() + "')";
                                     List<Object> roleRight = commonController.dataBaseQuery("table", "com.cn.bean.", "PlatformRoleRight", "*", whereCase, Integer.MAX_VALUE, 1, "RoleCode", 0, opt.getConnectBase());
                                     if (roleRight != null && roleRight.size() > 0) {
@@ -142,116 +147,108 @@ public class AppInterface extends HttpServlet {
                 case "备货管理": {
                     switch (operation) {
                         case "create": {
-                            String whereSql = "EmployeeName = '" + paramsJson.getString("username") + "'";
-                            List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.", "Employee", "*", whereSql, 1, 1, "EmployeeName", 1, opt.getConnect());
-                            if (res != null && res.size() > 0) {
-                                Employee employee = (Employee) res.get(0);
-                                String employeeType = employee.getEmployeeType();
-                                if (employeeType.compareTo("仓管员") == 0) {
-                                    JSONObject proParams = new JSONObject();
-                                    proParams.put("WareHouseManagerName", "string," + paramsJson.getString("username"));
-                                    proParams.put("StartTime", "string," + paramsJson.getString("startTime"));
-                                    proParams.put("EndTime", "string," + paramsJson.getString("endTime"));
-                                    proParams.put("ZDCustomerID", "string," + paramsJson.getString("ZDCustomerID"));
-                                    proParams.put("IsFinished", "int," + paramsJson.getString("isFinished"));
-                                    StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "JHOutWareHouseList.json"));
-                                    List<Object> list = commonController.proceduceQuery("tbGetJHCKBHListForKGY", proParams, "com.cn.bean.app.JHOutWareHouseList", opt.getConnect());
-                                    if (list != null && list.size() > 0) {
-                                        for (Object obj : list) {
-                                            JHOutWareHouseList wareHouseList = (JHOutWareHouseList) obj;
-                                            Customer supplier = JSONObject.parseObject(RedisAPI.get("customer_" + wareHouseList.getSupplierID()), Customer.class);
-                                            wareHouseList.setSupplierName(supplier.getCustomerAbbName());
-                                            Customer zdCustomer = JSONObject.parseObject(RedisAPI.get("customer_" + wareHouseList.getZdCustomerID()), Customer.class);
-                                            wareHouseList.setZdCustomerName(zdCustomer.getCustomerAbbName());
-                                            GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(wareHouseList.getSupplierID() + "_" + wareHouseList.getPartCode()), GYSPartContainerInfo.class);
-                                            wareHouseList.setOutboundContainerName(containerInfo.getOutboundContainerName());
-                                            wareHouseList.setOutboundPackageAmount(containerInfo.getOutboundPackageAmount());
-                                        }
-                                        buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
-                                        json = Units.objectToJson(0, "", buffer.toString());
-                                    } else {
-                                        json = Units.objectToJson(-1, "数据为空!", null);
+                            String employeeType = employee.getEmployeeType();
+                            if (employeeType.compareTo("仓管员") == 0) {
+                                JSONObject proParams = new JSONObject();
+                                proParams.put("WareHouseManagerName", "string," + employee.getEmployeeName());
+                                proParams.put("StartTime", "string," + paramsJson.getString("startTime"));
+                                proParams.put("EndTime", "string," + paramsJson.getString("endTime"));
+                                proParams.put("ZDCustomerID", "string," + paramsJson.getString("ZDCustomerID"));
+                                proParams.put("IsFinished", "int," + paramsJson.getString("isFinished"));
+                                StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "JHOutWareHouseList.json"));
+                                List<Object> list = commonController.proceduceQuery("tbGetJHCKBHListForKGY", proParams, "com.cn.bean.app.JHOutWareHouseList", opt.getConnect());
+                                if (list != null && list.size() > 0) {
+                                    for (Object obj : list) {
+                                        JHOutWareHouseList wareHouseList = (JHOutWareHouseList) obj;
+                                        Customer supplier = JSONObject.parseObject(RedisAPI.get("customer_" + wareHouseList.getSupplierID()), Customer.class);
+                                        wareHouseList.setSupplierName(supplier.getCustomerAbbName());
+                                        Customer zdCustomer = JSONObject.parseObject(RedisAPI.get("customer_" + wareHouseList.getZdCustomerID()), Customer.class);
+                                        wareHouseList.setZdCustomerName(zdCustomer.getCustomerAbbName());
+                                        GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(wareHouseList.getSupplierID() + "_" + wareHouseList.getPartCode().toLowerCase()), GYSPartContainerInfo.class);
+                                        wareHouseList.setOutboundContainerName(containerInfo.getOutboundContainerName());
+                                        wareHouseList.setOutboundPackageAmount(containerInfo.getOutboundPackageAmount());
                                     }
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
                                 }
-                                if (employeeType.compareTo("备货员") == 0) {
-                                    JSONObject proParams = new JSONObject();
-                                    proParams.put("BHStaff", "string," + paramsJson.getString("username"));
-                                    StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "ProcessList.json"));
-                                    List<Object> list = commonController.proceduceQuery("tbGetJHCKBHListForBHY", proParams, "com.cn.bean.app.ProcessList", opt.getConnect());
-                                    if (list != null && list.size() > 0) {
-                                        list.stream().map((obj) -> (ProcessList) obj).map((processList) -> {
-                                            Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + processList.getSupplierID()), Customer.class);
-                                            processList.setSupplierName(customer.getCustomerAbbName());
-                                            return processList;
-                                        }).forEachOrdered((processList) -> {
-                                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + processList.getPartCode()), PartBaseInfo.class);
-                                            processList.setPartName(baseInfo.getPartName());
-                                            processList.setAutoStylingName(baseInfo.getAutoStylingName());
-                                        });
-                                        buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
-                                        json = Units.objectToJson(0, "", buffer.toString());
-                                    } else {
-                                        json = Units.objectToJson(-1, "数据为空!", null);
-                                    }
+                            }
+                            if (employeeType.compareTo("备货员") == 0) {
+                                JSONObject proParams = new JSONObject();
+                                proParams.put("BHStaff", "string," + employee.getEmployeeName());
+                                StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "ProcessList.json"));
+                                List<Object> list = commonController.proceduceQuery("tbGetJHCKBHListForBHY", proParams, "com.cn.bean.app.ProcessList", opt.getConnect());
+                                if (list != null && list.size() > 0) {
+                                    list.stream().map((obj) -> (ProcessList) obj).map((processList) -> {
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + processList.getSupplierID()), Customer.class);
+                                        processList.setSupplierName(customer.getCustomerAbbName());
+                                        return processList;
+                                    }).forEachOrdered((processList) -> {
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + processList.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        processList.setPartName(baseInfo.getPartName());
+                                        processList.setAutoStylingName(baseInfo.getAutoStylingName());
+                                    });
+                                    buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
+                                    json = Units.objectToJson(0, "", buffer.toString());
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
                                 }
                             }
                             break;
                         }
                         case "confirm": {
                             JHOutWareHouseList list = JSONObject.parseObject(params, JHOutWareHouseList.class);
-                            String whereSql = "EmployeeName = '" + paramsJson.getString("username") + "'";
-                            List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.", "Employee", "*", whereSql, 1, 1, "EmployeeName", 1, opt.getConnect());
-                            if (res != null && res.size() > 0) {
-                                Employee employee = (Employee) res.get(0);
-                                String employeeType = employee.getEmployeeType();
-                                if (employeeType.compareTo("仓管员") == 0) {
-                                    ProcessListController controller = new ProcessListController();
-                                    int result = controller.bhConfirmForKGY(
-                                            paramsJson.getString("jhOutWareHouseID"),
-                                            paramsJson.getString("partCode"),
-                                            paramsJson.getString("supplierID"),
-                                            paramsJson.getString("inboundBatch"),
-                                            paramsJson.getIntValue("jhStatus"),
-                                            paramsJson.getString("remark"));
-                                    if (result == 0) {
-                                        if (paramsJson.getIntValue("jhStatus") == 0
-                                                || paramsJson.getIntValue("jhStatus") == -2) {
-                                            new Thread() {
-                                                @Override
-                                                public void run() {
-                                                    LedControl.setLedPlanList(list);
-                                                }
-                                            }.start();
-                                        }
-                                        json = Units.objectToJson(0, "确认成功!", null);
-                                    } else if (result == 1) {
-                                        json = Units.objectToJson(1, "备货未完成!", null);
-                                    } else if (result == 2) {
-                                        json = Units.objectToJson(2, "存在未完成计划!", null);
-                                    } else {
-                                        json = Units.objectToJson(-1, "确认失败!", null);
-                                    }
-                                }
-                                if (employeeType.compareTo("备货员") == 0) {
-                                    ProcessListController controller = new ProcessListController();
-                                    int result = controller.bhConfirmForBHY(
-                                            paramsJson.getString("jhOutWareHouseID"),
-                                            paramsJson.getString("partCode"),
-                                            paramsJson.getString("supplierID"),
-                                            paramsJson.getIntValue("packingNumber"),
-                                            paramsJson.getString("inboundBatch"));
-                                    if (result == 0) {
-                                        json = Units.objectToJson(0, "确认成功!", null);
-                                    } else if (result == 1) {
+
+                            String employeeType = employee.getEmployeeType();
+                            if (employeeType.compareTo("仓管员") == 0) {
+                                ProcessListController controller = new ProcessListController();
+                                int result = controller.bhConfirmForKGY(
+                                        paramsJson.getString("jhOutWareHouseID"),
+                                        paramsJson.getString("partCode"),
+                                        paramsJson.getString("supplierID"),
+                                        paramsJson.getString("inboundBatch"),
+                                        paramsJson.getIntValue("jhStatus"),
+                                        paramsJson.getString("jhOutWareHouseListRemark"));
+                                if (result == 0) {
+                                    if (paramsJson.getIntValue("jhStatus") == 0
+                                            || paramsJson.getIntValue("jhStatus") == -2) {
                                         new Thread() {
                                             @Override
                                             public void run() {
-                                                LedControl.setLedAreaCode(list.getPartCode(), list.getSupplierID());
+                                                LedControl.setLedPlanList(list);
                                             }
                                         }.start();
-                                    } else {
-                                        json = Units.objectToJson(-1, "确认失败!", null);
                                     }
+                                    json = Units.objectToJson(0, "确认成功!", null);
+                                } else if (result == 1) {
+                                    json = Units.objectToJson(1, "备货未完成, 请填写备注信息!", null);
+                                } else if (result == 2) {
+                                    json = Units.objectToJson(2, "存在未完成计划!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "确认失败!", null);
+                                }
+                            }
+                            if (employeeType.compareTo("备货员") == 0) {
+                                ProcessListController controller = new ProcessListController();
+                                int result = controller.bhConfirmForBHY(
+                                        paramsJson.getString("jhOutWareHouseID"),
+                                        paramsJson.getString("partCode"),
+                                        paramsJson.getString("supplierID"),
+                                        paramsJson.getIntValue("packingNumber"),
+                                        paramsJson.getString("inboundBatch"));
+                                if (result == 0) {
+                                    json = Units.objectToJson(0, "确认成功!", null);
+                                } else if (result == 1) {
+                                    new Thread() {
+                                        @Override
+                                        public void run() {
+                                            LedControl.setLedAreaCode(list.getPartCode(), list.getSupplierID());
+                                        }
+                                    }.start();
+                                    json = Units.objectToJson(0, "备货完成!", null);
+                                } else {
+                                    json = Units.objectToJson(-1, "确认失败!", null);
                                 }
                             }
                             break;
@@ -266,7 +263,7 @@ public class AppInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
-                            proParams.put("LHStaff", "string," + paramsJson.getString("username"));
+                            proParams.put("LHStaff", "string," + employee.getEmployeeName());
                             StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "ProcessList.json"));
                             List<Object> list = commonController.proceduceQuery("tbGetJHCKLHList", proParams, "com.cn.bean.app.ProcessList", opt.getConnect());
                             if (list != null && list.size() > 0) {
@@ -275,7 +272,7 @@ public class AppInterface extends HttpServlet {
                                     processList.setSupplierName(customer.getCustomerAbbName());
                                     return processList;
                                 }).forEachOrdered((processList) -> {
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + processList.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + processList.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     processList.setPartName(baseInfo.getPartName());
                                     processList.setAutoStylingName(baseInfo.getAutoStylingName());
                                 });
@@ -303,6 +300,16 @@ public class AppInterface extends HttpServlet {
                             }
                             break;
                         }
+                        case "finished": {
+                            JSONObject checkObj = new JSONObject();
+                            checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
+                            checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
+                            checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+
+                            //System.out.println("json:" + checkObj.toJSONString());
+                            commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, opt.getConnect());
+                            break;
+                        }
                     }
                     break;
                 }
@@ -313,7 +320,7 @@ public class AppInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
-                            proParams.put("SXStaff", "string," + paramsJson.getString("username"));
+                            proParams.put("SXStaff", "string," + employee.getEmployeeName());
                             StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "ProcessList.json"));
                             List<Object> list = commonController.proceduceQuery("tbGetJHCKSXList", proParams, "com.cn.bean.app.ProcessList", opt.getConnect());
                             if (list != null && list.size() > 0) {
@@ -322,7 +329,7 @@ public class AppInterface extends HttpServlet {
                                     processList.setSupplierName(customer.getCustomerAbbName());
                                     return processList;
                                 }).forEachOrdered((processList) -> {
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + processList.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + processList.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     processList.setPartName(baseInfo.getPartName());
                                     processList.setAutoStylingName(baseInfo.getAutoStylingName());
                                 });
@@ -334,13 +341,13 @@ public class AppInterface extends HttpServlet {
                             break;
                         }
                         case "confirm": {
-                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + paramsJson.getString("partCode")), PartBaseInfo.class);
+                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + paramsJson.getString("partCode").toLowerCase()), PartBaseInfo.class);
                             JSONObject updateObj = new JSONObject();
                             if (baseInfo.getAssemblingStation().compareTo("3") == 0) {
-                                    updateObj.put("fzTime", Units.getNowTime());
-                                } else {
-                                    updateObj.put("sxTime", Units.getNowTime());
-                                }
+                                updateObj.put("fzTime", Units.getNowTime());
+                            } else {
+                                updateObj.put("sxTime", Units.getNowTime());
+                            }
                             //updateObj.put("sxTime", Units.getNowTime());
                             JSONObject whereObj = new JSONObject();
                             whereObj.put("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
@@ -354,6 +361,16 @@ public class AppInterface extends HttpServlet {
                             } else {
                                 json = Units.objectToJson(-1, "确认失败!", null);
                             }
+                            break;
+                        }
+                        case "finished": {
+                            JSONObject checkObj = new JSONObject();
+                            checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
+                            checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
+                            checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+
+                            //System.out.println("json:" + checkObj.toJSONString());
+                            commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, opt.getConnect()).get(0);
                             break;
                         }
                     }

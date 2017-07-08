@@ -21,96 +21,84 @@ public class FZInWareHouse {
     public static void setRecordCount(int aRecordCount) {
         recordCount = aRecordCount;
     }
-    
-    @FieldDescription(description = "计划出库单号")
-    private String jhOutWareHouseID;
-    @FieldDescription(description = "终端客户代码")
-    private String zdCustomerID;
-    @FieldDescription(description = "终端客户名称", operate = "display")
-    private String zdCustomerName;
-    @FieldDescription(description = "计划需求时间")
-    private String jhDemandTime;
-    @FieldDescription(description = "计划类型")
-    private String jhType;
-    @FieldDescription(description = "计划班次")
-    private String jhShift;
-    @FieldDescription(description = "计划出库制单人员姓名")
-    private String jhCKProducerName;
-    @FieldDescription(description = "计划出库制单时间", type = "date")
-    private String jhCKProduceTime;
+    @FieldDescription(description = "分装入库单号")
+    private String fzInWareHouseID;
+    @FieldDescription(description = "部品件号")
+    private String partCode;
+    @FieldDescription(description = "部品名称", operate = "display")
+    private String partName;
+    @FieldDescription(description = "入库数量")
+    private int inboundAmount;
+    @FieldDescription(description = "入库箱数")
+    private int inboundBoxAmount;
+    @FieldDescription(description = "制单人员姓名")
+    private String fzInProducerName;
+    @FieldDescription(description = "制单时间", type = "date")
+    private String fzInProduceTime;
     @FieldDescription(description = "备注")
-    private String jhOutWareHouseRemark;
+    private String fzInRemark;
 
-    public String getJhOutWareHouseID() {
-        return jhOutWareHouseID;
+    public String getFzInWareHouseID() {
+        return fzInWareHouseID;
     }
 
-    public void setJhOutWareHouseID(String jhOutWareHouseID) {
-        this.jhOutWareHouseID = jhOutWareHouseID;
+    public void setFzInWareHouseID(String fzInWareHouseID) {
+        this.fzInWareHouseID = fzInWareHouseID;
     }
 
-    public String getZdCustomerID() {
-        return zdCustomerID;
+    public int getInboundAmount() {
+        return inboundAmount;
     }
 
-    public void setZdCustomerID(String zdCustomerID) {
-        this.zdCustomerID = zdCustomerID;
+    public void setInboundAmount(int inboundAmount) {
+        this.inboundAmount = inboundAmount;
     }
 
-    public String getZdCustomerName() {
-        return zdCustomerName;
+    public int getInboundBoxAmount() {
+        return inboundBoxAmount;
     }
 
-    public void setZdCustomerName(String zdCustomerName) {
-        this.zdCustomerName = zdCustomerName;
+    public void setInboundBoxAmount(int inboundBoxAmount) {
+        this.inboundBoxAmount = inboundBoxAmount;
     }
 
-    public String getJhDemandTime() {
-        return jhDemandTime;
+    public String getFzInProducerName() {
+        return fzInProducerName;
     }
 
-    public void setJhDemandTime(String jhDemandTime) {
-        this.jhDemandTime = jhDemandTime;
+    public void setFzInProducerName(String fzInProducerName) {
+        this.fzInProducerName = fzInProducerName;
     }
 
-    public String getJhType() {
-        return jhType;
+    public String getFzInProduceTime() {
+        return fzInProduceTime;
     }
 
-    public void setJhType(String jhType) {
-        this.jhType = jhType;
+    public void setFzInProduceTime(String fzInProduceTime) {
+        this.fzInProduceTime = fzInProduceTime;
     }
 
-    public String getJhShift() {
-        return jhShift;
+    public String getFzInRemark() {
+        return fzInRemark;
     }
 
-    public void setJhShift(String jhShift) {
-        this.jhShift = jhShift;
+    public void setFzInRemark(String fzInRemark) {
+        this.fzInRemark = fzInRemark;
     }
 
-    public String getJhCKProducerName() {
-        return jhCKProducerName;
+    public String getPartCode() {
+        return partCode;
     }
 
-    public void setJhCKProducerName(String jhCKProducerName) {
-        this.jhCKProducerName = jhCKProducerName;
+    public void setPartCode(String partCode) {
+        this.partCode = partCode;
     }
 
-    public String getJhCKProduceTime() {
-        return jhCKProduceTime;
+    public String getPartName() {
+        return partName;
     }
 
-    public void setJhCKProduceTime(String jhCKProduceTime) {
-        this.jhCKProduceTime = jhCKProduceTime;
+    public void setPartName(String partName) {
+        this.partName = partName;
     }
-
-    public String getJhOutWareHouseRemark() {
-        return jhOutWareHouseRemark;
-    }
-
-    public void setJhOutWareHouseRemark(String jhOutWareHouseRemark) {
-        this.jhOutWareHouseRemark = jhOutWareHouseRemark;
-    }
-    
 }

@@ -1,50 +1,23 @@
 {
     "control": {
-        "jhOutWareHouseID": "计划出库单号",
-        "jhType": "计划类型",
-        "jhCKProducerName": "制单人员姓名",
-        "jhCKProduceTime": "制单时间",
-        "jhShift": "计划班次,select,白班,夜班",
-        "customerTypeName": "客户类型,hidden,@终端客户",
-        "zdCustomerID": "终端客户代码,@table,@customerTypeName",
-        "jhDemandTime": "计划需求时间,date",
-        "jhOutWareHouseRemark": "备注,string,500"
+        "fzInWareHouseID": "分装入库单号",
+        "partCode": "部品件号",
+        "fzInProducerName": "制单人",
+        "fzInProduceTime": "制单时间",
+        "inboundAmount": "入库数量,number",
+        "fzInRemark": "备注"
     },
-    "mustwrite": ["jhOutWareHouseID", "zdCustomerID", "jhDemandTime", "jhType", "jhShift", "jhCKProducerName", "jhCKProduceTime"],
-    "unique": ["jhOutWareHouseID"],
-    "primary": "jhOutWareHouseID",
+    "mustwrite": ["fzInWareHouseID", "partCode", "inboundAmount", "fzInProducerName", "fzInProduceTime"],
+    "unique": [],
+    "primary": "fzInWareHouseID",
     "titles": {
-        "jhOutWareHouseID": "计划出库单号,20%",
-        "zdCustomerID": "终端客户代码,10%",
-        "zdCustomerName": "终端客户名称,10%",
-        "jhDemandTime": "计划需求时间,20%",
-        "jhType": "计划类型,8%",
-        "jhShift": "计划班次,5%",
-        "jhCKProducerName": "制单人员姓名,8%",
-        "jhCKProduceTime": "制单时间,20%",
-        "jhOutWareHouseRemark": "备注,20%"
-    },
-    "detailControl": {
-        "jhOutWareHouseID": "计划出库单号,parent",
-        "customerTypeName": "客户类型,hidden,@供应商",
-        "supplierID": "供应商代码,@table,@customerTypeName:@supplierName",
-        "partCode": "部品件号,@table,@supplierID:@partID,@partName",
-        "jhCKAmount": "计划出库数量,number",
-        "finishedAmount": "完成数量,check,小于,jhCKAmount",
-        "jhOutWareHouseListRemark": "备注,string,500"
-    },
-    "detailMustwrite": ["djInWareHouseID", "supplierID", "partCode", "jhCKAmount"],
-    "detailUnique": [],
-    "detailPrimary": "djInWareHouseID,partCode,supplierID",
-    "detailTitles": {
-        "supplierID": "供应商代码,10%",
-        "supplierName": "供应商名称,10%",
-        "partID": "部品编号,10%",
+        "fzInWareHouseID": "分装入库单号,20%",
+        "partCode": "部品件号,20%",
         "partName": "部品名称,10%",
-        "partCode": "部品件号,10%",
-        "jhCKAmount": "计划出库数量,10%",
-        "finishedAmount": "已完成数量,10%",
-        "jhOutWareHouseListRemark": "备注,10%",
-        "jhOutWareHouseID": "计划出库单号,20%"
+        "inboundAmount": "入库数量,10%",
+        "inboundBoxAmount": "入库箱数,10%",
+        "fzInProducerName": "制单人,10%",
+        "fzInProduceTime": "制单时间,20%",
+        "fzInRemark": "备注,10%"
     }
 }

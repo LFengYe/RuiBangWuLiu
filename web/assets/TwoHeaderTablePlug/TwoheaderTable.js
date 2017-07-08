@@ -8,7 +8,8 @@
             console.log(index);
         },
         dbclickRowCallBack: function (module, obj) {
-        }
+        },
+        sortMethod: 0
     };
 
     var _style = {
@@ -63,12 +64,13 @@
                 title1_str += "<td>" + title1[i] + "</td>";
             }
             title1_str = "<tr>" + title1_str + "</tr>";
-            
+
             this.$container = this.find(".chromaTable").append(title0_str);
             this.addClass("tht");
             return this;
         },
         getTableDataDOM: function (datas) {
+            var that = this;
             var data_str = '', result = '';
             for (var i = 0; i < datas.length; i++) {
                 for (var k = 0; k < this.arr.length; k++) {
@@ -83,7 +85,25 @@
             this.$container.chromatable({
                 width: this.$container.width() + "px",
                 height: "600px",
-                scrolling: "yes"
+                scrolling: "yes",
+                headerClickCallback: function (name) {
+                    if (that.sortMethod) {
+                        that.sortMethod = 0;
+                    } else {
+                        that.sortMethod = 1;
+                    }
+                    
+                    datas.sort(function (a, b) {
+                        if (that.sortMethod) {
+                            //return a[name] - b[name];
+                            return compareFunc(a[name], b[name]);
+                        } else {
+                            //return b[name] - a[name];
+                            return compareFunc(b[name], a[name]);
+                        }
+                    });
+                    _funs_.getTableDataDOM.call(that, datas);
+                }
             });
             _funs_.bindEvt.call(this);
         },
@@ -108,7 +128,16 @@
                 //obj2[name] = $(this).text();
                 //console.log(obj2);
                 that.dbclickRowCallBack(module, obj2);
+            });
 
+            this.$container.find("thead").find("tr").children("th").click(function (e) {
+                var name = $(this).attr("name");
+                that.datas.sort(function (a, b) {
+                    console.log(a);
+                    console.log(b);
+                    return a[name] - b[name];
+                });
+                _funs_.getTableDataDOM.call(that, that.datas);
             });
         },
         getRowData: function (index) {
@@ -126,18 +155,18 @@
                 }
             }
             /*this.$container.find("tbody").find('tr:contains("' + data + '")').each(function () {
-                var eq = $(this).index();
-                if (str.indexOf(eq) < 0) {
-                    str += eq;
-                    that.afterFilter.push([eq, that.datas[eq]]);
-                }
-            });
-            return;
-            this.$container.find("ul").html('');
-            var arr = this.afterFilter.map(function (it) {
-                return it[1];
-            });*/
-            console.log(this.afterFilter);
+             var eq = $(this).index();
+             if (str.indexOf(eq) < 0) {
+             str += eq;
+             that.afterFilter.push([eq, that.datas[eq]]);
+             }
+             });
+             return;
+             this.$container.find("ul").html('');
+             var arr = this.afterFilter.map(function (it) {
+             return it[1];
+             });*/
+            //console.log(this.afterFilter);
             _funs_.getTableDataDOM.call(this, this.afterFilter);
             this.filterState = true;        //表示数据筛选状态
             return this;
@@ -149,7 +178,7 @@
             this.datas = data;
             _funs_.getTableDataDOM.call(this, this.datas);
         },
-        filter: function(keyword) {
+        filter: function (keyword) {
             if (keyword)
                 _funs_.dataFilter.call(this, keyword);
             else

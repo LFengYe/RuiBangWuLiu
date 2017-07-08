@@ -30,7 +30,7 @@
         "supplierName": "供应商名称,10%",
         "partID": "部品编号,10%",
         "partName": "部品名称,10%",
-        "partCode": "部品件号,10%",
+        "partCode": "部品件号,20%",
         "partUnit": "部品单位,10%",
         "inboundBatch": "入库批次,10%",
         "partUnit": "部品单位,10%",

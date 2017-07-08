@@ -1,11 +1,13 @@
 {
     "control": {
-        "autoStylingName": "车型名称,string,10"
+        "autoStylingName": "车型名称,string,10",
+        "orderFlag": "排序,number"
     },
-    "mustwrite": ["autoStylingName"],
-    "unique": ["autoStylingName"],
+    "mustwrite": ["autoStylingName", "orderFlag"],
+    "unique": [],
     "primary": "autoStylingName",
     "titles": {
-        "autoStylingName": "车型名称,100%"
+        "autoStylingName": "车型名称,50%",
+        "orderFlag": "排序,50%"
     }
 }

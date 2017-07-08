@@ -3,7 +3,8 @@
         defaults: {
             width: "900px",
             height: "300px",
-            scrolling: "yes"
+            scrolling: "yes",
+            headerClickCallback: function (name) {}
         }
     };
 
@@ -47,8 +48,12 @@
                     'top': '1px'
                 }));
                 $('._thead').children('tbody').remove();
+                $('._thead').children('thead').find("tr").children("th").click(function (e) {
+                    if (options.headerClickCallback) {
+                        options.headerClickCallback($(this).attr("name"));
+                    }
+                });
             }
-
             $(this).each(function ($this) {
                 if (options.width == "100%" || options.width == "auto") {
                     $(this).parents(".scrolling_inner").css({'padding-right': '0px'});

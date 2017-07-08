@@ -8,9 +8,12 @@ package com.cn.servlet;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.ClassDescription;
 import com.cn.bean.FieldDescription;
+import com.cn.bean.PartBaseInfo;
+import com.cn.bean.pro.KFJCDJPForSJCK;
 import com.cn.controller.CommonController;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.ExportExcel;
+import com.cn.util.RedisAPI;
 import com.cn.util.Units;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -24,6 +27,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -45,14 +49,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ContainerServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(BaseInterface.class);
 
-    private CommonController commonController;
-    private DatabaseOpt opt;
+//    private CommonController commonController;
+//    private DatabaseOpt opt;
     
     @Override
     public void init() throws ServletException {
         super.init();
-        commonController = new CommonController();
-        opt = new DatabaseOpt();
+//        commonController = new CommonController();
+//        opt = new DatabaseOpt();
     }
 
     /**
@@ -71,9 +75,11 @@ public class ContainerServlet extends HttpServlet {
         String subUri = uri.substring(uri.lastIndexOf("/") + 1,
                 uri.lastIndexOf("."));
         String json = null;
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
 
         try {
-            System.out.println(subUri + ",params:" + params);
+            //System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
@@ -217,7 +223,14 @@ public class ContainerServlet extends HttpServlet {
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
                                 List<Object> list = commonController.proceduceQuery("tbGetContainerAmountListForSupplier", proParams, "com.cn.bean.container.ContainerManager", opt.getConnect());
                                 if (list != null && list.size() > 0) {
-                                    json = getSpecialTableJsonStr(list, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
+                                    List<Object> filterList = new ArrayList<>();
+                                    for (Object obj : list) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                            continue;
+                                        }
+                                        filterList.add(obj);
+                                    }
+                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
@@ -277,7 +290,14 @@ public class ContainerServlet extends HttpServlet {
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
                                 List<Object> list = commonController.proceduceQuery("tbGetContainerFXAmountListForSupplier", proParams, "com.cn.bean.container.ContainerManager", opt.getConnect());
                                 if (list != null && list.size() > 0) {
-                                    json = getSpecialTableJsonStr(list, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
+                                    List<Object> filterList = new ArrayList<>();
+                                    for (Object obj : list) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                            continue;
+                                        }
+                                        filterList.add(obj);
+                                    }
+                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
@@ -337,7 +357,14 @@ public class ContainerServlet extends HttpServlet {
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
                                 List<Object> list = commonController.proceduceQuery("tbGetContainerAmountListForSupplier", proParams, "com.cn.bean.container.ContainerManager", opt.getConnect());
                                 if (list != null && list.size() > 0) {
-                                    json = getSpecialTableJsonStr(list, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
+                                    List<Object> filterList = new ArrayList<>();
+                                    for (Object obj : list) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                            continue;
+                                        }
+                                        filterList.add(obj);
+                                    }
+                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
@@ -392,6 +419,7 @@ public class ContainerServlet extends HttpServlet {
      */
     private String createOperateWithFilter(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String whereCase, String orderField, Connection conn) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
@@ -429,6 +457,7 @@ public class ContainerServlet extends HttpServlet {
     private String queryOperateWithFilter(String beanPackage, String type, String tableName, String orderField, String keyWord, String rely,
             String whereCase, boolean isAll, Connection conn, int pageSize, int pageIndex) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         String result = "{}";
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
@@ -476,6 +505,7 @@ public class ContainerServlet extends HttpServlet {
             String orderField, String keyWord, String rely, boolean isAll, Connection conn, int pageSize, int pageIndex,
             String[] keys, String[] keysName, int[] keysWidth, String[] fieldsName) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", null);
         List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);
@@ -569,6 +599,7 @@ public class ContainerServlet extends HttpServlet {
      */
     private List<Object> queryData(String beanPackage, String type, String tableName, String orderField, String keyWord,
             Connection conn, int pageSize, int pageIndex) throws Exception {
+        CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
         return commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, "{}", true), pageSize, pageIndex, orderField, 0, conn);
     }
@@ -586,6 +617,8 @@ public class ContainerServlet extends HttpServlet {
      * @throws InstantiationException
      */
     private String submitOperate(String beanPackage, String tableName, String update, String add, String delete, String connType) throws Exception {
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
         Connection conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
         if (!Units.strIsEmpty(update) && !(update.compareTo("[]") == 0)) {
             ArrayList<Integer> updateResult = commonController.dataBaseOperate(update, beanPackage, tableName, "update", conn);
@@ -622,6 +655,7 @@ public class ContainerServlet extends HttpServlet {
      */
     private String importData(String beanPackage, String tableName, String fileName, Connection conn) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         //获取所有设置字段名称的字段
         Class objClass = Class.forName(beanPackage + tableName);
         Field[] fields = objClass.getDeclaredFields();

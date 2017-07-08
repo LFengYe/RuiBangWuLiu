@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,18 +41,18 @@ public class ReportInterface extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(ReportInterface.class);
 
-    private CommonController commonController;
-    private DatabaseOpt opt;
-    private boolean isForward;
-    private String forwardStr;
+//    private CommonController commonController;
+//    private DatabaseOpt opt;
+//    private boolean isForward;
+//    private String forwardStr;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        commonController = new CommonController();
-        opt = new DatabaseOpt();
-        isForward = false;
-        forwardStr = null;
+//        commonController = new CommonController();
+//        opt = new DatabaseOpt();
+//        isForward = false;
+//        forwardStr = null;
     }
 
     /**
@@ -70,16 +71,14 @@ public class ReportInterface extends HttpServlet {
         String subUri = uri.substring(uri.lastIndexOf("/") + 1,
                 uri.lastIndexOf("."));
         String json = null;
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
+        //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
 
         try {
-            System.out.println(subUri + ",params:" + params);
-            JSONObject paramsJson;
-            if (isForward) {
-                isForward = false;
-                paramsJson = JSONObject.parseObject(forwardStr);
-            } else {
-                paramsJson = JSONObject.parseObject(params);
-            }
+            //System.out.println(subUri + ",params:" + params);
+            JSONObject paramsJson = JSONObject.parseObject(params);
+            //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
             String rely = (paramsJson.getString("rely") == null) ? ("{}") : (paramsJson.getString("rely"));
@@ -137,7 +136,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     SFCTotalData data = (SFCTotalData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
                                     data.setPartUnit(baseInfo.getPartUnit());
@@ -160,7 +159,7 @@ public class ReportInterface extends HttpServlet {
                             if (list != null && list.size() > 0) {
                                 for (Object obj : list) {
                                     SFCTotalData data = (SFCTotalData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
                                     data.setPartUnit(baseInfo.getPartUnit());
@@ -262,7 +261,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForDjpRK data = (RKListForDjpRK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -280,7 +279,7 @@ public class ReportInterface extends HttpServlet {
                                 public void itemFilter(List<Object> filterList, Object obj) {
                                     RKListForDjpRK data = (RKListForDjpRK) obj;
                                     if (data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -311,7 +310,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForSJCK data = (RKListForSJCK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -334,7 +333,7 @@ public class ReportInterface extends HttpServlet {
                                     RKListForSJCK data = (RKListForSJCK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -364,7 +363,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForSJTK data = (RKListForSJTK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
                                 }
@@ -384,7 +383,7 @@ public class ReportInterface extends HttpServlet {
                                     RKListForSJTK data = (RKListForSJTK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -414,7 +413,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForLpRK data = (RKListForLpRK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -436,7 +435,7 @@ public class ReportInterface extends HttpServlet {
                                 public void itemFilter(List<Object> filterList, Object obj) {
                                     RKListForLpRK data = (RKListForLpRK) obj;
                                     if (data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -466,7 +465,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForBLpRK data = (RKListForBLpRK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -489,7 +488,7 @@ public class ReportInterface extends HttpServlet {
                                     RKListForBLpRK data = (RKListForBLpRK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -520,7 +519,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -544,7 +543,7 @@ public class ReportInterface extends HttpServlet {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -575,7 +574,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -599,7 +598,7 @@ public class ReportInterface extends HttpServlet {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -630,7 +629,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -654,7 +653,7 @@ public class ReportInterface extends HttpServlet {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -686,7 +685,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -710,7 +709,7 @@ public class ReportInterface extends HttpServlet {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -741,8 +740,8 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForZCJHCK data = (CKListForZCJHCK) obj;
-                                    System.out.println(data.getPartCode() + ":" + RedisAPI.get("partBaseInfo_" + data.getPartCode()));
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+//                                    System.out.println(data.getPartCode() + ":" + RedisAPI.get("partBaseInfo_" + data.getPartCode()));
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -764,7 +763,7 @@ public class ReportInterface extends HttpServlet {
                                     CKListForZCJHCK data = (CKListForZCJHCK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -797,7 +796,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForZCJHCK data = (CKListForZCJHCK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -819,7 +818,7 @@ public class ReportInterface extends HttpServlet {
                                     CKListForZCJHCK data = (CKListForZCJHCK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -852,7 +851,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFJHCK data = (CKListForFJHCK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -874,7 +873,7 @@ public class ReportInterface extends HttpServlet {
                                     CKListForFJHCK data = (CKListForFJHCK) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -907,7 +906,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForJPSX data = (CKListForJPSX) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -934,7 +933,7 @@ public class ReportInterface extends HttpServlet {
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0
                                             && data.getZdCustomerID().compareToIgnoreCase(dataJson.getString("zdCustomerID")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -969,7 +968,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -992,7 +991,7 @@ public class ReportInterface extends HttpServlet {
                                     THListForBPTH data = (THListForBPTH) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1025,7 +1024,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForLp data = (KFJCListForLp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1044,7 +1043,7 @@ public class ReportInterface extends HttpServlet {
                                     KFJCListForLp data = (KFJCListForLp) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1074,7 +1073,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForBLp data = (KFJCListForBLp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1093,7 +1092,7 @@ public class ReportInterface extends HttpServlet {
                                     KFJCListForBLp data = (KFJCListForBLp) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1123,7 +1122,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForDjp data = (KFJCListForDjp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1142,7 +1141,7 @@ public class ReportInterface extends HttpServlet {
                                     KFJCListForDjp data = (KFJCListForDjp) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1172,7 +1171,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForSjp data = (KFJCListForSjp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1191,7 +1190,7 @@ public class ReportInterface extends HttpServlet {
                                     KFJCListForSjp data = (KFJCListForSjp) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1221,7 +1220,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForFxp data = (KFJCListForFxp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1240,7 +1239,7 @@ public class ReportInterface extends HttpServlet {
                                     KFJCListForFxp data = (KFJCListForFxp) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1268,7 +1267,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFQCFenLuData data = (KFQCFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1287,7 +1286,7 @@ public class ReportInterface extends HttpServlet {
                                     KFQCFenLuData data = (KFQCFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1313,7 +1312,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     TKFenLuData data = (TKFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1332,7 +1331,7 @@ public class ReportInterface extends HttpServlet {
                                     TKFenLuData data = (TKFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1358,7 +1357,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THFenLuData data = (THFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1377,7 +1376,7 @@ public class ReportInterface extends HttpServlet {
                                     THFenLuData data = (THFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1408,7 +1407,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKFenLuData data = (CKFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1427,7 +1426,7 @@ public class ReportInterface extends HttpServlet {
                                     CKFenLuData data = (CKFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1457,7 +1456,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKFenLuData data = (RKFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1476,7 +1475,7 @@ public class ReportInterface extends HttpServlet {
                                     RKFenLuData data = (RKFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1506,7 +1505,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCFenLuData data = (KFJCFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1525,7 +1524,7 @@ public class ReportInterface extends HttpServlet {
                                     KFJCFenLuData data = (KFJCFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1555,7 +1554,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XCQCFenLuData data = (XCQCFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1574,7 +1573,7 @@ public class ReportInterface extends HttpServlet {
                                     XCQCFenLuData data = (XCQCFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1604,7 +1603,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XCJCFenLuData data = (XCJCFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1623,7 +1622,7 @@ public class ReportInterface extends HttpServlet {
                                     XCJCFenLuData data = (XCJCFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1653,7 +1652,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFTZFenLuData data = (KFTZFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1672,7 +1671,7 @@ public class ReportInterface extends HttpServlet {
                                     KFTZFenLuData data = (KFTZFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1702,7 +1701,7 @@ public class ReportInterface extends HttpServlet {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XCTZFenLuData data = (XCTZFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
 
@@ -1721,7 +1720,7 @@ public class ReportInterface extends HttpServlet {
                                     XCTZFenLuData data = (XCTZFenLuData) obj;
                                     if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
                                             && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode()), PartBaseInfo.class);
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
@@ -1799,9 +1798,9 @@ public class ReportInterface extends HttpServlet {
             logger.error("错误信息:" + e.getMessage(), e);
             json = Units.objectToJson(-1, "输入参数错误!", e.toString());
         }
-
+        //logger.info(Units.getIpAddress(request) + "response:" + subUri + ",time:" + (new Date().getTime()));
+        
         PrintWriter out = response.getWriter();
-
         try {
             response.setContentType("text/html;charset=UTF-8");
             response.setHeader("Cache-Control", "no-store");
@@ -1828,6 +1827,7 @@ public class ReportInterface extends HttpServlet {
     private String createOperateOnDate(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String datas,
             String rely, String whereCase, String orderField, Connection conn) throws Exception {
         String json;
+        CommonController commonController = new CommonController();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
@@ -1870,6 +1870,8 @@ public class ReportInterface extends HttpServlet {
     private String reportOperate(String operateType, String proceduceName, String className, JSONObject proParams, ReportItemOperate itemOperate) throws Exception {
         String result = null;
         String json = null;
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         if (operateType.compareTo("create") == 0) {
             result = Units.returnFileContext(path + "com/cn/json/report/", className + ".json");
@@ -1905,6 +1907,8 @@ public class ReportInterface extends HttpServlet {
     private String reportOperateWithFilter(String operateType, String proceduceName, String className, JSONObject proParams, FilterListItemOperate itemOperate) throws Exception {
         String result = null;
         String json = null;
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         if (operateType.compareTo("create") == 0) {
             result = Units.returnFileContext(path + "com/cn/json/report/", className + ".json");
