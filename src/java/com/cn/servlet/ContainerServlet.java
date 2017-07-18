@@ -79,7 +79,7 @@ public class ContainerServlet extends HttpServlet {
         DatabaseOpt opt = new DatabaseOpt();
 
         try {
-            //System.out.println(subUri + ",params:" + params);
+            logger.info(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");

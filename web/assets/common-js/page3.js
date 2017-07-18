@@ -119,7 +119,6 @@
         
         $keysword.change(function(){
             var keyword = $(this).val();
-            console.log(keyword);
             $mainTableBox.filter(keyword);
         });
         $keysword.keypress(function(event) {

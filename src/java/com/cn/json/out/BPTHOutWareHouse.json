@@ -37,7 +37,7 @@
     },
     "detailMustwrite": ["bpTHOutWareHoseID", "supplierID", "partCode", "thCKAmount"],
     "detailUnique": [],
-    "detailPrimary": "bpTHOutWareHoseID,supplierID,partCode,inboundBatch",
+    "detailPrimary": "bpTHOutWareHoseID,supplierID,partCode,inboundBatch,thPartState",
     "detailTitles": {
         "checkbox": "选择,5%",
         "supplierID": "供应商代码,10%",

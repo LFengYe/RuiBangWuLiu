@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -34,7 +35,7 @@ public class RedisAPI {
             JedisPoolConfig config = new JedisPoolConfig();
             //控制一个pool可分配多少个jedis实例，通过pool.getResource()来获取；
             //如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool的状态为exhausted(耗尽)。
-            config.setMaxActive(500);
+            config.setMaxActive(-1);
             //控制一个pool最多有多少个状态为idle(空闲的)的jedis实例。
             config.setMaxIdle(5);
             //表示当borrow(引入)一个jedis实例时，最大的等待时间，如果超过等待时间，则直接抛出JedisConnectionException；
@@ -56,6 +57,28 @@ public class RedisAPI {
         if (redis != null) {
             pool.returnResource(redis);
         }
+    }
+    
+    public static Jedis getJedis(){
+        try {
+            Properties prop = new Properties();
+            prop.load(RedisAPI.class.getClassLoader().getResourceAsStream("./config.properties"));
+            JedisPool pool = null;
+            Jedis jedis = null;
+            try {
+                pool = getPool(prop.getProperty("REDIS_HOST"), Integer.valueOf(prop.getProperty("REDIS_PORT")));
+                jedis = pool.getResource();
+                return jedis;
+            } catch (Exception e) {
+                //释放redis对象
+                if (null != pool)
+                    pool.returnBrokenResource(jedis);
+                logger.error("Redis获取连接出错", e);
+            }
+        } catch (IOException ex) {
+            logger.error("Redis配置文件读取错误", ex);
+        }
+        return null;
     }
     
     /**
@@ -195,6 +218,32 @@ public class RedisAPI {
         }
     }
     
+    public static Set<String> getKeys(String pattern) {
+        try {
+            Properties prop = new Properties();
+            prop.load(RedisAPI.class.getClassLoader().getResourceAsStream("./config.properties"));
+            List<String> value = null;
+            JedisPool pool = null;
+            Jedis jedis = null;
+            try {
+                pool = getPool(prop.getProperty("REDIS_HOST"), Integer.valueOf(prop.getProperty("REDIS_PORT")));
+                jedis = pool.getResource();
+                return jedis.keys(pattern);
+            } catch (Exception e) {
+                //释放redis对象
+                if (null != pool)
+                    pool.returnBrokenResource(jedis);
+                logger.error("Redis读取出错", e);
+            } finally {
+                //返还到连接池
+                returnResource(pool, jedis);
+            }
+        } catch (IOException ex) {
+            logger.error("Redis配置文件读取错误", ex);
+        }
+        return null;
+    }
+    
     public static String flushDB(){
         try {
             Properties prop = new Properties();
@@ -248,9 +297,10 @@ public class RedisAPI {
         }
         return null;
     }
-    /*
+    
     public static void main(String[] args) {
-        System.out.println(RedisAPI.get("partBaseInfo_2803011-02-W01D"));
+        System.out.println(getKeys("bomInfo_1101100-fa01"));
     }
-    */
+    
+    
 }

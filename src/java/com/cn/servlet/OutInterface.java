@@ -17,6 +17,7 @@ import com.cn.bean.out.BPTHOutWareHouseList;
 import com.cn.bean.out.FJHOutWareHouse;
 import com.cn.bean.out.FJHOutWareHouseList;
 import com.cn.bean.out.JHOutWareHouseList;
+import com.cn.bean.out.JHOutWareHouseShort;
 import com.cn.bean.out.LLJS;
 import com.cn.bean.out.LPKCListInfo;
 import com.cn.bean.out.XCJS;
@@ -97,7 +98,8 @@ public class OutInterface extends HttpServlet {
         //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
 
         try {
-            System.out.println(subUri + ",params:" + params);
+            logger.info(subUri + ",params:" + params);
+            //System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");
@@ -241,6 +243,7 @@ public class OutInterface extends HttpServlet {
                             ArrayList<Object> importData = commonController.importData("com.cn.bean.out.", "JHOutWareHouseList", importPath + fileName);
                             JHOutWareHouseController controller = new JHOutWareHouseController();
                             ArrayList<JHOutWareHouseList> result = controller.importData(importData, item);
+                            //logger.info(JSONObject.toJSONString(result));
                             if (result != null && result.size() > 0) {
                                 if (result.get(0).getListNumber() > 0) {
                                     //当前库存满足该计划
@@ -251,7 +254,10 @@ public class OutInterface extends HttpServlet {
 //                                        System.out.println("JSONObject.toJSONString(result):" + JSONObject.toJSONString(result));
                                         addRes = commonController.dataBaseOperate(JSONObject.toJSONString(result), "com.cn.bean.out.", "JHOutWareHouseList", "add", opt.getConnect()).get(0);
                                         if (addRes == 0) {
-                                            json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
+                                            JSONObject object = new JSONObject();
+                                            object.put("datas", result);
+                                            json = Units.objectToJson(0, "计划添加成功!", object.toJSONString());
+                                            //json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
                                         } else {
                                             commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", opt.getConnect());
                                             json = Units.objectToJson(-1, "明细添加失败!", null);
@@ -261,7 +267,31 @@ public class OutInterface extends HttpServlet {
                                     }
                                 } else {
                                     //当前库存不满足该计划
-                                    json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
+                                    List<Object> shortList = new ArrayList<>();//差缺表
+                                    Iterator<JHOutWareHouseList> iterator = result.iterator();
+                                    while (iterator.hasNext()) {
+                                        JHOutWareHouseList list = iterator.next();
+                                        if (list.getListNumber() < 0) {
+                                            JHOutWareHouseShort houseShort = new JHOutWareHouseShort();
+                                            houseShort.setSupplierID(list.getSupplierID());
+                                            houseShort.setSupplierName(list.getSupplierName());
+                                            houseShort.setPartID(list.getPartID());
+                                            houseShort.setPartName(list.getPartName());
+                                            houseShort.setPartCode(list.getPartCode());
+                                            houseShort.setInboundBatch(list.getInboundBatch());
+                                            houseShort.setJhCKAmount(list.getJhCKAmount());
+                                            houseShort.setAutoStylingName(list.getAutoStylingName());
+                                            houseShort.setShortAmount(list.getShortAmount());
+
+                                            shortList.add(houseShort);
+                                        }
+                                    }
+                                    String filePath = exportDataReturnFileName("com.cn.bean.out.", "JHOutWareHouseShort", shortList);
+                                    JSONObject object = new JSONObject();
+                                    object.put("datas", result);
+                                    object.put("fileUrl", filePath);
+                                    //json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
+                                    json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
                                 }
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", JSONObject.toJSONString(result));
@@ -325,7 +355,7 @@ public class OutInterface extends HttpServlet {
                                     }
                                 } else {
                                     //当前库存不满足该计划
-                                    json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
+                                    json = Units.objectToJson(-1, "计划添加失败!", JSONObject.toJSONString(result));
                                 }
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或格式不正确!", JSONObject.toJSONString(result));
@@ -465,7 +495,10 @@ public class OutInterface extends HttpServlet {
 //                                        System.out.println("JSONObject.toJSONString(result):" + JSONObject.toJSONString(result));
                                         addRes = commonController.dataBaseOperate(JSONObject.toJSONString(result), "com.cn.bean.out.", "JHOutWareHouseList", "add", opt.getConnect()).get(0);
                                         if (addRes == 0) {
-                                            json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
+                                            JSONObject object = new JSONObject();
+                                            object.put("datas", result);
+                                            json = Units.objectToJson(0, "计划添加成功!", object.toJSONString());
+                                            //json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
                                         } else {
                                             commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", opt.getConnect());
                                             json = Units.objectToJson(-1, "明细添加失败!", null);
@@ -475,7 +508,33 @@ public class OutInterface extends HttpServlet {
                                     }
                                 } else {
                                     //当前库存不满足该计划
-                                    json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
+                                    //当前库存不满足该计划
+                                    List<Object> shortList = new ArrayList<>();//差缺表
+                                    Iterator<JHOutWareHouseList> iterator = result.iterator();
+                                    while (iterator.hasNext()) {
+                                        JHOutWareHouseList list = iterator.next();
+                                        if (list.getListNumber() < 0) {
+                                            JHOutWareHouseShort houseShort = new JHOutWareHouseShort();
+                                            houseShort.setSupplierID(list.getSupplierID());
+                                            houseShort.setSupplierName(list.getSupplierName());
+                                            houseShort.setPartID(list.getPartID());
+                                            houseShort.setPartName(list.getPartName());
+                                            houseShort.setPartCode(list.getPartCode());
+                                            houseShort.setInboundBatch(list.getInboundBatch());
+                                            houseShort.setJhCKAmount(list.getJhCKAmount());
+                                            houseShort.setAutoStylingName(list.getAutoStylingName());
+                                            houseShort.setShortAmount(list.getShortAmount());
+
+                                            shortList.add(houseShort);
+                                        }
+                                    }
+                                    String filePath = exportDataReturnFileName("com.cn.bean.out.", "JHOutWareHouseShort", shortList);
+                                    JSONObject object = new JSONObject();
+                                    object.put("datas", result);
+                                    object.put("fileUrl", filePath);
+                                    //json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
+                                    json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
+                                    //json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
                                 }
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", JSONObject.toJSONString(result));
@@ -710,7 +769,9 @@ public class OutInterface extends HttpServlet {
 //                                        System.out.println("JSONObject.toJSONString(result):" + JSONObject.toJSONString(result));
                                         addRes = commonController.dataBaseOperate(JSONObject.toJSONString(result), "com.cn.bean.out.", "JHOutWareHouseList", "add", opt.getConnect()).get(0);
                                         if (addRes == 0) {
-                                            json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
+                                            JSONObject object = new JSONObject();
+                                            object.put("datas", result);
+                                            json = Units.objectToJson(0, "计划添加成功!", object.toJSONString());
                                         } else {
                                             commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", opt.getConnect());
                                             json = Units.objectToJson(-1, "明细添加失败!", null);
@@ -720,7 +781,33 @@ public class OutInterface extends HttpServlet {
                                     }
                                 } else {
                                     //当前库存不满足该计划
-                                    json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
+                                    //当前库存不满足该计划
+                                    List<Object> shortList = new ArrayList<>();//差缺表
+                                    Iterator<JHOutWareHouseList> iterator = result.iterator();
+                                    while (iterator.hasNext()) {
+                                        JHOutWareHouseList list = iterator.next();
+                                        if (list.getListNumber() < 0) {
+                                            JHOutWareHouseShort houseShort = new JHOutWareHouseShort();
+                                            houseShort.setSupplierID(list.getSupplierID());
+                                            houseShort.setSupplierName(list.getSupplierName());
+                                            houseShort.setPartID(list.getPartID());
+                                            houseShort.setPartName(list.getPartName());
+                                            houseShort.setPartCode(list.getPartCode());
+                                            houseShort.setInboundBatch(list.getInboundBatch());
+                                            houseShort.setJhCKAmount(list.getJhCKAmount());
+                                            houseShort.setAutoStylingName(list.getAutoStylingName());
+                                            houseShort.setShortAmount(list.getShortAmount());
+
+                                            shortList.add(houseShort);
+                                        }
+                                    }
+                                    String filePath = exportDataReturnFileName("com.cn.bean.out.", "JHOutWareHouseShort", shortList);
+                                    JSONObject object = new JSONObject();
+                                    object.put("datas", result);
+                                    object.put("fileUrl", filePath);
+                                    //json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
+                                    json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
+                                    //json = Units.objectToJson(-1, "计划导入失败!", JSONObject.toJSONString(result));
                                 }
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", JSONObject.toJSONString(result));
@@ -1056,7 +1143,10 @@ public class OutInterface extends HttpServlet {
 //                                        System.out.println("JSONObject.toJSONString(result):" + JSONObject.toJSONString(result));
                                         addRes = commonController.dataBaseOperate(JSONObject.toJSONString(result), "com.cn.bean.out.", "FJHOutWareHouseList", "add", opt.getConnect()).get(0);
                                         if (addRes == 0) {
-                                            json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
+                                            JSONObject object = new JSONObject();
+                                            object.put("datas", result);
+                                            json = Units.objectToJson(0, "计划添加成功!", object.toJSONString());
+                                            //json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
                                         } else {
                                             commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "FJHOutWareHouse", "delete", opt.getConnect());
                                             json = Units.objectToJson(-1, "明细添加失败!", null);
@@ -2070,6 +2160,7 @@ public class OutInterface extends HttpServlet {
                             }
                             List<Object> resList = new ArrayList<>();
                             resList.addAll(map.values());
+
                             if (list.size() > 0) {
                                 Collections.sort(resList, new Comparator<Object>() {
                                     @Override
@@ -2080,9 +2171,10 @@ public class OutInterface extends HttpServlet {
                                     }
                                 });
                                 StringBuffer buffer = new StringBuffer(result);
-                                buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
+                                buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(resList, Units.features));
                                 result = buffer.toString();
                             }
+
                             if (operateType.compareTo("create") == 0) {
                                 json = Units.objectToJson(0, "", result);
                             }
@@ -2504,6 +2596,33 @@ public class OutInterface extends HttpServlet {
         }
         exportExcel.exportExcel("导出", headers, datas, stream, "yyyy-MM-dd HH:mm:ss");
         return Units.objectToJson(0, "导出成功!", "{\"fileUrl\":\"" + getServletContext().getContextPath() + "/exportFile/" + fileName + "\"}");
+    }
+
+    private String exportDataReturnFileName(String beanPackage, String tableName, List<Object> datas) throws Exception {
+        Class objClass = Class.forName(beanPackage + tableName);
+        Field[] fields = objClass.getDeclaredFields();
+        ArrayList<String> fieldDes = new ArrayList<>();
+
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(FieldDescription.class)) {
+                FieldDescription description = field.getAnnotation(FieldDescription.class);
+                fieldDes.add(description.description());
+            }
+        }
+
+        String filePath = getServletContext().getRealPath("/").replace("\\", "/") + "exportFile/";
+        String fileName = Units.getNowTimeNoSeparator() + ".xls";
+        File file = Units.createNewFile(filePath, fileName);
+        OutputStream stream = new FileOutputStream(file);
+
+        ExportExcel exportExcel = new ExportExcel();
+        String[] headers = new String[fieldDes.size()];
+        for (int i = 0; i < fieldDes.size(); i++) {
+            headers[i] = fieldDes.get(i);
+        }
+        exportExcel.exportExcel("导出", headers, datas, stream, "yyyy-MM-dd HH:mm:ss");
+        return getServletContext().getContextPath() + "/exportFile/" + fileName;
+        //return Units.objectToJson(0, "导出成功!", "{\"fileUrl\":\"" + getServletContext().getContextPath() + "/exportFile/" + fileName + "\"}");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

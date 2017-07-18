@@ -1,0 +1,16 @@
+{
+    "titles": {
+        "supplierID": "供应商代码,1,1,20%,false",
+        "supplierName": "供应商名称,1,1,20%,false",
+        "partID": "部品编号,1,1,20%,false",
+        "partName": "部品名称,1,1,20%,false",
+        "partCode": "部品件号,1,1,20%,false",
+        "kcHighBound": "库存上限,1,1,20%,false",
+        "kcLowBound": "库存下限,1,1,20%,false",
+        "kfJCTotal": "库存总数,1,1,20%,false",
+        "hgKCAmount": "合格库存数,1,1,20%,false",
+        "krYAmount": "库容余量,1,1,20%,false",
+        "qjJYCAmount": "缺件及溢出数,1,1,20%,false",
+        "kcAlertRemark": "备注,1,1,20%,false"
+    }
+}

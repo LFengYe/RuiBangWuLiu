@@ -85,7 +85,7 @@ public class BaseInterface extends HttpServlet {
         //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
         
         try {
-            //System.out.println(subUri + ",params:" + params);
+            logger.info(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");

@@ -142,7 +142,7 @@ public class CommonController {
                         if (!isInput(objClass, key)) {
                             continue;
                         }
-                        
+
                         if (itemCount > 0) {
                             builder.append(",").append(key).append(" = ").append("?");
                         } else {
@@ -300,6 +300,13 @@ public class CommonController {
                     }
                     return results;
                 } catch (BatchUpdateException e) {
+                    try {
+                        if (conn != null) {
+                            conn.rollback();
+                        }
+                    } catch (SQLException ex1) {
+                        logger.error("数据库回滚错误", ex1);
+                    }
                     //外码不存在异常代码: 547
                     //Check条件不满足异常代码: 547
                     //重复键异常代码: 2627
@@ -435,28 +442,95 @@ public class CommonController {
         }
         return null;
     }
+    
+    public List<Object> dataBaseQueryWithNotCloseConn(String type, String beanPackage, String tableName, String fields, String wherecase, int pageSize, int pageIndex, String orderField, int orderFlag,
+            Connection conn) throws Exception {
+        //System.out.println("wherecase:" + wherecase);
+        CallableStatement statement = null;
+        ArrayList<Object> result;
+        Class objClass = Class.forName(beanPackage + tableName);
+        try {
+            statement = conn.prepareCall("{call tbGetRecordPageList(?, ?, ?, ?, ?, ?, ?, ?)}");
+            if (type.compareTo("table") == 0) {
+                statement.setString("tableName", "tbl" + tableName);
+            }
+            if (type.compareTo("view") == 0) {
+                statement.setString("tableName", "view" + tableName);
+            }
+            statement.setString("fields", fields);
+            statement.setString("wherecase", wherecase);
+            statement.setInt("pageSize", pageSize);
+            statement.setInt("pageIndex", pageIndex);
+            statement.setString("orderField", orderField);
+            statement.setInt("orderFlag", orderFlag);
+            statement.registerOutParameter("recordCount", Types.INTEGER);
+            ResultSet set = statement.executeQuery();
+            Method[] methods = objClass.getMethods();
+            result = new ArrayList<>();
+            while (set.next()) {
+                Object object = objClass.newInstance();
+                for (Method method : methods) {
+                    String methodName = method.getName();
+                    if (methodName.startsWith("set") && !Modifier.isStatic(method.getModifiers())) {
+                        // 根据方法名字得到数据表格中字段的名字
+                        String columnName = methodName.substring(3, methodName.length());
+                        if (Units.isExistColumn(set, columnName)) {
+                            // 得到方法的参数类型
+                            Class[] parmts = method.getParameterTypes();
+                            if (parmts[0] == int.class) {
+                                method.invoke(object, set.getInt(columnName));
+                            } else if (parmts[0] == boolean.class) {
+                                method.invoke(object, set.getBoolean(columnName));
+                            } else if (parmts[0] == float.class) {
+                                method.invoke(object, set.getFloat(columnName));
+                            } else if (parmts[0] == double.class) {
+                                method.invoke(object, set.getDouble(columnName));
+                            } else {
+                                method.invoke(object, set.getString(columnName));
+                            }
+                        }
+                    }
+                }
+                result.add(object);
+            }
+            objClass.getMethod("setRecordCount", int.class).invoke(null, statement.getInt("recordCount"));
+            set.close();
+            return result;
+        } catch (SQLException ex) {
+            logger.error("数据库执行出错", ex);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException ex) {
+                logger.error("数据库关闭连接错误", ex);
+            }
+        }
+        return null;
+    }
 
     /**
-     * 
+     *
      * @param proceduceName
      * @param params
      * @param conn
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     public ArrayList<Integer> proceduceForUpdate(String proceduceName, JSONObject params, Connection conn) throws Exception {
         JSONArray array = new JSONArray();
         array.add(params);
         return proceduceForUpdate(proceduceName, array, conn);
     }
-    
+
     /**
-     * 
+     *
      * @param proceduceName
      * @param params
      * @param conn
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     public ArrayList<Integer> proceduceForUpdate(String proceduceName, JSONArray params, Connection conn) throws Exception {
         CallableStatement statement = null;
@@ -475,10 +549,11 @@ public class CommonController {
                 }
                 keysIterator.next();
             }
-            if (builder.indexOf(",)") != -1)
+            if (builder.indexOf(",)") != -1) {
                 builder.deleteCharAt(builder.indexOf(",)"));
+            }
             String sql = builder.toString();
-            
+
 //            System.out.println("sql:" + sql);
             conn.setAutoCommit(false);
             //生产会话
@@ -511,7 +586,14 @@ public class CommonController {
                     }
                 }
                 return results;
-            } catch(BatchUpdateException e) {
+            } catch (BatchUpdateException e) {
+                try {
+                    if (conn != null) {
+                        conn.rollback();
+                    }
+                } catch (SQLException ex1) {
+                    logger.error("数据库回滚错误", ex1);
+                }
                 logger.error("批处理执行异常:" + e.getErrorCode() + "," + e.getMessage());
                 exeResult = e.getUpdateCounts();
                 results.add(0, e.getErrorCode());
@@ -523,6 +605,13 @@ public class CommonController {
                 return results;
             }
         } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex1) {
+                logger.error("数据库回滚错误", ex1);
+            }
             logger.error("数据库执行出错", e);
         } finally {
             try {
@@ -538,7 +627,7 @@ public class CommonController {
         }
         return null;
     }
-    
+
     /**
      * 执行只有输入参数且返回结果集的存储过程
      *
@@ -566,10 +655,11 @@ public class CommonController {
                 }
                 keysIterator.next();
             }
-            if (builder.indexOf(",)") != -1)
+            if (builder.indexOf(",)") != -1) {
                 builder.deleteCharAt(builder.indexOf(",)"));
+            }
             String sql = builder.toString();
-            
+
 //            System.out.println("sql:" + sql);
             //生产会话
             statement = conn.prepareCall(sql);
@@ -587,7 +677,7 @@ public class CommonController {
                     statement.setString(key, keyValue[1]);
                 }
             }
-            
+
             ResultSet set = statement.executeQuery();
             Class objClass = Class.forName(className);
             Method[] methods = objClass.getMethods();
@@ -621,7 +711,7 @@ public class CommonController {
             set.close();
             return result;
         } catch (SQLException e) {
-            
+
             logger.error("数据库执行出错" + e.getErrorCode(), e);
         } finally {
             try {
@@ -788,11 +878,11 @@ public class CommonController {
         } else {
             result = commonResult;
         }
-        
+
 //        System.out.println("where date sql:" + result);
         return (result == null) ? "" : "(" + result + ")";
     }
-    
+
     public String getWhereSQLStrWithArray(JSONArray array) {
         String result = null;
         for (int i = 0; i < array.size(); i++) {
@@ -807,7 +897,7 @@ public class CommonController {
                     item = entry.getKey() + " = '" + entry.getValue() + "'";
                 }
             }
-            
+
             if (result != null) {
                 result += " or (" + item + ")";
             } else {

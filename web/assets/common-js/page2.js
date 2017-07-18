@@ -443,7 +443,14 @@
             //console.log("import_page.html?method=importDetail&item=" + JSON.stringify(item) + "&detail=" + JSON.stringify(child));
             displayLayer(2, "import_page.html?method=importDetail&item=" + escape(JSON.stringify(item)) + "&detail=" + escape(JSON.stringify(child)),
                     "数据导入", function () {
-                        $chidTableBox.render(JSON.parse($("#import_return_data").val()));
+                        var data = JSON.parse($("#import_return_data").val());
+                        console.log(data);
+                        if (data.datas) {
+                            $chidTableBox.render(data.datas);
+                        }
+                        if (data.fileUrl) {
+                            location.href = data.fileUrl;
+                        }
                         var importRes = $("#import_result").val();
                         if (importRes === 0) {
                             importSuccess = true;

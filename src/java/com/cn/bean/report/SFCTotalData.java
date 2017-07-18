@@ -31,8 +31,10 @@ public class SFCTotalData {
     private String partUnit;
     @FieldDescription(description = "库房期初")
     private String kfQC;
-    @FieldDescription(description = "现场期初")
-    private String xcQC;
+    @FieldDescription(description = "集配区期初")
+    private String jpqQC;
+    @FieldDescription(description = "线旁期初")
+    private String xpQC;
     @FieldDescription(description = "入库数量")
     private String rk;
     @FieldDescription(description = "出库数量")
@@ -53,8 +55,12 @@ public class SFCTotalData {
     private String xcTZ;
     @FieldDescription(description = "现场结算")
     private String xcJS;
-    @FieldDescription(description = "现场结存")
-    private String xcJC;
+    @FieldDescription(description = "集配区结存")
+    private String jpqJC;
+    @FieldDescription(description = "线旁结存")
+    private String xpJC;
+    @FieldDescription(description = "结存总数")
+    private String jcTotal;
 
     public String getSupplierID() {
         return supplierID;
@@ -128,12 +134,12 @@ public class SFCTotalData {
         this.kfQC = kfQC;
     }
 
-    public String getXcQC() {
-        return xcQC;
+    public String getJpqQC() {
+        return jpqQC;
     }
 
-    public void setXcQC(String xcQC) {
-        this.xcQC = xcQC;
+    public void setJpqQC(String jpqQC) {
+        this.jpqQC = jpqQC;
     }
 
     public String getRk() {
@@ -216,11 +222,35 @@ public class SFCTotalData {
         this.xcJS = xcJS;
     }
 
-    public String getXcJC() {
-        return xcJC;
+    public String getXpQC() {
+        return xpQC;
     }
 
-    public void setXcJC(String xcJC) {
-        this.xcJC = xcJC;
+    public void setXpQC(String xpQC) {
+        this.xpQC = xpQC;
+    }
+
+    public String getJpqJC() {
+        return jpqJC;
+    }
+
+    public void setJpqJC(String jpqJC) {
+        this.jpqJC = jpqJC;
+    }
+
+    public String getXpJC() {
+        return xpJC;
+    }
+
+    public void setXpJC(String xpJC) {
+        this.xpJC = xpJC;
+    }
+
+    public String getJcTotal() {
+        return jcTotal;
+    }
+
+    public void setJcTotal(String jcTotal) {
+        this.jcTotal = jcTotal;
     }
 }

@@ -102,7 +102,7 @@ public class InInterface extends HttpServlet {
         //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
 
         try {
-            //System.out.println(subUri + ",params:" + params);
+            logger.info(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");
@@ -345,7 +345,10 @@ public class InInterface extends HttpServlet {
                                         json = Units.objectToJson(-1, "数据添加失败!", null);
                                     }
                                 } else {
-                                    json = Units.objectToJson(-1, "数据添加失败!", JSONObject.toJSONString(importData));
+                                    JSONObject object = new JSONObject();
+                                    object.put("datas", importData);
+                                    //json = Units.objectToJson(-1, "数据添加失败!", JSONObject.toJSONString(importData));
+                                    json = Units.objectToJson(-1, "数据添加失败!", object.toJSONString());
                                 }
 
                             } else {

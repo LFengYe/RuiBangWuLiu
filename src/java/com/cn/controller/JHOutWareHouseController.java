@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
@@ -60,12 +61,12 @@ public class JHOutWareHouseController {
              * 分解完成的计划明细
              */
             ArrayList<JHOutWareHouseList> completeResult = new ArrayList<>();
-
+            
             if (importData != null && importData.size() > 0) {
-                /**
-                 * 是否满足全部计划
-                 */
-                boolean isAllEnough = true;
+                mergeDuplicateJH(importData);// 合并重复
+                importData = resolveZCData(importData);//分解总成计划
+
+                boolean isAllEnough = true;//是否满足全部计划
                 Iterator<Object> it = importData.iterator();
                 while (it.hasNext()) {
                     /**
@@ -118,6 +119,7 @@ public class JHOutWareHouseController {
                     CustomPredicate predicate = new CustomPredicate(filterStr);
                     CustomPredicate.setKcCount(0);//部件编号对应库存总量初始化
                     //Predicate<LPKCList> predicate = (LPKCList input) -> (input.getSupplierID() + "," + input.getPartCode()).compareToIgnoreCase(filterStr) == 0;
+                    
                     /**
                      * 符合筛选条件的库存列表
                      */
@@ -138,7 +140,7 @@ public class JHOutWareHouseController {
                         while (ckAmount > 0) {
                             LPKCListInfo lpkcl = iterator.next();
                             JHOutWareHouseList detail = new JHOutWareHouseList();
-                            detail.setListNumber(completeResult.size() + 1);
+                            detail.setListNumber(completeResult.size() + 1);// 保证completeResult列表中添加的数据ListNumber都大于0
                             detail.setSupplierID(item.getSupplierID());
                             detail.setSupplierName(customer.getCustomerAbbName());
                             detail.setPartCode(item.getPartCode());
@@ -165,6 +167,7 @@ public class JHOutWareHouseController {
                     } else {
                         item.setListNumber(-1);//库存不能够满足计划
                         item.setFailedReason("库存不足");
+                        item.setShortAmount(ckAmount - kcCount);
                         isAllEnough = false;
                     }
                     item.setSupplierName(customer.getCustomerAbbName());
@@ -186,6 +189,76 @@ public class JHOutWareHouseController {
             }
         } catch (Exception ex) {
             logger.error("计划导入异常!", ex);
+        }
+        return null;
+    }
+
+    /**
+     * 如果导入计划数据中包含重复数据, 则合并重复数据
+     *
+     * @param importData
+     */
+    public void mergeDuplicateJH(List<Object> importData) {
+        HashMap<String, Object> map = new HashMap<>();
+        for (Iterator iter = importData.iterator(); iter.hasNext();) {
+            JHOutWareHouseList tmp = (JHOutWareHouseList) iter.next();
+            if (map.containsKey(tmp.getSupplierID() + "_" + tmp.getPartCode())) {
+                JHOutWareHouseList jhList = (JHOutWareHouseList) map.get(tmp.getSupplierID() + "_" + tmp.getPartCode());
+                jhList.setJhCKAmount(jhList.getJhCKAmount() + tmp.getJhCKAmount());
+            } else {
+                map.put(tmp.getSupplierID() + "_" + tmp.getPartCode(), tmp);
+            }
+        }
+        importData.clear();
+        importData.addAll(map.values());
+    }
+
+    /**
+     * 如果导入计划数据中包含总成件号, 则分解总成件号
+     *
+     * @param importData
+     * @return
+     */
+    public ArrayList<Object> resolveZCData(List<Object> importData) {
+        if (importData != null && importData.size() > 0) {
+            ArrayList<Object> completeResult = new ArrayList<>();
+
+            Iterator<Object> it = importData.iterator();
+            HashMap<String, JHOutWareHouseList> detailMap = new HashMap<>();
+            while (it.hasNext()) {
+                JHOutWareHouseList item = (JHOutWareHouseList) it.next();
+                String bomRedisKey = "bomInfo_" + item.getPartCode().toLowerCase();
+                logger.info(bomRedisKey);
+                Set<String> keys = RedisAPI.getKeys(bomRedisKey);
+                logger.info(keys);
+                if (keys != null && keys.size() > 0) {
+                    List<String> bomInfos = RedisAPI.getSet(bomRedisKey);
+                    if (bomInfos != null && bomInfos.size() > 0) {
+                        for (String str : bomInfos) {
+                            PartBomInfo bomInfo = JSONObject.parseObject(str, PartBomInfo.class);
+                            if (detailMap.containsKey(item.getSupplierID() + "_" + bomInfo.getDetailPartCode())) {
+                                JHOutWareHouseList list = detailMap.get(item.getSupplierID() + "_" + bomInfo.getDetailPartCode());
+                                list.setJhCKAmount(list.getJhCKAmount() + item.getJhCKAmount() * bomInfo.getDcAmount());
+                            } else {
+                                JHOutWareHouseList list = new JHOutWareHouseList();
+                                list.setSupplierID(item.getSupplierID());
+                                list.setPartCode(bomInfo.getDetailPartCode());
+                                list.setJhCKAmount(item.getJhCKAmount() * bomInfo.getDcAmount());
+                                list.setJhOutWareHouseListRemark(item.getJhOutWareHouseListRemark());
+                                detailMap.put(item.getSupplierID() + "_" + bomInfo.getDetailPartCode(), list);
+                            }
+                        }
+                    } else {
+                        item.setListNumber(-1);
+                        item.setFailedReason("缺失BOM信息");
+                        completeResult.add(item);
+                    }
+                } else {
+                    completeResult.add(item);
+                }
+            }
+            completeResult.addAll(detailMap.values());
+            return completeResult;
         }
         return null;
     }
@@ -442,6 +515,8 @@ public class JHOutWareHouseController {
         int kcCount = 0;
         if (subKCAmount == null) {
             subKCAmount = new ArrayList<>();
+        } else {
+            subKCAmount.clear();
         }
 
         for (LPKCListInfo data : kcAmount) {
@@ -541,6 +616,7 @@ public class JHOutWareHouseController {
      */
     public ArrayList<Integer> jhPartitionPackage(String jhOutWareHouseID) throws Exception {
         JSONArray params = new JSONArray();
+        JSONArray virtualParams = new JSONArray();
         DatabaseOpt opt = new DatabaseOpt();
         CommonController commonController = new CommonController();
 
@@ -555,7 +631,7 @@ public class JHOutWareHouseController {
         if (res != null && !res.isEmpty()) {
             Iterator<JHOutWareHouseList> iterator = res.iterator();
             JHOutWareHouseList oldList = null;
-            int oldPackingNum = 0;
+            int oldPackingNum = 0;//上一个批次最后一个包号
             boolean isFull = true;
 
             while (iterator.hasNext()) {
@@ -567,38 +643,39 @@ public class JHOutWareHouseController {
                         || !(oldList.getPartCode().compareTo(list.getPartCode()) == 0))) {
                     isFull = true;
                     oldPackingNum = 0;
-                }
+                    JSONObject preLastObj = params.getJSONObject(params.size() - 1);
+                    preLastObj.put("BHStatus", "int," + 1);
+                }/* else {
+                     //添加该批次虚拟计划数量
+                     if (oldList == null) {
+                         virtualParams.add(addJHOutWareListVirtual(list.getSupplierID(), list.getPartCode(), jhOutWareHouseID, list.getInboundBatch(), list.getJhCKAmount()));
+                     } else {
+                         virtualParams.add(addJHOutWareListVirtual(list.getSupplierID(), list.getPartCode(), jhOutWareHouseID, list.getInboundBatch(), list.getJhCKAmount() + oldList.getJhCKAmount()));
+                     }
+                }*/
                 int containerAmount;
                 int tmpJhCkAmount;
                 //计算当前批次需要分包的计划数量
                 if (isFull) {
                     tmpJhCkAmount = list.getJhCKAmount();
+                    //添加该批次虚拟计划数量
+                    virtualParams.add(addJHOutWareListVirtual(list.getSupplierID(), list.getPartCode(), jhOutWareHouseID, list.getInboundBatch(), list.getJhCKAmount()));
                 } else {
                     //同一计划, 不同批次, 若上一批次最后一箱不满, 将上一批次最后一箱填满, 本批次计划数量减去上一个批次最后一包空余数量
                     //先取出上批次最后一箱数据, 再增加本批次填满数据
                     JSONObject preLastObj = params.getJSONObject(params.size() - 1);
                     tmpJhCkAmount = list.getJhCKAmount() - containerInfo.getOutboundPackageAmount() + Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1]);
                     if (tmpJhCkAmount > 0) {//本批次计划数量能够填满上一批次最后一箱
-                        JSONObject object = new JSONObject();
-                        object.put("SupplierID", "string," + list.getSupplierID());
-                        object.put("PartCode", "string," + list.getPartCode());
-                        object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
-                        object.put("PackingNumber", "int," + oldPackingNum);
-                        object.put("InBoundBatch", "string," + list.getInboundBatch());
-                        object.put("PackingAmount", "int," + (containerInfo.getOutboundPackageAmount() - Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1])));
-                        params.add(object);
+                        params.add(addPackingObj(list.getSupplierID(), list.getPartCode(), jhOutWareHouseID, oldPackingNum, list.getInboundBatch(),
+                                containerInfo.getOutboundPackageAmount() - Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1]) ));
                     } else {
-                        JSONObject object = new JSONObject();
-                        object.put("SupplierID", "string," + list.getSupplierID());
-                        object.put("PartCode", "string," + list.getPartCode());
-                        object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
-                        object.put("PackingNumber", "int," + oldPackingNum);
-                        object.put("InBoundBatch", "string," + list.getInboundBatch());
-                        object.put("PackingAmount", "int," + list.getJhCKAmount());
-                        params.add(object);
+                        params.add(addPackingObj(list.getSupplierID(), list.getPartCode(), jhOutWareHouseID, oldPackingNum, list.getInboundBatch(), list.getJhCKAmount()));
                         tmpJhCkAmount = 0;
                     }
+                    virtualParams.add(addJHOutWareListVirtual(list.getSupplierID(), list.getPartCode(), jhOutWareHouseID, list.getInboundBatch(),
+                            list.getJhCKAmount() + Integer.valueOf(preLastObj.getString("PackingAmount").split(",")[1])));
                 }
+                
                 //计算当前批次计划是否能完全分包
                 if (tmpJhCkAmount % containerInfo.getOutboundPackageAmount() == 0) {
                     containerAmount = tmpJhCkAmount / containerInfo.getOutboundPackageAmount();
@@ -609,29 +686,46 @@ public class JHOutWareHouseController {
                 }
                 //计划明细分包
                 for (int i = 0; i < containerAmount; i++) {
-                    JSONObject object = new JSONObject();
-                    object.put("SupplierID", "string," + list.getSupplierID());
-                    object.put("PartCode", "string," + list.getPartCode());
-                    object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
-                    object.put("PackingNumber", "int," + (i + 1 + oldPackingNum));
-                    object.put("InBoundBatch", "string," + list.getInboundBatch());
-
+                    int packingAmount;
                     if (i == containerAmount - 1 && !isFull) {
-                        int packAmount = tmpJhCkAmount - (containerInfo.getOutboundPackageAmount() * i);
-                        object.put("PackingAmount", "int," + packAmount);
+                        packingAmount = tmpJhCkAmount - (containerInfo.getOutboundPackageAmount() * i);
                     } else {
-                        object.put("PackingAmount", "int," + containerInfo.getOutboundPackageAmount());
+                        packingAmount = containerInfo.getOutboundPackageAmount();
                     }
-                    params.add(object);
+                    params.add(addPackingObj(list.getSupplierID(), list.getPartCode(), jhOutWareHouseID, (i + 1 + oldPackingNum), list.getInboundBatch(), packingAmount));
                 }
-
+                
                 oldPackingNum += containerAmount;
                 oldList = list;
             }
             //System.out.println("part parasm:" + params.toJSONString());
+            
+            commonController.proceduceForUpdate("tbAddJHListVirtualAmount", virtualParams, opt.getConnect());
             return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, opt.getConnect());
         }
         return null;
+    }
+
+    private JSONObject addPackingObj(String supplierID, String partCode, String jhOutWareHouseID, int packingNumber, String inBoundBatch, int jhCKAmount) {
+        JSONObject object = new JSONObject();
+        object.put("SupplierID", "string," + supplierID);
+        object.put("PartCode", "string," + partCode);
+        object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+        object.put("PackingNumber", "int," + packingNumber);
+        object.put("InBoundBatch", "string," + inBoundBatch);
+        object.put("PackingAmount", "int," + jhCKAmount);
+        object.put("BHStatus", "int," + 0);
+        return object;
+    }
+    
+    private JSONObject addJHOutWareListVirtual(String supplierID, String partCode, String jhOutWareHouseID, String inBoundBatch, int virtualAmount) {
+        JSONObject object = new JSONObject();
+        object.put("SupplierID", "string," + supplierID);
+        object.put("PartCode", "string," + partCode);
+        object.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
+        object.put("InBoundBatch", "string," + inBoundBatch);
+        object.put("VirtualAmount", "int," + virtualAmount);
+        return object;
     }
 
     public ArrayList<Integer> jhPartitionPackageHasNoBatch(String jhOutWareHouseID) throws Exception {

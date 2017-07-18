@@ -66,7 +66,7 @@ public class AppInterface extends HttpServlet {
         DatabaseOpt opt = new DatabaseOpt();
         String json = null;
         try {
-            //System.out.println(subUri + ",params:" + params);
+            logger.info(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
@@ -93,7 +93,7 @@ public class AppInterface extends HttpServlet {
                 return;
             }
             Employee employee = (Employee) session.getAttribute("employee");
-            System.out.println("employee:" + JSONObject.toJSONString(employee));
+            //System.out.println("employee:" + JSONObject.toJSONString(employee));
 
             switch (module) {
                 //<editor-fold desc="用户登陆模板">

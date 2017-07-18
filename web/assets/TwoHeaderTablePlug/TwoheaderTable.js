@@ -109,6 +109,12 @@
         },
         bindEvt: function () {
             var that = this;
+            this.$container.find("tbody").find("tr").children("td").click(function(e){
+                var index = $(this).attr("index");
+                console.log(index);
+                that.$container.find("tbody tr:nth-child(" + (parseInt(index) + 1) + ")").toggleClass("clicked");
+            });
+            
             this.$container.find("tbody").find("tr").children("td").dblclick(function (e) {
                 var name = $(this).attr("name");
                 var titleTd = that.$container.find("thead").find("tr:eq(0)").children("th[name='" + name + "']");
@@ -151,6 +157,7 @@
                 for (var index in item) {
                     if (item[index].toString().toLowerCase().indexOf(data.toLowerCase()) >= 0) {
                         this.afterFilter.push(item);
+                        break;
                     }
                 }
             }

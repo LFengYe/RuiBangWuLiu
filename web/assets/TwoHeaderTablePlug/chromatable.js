@@ -18,7 +18,7 @@
             $(this).css('width', options.width).addClass("_scrolling");
 
             if (this.parentNode.className == "scrolling_inner") {
-
+                return ;
             } else {
                 $(this).wrap('<div class="scrolling_outer"><div class="scrolling_inner"></div></div>');
             }
@@ -75,7 +75,7 @@
             });
             $curr = $this.prev();
             $("thead:eq(0)>tr th", this).each(function (i) {
-                $("thead:eq(0)>tr th:eq(" + i + ")", $curr).width($(this).width());
+                $("thead>tr th:eq(" + i + ")", $curr).width($(this).width());
             });
             if (options.width == "100%" || "auto") {
                 $(window).resize(function () {

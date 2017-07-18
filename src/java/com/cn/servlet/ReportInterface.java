@@ -24,7 +24,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -76,7 +75,7 @@ public class ReportInterface extends HttpServlet {
         //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
 
         try {
-            //System.out.println(subUri + ",params:" + params);
+            logger.info(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");
@@ -184,7 +183,7 @@ public class ReportInterface extends HttpServlet {
                         case "create": {
                             JSONObject proParams = new JSONObject();
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("BeginTime", "string,");
                                 proParams.put("Endtime", "string," + end);
                             }
                             json = reportOperate(operateType, "spGETJHCKCompletionAllInfo", "JHCKCompletionAllInfo", proParams, new ReportInterface.ReportItemOperate() {
@@ -222,21 +221,23 @@ public class ReportInterface extends HttpServlet {
                 case "部品报警明细表": {
                     switch (operation) {
                         case "create": {
-                            String result = Units.returnFileContext(path + "com/cn/json/report/", "JHCKCompletionAllInfo.json");
                             JSONObject proParams = new JSONObject();
-                            List<Object> list = commonController.proceduceQuery("spGETJHCKCompletionAllInfo", proParams, "com.cn.bean.report.JHCKCompletionAllInfo", opt.getConnect());
-                            if (list != null && list.size() > 0) {
-                                StringBuffer buffer = new StringBuffer(result);
-                                buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
-                                result = buffer.toString();
+                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
+                                proParams.put("BeginTime", "string," + start);
+                                proParams.put("Endtime", "string," + end);
                             }
-                            json = Units.objectToJson(0, "", result);
-                            break;
-                        }
-                        case "export": {
-                            JSONObject proParams = new JSONObject();
-                            List<Object> list = commonController.proceduceQuery("spGETJHCKCompletionAllInfo", proParams, "com.cn.bean.report.JHCKCompletionAllInfo", opt.getConnect());
-                            json = exportData("com.cn.bean.report.", "JHCKCompletionAllInfo", (ArrayList<Object>) list);
+                            json = reportOperate(operateType, "spGetKCAlertListData", "KCAlertListData", proParams, new ReportInterface.ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KCAlertListData data = (KCAlertListData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
                             break;
                         }
                     }
@@ -961,7 +962,7 @@ public class ReportInterface extends HttpServlet {
                             JSONObject proParams = new JSONObject();
                             proParams.put("PartState", "string," + paramsJson.getString("partStatus"));
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
+                                //proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
                             json = reportOperate(operateType, "spGetTHListForBPTH", "THListForBPTH", proParams, new ReportInterface.ReportItemOperate() {
@@ -1017,7 +1018,7 @@ public class ReportInterface extends HttpServlet {
                         case "create": {
                             JSONObject proParams = new JSONObject();
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
+                                //proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
                             json = reportOperate(operateType, "spGetKFJCListForLp", "KFJCListForLp", proParams, new ReportInterface.ReportItemOperate() {
@@ -1903,7 +1904,7 @@ public class ReportInterface extends HttpServlet {
         }
         return json;
     }
-
+    
     private String reportOperateWithFilter(String operateType, String proceduceName, String className, JSONObject proParams, FilterListItemOperate itemOperate) throws Exception {
         String result = null;
         String json = null;

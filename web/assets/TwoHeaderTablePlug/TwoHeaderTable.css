@@ -30,3 +30,5 @@
 .ui-resizable{position: relative;}
 .ui-resizable-handle{display: block;font-size: 0.1px;position: absolute;z-index: 99999;}
 .ui-resizable-s{border-top: 1px solid #CCCCCC;bottom: -5px;cursor: s-resize;height: 14px;left: 0;width: 100%;}
+
+.tht .clicked{color: red;}
