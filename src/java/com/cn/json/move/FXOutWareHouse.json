@@ -13,7 +13,7 @@
     "unique": [],
     "primary": "fxOutWareHouseID,supplierID,partState",
     "titles": {
-        "fxOutWareHouseID": "返修出库单号,10%",
+        "fxOutWareHouseID": "返修出库单号,20%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
         "partState": "部品状态,10%",
@@ -21,7 +21,6 @@
         "fxCKProduceTime": "制单时间,10%",
         "fxCKAuditStaffName": "审核人,10%",
         "fxCKAuditTime": "审核时间,10%",
-        "printFlag": "打印标志,10%",
         "fxOutWareHouseRemark": "备注,10%"
     },
     "detailControl": {
@@ -42,7 +41,6 @@
         "checkbox": "选择,5%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
-        "partID": "部品编号,10%",
         "partName": "部品名称,10%",
         "partCode": "部品件号,20%",
         "inboundBatch": "入库批次,10%",

@@ -100,7 +100,7 @@
                         $chidTableBox.setData(data);
                     }
                     $("#page2-return").trigger("click");
-                }, function(){
+                }, function () {
                     $("#page2-return").trigger("click");
                 });
             } else {
@@ -195,7 +195,7 @@
             }, function (data) {
             });
         });
-        
+
         $finishItem.off("click");
         $finishItem.click(function () {
             if (mainCancelRows.length === 0) {
@@ -301,6 +301,7 @@
                 };
                 ajaxData(OPERATION.SUBMIT, obj, function (data) {
                     importSuccess = true;
+                    console.log(data);
                     if (data) {
                         $chidTableBox.render(data);
                     } else {
@@ -481,7 +482,7 @@
                 detailPrimary = data.detailPrimary.split(",");
             else
                 detailPrimary = [];
-            
+
             $mainTableBox.insertTable({
                 titles: data.titles,
                 datas: data.datas,
@@ -602,15 +603,19 @@
                     });
                 },
                 checkBoxCallBack: function (index, selected, obj) {
-                    if (selected) {
-                        whereObj = {};
-                        for (var proIndex in detailPrimary) {
-                            var proName = detailPrimary[proIndex];
-                            whereObj[proName] = obj[proName];
-                        }
-                        checkSelected.push(whereObj);
+                    if (moudle === "总成计划" ||  module === "计划出库") {
+                        
                     } else {
-                        checkSelected.splice(index, 1);
+                        if (selected) {
+                            whereObj = {};
+                            for (var proIndex in detailPrimary) {
+                                var proName = detailPrimary[proIndex];
+                                whereObj[proName] = obj[proName];
+                            }
+                            checkSelected.push(whereObj);
+                        } else {
+                            checkSelected.splice(index, 1);
+                        }
                     }
                 }
             });
@@ -742,7 +747,6 @@
             }
             case "计划出库":
             case "总成计划":
-            case "临时调货":
             {
                 $addItem.css("display", "inline-block");
                 $("#page2-submit").css("display", "inline-block");
@@ -762,26 +766,27 @@
                 $auditItem.attr("disabled", "disabled");
                 break;
             }
-            case "非生成领料":
-            {
-                $addItem.css("display", "inline-block");
-                $("#page2-submit").css("display", "inline-block");
-                $audit.css("display", "none");
-                $inspection.css("display", "none");
-                $confirm.css("display", "inline-block");
-                //$import.css("display", "inline-block");
-                $deleteItem.css("display", "inline-block");
-                $finishItem.css("display", "none");
-                $history.css("display", "none");
-
-                !type ? $add.attr("disabled", false) : $add.attr("disabled", "disabled");
-                !type ? $modify.attr("disabled", false) : $modify.attr("disabled", "disabled");
-                !type ? $cancel.attr("disabled", false) : $cancel.attr("disabled", "disabled");
-                $import.attr("disabled", false);
-                $print.attr("disabled", false);
-                $auditItem.attr("disabled", "disabled");
-                break;
-            }
+            /*case "临时调货":
+             case "非生成领料":
+             {
+             $addItem.css("display", "inline-block");
+             $("#page2-submit").css("display", "inline-block");
+             $audit.css("display", "none");
+             $inspection.css("display", "none");
+             $confirm.css("display", "inline-block");
+             //$import.css("display", "inline-block");
+             $deleteItem.css("display", "inline-block");
+             $finishItem.css("display", "none");
+             $history.css("display", "none");
+             
+             !type ? $add.attr("disabled", false) : $add.attr("disabled", "disabled");
+             !type ? $modify.attr("disabled", false) : $modify.attr("disabled", "disabled");
+             !type ? $cancel.attr("disabled", false) : $cancel.attr("disabled", "disabled");
+             $import.attr("disabled", false);
+             $print.attr("disabled", false);
+             $auditItem.attr("disabled", "disabled");
+             break;
+             }*/
             case "送检出库":
             case "送检返回":
             case "终端退库":
@@ -827,7 +832,7 @@
                 break;
             }
         }
-        
+
         if (moudle === "待检入库")
             $audit.css("display", "none");
     }

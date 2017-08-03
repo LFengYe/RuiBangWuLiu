@@ -8,12 +8,9 @@ package com.cn.servlet;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.ClassDescription;
 import com.cn.bean.FieldDescription;
-import com.cn.bean.PartBaseInfo;
-import com.cn.bean.pro.KFJCDJPForSJCK;
 import com.cn.controller.CommonController;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.ExportExcel;
-import com.cn.util.RedisAPI;
 import com.cn.util.Units;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -27,7 +24,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -47,11 +43,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author LFeng
  */
 public class ContainerServlet extends HttpServlet {
+
     private static final Logger logger = Logger.getLogger(BaseInterface.class);
 
 //    private CommonController commonController;
 //    private DatabaseOpt opt;
-    
     @Override
     public void init() throws ServletException {
         super.init();
@@ -120,8 +116,8 @@ public class ContainerServlet extends HttpServlet {
                 }
                 return;
             }
-            
-            switch(module) {
+
+            switch (module) {
                 /**
                  * ***************************************盛具信息管理**************************************
                  */
@@ -134,6 +130,7 @@ public class ContainerServlet extends HttpServlet {
                             json = createOperateWithFilter(15, "view", "com/cn/json/container/", "com.cn.bean.container.", "ContainerManager", whereCase, "SupplierID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"盛具状态\\", ",@良品");
                             json = Units.insertStr(json, "\\\"操作类型\\", ",@盛具入库");
                             break;
                         }
@@ -187,6 +184,7 @@ public class ContainerServlet extends HttpServlet {
                             json = createOperateWithFilter(15, "view", "com/cn/json/container/", "com.cn.bean.container.", "ContainerManager", whereCase, "SupplierID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"盛具状态\\", ",select,良品,不良品");
                             json = Units.insertStr(json, "\\\"操作类型\\", ",@返修出库");
                             break;
                         }
@@ -218,19 +216,29 @@ public class ContainerServlet extends HttpServlet {
                                 String[] keys = {"containerName", "operateMaxAmount"};
                                 String[] keysName = {"盛具名称", "入库数量"};
                                 int[] keysWidth = {50, 50};
-                                String[] fieldsName = {"containerName", "operateMaxAmount"};
+                                String[] fieldsName = new String[2];
+                                
+                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("良品") == 0) {
+                                    fieldsName[0] = "containerName";
+                                    fieldsName[1] = "containerLPTotal";
+                                }
+                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("不良品") == 0) {
+                                    fieldsName[0] = "containerName";
+                                    fieldsName[1] = "containerBLPTotal";
+                                }
+                                
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
-                                List<Object> list = commonController.proceduceQuery("tbGetContainerAmountListForSupplier", proParams, "com.cn.bean.container.ContainerManager", opt.getConnect());
+                                List<Object> list = commonController.proceduceQuery("tbGetContainerAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
-                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                             continue;
                                         }
                                         filterList.add(obj);
                                     }
-                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
+                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerAmount", keys, keysName, keysWidth, fieldsName, target, rely);
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
@@ -254,6 +262,7 @@ public class ContainerServlet extends HttpServlet {
                             json = createOperateWithFilter(15, "view", "com/cn/json/container/", "com.cn.bean.container.", "ContainerManager", whereCase, "SupplierID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"盛具状态\\", ",select,良品,不良品");
                             json = Units.insertStr(json, "\\\"操作类型\\", ",@返修入库");
                             break;
                         }
@@ -285,19 +294,29 @@ public class ContainerServlet extends HttpServlet {
                                 String[] keys = {"containerName", "operateMaxAmount"};
                                 String[] keysName = {"盛具名称", "入库数量"};
                                 int[] keysWidth = {50, 50};
-                                String[] fieldsName = {"containerName", "operateMaxAmount"};
+                                String[] fieldsName = {"containerName", "containerFX"};
+                                /*
+                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("良品") == 0) {
+                                    fieldsName[0] = "containerName";
+                                    fieldsName[1] = "containerFXLP";
+                                }
+                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("不良品") == 0) {
+                                    fieldsName[0] = "containerName";
+                                    fieldsName[1] = "containerFXBLP";
+                                }
+                                */
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
-                                List<Object> list = commonController.proceduceQuery("tbGetContainerFXAmountListForSupplier", proParams, "com.cn.bean.container.ContainerManager", opt.getConnect());
+                                List<Object> list = commonController.proceduceQuery("tbGetContainerFXAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
-                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                             continue;
                                         }
                                         filterList.add(obj);
                                     }
-                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
+                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerAmount", keys, keysName, keysWidth, fieldsName, target, rely);
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
@@ -321,6 +340,7 @@ public class ContainerServlet extends HttpServlet {
                             json = createOperateWithFilter(15, "view", "com/cn/json/container/", "com.cn.bean.container.", "ContainerManager", whereCase, "SupplierID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"盛具状态\\", ",select,良品,不良品");
                             json = Units.insertStr(json, "\\\"操作类型\\", ",@盛具出库");
                             break;
                         }
@@ -352,19 +372,29 @@ public class ContainerServlet extends HttpServlet {
                                 String[] keys = {"containerName", "operateMaxAmount"};
                                 String[] keysName = {"盛具名称", "入库数量"};
                                 int[] keysWidth = {50, 50};
-                                String[] fieldsName = {"containerName", "operateMaxAmount"};
+                                String[] fieldsName = new String[2];
+                                
+                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("良品") == 0) {
+                                    fieldsName[0] = "containerName";
+                                    fieldsName[1] = "containerLPTotal";
+                                }
+                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("不良品") == 0) {
+                                    fieldsName[0] = "containerName";
+                                    fieldsName[1] = "containerBLPTotal";
+                                }
+                                
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
-                                List<Object> list = commonController.proceduceQuery("tbGetContainerAmountListForSupplier", proParams, "com.cn.bean.container.ContainerManager", opt.getConnect());
+                                List<Object> list = commonController.proceduceQuery("tbGetContainerAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
-                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                             continue;
                                         }
                                         filterList.add(obj);
                                     }
-                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerManager", keys, keysName, keysWidth, fieldsName, target, rely);
+                                    json = getSpecialTableJsonStr(filterList, "com.cn.bean.container.ContainerAmount", keys, keysName, keysWidth, fieldsName, target, rely);
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
@@ -546,7 +576,7 @@ public class ContainerServlet extends HttpServlet {
         }
         return json;
     }
-    
+
     private String getSpecialTableJsonStr(List<Object> list, String className, String[] keys, String[] keysName, int[] keysWidth, String[] fieldsName,
             String target, String rely) throws Exception {
         Class objClass = Class.forName(className);
@@ -854,6 +884,7 @@ public class ContainerServlet extends HttpServlet {
         exportExcel.exportExcel("导出", headers, datas, stream, "yyyy-MM-dd HH:mm:ss");
         return Units.objectToJson(0, "导出成功!", "{\"fileUrl\":\"" + getServletContext().getContextPath() + "/exportFile/" + fileName + "\"}");
     }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

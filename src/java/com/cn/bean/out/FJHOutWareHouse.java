@@ -27,6 +27,8 @@ public class FJHOutWareHouse {
     private String fzdCustomerID;
     @FieldDescription(description = "非终端客户", operate = "display")
     private String fzdCustomerName;
+    @FieldDescription(description = "计划类型")
+    private String fjhType;
     @FieldDescription(description = "发货人员名称")
     private String fhStaffName;
     @FieldDescription(description = "制单人员姓名")

@@ -73,13 +73,13 @@
         $("#partStatusSelect").on("change", function () {
             $(this).prev().val($(this).val());
         });
-        
+
         $("#page3-return").off("click");
         $("#page3-return").click(function () {
             $detailList.hide();
             $mainTable.show();
         });
-        
+
         $export.off("click");
         $export.click(function (e) {
             var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
@@ -97,7 +97,7 @@
             }, function () {
             });
         });
-        
+
         $search.off("click");
         $search.click(function (e) {
             var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
@@ -116,15 +116,16 @@
                 $mainTableBox.render(data.datas);
             }, function () {});
         });
-        
-        $keysword.change(function(){
-            var keyword = $(this).val();
-            $mainTableBox.filter(keyword);
+
+        $keysword.change(function () {
         });
-        $keysword.keypress(function(event) {
-            switch(event.keyCode) {
+        $keysword.keypress(function (event) {
+            switch (event.keyCode) {
                 case 13:
-                    $(this).trigger('blur');
+                    var keyword = $(this).val();
+                    console.log("change:" + keyword);
+                    $mainTableBox.filter(keyword);
+                    //$(this).trigger('blur');
                     break;
             }
         });

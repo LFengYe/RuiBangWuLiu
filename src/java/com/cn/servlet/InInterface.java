@@ -169,6 +169,7 @@ public class InInterface extends HttpServlet {
                             json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
                             json = Units.insertStr(json, "\\\"入库批次\\", ",@" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"失败原因,0%\\", ",10%");
                             break;
                         }
                         case "request_detail": {
@@ -573,7 +574,7 @@ public class InInterface extends HttpServlet {
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
-                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                             continue;
                                         }
                                         KFJCDJPForSJCK sjck = (KFJCDJPForSJCK) obj;
@@ -866,7 +867,7 @@ public class InInterface extends HttpServlet {
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
-                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                             continue;
                                         }
                                         KFJCSJPForSJTK sjtk = (KFJCSJPForSJTK) obj;
@@ -1117,7 +1118,7 @@ public class InInterface extends HttpServlet {
                                         //HashMap minInboundBatchMap = controller.getSupplierInboundBatch(JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
                                         List<Object> filterList = new ArrayList<>();
                                         for (Object obj : list) {
-                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                                 continue;
                                             }
                                             JPQJCForZDTK zdtk = (JPQJCForZDTK) obj;
@@ -1141,7 +1142,7 @@ public class InInterface extends HttpServlet {
                                         InWareHouseController controller = new InWareHouseController();
                                         List<Object> filterList = new ArrayList<>();
                                         for (Object obj : list) {
-                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                                 continue;
                                             }
                                             XPJCForZDTK zdtk = (XPJCForZDTK) obj;

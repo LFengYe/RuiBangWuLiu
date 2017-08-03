@@ -5,11 +5,11 @@
     "unique": [],
     "primary": "",
     "titles": {
-        "supplierID": "供应商代码,1,1,20%",
-        "supplierName": "供应商名称,1,1,20%",
-        "partID": "部品编号,1,1,20%",
-        "partName": "部品名称,1,1,20%",
-        "partCode": "部品件号,1,1,20%",
-        "lpAmount": "良品数量,1,1,10%"
+        "supplierID": "供应商代码,1,1,20%,false",
+        "supplierName": "供应商名称,1,1,20%,false",
+        "partID": "部品编号,1,1,20%,false",
+        "partName": "部品名称,1,1,20%,false",
+        "partCode": "部品件号,1,1,20%,false",
+        "lpAmount": "良品数量,1,1,10%,false"
     }
 }

@@ -297,10 +297,10 @@ public class RedisAPI {
         }
         return null;
     }
-    
+    /*
     public static void main(String[] args) {
         System.out.println(getKeys("bomInfo_1101100-fa01"));
     }
-    
+    */
     
 }

@@ -1,0 +1,5 @@
+14:36:54,950 INFO  [cn.jiguang.common.connection.NativeHttpClient] Created instance with connectionTimeout 5,000, readTimeout 30,000, maxRetryTimes 3, SSL Version TLS
+14:36:55,498 INFO  [cn.jiguang.common.connection.NativeHttpClient] Created instance with connectionTimeout 5,000, readTimeout 30,000, maxRetryTimes 3, SSL Version TLS
+14:36:55,498 INFO  [cn.jiguang.common.connection.NativeHttpClient] Created instance with connectionTimeout 5,000, readTimeout 30,000, maxRetryTimes 3, SSL Version TLS
+14:36:55,498 INFO  [cn.jiguang.common.connection.NativeHttpClient] Created instance with connectionTimeout 5,000, readTimeout 30,000, maxRetryTimes 3, SSL Version TLS
+14:36:56,036 INFO  [com.cn.util.RedisAPI] Got result - {"msg_id":2946724944,"sendno":693511034,"statusCode":0}

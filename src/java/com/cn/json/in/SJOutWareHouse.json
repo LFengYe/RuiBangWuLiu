@@ -12,14 +12,13 @@
     "unique": [],
     "primary": "sjOutWareHouseID,supplierID",
     "titles": {
-        "sjOutWareHouseID": "送检出库单号,20%",
+        "sjOutWareHouseID": "送检出库单号,25%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
         "sjCKProducerName": "制单人,10%",
         "sjCKProduceTime": "制单时间,10%",
         "sjCKAuditStaffName": "审核人员姓名,10%",
-        "sjCKAuditTime": "审核时间,10%",
-        "printFlag": "打印标志,10%",
+        "sjCKAuditTime": "审核时间,15%",
         "sjOutBackWareHouseRemark": "备注,10%"
     },
     "detailControl": {
@@ -39,7 +38,6 @@
         "checkbox": "选择,5%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
-        "partID": "部品编号,10%",
         "partName": "部品名称,10%",
         "partCode": "部品件号,20%",
         "inboundBatch": "入库批次,10%",

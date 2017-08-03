@@ -158,6 +158,7 @@
     </first>
     <first hypelnk="app"  id="804" text="库房作业管理" url="">
         <second hypelnk="ic_out_finished"  id="8041" text="非生产领料" url="out.do"></second>
+        <second hypelnk="ic_stock_alarm"  id="8049" text="临时调货" url="out.do"></second>
         <second hypelnk="ic_return_goods"  id="8042" text="部品退货" url="out.do"></second>
         <second hypelnk="ic_rework_out"  id="8045" text="返修出库" url="move.do"></second>
         <second hypelnk="ic_rework_in"  id="8046" text="返修入库" url="move.do"></second>

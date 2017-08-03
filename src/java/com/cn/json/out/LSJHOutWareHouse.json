@@ -1,26 +1,26 @@
 {
     "control": {
-        "fjhOutWareHouseID": "非计划出库单号",
+        "fjhOutWareHouseID": "计划出库单号",
         "fjhCKProducerName": "制单人",
         "fjhCKProduceTime": "制单时间",
         "fjhType": "计划类型",
-        "customerTypeName": "客户类型,hidden",
-        "fzdCustomerID": "非终端客户代码,@table,@customerTypeName:@fzdCustomerName",
+        "customerTypeName": "客户类型,hidden,@终端客户",
+        "fzdCustomerID": "终端客户代码,@table,@customerTypeName:@fzdCustomerName",
         "fjhOutWareHouseRemark": "备注,string,500"
     },
     "mustwrite": ["fjhOutWareHouseID", "fzdCustomerID", "fjhCKProducerName", "fjhCKProduceTime"],
     "unique": [],
     "primary": "fjhOutWareHouseID",
     "titles": {
-        "fjhOutWareHouseID": "非计划出库单号,30%",
-        "fzdCustomerID": "非终端客户代码,10%",
-        "fzdCustomerName": "非终端客户名称,10%",
+        "fjhOutWareHouseID": "计划出库单号,30%",
+        "fzdCustomerID": "终端客户代码,10%",
+        "fzdCustomerName": "终端客户名称,10%",
         "fjhCKProducerName": "制单人,10%",
         "fjhCKProduceTime": "制单时间,20%",
         "fjhOutWareHouseRemark": "备注,20%"
     },
     "detailControl": {
-        "fjhOutWareHouseID": "非计划出库单号,parent",
+        "fjhOutWareHouseID": "计划出库单号,parent",
         "customerTypeName": "客户类型,hidden,@供应商",
         "lpAmount": "良品数量,hidden",
         "supplierID": "供应商代码,@table,@customerTypeName:@supplierName",
@@ -40,7 +40,7 @@
         "fjhCKAmount": "出库数量,10%",
         "fjhCKTime": "出库时间,10%",
         "fjhOutWareHouseListRemark": "备注,10%",
-        "fjhOutWareHouseID": "非计划出库单号,10%",
+        "fjhOutWareHouseID": "计划出库单号,10%",
         "wareHouseManagerName": "库管员,10%",
         "cfAddress": "存放地址,10%"
     }

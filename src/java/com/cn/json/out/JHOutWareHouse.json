@@ -14,16 +14,14 @@
     "unique": ["jhOutWareHouseID"],
     "primary": "jhOutWareHouseID",
     "titles": {
-        "jhOutWareHouseID": "计划出库单号,10%",
+        "jhOutWareHouseID": "计划出库单号,15%",
         "zdCustomerID": "终端客户代码,10%",
         "zdCustomerName": "终端客户名称,10%",
-        "jhDemandTime": "计划需求时间,10%",
-        "jhType": "计划类型,8%",
-        "bhStaffName": "备货人员姓名,8%",
+        "jhDemandTime": "计划需求时间,15%",
+        "jhType": "计划类型,10%",
         "jhShift": "计划班次,5%",
-        "jhCKProducerName": "制单人员姓名,8%",
+        "jhCKProducerName": "制单人员姓名,5%",
         "jhCKProduceTime": "制单时间,10%",
-        "printFlag": "打印标志,8%",
         "jhOutWareHouseRemark": "备注,20%"
     },
     "detailControl": {
@@ -41,6 +39,7 @@
     "detailUnique": [],
     "detailPrimary": "djInWareHouseID,partCode",
     "detailTitles": {
+        "checkbox": "选择,5%",
         "failedReason": "失败原因,0%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
@@ -53,5 +52,19 @@
         "containerAmount": "盛具数量,10%",
         "jhOutWareHouseListRemark": "备注,10%",
         "jhOutWareHouseID": "计划出库单号,10%"
+    },
+    "printArea": {
+        "rows1": {
+            "supplierIDName": "15%,供应商代码",
+            "supplierID": "20%",
+            "supplierNameName": "15%,供应商",
+            "supplierName": "20%"
+        },
+        "rows2": {
+            "partCodeName": "15%,部品件号",
+            "partCode": "20%",
+            "packingNumberName": "15%,数量",
+            "packingNumber": "20%"
+        }
     }
 }

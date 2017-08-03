@@ -188,7 +188,7 @@ public class StartInit implements ServletContextListener {
                 transaction.rpush("bomInfo_" + bomInfo.getZcPartCode().toLowerCase(), JSONObject.toJSONString(bomInfo));
             }
             
-             transaction.exec();
+            transaction.exec();
             if (conn != null)
                 conn.close();
             

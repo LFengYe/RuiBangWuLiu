@@ -18,6 +18,8 @@ public class ContainerAmount {
     private int containerFXIn;
     private int containerOut;
     private int containerTotal;
+    private int containerLPTotal;
+    private int containerBLPTotal;
 
     public String getSupplierID() {
         return supplierID;
@@ -81,6 +83,22 @@ public class ContainerAmount {
 
     public void setContainerTotal(int containerTotal) {
         this.containerTotal = containerTotal;
+    }
+
+    public int getContainerLPTotal() {
+        return containerLPTotal;
+    }
+
+    public void setContainerLPTotal(int containerLPTotal) {
+        this.containerLPTotal = containerLPTotal;
+    }
+
+    public int getContainerBLPTotal() {
+        return containerBLPTotal;
+    }
+
+    public void setContainerBLPTotal(int containerBLPTotal) {
+        this.containerBLPTotal = containerBLPTotal;
     }
     
 }

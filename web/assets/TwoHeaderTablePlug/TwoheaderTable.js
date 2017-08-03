@@ -111,7 +111,6 @@
             var that = this;
             this.$container.find("tbody").find("tr").children("td").click(function(e){
                 var index = $(this).attr("index");
-                console.log(index);
                 that.$container.find("tbody tr:nth-child(" + (parseInt(index) + 1) + ")").toggleClass("clicked");
             });
             
@@ -153,12 +152,9 @@
             var str = '';                  //保证元组不重复
             var that = this;
             for (var i = 0; i < this.datas.length; i++) {
-                var item = this.datas[i];
-                for (var index in item) {
-                    if (item[index].toString().toLowerCase().indexOf(data.toLowerCase()) >= 0) {
-                        this.afterFilter.push(item);
-                        break;
-                    }
+                var item = JSON.stringify(this.datas[i]);
+                if (item.toLowerCase().indexOf(data.toLowerCase()) >= 0) {
+                    this.afterFilter.push(this.datas[i]);
                 }
             }
             /*this.$container.find("tbody").find('tr:contains("' + data + '")').each(function () {
@@ -173,7 +169,7 @@
              var arr = this.afterFilter.map(function (it) {
              return it[1];
              });*/
-            //console.log(this.afterFilter);
+            console.log(this.afterFilter);
             _funs_.getTableDataDOM.call(this, this.afterFilter);
             this.filterState = true;        //表示数据筛选状态
             return this;
@@ -186,6 +182,7 @@
             _funs_.getTableDataDOM.call(this, this.datas);
         },
         filter: function (keyword) {
+            console.log(keyword);
             if (keyword)
                 _funs_.dataFilter.call(this, keyword);
             else

@@ -399,7 +399,7 @@ public class MoveInterface extends HttpServlet {
                                     if (list != null && list.size() > 0) {
                                         List<Object> filterList = new ArrayList<>();
                                         for (Object obj : list) {
-                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                                 continue;
                                             }
                                             KFJCLPForFXCK fxck = (KFJCLPForFXCK) obj;
@@ -423,7 +423,7 @@ public class MoveInterface extends HttpServlet {
                                     if (list != null && list.size() > 0) {
                                         List<Object> filterList = new ArrayList<>();
                                         for (Object obj : list) {
-                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                            if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                                 continue;
                                             }
                                             KFJCBLPForFXCK fxck = (KFJCBLPForFXCK) obj;
@@ -664,7 +664,7 @@ public class MoveInterface extends HttpServlet {
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
-                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).contains(datas)) {
+                                        if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
                                             continue;
                                         }
                                         KFJCFXPForFXRK fxrk = (KFJCFXPForFXRK) obj;

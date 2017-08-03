@@ -44,7 +44,6 @@ public class ReportInterface extends HttpServlet {
 //    private DatabaseOpt opt;
 //    private boolean isForward;
 //    private String forwardStr;
-
     @Override
     public void init() throws ServletException {
         super.init();
@@ -91,6 +90,7 @@ public class ReportInterface extends HttpServlet {
             String detail = paramsJson.getString("detail");
             String fileName = paramsJson.getString("fileName");
             String operateType = paramsJson.getString("type");
+            String clientType = paramsJson.getString("clientType");
             String start = paramsJson.getString("start");
             String end = paramsJson.getString("end");
             int isHistory = paramsJson.getIntValue("isHistory");
@@ -182,10 +182,28 @@ public class ReportInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
+                            if (clientType != null && clientType.compareTo("app") == 0) {
+                                Class className = Class.forName("com.cn.bean.report.JHCKCompletionAllInfo");
+                                proParams.put("fields", "string,*");
+                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrAllField(className, datas));
+                                proParams.put("pageSize", "int," + pageSize);
+                                proParams.put("pageIndex", "int," + pageIndex);
+                                proParams.put("orderField", "string,ZDCustomerID");
+                                proParams.put("orderFlag", "int,0");
+                                proParams.put("Endtime", "string," + end);
+
+                                json = reportOperate(operateType, "spGETJHCKCompletionAllInfoWithFilter", "JHCKCompletionAllInfo", proParams, new ReportInterface.ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                    }
+                                });
+                                break;
+                            }
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
                                 proParams.put("BeginTime", "string,");
                                 proParams.put("Endtime", "string," + end);
                             }
+
                             json = reportOperate(operateType, "spGETJHCKCompletionAllInfo", "JHCKCompletionAllInfo", proParams, new ReportInterface.ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
@@ -211,7 +229,7 @@ public class ReportInterface extends HttpServlet {
                             List<Object> list = commonController.proceduceQuery("spGETJHCKCompletionAllInfo", proParams, "com.cn.bean.report.JHCKCompletionAllInfo", opt.getConnect());
                             json = exportData("com.cn.bean.report.", "JHCKCompletionAllInfo", (ArrayList<Object>) list);
                         }
-                        */
+                         */
                     }
                     break;
                 }
@@ -247,7 +265,6 @@ public class ReportInterface extends HttpServlet {
 
                 //<editor-fold desc="期初明细">
                 //</editor-fold>
-
                 //<editor-fold desc="部品出入库明细">
                 //<editor-fold desc="待检入库报表_spGetRKListForDjpRK">
                 case "待检入库报表": {
@@ -1739,7 +1756,6 @@ public class ReportInterface extends HttpServlet {
                 //</editor-fold>
 
                 //</editor-fold>
-                
                 //<editor-fold desc="盛具报表">
                 case "盛具报表": {
                     switch (operation) {
@@ -1779,7 +1795,7 @@ public class ReportInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="报检信息查询">
                 case "报检信息查询": {
                     String whereCase1 = "DJInWareHouseID in (select DJInWareHouseID from tblDJInWareHouse where DJRKAuditTime is not null)";
@@ -1800,7 +1816,7 @@ public class ReportInterface extends HttpServlet {
             json = Units.objectToJson(-1, "输入参数错误!", e.toString());
         }
         //logger.info(Units.getIpAddress(request) + "response:" + subUri + ",time:" + (new Date().getTime()));
-        
+
         PrintWriter out = response.getWriter();
         try {
             response.setContentType("text/html;charset=UTF-8");
@@ -1855,7 +1871,7 @@ public class ReportInterface extends HttpServlet {
         }
         return json;
     }
-    
+
     /**
      * 报表操作
      *
@@ -1904,7 +1920,7 @@ public class ReportInterface extends HttpServlet {
         }
         return json;
     }
-    
+
     private String reportOperateWithFilter(String operateType, String proceduceName, String className, JSONObject proParams, FilterListItemOperate itemOperate) throws Exception {
         String result = null;
         String json = null;

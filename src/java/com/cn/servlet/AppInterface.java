@@ -10,6 +10,7 @@ import com.cn.bean.Customer;
 import com.cn.bean.Employee;
 import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
+import com.cn.bean.PartCategory;
 import com.cn.bean.PlatformRoleRight;
 import com.cn.bean.app.JHOutWareHouseList;
 import com.cn.bean.app.ProcessList;
@@ -17,8 +18,10 @@ import com.cn.controller.CommonController;
 import com.cn.controller.ProcessListController;
 import com.cn.test.LedControl;
 import com.cn.util.DatabaseOpt;
+import com.cn.util.PushUnits;
 import com.cn.util.RedisAPI;
 import com.cn.util.Units;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -244,6 +247,11 @@ public class AppInterface extends HttpServlet {
                                         @Override
                                         public void run() {
                                             LedControl.setLedAreaCode(list.getPartCode(), list.getSupplierID());
+                                            JsonObject object = new JsonObject();
+                                            GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), GYSPartContainerInfo.class);
+                                            PartCategory partCategory = JSONObject.parseObject(RedisAPI.get(containerInfo.getPartCategoryName()), PartCategory.class);
+                                            object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
+                                            PushUnits.pushNotifationWithAlias(partCategory.getWareHouseManagerName(), "备货已完成", "1", object);
                                         }
                                     }.start();
                                     json = Units.objectToJson(0, "备货完成!", null);

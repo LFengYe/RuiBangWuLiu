@@ -21,7 +21,6 @@
         "bpTHProduceTime": "制单时间,10%",
         "bpTHAuditStaffName": "审核人,10%",
         "bpTHAuditTime": "审核时间,10%",
-        "printFlag": "打印标志,10%",
         "bpTHOutWareHouseRemark": "备注,10%"
     },
     "detailControl": {

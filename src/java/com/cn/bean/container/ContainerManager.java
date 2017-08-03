@@ -29,6 +29,8 @@ public class ContainerManager {
     private String containerName;
     @FieldDescription(description = "盛具编号")
     private String containerCode;
+    @FieldDescription(description = "盛具状态")
+    private String containerStatus;
     @FieldDescription(description = "操作类型")
     private String operateType;
     @FieldDescription(description = "数量")
@@ -120,5 +122,13 @@ public class ContainerManager {
 
     public void setOperateMaxAmount(int operateMaxAmount) {
         this.operateMaxAmount = operateMaxAmount;
+    }
+
+    public String getContainerStatus() {
+        return containerStatus;
+    }
+
+    public void setContainerStatus(String containerStatus) {
+        this.containerStatus = containerStatus;
     }
 }

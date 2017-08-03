@@ -18,8 +18,10 @@
             $(this).css('width', options.width).addClass("_scrolling");
 
             if (this.parentNode.className == "scrolling_inner") {
+                console.log("has parent");
                 return ;
             } else {
+                console.log("new");
                 $(this).wrap('<div class="scrolling_outer"><div class="scrolling_inner"></div></div>');
             }
             $(this).parents(".scrolling_outer").css({
@@ -74,8 +76,9 @@
                 }
             });
             $curr = $this.prev();
-            $("thead:eq(0)>tr th", this).each(function (i) {
+            $("thead>tr th", this).each(function (i) {
                 $("thead>tr th:eq(" + i + ")", $curr).width($(this).width());
+                $("thead>tr th:eq(" + i + ")", $this).width($(this).width());
             });
             if (options.width == "100%" || "auto") {
                 $(window).resize(function () {
@@ -94,8 +97,9 @@
 
     function resizer($this) {
         $curr = $this.prev();
-        $("thead:eq(0)>tr th", $this).each(function (i) {
-            $("thead:eq(0)>tr th:eq(" + i + ")", $curr).width($(this).width());
+        $("thead>tr th", $this).each(function (i) {
+            $("thead>tr th:eq(" + i + ")", $curr).width($(this).width());
+            $("thead>tr th:eq(" + i + ")", $this).width($(this).width());
         });
     }
     ;

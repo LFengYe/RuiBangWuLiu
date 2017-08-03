@@ -34,7 +34,6 @@
         "supplierName": "供应商名称,10%",
         "partCode": "部品件号,20%",
         "partName": "部品名称,10%",
-        "partID": "部品编号,10%",
         "partState": "部品状态,10%",
         "accountBalance": "账面结存,10%",
         "realBalance": "实物结存,10%",

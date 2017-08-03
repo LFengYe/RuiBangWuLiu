@@ -23,8 +23,7 @@
         "djRKProduceTime": "制单时间,10%",
         "djRKAuditStaffName": "审核人员姓名,10%",
         "djRKAuditTime": "审核时间,10%",
-        "printFlag": "打印标志,5%",
-        "djINWareHousRemark": "备注,5%"
+        "djINWareHousRemark": "备注,10%"
     },
     "detailControl": {
         "djInWareHouseID": "待检入库单号,parent",
@@ -43,10 +42,10 @@
     "detailUnique": [],
     "detailPrimary": "djInWareHouseID,partCode",
     "detailTitles": {
-        "failedReason": "失败原因,10%",
+        "failedReason": "失败原因,0%",
+        "djInWareHouseID": "待检入库单号,10%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
-        "partID": "部品编号,10%",
         "partName": "部品名称,10%",
         "partCode": "部品件号,20%",
         "partUnit": "部品单位,10%",
@@ -56,8 +55,7 @@
         "inboundBoxAmount": "入库箱数,10%",
         "inboundBatch": "入库批次,10%",
         "originalBatch": "原厂批次,10%",
-        "djInWareHouseListRemark": "备注,10%",
-        "djInWareHouseID": "待检入库单号,10%"
+        "djInWareHouseListRemark": "备注,10%"
     },
     "printArea": {
         "title": {"djInWareHouse":"100%,待检入库单"},

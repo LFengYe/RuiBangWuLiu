@@ -14,7 +14,7 @@
     "unique": [],
     "primary": "zdBackWareHouseID,ycFLocation,zdCustomerID",
     "titles": {
-        "zdBackWareHouseID": "终端退库单据号,10%",
+        "zdBackWareHouseID": "终端退库单据号,15%",
         "zdCustomerID": "终端客户代码,10%",
         "zdCustomerName": "终端客户名称,10%",
         "ycFLocation": "原存放区域,10%",
@@ -23,7 +23,6 @@
         "zdTKProduceTime": "制单时间,10%",
         "zdTKAuditStaffName": "审核员姓名,10%",
         "zdTKAuditTime": "审核时间,10%",
-        "printFlag": "打印标志,10%",
         "zdTKRemark": "备注,10%"
     },
     "detailControl": {
@@ -46,7 +45,6 @@
         "checkbox": "选择,5%",
         "supplierID": "供应商ID,10%",
         "supplierName": "供应商名称,10%",
-        "partID": "部品编号,10%",
         "partName": "部品名称,10%",
         "partCode": "部品件号,20%",
         "partUnit": "部品单位,10%",

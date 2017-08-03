@@ -831,6 +831,16 @@ public class BaseInterface extends HttpServlet {
                             json = exportData("com.cn.bean.", "PartCategory", (ArrayList<Object>) queryData("com.cn.bean.", "table", "PartCategory", "PartCategoryName", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("wareHouseManagerName") == 0) {
+                                String[] keys = {"wareHouseManagerName"};
+                                String[] keysName = {"库管员"};
+                                int[] keysWidth = {100};
+                                String[] fieldsName = {"employeeName"};
+                                json = queryOperate(target, "com.cn.bean.", "table", "Employee", "EmployeeName", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
+                            break;
+                        }
                         case "submit": {
                             json = submitOperate("com.cn.bean.", "PartCategory", update, add, delete, "data");
                             new Thread() {

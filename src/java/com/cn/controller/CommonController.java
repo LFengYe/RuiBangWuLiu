@@ -442,7 +442,7 @@ public class CommonController {
         }
         return null;
     }
-    
+
     public List<Object> dataBaseQueryWithNotCloseConn(String type, String beanPackage, String tableName, String fields, String wherecase, int pageSize, int pageIndex, String orderField, int orderFlag,
             Connection conn) throws Exception {
         //System.out.println("wherecase:" + wherecase);
@@ -905,6 +905,32 @@ public class CommonController {
             }
         }
         return result;
+    }
+    
+    public String getWhereSQLStrAllField(Class objClass, String keyWord) {
+        Field[] fields = objClass.getDeclaredFields();
+        String commonResult = null;
+        for (Field field : fields) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+
+            String fieldType = field.getGenericType().toString();
+            if (fieldType.contains("Integer") || fieldType.contains("Double") || fieldType.contains("Float")) {
+                if (commonResult == null) {
+                    commonResult = "(" + field.getName() + " = " + keyWord + ")";
+                } else {
+                    commonResult += " or " + "(" + field.getName() + " = " + keyWord + ")";
+                }
+            } else if (fieldType.contains("String")) {
+                if (commonResult == null) {
+                    commonResult = "(" + field.getName() + " like '%" + keyWord + "%')";
+                } else {
+                    commonResult += " or " + "(" + field.getName() + " like '%" + keyWord + "%')";
+                }
+            }
+        }
+        return commonResult;
     }
 
     /**

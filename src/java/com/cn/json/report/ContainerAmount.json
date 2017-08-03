@@ -7,6 +7,8 @@
         "containerFXOut": "返修出库,1,1,20%,false",
         "containerFXIn": "返修入库,1,1,20%,false",
         "containerOut": "盛具出库,1,1,20%,false",
+        "containerLPTotal": "良品数,1,1,20%,false",
+        "containerBLPTotal": "不良品数,1,1,20%,false",
         "containerTotal": "盛具总数,1,1,20%,false"
     }
 }
