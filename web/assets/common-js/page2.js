@@ -1,4 +1,3 @@
-
 (function () {
     var $mainTable = $(".page2-container .page2-main-table");
     var $mainTableBox = $(".page2-container .page2-main-table .page2-show-table");
@@ -14,6 +13,7 @@
     var $addItem = $(".page2-container .page2-addItem");
     var $deleteItem = $(".page2-container .page2-deleteItem");
     var $finishItem = $(".page2-container .page2-finishItem");
+    var $printItem = $(".page2-container .page2-printItem");
     var $audit = $("#page2-audit");
     var $inspection = $("#page2-inspection");
     var $search = $(".page2-container .page2-query");
@@ -216,6 +216,37 @@
                 }
             }
             ajaxData("finish", {del: submitDel}, function () {
+                mainCancelRows = [];
+            }, function () {
+                mainCancelRows = [];
+            });
+        });
+
+        $printItem.off("click");
+        $printItem.click(function () {
+            if (mainCancelRows.length === 0) {
+                alert("未选中行");
+                return;
+            }
+            var arr = [];
+            var submitDel = [];
+            for (var index in mainCancelRows) {
+                if (mainCancelRows[index]) {
+                    arr.push(index);
+                    var whereObj = new Object();
+                    for (var proIndex in primary) {
+                        var proName = primary[proIndex];
+                        whereObj[proName] = mainCancelRows[index][proName];
+                    }
+                    submitDel.push(whereObj);
+                }
+            }
+            ajaxData("print", {del: submitDel, type: "all"}, function (data) {
+                $printArea.render(data.datas);
+                $("#print_area").css({
+                    "height": "auto"
+                    , "overflow": "visible"
+                }).printArea();
                 mainCancelRows = [];
             }, function () {
                 mainCancelRows = [];
@@ -427,10 +458,28 @@
 
         $print.off("click");
         $print.on("click", function () {
-            $("#print_area").css({
-                "height": "auto"
-                , "overflow": "visible"
-            }).printArea();
+            if (moudle === "总成计划" || moudle === "计划出库") {
+                var arr = $chidTableBox.getSelectedItem();
+                if (arr && arr.length > 0) {
+                    ajaxData("print", {del: arr, type: "selected"}, function (data) {
+                        $printArea.render(data.datas);
+                        $("#print_area").css({
+                            "height": "auto"
+                            , "overflow": "visible"
+                        }).printArea();
+                        mainCancelRows = [];
+                    }, function () {
+                        mainCancelRows = [];
+                    });
+                } else {
+                    alert("未选中数据!");
+                }
+            } else {
+                $("#print_area").css({
+                    "height": "auto"
+                    , "overflow": "visible"
+                }).printArea();
+            }
         });
 
         $import.off("click");
@@ -603,8 +652,17 @@
                     });
                 },
                 checkBoxCallBack: function (index, selected, obj) {
-                    if (moudle === "总成计划" ||  module === "计划出库") {
-                        
+                    if (moudle === "总成计划" || moudle === "计划出库") {
+                        if (selected) {
+                            whereObj = {};
+                            for (var proIndex in detailPrimary) {
+                                var proName = detailPrimary[proIndex];
+                                whereObj[proName] = obj[proName];
+                            }
+                            checkSelected.push(whereObj);
+                        } else {
+                            checkSelected.splice(index, 1);
+                        }
                     } else {
                         if (selected) {
                             whereObj = {};
@@ -619,9 +677,18 @@
                     }
                 }
             });
-            $printArea.createPrintArea({
-                printArea: data.printArea
-            });
+            
+            console.log("url:" + localStorage.getItem("url"));
+            if (moudle === "总成计划" || moudle === "计划出库") {
+                $printArea.createPrintCode({
+                    printArea: data.printArea
+                });
+            } else {
+                $printArea.createPrintArea({
+                    printArea: data.printArea,
+                    type: 2
+                });
+            }
             moudleOperate(moudle, 1);
         }, function () {
         });
@@ -674,6 +741,7 @@
                 $deleteItem.css("display", "none");
                 $finishItem.css("display", "none");
                 $history.css("display", "inline-block");
+                $printItem.css("display", "none");
 
                 $add.attr("disabled", "disabled");
                 $modify.attr("disabled", "disabled");
@@ -693,6 +761,7 @@
                 $deleteItem.css("display", "none");
                 $finishItem.css("display", "none");
                 $history.css("display", "inline-block");
+                $printItem.css("display", "none");
 
                 $add.attr("disabled", "disabled");
                 $modify.attr("disabled", "disabled");
@@ -715,6 +784,7 @@
                 $deleteItem.css("display", "none");
                 $history.css("display", "inline-block");
                 $finishItem.css("display", "none");
+                $printItem.css("display", "none");
 
                 $add.attr("disabled", "disabled");
                 $modify.attr("disabled", "disabled");
@@ -736,6 +806,7 @@
                 $deleteItem.css("display", "none");
                 $finishItem.css("display", "none");
                 $history.css("display", "inline-block");
+                $printItem.css("display", "none");
 
                 $add.attr("disabled", "disabled");
                 $modify.attr("disabled", false);
@@ -756,6 +827,7 @@
                 //$import.css("display", "inline-block");
                 $deleteItem.css("display", "inline-block");
                 $finishItem.css("display", "inline-block");
+                $printItem.css("display", "inline-block");
                 $history.css("display", "none");
 
                 !type ? $add.attr("disabled", false) : $add.attr("disabled", "disabled");
@@ -802,6 +874,7 @@
                 $deleteItem.css("display", "inline-block");
                 $finishItem.css("display", "none");
                 $history.css("display", "none");
+                $printItem.css("display", "none");
 
                 $add.attr("disabled", false);
                 $modify.attr("disabled", false);
@@ -822,6 +895,7 @@
                 $deleteItem.css("display", "inline-block");
                 $finishItem.css("display", "none");
                 $history.css("display", "none");
+                $printItem.css("display", "none");
 
                 $add.attr("disabled", false);
                 $modify.attr("disabled", false);

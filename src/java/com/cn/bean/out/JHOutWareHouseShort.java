@@ -16,19 +16,15 @@ public class JHOutWareHouseShort {
     private String supplierID;
     @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号", operate = "display")
-    private String partID;
     @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号", operate = "import")
     private String partCode;
-    @FieldDescription(description = "入库批次")
-    private String inboundBatch;
-    @FieldDescription(description = "车型", operate = "display")
-    private String autoStylingName;
-    @FieldDescription(description = "数量", operate = "import")
+    @FieldDescription(description = "计划数量", operate = "import")
     private int jhCKAmount;
-    @FieldDescription(description = "缺少", operate = "display")
+    @FieldDescription(description = "实物数量", operate = "display")
+    private int kcCount;
+    @FieldDescription(description = "差缺数量", operate = "display")
     private int shortAmount;
 
     public String getSupplierID() {
@@ -47,14 +43,6 @@ public class JHOutWareHouseShort {
         this.supplierName = supplierName;
     }
 
-    public String getPartID() {
-        return partID;
-    }
-
-    public void setPartID(String partID) {
-        this.partID = partID;
-    }
-
     public String getPartName() {
         return partName;
     }
@@ -71,22 +59,6 @@ public class JHOutWareHouseShort {
         this.partCode = partCode;
     }
 
-    public String getInboundBatch() {
-        return inboundBatch;
-    }
-
-    public void setInboundBatch(String inboundBatch) {
-        this.inboundBatch = inboundBatch;
-    }
-
-    public String getAutoStylingName() {
-        return autoStylingName;
-    }
-
-    public void setAutoStylingName(String autoStylingName) {
-        this.autoStylingName = autoStylingName;
-    }
-
     public int getJhCKAmount() {
         return jhCKAmount;
     }
@@ -101,5 +73,13 @@ public class JHOutWareHouseShort {
 
     public void setShortAmount(int shortAmount) {
         this.shortAmount = shortAmount;
+    }
+
+    public int getKcCount() {
+        return kcCount;
+    }
+
+    public void setKcCount(int kcCount) {
+        this.kcCount = kcCount;
     }
 }

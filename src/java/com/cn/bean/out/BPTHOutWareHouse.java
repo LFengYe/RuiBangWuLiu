@@ -30,8 +30,8 @@ public class BPTHOutWareHouse {
     private String supplierName;
     @FieldDescription(description = "部品状态")
     private String thPartState;
-    @FieldDescription(description = "库管员姓名", operate = "display")
-    private String wareHouseManagerName;
+//    @FieldDescription(description = "库管员姓名", operate = "display")
+//    private String wareHouseManagerName;
     @FieldDescription(description = "制单员姓名")
     private String bpTHProducerName;
     @FieldDescription(description = "制单时间", type = "date")
@@ -77,14 +77,6 @@ public class BPTHOutWareHouse {
 
     public void setThPartState(String thPartState) {
         this.thPartState = thPartState;
-    }
-
-    public String getWareHouseManagerName() {
-        return wareHouseManagerName;
-    }
-
-    public void setWareHouseManagerName(String wareHouseManagerName) {
-        this.wareHouseManagerName = wareHouseManagerName;
     }
 
     public String getBpTHProducerName() {

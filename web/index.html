@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="assets/JQueryTablePlug/jQueryTablePlug2.css" media="screen" />
         <link rel="stylesheet" href="assets/TwoHeaderTablePlug/TwoHeaderTable.css" media="screen" />
         <link rel="stylesheet" href="assets/JqueryPrintPlug/jqueryPrintPlug.css" media="print" />
+        <link rel="stylesheet" href="assets/JqueryPrintCode/jqueryPrintCode.css" media="print" />
         <!--[if lt IE 9]>
         <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -24,6 +25,7 @@
         <script type="text/javascript" src="javascript/laypage/laypage.js"></script>
         <script type="text/javascript" src="javascript/layer/layer.js"></script>
         <script type="text/javascript" src="javascript/jquery.PrintArea.js"></script>
+        <script type="text/javascript" src="javascript/JsBarcode.all.min.js"></script>
         <script type="text/javascript" src="javascript/script.js"></script>
         <script type="text/javascript">
             window.onload = function () {
@@ -108,6 +110,7 @@
                                     <button class="button btn btn-info" id="page1-submit">提交</button>
                                     <button class="button btn btn-info" id="page1-import">导入</button>
                                     <button class="button btn btn-info" id="page1-export">导出</button>
+                                    <button class="button btn btn-info" id="page1-print">打印</button>
                                 </div>
                                 <div class="page1-table">
                                     <div class="page1-show-table">
@@ -136,9 +139,10 @@
                                         </div>
                                         <button class="page2-query">查询</button>
                                         <div class="page2-history checkbox"><label><input type="checkbox"/>查询历史记录</label></div>
-                                        <button class="page2-addItem">添加</button>
-                                        <button class="page2-deleteItem">删除</button>
-                                        <button class="page2-finishItem">完成</button>
+                                        <button class="page2-addItem" style="display: inline-block">添加</button>
+                                        <button class="page2-deleteItem" style="display: inline-block">删除</button>
+                                        <button class="page2-finishItem" style="display: inline-block">完成</button>
+                                        <button class="page2-printItem" style="display: inline-block">打印</button>
                                     </div>
                                     <div class="page2-show-table"><!--动态添加--></div>
                                 </div>
@@ -188,7 +192,7 @@
                                         </div>
                                         <div class="wc-group">
                                             <label>关键字</label>
-                                            <input type="text" name="keywords" class="wc-control" placeholder="请输入关键词">
+                                            <input type="text" name="keywords" class="wc-control keywords" placeholder="请输入关键词">
                                         </div>
                                         <div class="wc-group">
                                             <label>起始日期</label>
@@ -305,6 +309,7 @@
         <script type="text/javascript" src="assets/TwoHeaderTablePlug/chromatable.js" ></script>
         <script type="text/javascript" src="assets/TwoHeaderTablePlug/TwoheaderTable.js" ></script>
         <script type="text/javascript" src="assets/JqueryPrintPlug/jqueryPrintPlug.js" ></script>
+        <script type="text/javascript" src="assets/JqueryPrintCode/jqueryPrintCode.js" ></script>
 
         <script type="text/javascript" src="assets/common-js/common.js" ></script>
         <script type="text/javascript" src="assets/common-js/mobile.js" ></script>		

@@ -86,6 +86,7 @@ public class JHOutWareHouseController {
                     if (baseInfo == null) {
                         item.setListNumber(-2);//没有对应件号
                         item.setFailedReason("没有该件号");
+                        item.setShortAmount(item.getJhCKAmount());
                         importResult.add(item);
                         isAllEnough = false;
                         continue;
@@ -94,6 +95,7 @@ public class JHOutWareHouseController {
                     if (customer == null) {
                         item.setListNumber(-3);//没有供应商信息
                         item.setFailedReason("没有该供应商");
+                        item.setShortAmount(item.getJhCKAmount());
                         importResult.add(item);
                         isAllEnough = false;
                         continue;
@@ -105,6 +107,7 @@ public class JHOutWareHouseController {
                     if (containerInfo == null || containerInfo.getOutboundPackageAmount() <= 0) {
                         item.setListNumber(-4);//没有出库盛具信息
                         item.setFailedReason("出库盛具信息不正确");
+                        item.setShortAmount(item.getJhCKAmount());
                         importResult.add(item);
                         isAllEnough = false;
                         continue;
@@ -139,6 +142,11 @@ public class JHOutWareHouseController {
                         Iterator<LPKCListInfo> iterator = subKCAmount.iterator();
                         while (ckAmount > 0) {
                             LPKCListInfo lpkcl = iterator.next();
+                            //保证分配到的批次计划数量都大于0, 需要考虑正式发布是否去掉
+                            if (lpkcl.getLpAmount() <= 0) {
+                                logger.info("实时良品库存出现负值: 供应商代码-->" + lpkcl.getSupplierID() + ",件号-->" + lpkcl.getPartCode() + ",批次-->" + lpkcl.getInboundBatch() + ",数量-->" + lpkcl.getLpAmount());
+                                continue;
+                            }
                             JHOutWareHouseList detail = new JHOutWareHouseList();
                             detail.setListNumber(completeResult.size() + 1);// 保证completeResult列表中添加的数据ListNumber都大于0
                             detail.setSupplierID(item.getSupplierID());
@@ -167,6 +175,7 @@ public class JHOutWareHouseController {
                     } else {
                         item.setListNumber(-1);//库存不能够满足计划
                         item.setFailedReason("库存不足");
+                        item.setKcCount(kcCount);
                         item.setShortAmount(ckAmount - kcCount);
                         isAllEnough = false;
                     }
@@ -228,9 +237,9 @@ public class JHOutWareHouseController {
             while (it.hasNext()) {
                 JHOutWareHouseList item = (JHOutWareHouseList) it.next();
                 String bomRedisKey = "bomInfo_" + item.getPartCode().toLowerCase();
-                logger.info(bomRedisKey);
+                //logger.info(bomRedisKey);
                 Set<String> keys = RedisAPI.getKeys(bomRedisKey);
-                logger.info(keys);
+                //logger.info(keys);
                 if (keys != null && keys.size() > 0) {
                     List<String> bomInfos = RedisAPI.getSet(bomRedisKey);
                     if (bomInfos != null && bomInfos.size() > 0) {

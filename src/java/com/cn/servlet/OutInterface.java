@@ -98,7 +98,7 @@ public class OutInterface extends HttpServlet {
         //logger.info(Units.getIpAddress(request) + "accept:" + subUri + ",time:" + (new Date().getTime()));
 
         try {
-            logger.info(subUri + ",params:" + params);
+            //logger.info(subUri + ",params:" + params);
             //System.out.println(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
@@ -275,13 +275,14 @@ public class OutInterface extends HttpServlet {
                                             JHOutWareHouseShort houseShort = new JHOutWareHouseShort();
                                             houseShort.setSupplierID(list.getSupplierID());
                                             houseShort.setSupplierName(list.getSupplierName());
-                                            houseShort.setPartID(list.getPartID());
+//                                            houseShort.setPartID(list.getPartID());
                                             houseShort.setPartName(list.getPartName());
                                             houseShort.setPartCode(list.getPartCode());
-                                            houseShort.setInboundBatch(list.getInboundBatch());
+//                                            houseShort.setInboundBatch(list.getInboundBatch());
                                             houseShort.setJhCKAmount(list.getJhCKAmount());
-                                            houseShort.setAutoStylingName(list.getAutoStylingName());
+//                                            houseShort.setAutoStylingName(list.getAutoStylingName());
                                             houseShort.setShortAmount(list.getShortAmount());
+                                            houseShort.setKcCount(list.getKcCount());
 
                                             shortList.add(houseShort);
                                         }
@@ -342,7 +343,7 @@ public class OutInterface extends HttpServlet {
                                     jhOutWareHouse.put("jhMethod", "明细计划");
                                     int addRes = commonController.dataBaseOperate("[" + jhOutWareHouse.toJSONString() + "]", "com.cn.bean.out.", "JHOutWareHouse", "add", opt.getConnect()).get(0);
                                     if (addRes == 0) {
-                                        //System.out.println("JSONObject.toJSONString(result):" + JSONObject.toJSONString(result));
+                                        //logger.info("计划明细:" + JSONObject.toJSONString(result));
                                         addRes = commonController.dataBaseOperate(JSONObject.toJSONString(result), "com.cn.bean.out.", "JHOutWareHouseList", "add", opt.getConnect()).get(0);
                                         if (addRes == 0) {
                                             json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
@@ -508,7 +509,6 @@ public class OutInterface extends HttpServlet {
                                     }
                                 } else {
                                     //当前库存不满足该计划
-                                    //当前库存不满足该计划
                                     List<Object> shortList = new ArrayList<>();//差缺表
                                     Iterator<JHOutWareHouseList> iterator = result.iterator();
                                     while (iterator.hasNext()) {
@@ -517,13 +517,14 @@ public class OutInterface extends HttpServlet {
                                             JHOutWareHouseShort houseShort = new JHOutWareHouseShort();
                                             houseShort.setSupplierID(list.getSupplierID());
                                             houseShort.setSupplierName(list.getSupplierName());
-                                            houseShort.setPartID(list.getPartID());
+//                                            houseShort.setPartID(list.getPartID());
                                             houseShort.setPartName(list.getPartName());
                                             houseShort.setPartCode(list.getPartCode());
-                                            houseShort.setInboundBatch(list.getInboundBatch());
+//                                            houseShort.setInboundBatch(list.getInboundBatch());
                                             houseShort.setJhCKAmount(list.getJhCKAmount());
-                                            houseShort.setAutoStylingName(list.getAutoStylingName());
+//                                            houseShort.setAutoStylingName(list.getAutoStylingName());
                                             houseShort.setShortAmount(list.getShortAmount());
+                                            houseShort.setKcCount(list.getKcCount());
 
                                             shortList.add(houseShort);
                                         }
@@ -632,6 +633,30 @@ public class OutInterface extends HttpServlet {
                                     json = Units.objectToJson(-1, "有" + count + "条数据不能删除, 计划已确认!", null);
                                 } else {
                                     json = Units.objectToJson(-1, "删除操作失败!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "未选中删除行!", null);
+                            }
+                            break;
+                        }
+                        case "print": {
+                            if (!Units.strIsEmpty(delete)) {
+                                JSONArray paramsArray = JSONArray.parseArray(delete);
+                                List<Object> list = new ArrayList<>();
+                                for (int i = 0; i < paramsArray.size(); i++) {
+                                    JSONObject object = paramsArray.getJSONObject(i);
+                                    String whereStr = "JHOutWareHouseID = '" + object.get("jhOutWareHouseID") + "'";
+                                    list.addAll(queryOperate("com.cn.bean.out.", "view", "BHProgressList", "JHOutWareHouseID", "", "{}", whereStr, false, opt.getConnect(), Integer.MAX_VALUE, 1));
+                                }
+
+                                String result = "{}";
+                                if (list != null && list.size() > 0) {
+                                    StringBuffer buffer = new StringBuffer(result);
+                                    buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
+                                    result = buffer.toString();
+                                    json = Units.objectToJson(0, "", result);
+                                } else {
+                                    json = Units.objectToJson(-1, "数据为空!", null);
                                 }
                             } else {
                                 json = Units.objectToJson(-1, "未选中删除行!", null);
@@ -790,13 +815,14 @@ public class OutInterface extends HttpServlet {
                                             JHOutWareHouseShort houseShort = new JHOutWareHouseShort();
                                             houseShort.setSupplierID(list.getSupplierID());
                                             houseShort.setSupplierName(list.getSupplierName());
-                                            houseShort.setPartID(list.getPartID());
+//                                            houseShort.setPartID(list.getPartID());
                                             houseShort.setPartName(list.getPartName());
                                             houseShort.setPartCode(list.getPartCode());
-                                            houseShort.setInboundBatch(list.getInboundBatch());
+//                                            houseShort.setInboundBatch(list.getInboundBatch());
                                             houseShort.setJhCKAmount(list.getJhCKAmount());
-                                            houseShort.setAutoStylingName(list.getAutoStylingName());
+//                                            houseShort.setAutoStylingName(list.getAutoStylingName());
                                             houseShort.setShortAmount(list.getShortAmount());
+                                            houseShort.setKcCount(list.getKcCount());
 
                                             shortList.add(houseShort);
                                         }
@@ -1245,7 +1271,7 @@ public class OutInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="非生产领料">
                 case "非生产领料": {
                     String jhType = "FJHType = '非生产领料'";
@@ -2699,6 +2725,20 @@ public class OutInterface extends HttpServlet {
         }
 
         return json;
+    }
+
+    private List<Object> queryOperate(String beanPackage, String type, String tableName, String orderField, String keyWord, String rely,
+            String whereCase, boolean isAll, Connection conn, int pageSize, int pageIndex) throws Exception {
+        CommonController commonController = new CommonController();
+        Class objClass = Class.forName(beanPackage + tableName);
+        Method method = objClass.getMethod("getRecordCount", null);
+        String whereSql = commonController.getWhereSQLStr(objClass, keyWord, rely, isAll);
+        if (Units.strIsEmpty(whereSql)) {
+            whereSql = whereCase;
+        } else {
+            whereSql = whereSql + (Units.strIsEmpty(whereCase) ? "" : " and " + whereCase);
+        }
+        return commonController.dataBaseQuery(type, beanPackage, tableName, "*", whereSql, pageSize, pageIndex, orderField, 0, conn);
     }
 
     /**

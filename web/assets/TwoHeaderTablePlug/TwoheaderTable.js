@@ -4,6 +4,9 @@
         title0: {},
         title1: {},
         datas: [],
+        pageIndex: 1,
+        pageSize: 15,
+        dataCount: 0,
         clickRowCallBack: function (index, obj) {
             console.log(index);
         },
@@ -20,7 +23,9 @@
 
     var _funs_ = {
         getDOM: function () {
-            this.html('<div class="wrapper"><div class="tht-header"></div><table class="chromaTable"></table></div>');
+            var htmlStr = '<div class="wrapper"><div class="tht-header"></div><table class="chromaTable"></table></div>';
+            htmlStr += '<div class="jtb-page"><div class="page"></div><div class="page-info"></div></div>';
+            this.html(htmlStr);
 
             //加载表头
             var title0 = this.title0;
@@ -92,7 +97,7 @@
                     } else {
                         that.sortMethod = 1;
                     }
-                    
+
                     datas.sort(function (a, b) {
                         if (that.sortMethod) {
                             //return a[name] - b[name];
@@ -107,13 +112,44 @@
             });
             _funs_.bindEvt.call(this);
         },
+        getPageInfo: function () {
+            var that = this;
+            this.pageCount = parseInt((this.dataCount % this.pageSize === 0) ? (this.dataCount / this.pageSize) : (this.dataCount / this.pageSize + 1));
+            laypage({
+                cont: this.find(".jtb-page .page"),
+                pages: this.pageCount,
+                curr: this.pageIndex,
+                skip: true,
+                jump: function (obj, first) {
+                    if (!first) {
+                        that.pageIndex = obj.curr;
+                        var keyWord;
+                        if (that.isLocalSearch)
+                            keyWord = serializeJqueryElement(that.find(".LocalFilter").parent());
+                        else
+                            keyWord = serializeJqueryElement($(".page2-container .wc-page2-form"));
+                        //console.log(keyWord);
+                        if (that.pageCallBack) {
+                            that.pageCallBack(obj.curr, keyWord);
+                        }
+                    }
+                }
+            });
+            this.find(".jtb-page .page-info").html("当前第" + this.pageIndex + "页,当前页" + this.datas.length + "条数据,   共" + this.pageCount + "页");
+            if (this.pageCount > 1) {
+                this.find(".jtb-page").css("display", "block");
+            } else {
+                this.find(".jtb-page").css("display", "none");
+            }
+            return this;
+        },
         bindEvt: function () {
             var that = this;
-            this.$container.find("tbody").find("tr").children("td").click(function(e){
+            this.$container.find("tbody").find("tr").children("td").click(function (e) {
                 var index = $(this).attr("index");
                 that.$container.find("tbody tr:nth-child(" + (parseInt(index) + 1) + ")").toggleClass("clicked");
             });
-            
+
             this.$container.find("tbody").find("tr").children("td").dblclick(function (e) {
                 var name = $(this).attr("name");
                 var titleTd = that.$container.find("thead").find("tr:eq(0)").children("th[name='" + name + "']");
@@ -180,6 +216,12 @@
         render: function (data) {
             this.datas = data;
             _funs_.getTableDataDOM.call(this, this.datas);
+        },
+        page: function (dataCount, pageIndex, pageSize) {
+            this.dataCount = dataCount;
+            this.pageIndex = pageIndex;
+            this.pageSize = pageSize;
+            _funs_.getPageInfo.call(this);
         },
         filter: function (keyword) {
             console.log(keyword);

@@ -25,5 +25,36 @@
         "operateProducerName": "制单人,15%",
         "operateProducerTime": "制单时间,20%",
         "containerManagerRemark": "备注,10%"
+    },
+    "printArea": {
+        "title": {
+            "containerManager": "100%,盛具管理"
+        },
+        "datasTitle": {
+            "supplierName": "15%,供应商名称",
+            "supplierID": "15%,供应商代码",
+            "operateType": "10%,操作类型",
+            "containerName": "10%,盛具名称",
+            "containerStatus": "10%,盛具状态",
+            "operateAmount": "5%,数量",
+            "operateProducerName": "10%,制单人",
+            "operateProducerTime": "20%,制单时间",
+            "djInWareHouseListRemark": "5%,备注"
+        },
+        "rows1": {
+            "inboundCountName":"15%,总计",
+            "inboundCount":"85%"
+        },
+        "rows2": {
+            "supplierSignName": "15%,供应商",
+            "supplierSign": "20%",
+            "wareHouseManagerSignName": "15%,审核人",
+            "wareHouseManagerSign": "20%",
+            "auditSignName": "15%,检验人",
+            "auditSign": "15%"
+        },
+        "rows3": {
+            "remark": "100%,备注: 白 --> 存根; 红色 --> 客户; 蓝 --> 库房; 绿色 --> 检验; 黄 --> 返回"
+        }
     }
 }

@@ -23,9 +23,21 @@ public class LedControl {
 
     private static final Logger logger = Logger.getLogger(DataInterface.class);
 
-    public static void main(String[] args) throws Exception {
-        setC01Plan();
-    }
+    /*public static void main(String[] args) throws Exception {
+        //setC01Plan();
+        String keys = "null";
+        String[] keyValue = keys.split(",", 2);
+        //System.out.println(key + ":" + keyValue[1] + "," + keyValue[1].length());
+        if (keyValue[0].compareToIgnoreCase("int") == 0) {
+            System.out.println("int");
+        }
+        if (keyValue[0].compareToIgnoreCase("string") == 0) {
+            System.out.println("string");
+        }
+        if (keyValue[0] == null || keyValue[0].isEmpty() || keyValue[0].compareToIgnoreCase("null") == 0) {
+            System.out.println("null");
+        }
+    }*/
 
     public static void setImage(AreaLedIPInfo ledIPInfo, String fileName) throws Exception {
         String filePath = "exportFile/" + fileName;

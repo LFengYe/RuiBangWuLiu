@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="assets/jQuery/jquery-1.11.1.min.js" ></script>
+        <script type="text/javascript" src="javascript/JsBarcode.all.min.js"></script>
+        <script type="text/javascript" src="javascript/script.js"></script>
+        <style>
+            .div_table{display: table;width: 100%;text-align: center;border: 0px solid;}
+            .div_row{display: table-row;}
+            .div_cell{display:block;float: left;border: 0px solid;height: 40px;line-height: 40px;}
+            .div_cell_code{display:block;float: left;border: 0px solid;}
+            .div_cell_double{height: 80px;line-height: 80px;}
+            #barcode{width:100px;}
+        </style>
+        <script type="text/javascript">
+            window.onload = function () {
+                console.log(serializeJqueryElement($(".page2-query").parent()));
+                
+                var str = "JHCK-20170801121212001";
+                var options = {
+                    format: "CODE128",
+                    displayValue: false,
+                    fontSize: 18,
+                    height: 100
+                };
+                $('#barcode').JsBarcode(str, options);//jQuery
+            };
+        </script>
+    </head>
+    <body>
+        <div class="div_table">
+            <img alt="条码" src="" id="barcode"/>
+            <div class="div_row">
+                <div class="div_cell" style="width: 50%;">供应商名称</div>
+                <div class="div_cell" style="width: 50%;">2511</div>
+            </div>
+            <div class="div_row">
+                <div class="div_cell" style="width: 50%;">产品名称</div>
+                <div class="div_cell" style="width: 50%;">数量</div>
+            </div>
+            <div class="div_row">
+                <div class="div_cell" style="width: 50%;">件号</div>
+                <div class="div_cell" style="width: 50%;">备注</div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -2,13 +2,10 @@
     "titles": {
         "fxCKAuditTime": "出库审核时间,1,1,10%,false", 
         "fxOutWareHouseID": "出库单号,1,1,10%,false", 
-        "outInType": "出入库类型,1,1,10%,false",
-        "outInMethod": "出入库方式,1,1,10%,false", 
         "supplierID": "供应商编号,1,1,10%,false",
         "supplierName": "供应商名称,1,1,10%,false",
         "partCode": "部品件号,1,1,10%,false", 
         "partName": "部品名称,1,1,10%,false",
-        "partID": "部品编号,1,1,10%,false",
         "inboundBatch": "入库批次,1,1,10%,false", 
         "fxCKAmount": "返修出库数量,1,1,10%,false", 
         "fxCKProducerName": "制单人,1,1,10%,false", 

@@ -43,6 +43,8 @@ public class JHOutWareHouseList implements Comparable{
     private int jhCKAmount;
     @FieldDescription(description = "缺少数量", operate = "display")
     private int shortAmount;
+    @FieldDescription(description = "库存数量", operate = "display")
+    private int kcCount;
     @FieldDescription(description = "出库盛具", operate = "display")
     private String outboundContainerName;
     @FieldDescription(description = "包装数量", operate = "display")
@@ -216,5 +218,13 @@ public class JHOutWareHouseList implements Comparable{
 
     public void setShortAmount(int shortAmount) {
         this.shortAmount = shortAmount;
+    }
+
+    public int getKcCount() {
+        return kcCount;
+    }
+
+    public void setKcCount(int kcCount) {
+        this.kcCount = kcCount;
     }
 }

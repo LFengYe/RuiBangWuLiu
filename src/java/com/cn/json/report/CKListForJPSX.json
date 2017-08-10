@@ -1,13 +1,10 @@
 {
     "titles": {
         "sxTime": "上线时间,1,1,10%,false",
-        "outInType": "出入库类型,1,1,10%,false",
-        "outInMethod": "出入库方式,1,1,10%,false",
         "supplierID": "供应商代码,1,1,10%,false",
         "supplierName": "供应商名称,1,1,10%,false",
         "partCode": "部品件号,1,1,10%,false",
         "partName": "部品名称,1,1,10%,false",
-        "partID": "部品编号,1,1,10%,false",
         "packingNumber": "包号,1,1,10%,false",
         "sxAmount": "上线数量,1,1,10%,false",
         "zdCustomerID": "终端客户代码,1,1,10%,false",

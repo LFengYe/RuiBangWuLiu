@@ -2,7 +2,6 @@
     "titles": {
         "supplierID": "供应商编号,1,1,20%,false",
         "supplierName": "供应商名称,1,1,20%,false",
-        "partID": "部品编号,1,1,20%,false",
         "partName": "部品名称,1,1,20%,false",
         "partCode": "部品件号,1,1,20%,false",
         "kcBLpAmount": "不良品数量,1,1,20%,false",

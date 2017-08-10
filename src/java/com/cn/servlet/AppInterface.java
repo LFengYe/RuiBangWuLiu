@@ -216,6 +216,9 @@ public class AppInterface extends HttpServlet {
                                 if (result == 0) {
                                     if (paramsJson.getIntValue("jhStatus") == 0
                                             || paramsJson.getIntValue("jhStatus") == -2) {
+                                        JsonObject object = new JsonObject();
+                                        object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
+                                        PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), "您有新的计划", "2", object);
                                         new Thread() {
                                             @Override
                                             public void run() {
@@ -243,15 +246,18 @@ public class AppInterface extends HttpServlet {
                                 if (result == 0) {
                                     json = Units.objectToJson(0, "确认成功!", null);
                                 } else if (result == 1) {
+                                    JsonObject object = new JsonObject();
+                                    GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), GYSPartContainerInfo.class);
+                                    logger.info("containerInfo:" + JSONObject.toJSONString(containerInfo));
+                                    PartCategory partCategory = JSONObject.parseObject(RedisAPI.get("partCategory_" + containerInfo.getPartCategoryName()), PartCategory.class);
+                                    logger.info("partCategory:" + JSONObject.toJSONString(partCategory));
+                                    object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
+                                    logger.info("库管员:" + partCategory.getWareHouseManagerName());
+                                    PushUnits.pushNotifationWithAlias(partCategory.getWareHouseManagerName(), "备货已完成", "1", object);
                                     new Thread() {
                                         @Override
                                         public void run() {
                                             LedControl.setLedAreaCode(list.getPartCode(), list.getSupplierID());
-                                            JsonObject object = new JsonObject();
-                                            GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), GYSPartContainerInfo.class);
-                                            PartCategory partCategory = JSONObject.parseObject(RedisAPI.get(containerInfo.getPartCategoryName()), PartCategory.class);
-                                            object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
-                                            PushUnits.pushNotifationWithAlias(partCategory.getWareHouseManagerName(), "备货已完成", "1", object);
                                         }
                                     }.start();
                                     json = Units.objectToJson(0, "备货完成!", null);

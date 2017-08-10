@@ -13,6 +13,15 @@ import com.cn.bean.FieldDescription;
  */
 public class SFCTotalData {
 
+    private static int recordCount;
+
+    public static int getRecordCount() {
+        return recordCount;
+    }
+
+    public static void setRecordCount(int aRecordCount) {
+        recordCount = aRecordCount;
+    }
     @FieldDescription(description = "供应商编号")
     private String supplierID;
     @FieldDescription(description = "供应商名称")

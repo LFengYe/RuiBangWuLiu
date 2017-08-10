@@ -13,6 +13,15 @@ import com.cn.bean.FieldDescription;
  */
 public class JHCKCompletionAllInfo {
 
+    private static int recordCount;
+
+    public static int getRecordCount() {
+        return recordCount;
+    }
+
+    public static void setRecordCount(int aRecordCount) {
+        recordCount = aRecordCount;
+    }
     @FieldDescription(description = "终端客户编号")
     private String zdCustomerID;
     @FieldDescription(description = "终端客户")

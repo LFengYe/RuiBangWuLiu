@@ -1,8 +1,8 @@
 {
     "control": {
-        "partID": "部品编号,string,30",
         "partName": "部品名称,string,50",
         "partCode": "部品件号,string,50",
+        "partID": "部品编号,string,50",
         "autoStylingName": "使用车型,@table",
         "assemblingStation": "装配工位,string,3",
         "partUnit": "部品单位,string,2",
@@ -16,9 +16,9 @@
     "unique": ["partCode", "partID"],
     "primary": "partCode",
     "titles": {
-        "partID": "部品编号,10%",
         "partName": "部品名称,12%",
         "partCode": "部品件号,20%",
+        "partID": "部品编号,10%",
         "autoStylingName": "使用车型,8%",
         "assemblingStation": "装配工位,10%",
         "partUnit": "部品单位,6%",

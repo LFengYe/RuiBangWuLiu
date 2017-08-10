@@ -2,7 +2,8 @@
     var _default = {
         printArea:{},
         datasTitle:{},
-        datas:[]
+        datas:[],
+        type: 2
     };
     
     var _funs_ = {
@@ -23,12 +24,31 @@
                 inputResult += "</div>";
             }
             
-            this.html("<div class='div_table_2'>" + inputResult + "</div>");
+            if (this.type == 1)
+                this.html("<div class='div_table_1'>" + inputResult + "</div>");
+            if (this.type == 2)
+                this.html("<div class='div_table_2'>" + inputResult + "</div>");
             
             this.$detasTitle = this.find("div[name='datasTitle']");
             return this;
         },
         insertData: function(datas) {
+            console.log(datas);
+            this.$detasTitle.find("ul").html("");
+            var obj = null;
+            for (var i = 0; i < datas.length; i++) {
+                obj = datas[i];
+                for (var j in this.datasTitle) {
+                    if (obj[j]) {
+                        this.$detasTitle.children("div[name='" + j + "']").find("ul").append("<li><div class='cell_start'></div>" + obj[j] + "</li>");
+                    } else {
+                        this.$detasTitle.children("div[name='" + j + "']").find("ul").append("<li><div class='cell_start'></div>" + " " + "</li>");
+                    }
+                }
+            }
+            return this;
+        },
+        addData: function(datas) {
             this.$detasTitle.find("ul").html("");
             var obj = null;
             for (var i = 0; i < datas.length; i++) {
@@ -63,7 +83,6 @@
     $.fn.createPrintArea = function (options) {
         $.extend(this, _default, options);
         _funs_.getDOM.call(this);
-        console.log(this.datas);
         _funs_.insertData.call(this, this.datas);
         $.extend(this, _interface);
         return this;

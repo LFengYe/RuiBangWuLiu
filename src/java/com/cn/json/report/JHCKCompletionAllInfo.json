@@ -22,5 +22,6 @@
         "sxTotal": "已上线,1,1,10%,false",
         "wsXTotal": "未上线,1,1,10%,false",
         "sxTime": "上线完成时间,1,1,10%,false"
-    }
+    },
+    "orderFiled": "zdCustomerID"
 }

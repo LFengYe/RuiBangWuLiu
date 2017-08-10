@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -76,24 +77,14 @@ public class ReportInterface extends HttpServlet {
         try {
             logger.info(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
-            //logger.info("send:" + subUri + ",time:" + paramsJson.getString("timestamp"));
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
             String rely = (paramsJson.getString("rely") == null) ? ("{}") : (paramsJson.getString("rely"));
-            String target = paramsJson.getString("target");
             String datas = (paramsJson.getString("datas") == null) ? ("") : paramsJson.getString("datas");
-            String update = paramsJson.getString("update");
-            String add = paramsJson.getString("add");
-            String delete = paramsJson.getString("del");
-            String item = paramsJson.getString("item");
-            String details = paramsJson.getString("details");
-            String detail = paramsJson.getString("detail");
-            String fileName = paramsJson.getString("fileName");
             String operateType = paramsJson.getString("type");
             String clientType = paramsJson.getString("clientType");
             String start = paramsJson.getString("start");
             String end = paramsJson.getString("end");
-            int isHistory = paramsJson.getIntValue("isHistory");
             int pageIndex = paramsJson.getIntValue("pageIndex");
             int pageSize = paramsJson.getIntValue("pageSize");
 
@@ -183,32 +174,35 @@ public class ReportInterface extends HttpServlet {
                         case "create": {
                             JSONObject proParams = new JSONObject();
                             if (clientType != null && clientType.compareTo("app") == 0) {
-                                Class className = Class.forName("com.cn.bean.report.JHCKCompletionAllInfo");
-                                proParams.put("fields", "string,*");
-                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrAllField(className, datas));
-                                proParams.put("pageSize", "int," + pageSize);
-                                proParams.put("pageIndex", "int," + pageIndex);
-                                proParams.put("orderField", "string,ZDCustomerID");
-                                proParams.put("orderFlag", "int,0");
-                                proParams.put("Endtime", "string," + end);
-
-                                json = reportOperate(operateType, "spGETJHCKCompletionAllInfoWithFilter", "JHCKCompletionAllInfo", proParams, new ReportInterface.ReportItemOperate() {
-                                    @Override
-                                    public void itemObjOperate(Object obj) {
-                                    }
-                                });
-                                break;
                             }
+
+                            Class className = Class.forName("com.cn.bean.report.JHCKCompletionAllInfo");
+                            proParams.put("fields", "string,*");
+                            proParams.put("wherecase", "string," + commonController.getWhereSQLStrAllField(className, datas));
+                            proParams.put("pageSize", "int," + pageSize);
+                            proParams.put("pageIndex", "int," + pageIndex);
+                            proParams.put("orderField", "string,ZDCustomerID");
+                            proParams.put("orderFlag", "int,0");
+                            proParams.put("Endtime", "string," + end);
+                            proParams.put("BeginTime", "");
+                            proParams.put("recordCount", "out," + Types.INTEGER);
+
+                            json = reportOperate(operateType, "spGETJHCKCompletionAllInfoWithFilter", "JHCKCompletionAllInfo", proParams, new ReportInterface.ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                }
+                            });
+                            /*
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
                                 proParams.put("BeginTime", "string,");
                                 proParams.put("Endtime", "string," + end);
                             }
-
                             json = reportOperate(operateType, "spGETJHCKCompletionAllInfo", "JHCKCompletionAllInfo", proParams, new ReportInterface.ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                 }
                             });
+                             */
                             break;
                         }
                         /*
@@ -1890,6 +1884,9 @@ public class ReportInterface extends HttpServlet {
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
+        Class objClass = Class.forName("com.cn.bean.report." + className);
+        //Method method = objClass.getMethod("getRecordCount", null);
+        
         if (operateType.compareTo("create") == 0) {
             result = Units.returnFileContext(path + "com/cn/json/report/", className + ".json");
         }
@@ -1907,11 +1904,13 @@ public class ReportInterface extends HttpServlet {
             } else if (operateType.compareTo("create") == 0) {
                 StringBuffer buffer = new StringBuffer(result);
                 buffer.insert(buffer.lastIndexOf("}"), ",\"datas\":" + JSONObject.toJSONString(list, Units.features));
+                //buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, null));
                 result = buffer.toString();
                 json = Units.objectToJson(0, "", result);
             } else if (operateType.compareTo("search") == 0) {
                 StringBuffer buffer = new StringBuffer(result);
                 buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
+                //buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, null));
                 result = buffer.toString();
                 json = Units.objectToJson(0, "", result);
             }

@@ -8,7 +8,6 @@
         "supplierName": "供应商名称,1,1,10%,false",
         "partCode": "部品件号,1,1,10%,false",
         "partName": "部品名称,1,1,10%,false",
-        "partID": "部品编号,1,1,10%,false",
         "inboundBatch": "入库批次,1,1,10%,false",
         "fjHCKAmount": "出库数量,1,1,10%,false",
         "fzDCustomerID": "终端客户编号,1,1,10%,false",

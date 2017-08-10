@@ -676,6 +676,12 @@ public class CommonController {
                 if (keyValue[0].compareToIgnoreCase("string") == 0) {
                     statement.setString(key, keyValue[1]);
                 }
+                if (keyValue[0] == null || keyValue[0].isEmpty() || keyValue[0].compareToIgnoreCase("null") == 0) {
+                    statement.setString(key, null);
+                }
+                if (keyValue[0].compareToIgnoreCase("out") == 0) {
+                    statement.registerOutParameter(key, Integer.valueOf(keyValue[1]));
+                }
             }
 
             ResultSet set = statement.executeQuery();

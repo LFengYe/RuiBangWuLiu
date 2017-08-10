@@ -161,7 +161,8 @@ html,body{
 .wc-page2-form .page2-history{display: none;}
 .wc-page2-form .page2-addItem,
 .wc-page2-form .page2-deleteItem,
-.wc-page2-form .page2-finishItem{
+.wc-page2-form .page2-finishItem,
+.wc-page2-form .page2-printItem{
     float:right;
     margin-right: 10px;
 }

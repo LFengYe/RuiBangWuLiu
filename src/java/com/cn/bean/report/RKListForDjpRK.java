@@ -21,6 +21,7 @@ public class RKListForDjpRK {
     private String partID;
     private String partName;
     private String inboundBatch;
+    private String originalBatch;
     private String djRKAmount;
     private String djRKProducerName;
     private String djInWareHouseListRemark;
@@ -127,5 +128,13 @@ public class RKListForDjpRK {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+    }
+
+    public String getOriginalBatch() {
+        return originalBatch;
+    }
+
+    public void setOriginalBatch(String originalBatch) {
+        this.originalBatch = originalBatch;
     }
 }

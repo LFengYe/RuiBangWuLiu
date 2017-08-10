@@ -2,7 +2,6 @@
     "titles": {
         "supplierID": "供应商编号,1,1,10%,false",
         "supplierName": "供应商名称,1,1,10%,false",
-        "partID": "部品编号,1,1,10%,false",
         "partName": "部品名称,1,1,10%,false",
         "partCode": "部品件号,1,1,10%,false",
         "gySBPrk": "供应商部品入库,1,1,10%,true,待检入库报表",

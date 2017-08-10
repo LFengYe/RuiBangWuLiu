@@ -43,6 +43,8 @@ public class ContainerManager {
     private String operateProducerTime;
     @FieldDescription(description = "备注")
     private String containerManagerRemark;
+    @FieldDescription(description = "明细中入库总数", operate = "display")
+    private int inboundCount;
 
     public String getSupplierID() {
         return supplierID;
@@ -130,5 +132,13 @@ public class ContainerManager {
 
     public void setContainerStatus(String containerStatus) {
         this.containerStatus = containerStatus;
+    }
+
+    public int getInboundCount() {
+        return inboundCount;
+    }
+
+    public void setInboundCount(int inboundCount) {
+        this.inboundCount = inboundCount;
     }
 }

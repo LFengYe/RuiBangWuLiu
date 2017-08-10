@@ -26,14 +26,20 @@
         } else {
             $("#partStatusSelect").parent(".wc-group").css("display", "none");
         }
+        $(".keywords").val("");
         $(".start-time").val("");
         $(".end-time").val("");
         var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
         var request = {};
         request.type = "create";
+        request.pageIndex = pageIndex;
+        request.pageSize = maxInpage;
         if (tmp.startTime && tmp.endTime) {
             request.start = tmp.startTime;
             request.end = tmp.endTime;
+        }
+        if (tmp.keyswords) {
+            request.datas = tmp.keyswords;
         }
         if (tmp.partStatus) {
             request.partStatus = tmp.partStatus;
@@ -45,12 +51,14 @@
                 title0: arr.titles,
                 title1: null,
                 datas: arr.datas,
+                dataCount: 100,
+                pageSize: 20,
                 dbclickRowCallBack: function (module, maps) {
                     //$mainInputBox.objInInputs(maps);
                     //request.name = name;
                     request.datas = maps;
                     ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
-                        console.log(data);
+                        //console.log(data);
                         $detailList.show();
                         $mainTable.hide();
                         $chidTableBox.insertTwoHeaderTable({

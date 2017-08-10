@@ -43,7 +43,6 @@
         "failedReason": "失败原因,0%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
-        "partID": "部品编号,10%",
         "partName": "部品名称,10%",
         "partCode": "部品件号,20%",
         "inboundBatch": "入库批次,10%",
@@ -55,16 +54,16 @@
     },
     "printArea": {
         "rows1": {
-            "supplierIDName": "15%,供应商代码",
-            "supplierID": "20%",
-            "supplierNameName": "15%,供应商",
-            "supplierName": "20%"
+            "supplierName": "50%",
+            "supplierID": "50%"
         },
         "rows2": {
-            "partCodeName": "15%,部品件号",
-            "partCode": "20%",
-            "packingNumberName": "15%,数量",
-            "packingNumber": "20%"
+            "partName": "50%",
+            "packingAmount": "50%"
+        },
+        "rows3": {
+            "partCode": "50%",
+            "progressListRemark":"50%"
         }
     }
 }

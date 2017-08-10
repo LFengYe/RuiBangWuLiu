@@ -5,6 +5,8 @@
     var $dateQueryBtn = $(".wc-page1-form .page1-query");
     var $dateInputs = $(".wc-page1-form input.wc-control");
 
+    var $printArea = $("#print_area");
+
     var OPERATION = {
         CREATE: "create",
         REQUEST_TABLE: "request_table",
@@ -19,14 +21,27 @@
         update: [],
         del: []
     };
-
     var primary = [];
     var inputNames = {};
     var modifyRow = null;
     var selectedSet = [];
     var pageSize = 15;
 
+    function initData() {
+        submitDatas = {
+            add: [],
+            update: [],
+            del: []
+        };
+        primary = [];
+        inputNames = {};
+        modifyRow = null;
+        selectedSet = [];
+        pageSize = 15;
+    }
+
     function initDOM(module) {
+        initData();
         ajaxData(OPERATION.CREATE, {}, function (data) {
             primary = data.primary.split(",");
             for (var i in data.control) {
@@ -85,8 +100,13 @@
                     });
                 }
             });
-            
+
             moduleOperate(module);
+
+            $printArea.createPrintArea({
+                printArea: data.printArea
+                ,type: 1
+            });
         }, function () {
             $inputBox.html("");
             $tableBox.html("");
@@ -207,11 +227,26 @@
             }, function () {
             });
         });
+        $("#page1-print").off("click");
+        $("#page1-print").on("click", function (e) {
+            $printArea.render(selectedSet);
+            var inboundCount = 0;
+            for (var i = 0; i < selectedSet.length; i++) {
+                var obj = selectedSet[i];
+                inboundCount += obj.operateAmount;
+            }
+            var obj = {};obj.inboundCount = inboundCount;
+            $printArea.controlData(obj);
+            $("#print_area").css({
+                "height": "auto"
+                , "overflow": "visible"
+            }).printArea();
+        });
     }
-    
+
     function moduleOperate(module) {
         console.log(module);
-        switch(module) {
+        switch (module) {
             case "分装入库":
             case "分装出库":
                 $("#page1-add").css("display", "inline-block");
@@ -232,7 +267,7 @@
                 $("#page1-export").css("display", "inline-block");
         }
     }
-    
+
     ajaxPage1 = function (module) {
         initDOM(module);
         bindEvt(module);
