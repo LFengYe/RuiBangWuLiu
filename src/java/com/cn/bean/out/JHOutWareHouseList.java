@@ -61,6 +61,8 @@ public class JHOutWareHouseList implements Comparable{
     private String jhCKProduceTime;
     @FieldDescription(description = "计划需求时间", operate = "display")
     private String jhDemandTime;
+    @FieldDescription(description = "库房存放地址", operate = "display")
+    private String kfCFAddress;
 
     public String getSupplierID() {
         return supplierID;
@@ -226,5 +228,13 @@ public class JHOutWareHouseList implements Comparable{
 
     public void setKcCount(int kcCount) {
         this.kcCount = kcCount;
+    }
+
+    public String getKfCFAddress() {
+        return kfCFAddress;
+    }
+
+    public void setKfCFAddress(String kfCFAddress) {
+        this.kfCFAddress = kfCFAddress;
     }
 }

@@ -37,7 +37,7 @@ public class LHProgressList {
     private int packingNumber;
     @FieldDescription(description = "包装数量")
     private int packingAmount;
-    @FieldDescription(description = "备货时间")
+    @FieldDescription(description = "领货时间")
     private String lhTime;
     @FieldDescription(description = "计划出库单号")
     private String jhOutWareHouseID;
@@ -50,6 +50,12 @@ public class LHProgressList {
     private String progressListRemark;
     @FieldDescription(description = "操作人员", operate = "display")
     private String staffName;
+    @FieldDescription(description = "计划状态", operate = "display")
+    private int jhStatus;
+    @FieldDescription(description = "需求时间", operate = "display")
+    private String jhDemandTime;
+    @FieldDescription(description = "库房存放地址", operate = "display")
+    private String kfCFAddress;
 
     public String getSupplierID() {
         return supplierID;
@@ -163,4 +169,27 @@ public class LHProgressList {
         this.lhProgressListRemark = lhProgressListRemark;
     }
     
+    public int getJhStatus() {
+        return -1;
+    }
+
+    public void setJhStatus(int jhStatus) {
+        this.jhStatus = jhStatus;
+    }
+
+    public String getJhDemandTime() {
+        return jhDemandTime;
+    }
+
+    public void setJhDemandTime(String jhDemandTime) {
+        this.jhDemandTime = jhDemandTime;
+    }
+
+    public String getKfCFAddress() {
+        return kfCFAddress;
+    }
+
+    public void setKfCFAddress(String kfCFAddress) {
+        this.kfCFAddress = kfCFAddress;
+    }
 }

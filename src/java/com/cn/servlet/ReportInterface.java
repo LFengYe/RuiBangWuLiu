@@ -174,25 +174,25 @@ public class ReportInterface extends HttpServlet {
                         case "create": {
                             JSONObject proParams = new JSONObject();
                             if (clientType != null && clientType.compareTo("app") == 0) {
+                                Class className = Class.forName("com.cn.bean.report.JHCKCompletionAllInfo");
+                                proParams.put("fields", "string,*");
+                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrAllField(className, datas));
+                                proParams.put("pageSize", "int," + pageSize);
+                                proParams.put("pageIndex", "int," + pageIndex);
+                                proParams.put("orderField", "string,ZDCustomerID");
+                                proParams.put("orderFlag", "int,0");
+                                proParams.put("Endtime", "string," + end);
+                                //proParams.put("BeginTime", "");
+                                //proParams.put("recordCount", "out," + Types.INTEGER);
+
+                                json = reportOperate(operateType, "spGETJHCKCompletionAllInfoWithFilter", "JHCKCompletionAllInfo", proParams, new ReportInterface.ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                    }
+                                });
+                                break;
                             }
-
-                            Class className = Class.forName("com.cn.bean.report.JHCKCompletionAllInfo");
-                            proParams.put("fields", "string,*");
-                            proParams.put("wherecase", "string," + commonController.getWhereSQLStrAllField(className, datas));
-                            proParams.put("pageSize", "int," + pageSize);
-                            proParams.put("pageIndex", "int," + pageIndex);
-                            proParams.put("orderField", "string,ZDCustomerID");
-                            proParams.put("orderFlag", "int,0");
-                            proParams.put("Endtime", "string," + end);
-                            proParams.put("BeginTime", "");
-                            proParams.put("recordCount", "out," + Types.INTEGER);
-
-                            json = reportOperate(operateType, "spGETJHCKCompletionAllInfoWithFilter", "JHCKCompletionAllInfo", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                }
-                            });
-                            /*
+                            
                             if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
                                 proParams.put("BeginTime", "string,");
                                 proParams.put("Endtime", "string," + end);
@@ -202,7 +202,6 @@ public class ReportInterface extends HttpServlet {
                                 public void itemObjOperate(Object obj) {
                                 }
                             });
-                             */
                             break;
                         }
                         /*
@@ -1886,7 +1885,7 @@ public class ReportInterface extends HttpServlet {
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         Class objClass = Class.forName("com.cn.bean.report." + className);
         //Method method = objClass.getMethod("getRecordCount", null);
-        
+
         if (operateType.compareTo("create") == 0) {
             result = Units.returnFileContext(path + "com/cn/json/report/", className + ".json");
         }

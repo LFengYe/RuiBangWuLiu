@@ -45,6 +45,12 @@ public class BHProgressList {
     private String bhProgressListRemark;
     @FieldDescription(description = "操作人员")
     private String bhStaffName;
+    @FieldDescription(description = "出库盛具", operate = "display")
+    private String outboundContainerName;
+    @FieldDescription(description = "包装数量", operate = "display")
+    private int outboundPackageAmount;
+    @FieldDescription(description = "需求时间", operate = "display")
+    private String jhDemandTime;
     
     @FieldDescription(description = "完成时间", operate = "display")
     private String finishTime;
@@ -171,6 +177,30 @@ public class BHProgressList {
 
     public void setStaffName(String staffName) {
         this.staffName = staffName;
+    }
+
+    public String getOutboundContainerName() {
+        return outboundContainerName;
+    }
+
+    public void setOutboundContainerName(String outboundContainerName) {
+        this.outboundContainerName = outboundContainerName;
+    }
+
+    public int getOutboundPackageAmount() {
+        return outboundPackageAmount;
+    }
+
+    public void setOutboundPackageAmount(int outboundPackageAmount) {
+        this.outboundPackageAmount = outboundPackageAmount;
+    }
+
+    public String getJhDemandTime() {
+        return jhDemandTime;
+    }
+
+    public void setJhDemandTime(String jhDemandTime) {
+        this.jhDemandTime = jhDemandTime;
     }
     
 }

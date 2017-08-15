@@ -23,7 +23,7 @@ and open the template in the editor.
 .div_cell .cell_start{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: left;}
 .div_cell_double{height: 40px;line-height: 40px;}
 
-.div_code_table{display: table;width: 100px;text-align: center;border: 0px solid;margin: 0;}
+.div_code_table{display: table;width: 300px;text-align: left;border: 0px solid;margin: 0;}
 .div_code_row{display: table-row;}
-.div_code_cell{display:block;float: left;border: 0px solid;height: 40px;line-height: 40px;}
-.div_code_cell_img{display:block;float: left;border: 0px solid;}
+.div_code_cell{display:block;float: left;border: 0px solid;height: 25px;line-height: 25px;}
+.div_code_cell_img{display:block;border: 0px solid;height: 80px;width: 250px;margin: 0 auto;}

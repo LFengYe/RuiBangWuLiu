@@ -17,27 +17,16 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.apache.log4j.Logger;
 
 public class LedControl {
 
     private static final Logger logger = Logger.getLogger(DataInterface.class);
 
-    /*public static void main(String[] args) throws Exception {
-        //setC01Plan();
-        String keys = "null";
-        String[] keyValue = keys.split(",", 2);
-        //System.out.println(key + ":" + keyValue[1] + "," + keyValue[1].length());
-        if (keyValue[0].compareToIgnoreCase("int") == 0) {
-            System.out.println("int");
-        }
-        if (keyValue[0].compareToIgnoreCase("string") == 0) {
-            System.out.println("string");
-        }
-        if (keyValue[0] == null || keyValue[0].isEmpty() || keyValue[0].compareToIgnoreCase("null") == 0) {
-            System.out.println("null");
-        }
-    }*/
+    public static void main(String[] args) throws Exception {
+        setAllLed(2, 1);
+    }
 
     public static void setImage(AreaLedIPInfo ledIPInfo, String fileName) throws Exception {
         String filePath = "exportFile/" + fileName;
@@ -62,24 +51,14 @@ public class LedControl {
 
     public static void setC01Plan() throws Exception {
         AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
-        ledIPInfo.setIpAddress("192.168.10.148");
-        ledIPInfo.setAddressCode("C-01");
-        LedPlan plan = new LedPlan();
-        plan.setSupplierName("四川泛华");
-        plan.setSupplierID("2033");
-        plan.setPartName("驾驶室线束总成");
-        plan.setPartCode("4010010-KA04R-C4D0");
-        plan.setInboundBatch("20170110122323");
-        plan.setPlanNum("5");
-        plan.setContainer("料架");
-        plan.setContainerAmount("20");
-        plan.setContainerBoxAmount("15");
-        setLedPlan(ledIPInfo, plan, 2);
+        ledIPInfo.setIpAddress("192.168.10.27");
+        ledIPInfo.setAddressCode("A-01");
+        setLedAreaCode(ledIPInfo);
     }
 
     public static void setC01PartStauts() throws Exception {
         AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
-        ledIPInfo.setIpAddress("192.168.10.46");
+        ledIPInfo.setIpAddress("192.168.7.46");
         ledIPInfo.setAddressCode("C-01");
         LedPartStatus partStatus = new LedPartStatus();
         partStatus.setPartStatus("禁用");
@@ -122,6 +101,25 @@ public class LedControl {
             logger.error("设置Led信息出错!", e);
         }
     }
+    
+    public static void setLedPlanList(JHOutWareHouseList list, AreaLedIPInfo ledIPInfo) {
+        try {
+            LedPlan plan = new LedPlan();
+            plan.setPartCode(list.getPartCode());
+            plan.setPartName(list.getPartName());
+            plan.setSupplierID(list.getSupplierID());
+            plan.setSupplierName(list.getSupplierName());
+            plan.setPlanNum(String.valueOf(list.getJhCKAmount()));
+            plan.setInboundBatch(list.getInboundBatch());
+            plan.setAreaCode(ledIPInfo.getAddressCode());
+            plan.setContainer(list.getOutboundContainerName());
+            plan.setContainerAmount(String.valueOf(list.getOutboundPackageAmount()));
+            plan.setContainerBoxAmount(String.valueOf(list.getContainerAmount()));
+            setLedPlan(ledIPInfo, plan, 1);
+        } catch (Exception e) {
+            logger.error("设置Led信息出错!", e);
+        }
+    }
 
     /**
      * 设置所有显示屏(测试用)
@@ -131,12 +129,14 @@ public class LedControl {
      * @throws Exception
      */
     public static void setAllLed(int type, int picType) throws Exception {
-        CommonController controller = new CommonController();
-        DatabaseOpt opt = new DatabaseOpt();
-        List<Object> list = controller.dataBaseQuery("table", "com.cn.bean.", "AreaLedIPInfo", "*", "", 999, 1, "AddressCode", 0, opt.getConnect());
-        Iterator iterator = list.iterator();
+        //CommonController controller = new CommonController();
+        //DatabaseOpt opt = new DatabaseOpt();
+        //List<Object> list = controller.dataBaseQuery("table", "com.cn.bean.", "AreaLedIPInfo", "*", "", 999, 1, "AddressCode", 0, opt.getConnect());
+        //Iterator iterator = list.iterator();
+        Set<String> keys = RedisAPI.getKeys("ledIpInfo_*");
+        Iterator<String> iterator = keys.iterator();
         while (iterator.hasNext()) {
-            AreaLedIPInfo ledIPInfo = (AreaLedIPInfo) iterator.next();
+            AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get(iterator.next()), AreaLedIPInfo.class);
             if (type == 2) {
                 setLedAreaCode(ledIPInfo);
             }
@@ -187,6 +187,9 @@ public class LedControl {
             if (result == 0 || count >= 5) {
                 System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
                 break;
+            }
+            if (result != 0) {
+                System.out.println(ledIPInfo.getAddressCode() + "设置失败!");
             }
             count++;
         }

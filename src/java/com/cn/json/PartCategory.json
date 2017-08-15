@@ -1,6 +1,6 @@
 {
     "control": {
-        "employeeType": "雇员类型,hidden,@配送员",
+        "employeeType": "雇员类型,hidden,@仓管员",
         "partCategoryName": "部品类别,string,10",
         "wareHouseManagerName": "库管员,@table,@employeeType"
     },

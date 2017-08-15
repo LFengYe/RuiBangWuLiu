@@ -986,7 +986,7 @@ public class CommonController {
                 menuJson += "},";
             } else {
                 menuJson += "\"" + element.attributeValue("text") + "\":";
-                menuJson += "\"" + element.attributeValue("hypelnk") + "," + element.attributeValue("url") + "," + element.attributeValue("id") + "\",";
+                menuJson += "\"" + element.attributeValue("hypelnk") + "," + element.attributeValue("url") + "," + element.attributeValue("id") + "," + element.attributeValue("icon") + "\",";
             }
         }
         return menuJson;

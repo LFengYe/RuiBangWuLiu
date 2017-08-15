@@ -663,6 +663,19 @@ public class OutInterface extends HttpServlet {
                             }
                             break;
                         }
+                        case "printItem": {
+                            if (!Units.strIsEmpty(delete)) {
+                                logger.info(JSONObject.toJSONString(delete));
+                                JSONArray paramsArray = JSONArray.parseArray(delete);
+                                List<Object> list = new ArrayList<>();
+                                for (int i = 0; i < paramsArray.size(); i++) {
+                                    JSONObject object = paramsArray.getJSONObject(i);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "未选中删除行!", null);
+                            }
+                            break;
+                        }
                         case "finish": {
                             if (!Units.strIsEmpty(delete) && employee.getEmployeeName().compareTo("管理员") == 0) {
                                 JSONArray paramsArray = JSONArray.parseArray(delete);
@@ -1921,12 +1934,23 @@ public class OutInterface extends HttpServlet {
                 case "部品退货": {
                     switch (operation) {
                         case "create": {
-                            String whereCase = "exists (select * from tblBPTHOutWareHouseList list left join viewGYSPartContainerInfo gys"
-                                    + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
-                                    + " where list.BPTHOutWareHoseID = viewBPTHOutWareHouse.BPTHOutWareHoseID"
-                                    + " and list.WareHouseManagername is null"
-                                    + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
-                            whereCase = (operateType.compareTo("app") == 0) ? (whereCase) : ("");
+                            String whereCase = "";
+                            if (operateType.compareTo("app") == 0) {
+                                if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
+                                    whereCase = "exists (select * from tblBPTHOutWareHouseList list left join viewGYSPartContainerInfo gys"
+                                            + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
+                                            + " where list.BPTHOutWareHoseID = viewBPTHOutWareHouse.BPTHOutWareHoseID"
+                                            + " and list.WareHouseManagername is null"
+                                            + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "') and THPartState <> '不良品'";
+                                }
+
+                                if (employee.getEmployeeTypeCode().compareTo("9") == 0) {
+                                    whereCase = "exists (select * from tblBPTHOutWareHouseList list"
+                                            + " where list.BPTHOutWareHoseID = viewBPTHOutWareHouse.BPTHOutWareHoseID"
+                                            + " and list.WareHouseManagername is null)"
+                                            + " and THPartState = '不良品'";
+                                }
+                            }
 
                             json = createOperateOnDate(20, "view", "com/cn/json/out/", "com.cn.bean.out.", "BPTHOutWareHouse", datas, rely, whereCase, "BPTHOutWareHoseID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"退货出库单据号\\", ",@THCK-" + Units.getNowTimeNoSeparator());
@@ -2030,11 +2054,14 @@ public class OutInterface extends HttpServlet {
                                 Class objClass = Class.forName("com.cn.bean.out." + "BPTHOutWareHouseList");
                                 Method method = objClass.getMethod("getRecordCount", null);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
+                                /*
                                 String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
                                         + " gys.SupplierID = viewBPTHOutWareHouseList.SupplierID"
                                         + " and gys.PartCode = viewBPTHOutWareHouseList.PartCode"
                                         + " and viewBPTHOutWareHouseList.WareHouseManagername is null"
                                         + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
+                                 */
+                                String detailWhereCase = "WareHouseManagername is null";
                                 if (!Units.strIsEmpty(whereSql)) {
                                     detailWhereCase = whereSql + " and " + detailWhereCase;
                                 }
@@ -2205,7 +2232,7 @@ public class OutInterface extends HttpServlet {
                                 }
                             }
                             if (operate.compareToIgnoreCase("modify") == 0) {
-                                json = submitOperate("com.cn.bean.in.", "BPTHOutWareHouseList", update, add, delete, "data");
+                                json = submitOperate("com.cn.bean.out.", "BPTHOutWareHouseList", update, add, delete, "data");
                             }
                             break;
                         }
@@ -2287,8 +2314,8 @@ public class OutInterface extends HttpServlet {
                 }
                 //</editor-fold>
 
-                //<editor-fold desc="备货确认">
-                case "备货确认": {
+                //<editor-fold desc="备货管理">
+                case "备货管理": {
                     String whereCase = "JHStatus <= 0";
                     switch (operation) {
                         case "create": {
@@ -2361,11 +2388,21 @@ public class OutInterface extends HttpServlet {
                 }
                 //</editor-fold>
 
-                //<editor-fold desc="领货确认">
-                case "领货确认": {
-                    String whereCase = "exists(select * from tblBHProgressList bhList where viewJHOutWareHouseList.JHOutWareHouseID = bhList.JHOutWareHouseID"
-                            + " and viewJHOutWareHouseList.SupplierID = bhList.SupplierID and viewJHOutWareHouseList.PartCode = bhList.PartCode"
-                            + " and viewJHOutWareHouseList.InboundBatch = bhList.InboundBatch and bhList.BHTime is not null and (JHStatus = 1 or JHStatus = -2))";
+                //<editor-fold desc="领货管理">
+                case "领货管理": {
+                    String whereCase;
+                    if (operateType.compareTo("app") == 0) {
+                        isHistory = 0;
+                        whereCase = "exists(select * from tblBHProgressList bhList left join tblPartBHStaff part on bhList.PartCode = part.PartCode"
+                                + " where viewJHOutWareHouseList.JHOutWareHouseID = bhList.JHOutWareHouseID"
+                                + " and viewJHOutWareHouseList.SupplierID = bhList.SupplierID and viewJHOutWareHouseList.PartCode = bhList.PartCode"
+                                + " and viewJHOutWareHouseList.InboundBatch = bhList.InboundBatch and bhList.BHTime is not null"
+                                + " and (JHStatus = 1 or JHStatus = -2) and part.LHEmployeeName = '" + employee.getEmployeeName() + "')";
+                    } else {
+                        whereCase = "exists(select * from tblBHProgressList bhList where viewJHOutWareHouseList.JHOutWareHouseID = bhList.JHOutWareHouseID"
+                                + " and viewJHOutWareHouseList.SupplierID = bhList.SupplierID and viewJHOutWareHouseList.PartCode = bhList.PartCode"
+                                + " and viewJHOutWareHouseList.InboundBatch = bhList.InboundBatch and bhList.BHTime is not null and (JHStatus = 1 or JHStatus = -2))";
+                    }
                     String whereCase1 = whereCase + " and (JHStatus < 2)";
                     switch (operation) {
                         case "create": {
@@ -2382,8 +2419,12 @@ public class OutInterface extends HttpServlet {
                         case "request_detail": {
                             String detailCase = "exists(select * from tblBHProgressList bhList where viewLHProgressList.JHOutWareHouseID = bhList.JHOutWareHouseID"
                                     + " and viewLHProgressList.SupplierID = bhList.SupplierID and viewLHProgressList.PartCode = bhList.PartCode"
-                                    + " and viewLHProgressList.PackgetNumber = bhList.PackgetNumber and bhList.BHTime is not null)";
+                                    + " and viewLHProgressList.PackingNumber = bhList.PackingNumber and bhList.BHTime is not null)";
                             String detailCase1 = detailCase + " and FinishTime is null";
+                            if (operateType.compareTo("app") == 0) {
+                                isHistory = 0;
+                            }
+
                             if (isHistory == 0) {
                                 json = queryOperateWithFilter("com.cn.bean.out.", "view", "LHProgressList", "JHOutWareHouseID", datas, rely, detailCase1, false, opt.getConnect(), pageSize, pageIndex);
                             }
@@ -2435,16 +2476,59 @@ public class OutInterface extends HttpServlet {
 
                             break;
                         }
+                        case "confirm": {
+                            JSONObject updateObj = new JSONObject();
+                            updateObj.put("lhTime", Units.getNowTime());
+                            JSONObject whereObj = new JSONObject();
+                            whereObj.put("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
+                            whereObj.put("partCode", paramsJson.getString("partCode"));
+                            whereObj.put("supplierID", paramsJson.getString("supplierID"));
+                            whereObj.put("packingNumber", paramsJson.getIntValue("packingNumber"));
+                            int result = commonController.dataBaseOperate("[" + updateObj.toJSONString() + "," + whereObj.toJSONString() + "]",
+                                    "com.cn.bean.out.", "LHProgressList", "update", opt.getConnect()).get(0);
+                            if (result == 0) {
+                                json = Units.objectToJson(0, "确认成功!", null);
+                            } else {
+                                json = Units.objectToJson(-1, "确认失败!", null);
+                            }
+
+                            JSONObject checkObj = new JSONObject();
+                            checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
+                            checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
+                            checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+                            checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
+                            commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, opt.getConnect());
+                            break;
+                        }
+                        case "finished": {
+                            JSONObject checkObj = new JSONObject();
+                            checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
+                            checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
+                            checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+                            checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
+                            commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, opt.getConnect());
+                            break;
+                        }
                     }
                     break;
                 }
                 //</editor-fold>
 
-                //<editor-fold desc="配送确认">
-                case "配送确认": {
-                    String whereCase = "exists(select * from tblLHProgressList lhList where viewJHOutWareHouseList.JHOutWareHouseID = lhList.JHOutWareHouseID"
+                //<editor-fold desc="配送管理">
+                case "配送管理": {
+                    String whereCase;
+                    if (operateType.compareTo("app") == 0) {
+                        isHistory = 0;
+                        whereCase = "exists(select * from tblLHProgressList lhList left join tblPartBHStaff part on lhList.PartCode = part.PartCode"
+                                + " where viewJHOutWareHouseList.JHOutWareHouseID = lhList.JHOutWareHouseID"
+                                + " and viewJHOutWareHouseList.SupplierID = lhList.SupplierID and viewJHOutWareHouseList.PartCode = lhList.PartCode"
+                                + " and viewJHOutWareHouseList.InboundBatch = lhList.InboundBatch and lhList.LHTime is not null"
+                                + " and part.PSEmployeeName = '" + employee.getEmployeeName() + "') and AssemblingStation = 3";
+                    } else {
+                        whereCase = "exists(select * from tblLHProgressList lhList where viewJHOutWareHouseList.JHOutWareHouseID = lhList.JHOutWareHouseID"
                             + " and viewJHOutWareHouseList.SupplierID = lhList.SupplierID and viewJHOutWareHouseList.PartCode = lhList.PartCode"
-                            + " and viewJHOutWareHouseList.InboundBatch = lhList.InboundBatch and lhList.LHTime is not null)";;
+                            + " and viewJHOutWareHouseList.InboundBatch = lhList.InboundBatch and lhList.LHTime is not null)";
+                    }
                     String whereCase1 = whereCase + " and JHStatus < 3";
                     switch (operation) {
                         case "create": {
@@ -2459,8 +2543,11 @@ public class OutInterface extends HttpServlet {
                         case "request_detail": {
                             String detailCase = "exists(select * from tblLHProgressList lhList where viewSXProgressList.JHOutWareHouseID = lhList.JHOutWareHouseID"
                                     + " and viewSXProgressList.SupplierID = lhList.SupplierID and viewSXProgressList.PartCode = lhList.PartCode"
-                                    + " and viewSXProgressList.PackgetNumber = lhList.PackgetNumber  and lhList.LHTime is not null)";
+                                    + " and viewSXProgressList.PackingNumber = lhList.PackingNumber and lhList.LHTime is not null)";
                             String detailCase1 = detailCase + " and FinishTime is null";
+                            if (operateType.compareTo("app") == 0) {
+                                isHistory = 0;
+                            }
                             if (isHistory == 0) {
                                 json = queryOperateWithFilter("com.cn.bean.out.", "view", "SXProgressList", "JHOutWareHouseID", datas, rely, detailCase1, false, opt.getConnect(), pageSize, pageIndex);
                             }
@@ -2515,6 +2602,43 @@ public class OutInterface extends HttpServlet {
                                 json = Units.objectToJson(-1, "确认失败!", null);
                             }
 
+                            break;
+                        }
+                        case "confirm": {
+                            //PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + paramsJson.getString("partCode").toLowerCase()), PartBaseInfo.class);
+                            JSONObject updateObj = new JSONObject();
+                            updateObj.put("sxTime", Units.getNowTime());
+
+                            JSONObject whereObj = new JSONObject();
+                            whereObj.put("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
+                            whereObj.put("partCode", paramsJson.getString("partCode"));
+                            whereObj.put("supplierID", paramsJson.getString("supplierID"));
+                            whereObj.put("packingNumber", paramsJson.getIntValue("packingNumber"));
+                            int result = commonController.dataBaseOperate("[" + updateObj.toJSONString() + "," + whereObj.toJSONString() + "]",
+                                    "com.cn.bean.out.", "SXProgressList", "update", opt.getConnect()).get(0);
+                            if (result == 0) {
+                                json = Units.objectToJson(0, "确认成功!", null);
+                            } else {
+                                json = Units.objectToJson(-1, "确认失败!", null);
+                            }
+
+                            JSONObject checkObj = new JSONObject();
+                            checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
+                            checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
+                            checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+                            checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
+                            commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, opt.getConnect()).get(0);
+                            break;
+                        }
+                        case "finished": {
+                            JSONObject checkObj = new JSONObject();
+                            checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
+                            checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
+                            checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+                            checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
+
+                            //System.out.println("json:" + checkObj.toJSONString());
+                            commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, opt.getConnect()).get(0);
                             break;
                         }
                     }

@@ -44,7 +44,6 @@ public class JHOutWareHouseList implements Comparable{
     private String jhOutWareHouseID;
     private int jhStatus;
     private String jhStatusName;
-    private int operatetion;
     
     @Override
     public int compareTo(Object o) {
@@ -218,14 +217,6 @@ public class JHOutWareHouseList implements Comparable{
 
     public void setJhStatus(int jhStatus) {
         this.jhStatus = jhStatus;
-    }
-
-    public int getOperatetion() {
-        return operatetion;
-    }
-
-    public void setOperatetion(int operatetion) {
-        this.operatetion = operatetion;
     }
 
     public String getJhStatusName() {

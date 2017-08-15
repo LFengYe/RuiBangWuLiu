@@ -35,9 +35,9 @@
         "jhCKAmount": "计划出库数量,check,小于,lpAmount",
         "jhOutWareHouseListRemark": "备注,string,500"
     },
-    "detailMustwrite": ["djInWareHouseID", "supplierID", "partCode", "jhCKAmount"],
+    "detailMustwrite": ["jhOutWareHouseID", "supplierID", "partCode", "jhCKAmount"],
     "detailUnique": [],
-    "detailPrimary": "djInWareHouseID,partCode",
+    "detailPrimary": "jhOutWareHouseID,partCode,supplierID",
     "detailTitles": {
         "checkbox": "选择,5%",
         "failedReason": "失败原因,0%",
@@ -54,16 +54,37 @@
     },
     "printArea": {
         "rows1": {
-            "supplierName": "50%",
-            "supplierID": "50%"
+            "partCodeName": "20%,件号:",
+            "partCode": "80%"
         },
         "rows2": {
-            "partName": "50%",
-            "packingAmount": "50%"
+            "partNameName": "20%,名称:",
+            "partName": "80%"
         },
         "rows3": {
-            "partCode": "50%",
-            "progressListRemark":"50%"
+            "outboundPackageAmountName": "20%,标准:",
+            "outboundPackageAmount": "10%",
+            "packingAmountName": "20%,实际:",
+            "packingAmount": "10%",
+            "packingNumberName": "20%,箱号:",
+            "packingNumber": "10%"
+        },
+        "row4": {
+            "zdCustomerNameName": "20%,工厂:",
+            "zdCustomerName": "40%,十堰二工厂",
+            "outboundContainerNameName": "20%,盛具:",
+            "outboundContainerName": "20%"
+        },
+        "row5": {
+            "supplierIDName": "25%,供应商:",
+            "supplierID": "25%",
+            "jhDemandTime": "40%"
+        },
+        "row6": {
+            "集配": "20%,集配:",
+            "集配地址": "40%,JP-LK-LE-001",
+            "上线": "20%,上线:",
+            "工位地址": "20%,涂装"
         }
     }
 }

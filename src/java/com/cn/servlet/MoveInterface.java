@@ -217,12 +217,23 @@ public class MoveInterface extends HttpServlet {
                 case "返修出库": {
                     switch (operation) {
                         case "create": {
-                            String whereCase = "exists (select * from tblFXOutWareHouseList list left join viewGYSPartContainerInfo gys"
-                                    + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
-                                    + " where list.FXOutWareHouseID = viewFXOutWareHouse.FXOutWareHouseID"
-                                    + " and list.WareHouseManagername is null"
-                                    + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
-                            whereCase = (operateType.compareTo("app") == 0) ? (whereCase) : ("");
+                            String whereCase = "";
+                            if (operateType.compareTo("app") == 0) {
+                                if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
+                                    whereCase = "exists (select * from tblFXOutWareHouseList list left join viewGYSPartContainerInfo gys"
+                                            + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
+                                            + " where list.FXOutWareHouseID = viewFXOutWareHouse.FXOutWareHouseID"
+                                            + " and list.WareHouseManagername is null"
+                                            + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "') and PartState <> '不良品'";
+                                }
+
+                                if (employee.getEmployeeTypeCode().compareTo("9") == 0) {
+                                    whereCase = "exists (select * from tblFXOutWareHouseList list"
+                                            + " where list.FXOutWareHouseID = viewFXOutWareHouse.FXOutWareHouseID"
+                                            + " and list.WareHouseManagername is null)"
+                                            + " and PartState = '不良品'";
+                                }
+                            }
 
                             json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXOutWareHouse", datas, rely, whereCase, "FXOutWareHouseID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"返修出库单号\\", ",@FXCK-" + Units.getNowTimeNoSeparator());
@@ -331,11 +342,14 @@ public class MoveInterface extends HttpServlet {
                                 Class objClass = Class.forName("com.cn.bean.move." + "FXOutWareHouseList");
                                 Method method = objClass.getMethod("getRecordCount", null);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
+                                /*
                                 String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
                                         + " gys.SupplierID = viewFXOutWareHouseList.SupplierID"
                                         + " and gys.PartCode = viewFXOutWareHouseList.PartCode"
                                         + " and viewFXOutWareHouseList.WareHouseManagername is null"
                                         + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
+                                */
+                                String detailWhereCase = "WareHouseManagername is null";
                                 if (!Units.strIsEmpty(whereSql)) {
                                     detailWhereCase = whereSql + " and " + detailWhereCase;
                                 }
@@ -461,7 +475,7 @@ public class MoveInterface extends HttpServlet {
                                 }
                             }
                             if (operate.compareToIgnoreCase("modify") == 0) {
-                                json = submitOperate("com.cn.bean.in.", "FXOutWareHouseList", update, add, delete, "data");
+                                json = submitOperate("com.cn.bean.move.", "FXOutWareHouseList", update, add, delete, "data");
                             }
                             break;
                         }
@@ -474,12 +488,23 @@ public class MoveInterface extends HttpServlet {
                 case "返修入库": {
                     switch (operation) {
                         case "create": {
-                            String whereCase = "exists (select * from tblFXInWareHouseList list left join viewGYSPartContainerInfo gys"
-                                    + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
-                                    + " where list.FXInWareHouseID = viewFXInWareHouse.FXInWareHouseID"
-                                    + " and list.WareHouseManagername is null"
-                                    + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
-                            whereCase = (operateType.compareTo("app") == 0) ? (whereCase) : ("");
+                            String whereCase = "";
+                            if (operateType.compareTo("app") == 0) {
+                                if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
+                                    whereCase = "exists (select * from tblFXInWareHouseList list left join viewGYSPartContainerInfo gys"
+                                            + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
+                                            + " where list.FXInWareHouseID = viewFXInWareHouse.FXInWareHouseID"
+                                            + " and list.WareHouseManagername is null"
+                                            + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "') and PartState <> '不良品'";
+                                }
+
+                                if (employee.getEmployeeTypeCode().compareTo("9") == 0) {
+                                    whereCase = "exists (select * from tblFXInWareHouseList list"
+                                            + " where list.FXInWareHouseID = viewFXInWareHouse.FXInWareHouseID"
+                                            + " and list.WareHouseManagername is null)"
+                                            + " and PartState = '不良品'";
+                                }
+                            }
 
                             json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXInWareHouse", datas, rely, whereCase, "FXInWareHouseID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"返修入库单号\\", ",@FXRK-" + Units.getNowTimeNoSeparator());
@@ -554,11 +579,14 @@ public class MoveInterface extends HttpServlet {
                                 Class objClass = Class.forName("com.cn.bean.move." + "FXInWareHouseList");
                                 Method method = objClass.getMethod("getRecordCount", null);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
+                                /*
                                 String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
                                         + " gys.SupplierID = viewFXInWareHouseList.SupplierID"
                                         + " and gys.PartCode = viewFXInWareHouseList.PartCode"
                                         + " and viewFXInWareHouseList.WareHouseManagername is null"
                                         + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
+                                */
+                                String detailWhereCase = "WareHouseManagername is null";
                                 if (!Units.strIsEmpty(whereSql)) {
                                     detailWhereCase = whereSql + " and " + detailWhereCase;
                                 }

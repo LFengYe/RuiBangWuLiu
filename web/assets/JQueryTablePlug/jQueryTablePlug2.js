@@ -117,7 +117,7 @@
              that.filterState = false;
              });
              */
-            this.find(".select-all button").click(function(){
+            this.find(".select-all button").click(function() {
                 var checkBoxs = that.$container.find("input[type='checkbox']");
                 var text = $(this).html();
                 if (text === "全选") {
@@ -285,7 +285,7 @@
                     arr.push(whereObj);
                 }
             }
-            console.log(arr);
+            //console.log(arr);
             return arr;
         },
         setData: function(data) {
@@ -295,6 +295,12 @@
                 }
             }
             this.render(this.datas);
+        },
+        clearSelected: function() {
+            this.$container.find("ul li").removeClass("clicked");
+        },
+        selectAllClear: function() {
+            this.find(".select-all button").trigger("click");
         }
     };
 

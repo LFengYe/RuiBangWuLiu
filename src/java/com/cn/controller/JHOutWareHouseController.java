@@ -158,6 +158,7 @@ public class JHOutWareHouseController {
                             detail.setInboundBatch(lpkcl.getInboundBatch());
                             if (ckAmount > lpkcl.getLpAmount()) {
                                 detail.setJhCKAmount(lpkcl.getLpAmount());
+                                
                                 detail.setContainerAmount((lpkcl.getLpAmount() % containerInfo.getOutboundPackageAmount() == 0) ? (lpkcl.getLpAmount() / containerInfo.getOutboundPackageAmount()) : (lpkcl.getLpAmount() / containerInfo.getOutboundPackageAmount() + 1));//containerAmount当一个批次不满一个盛具如何处理, 待解决
                             } else {
                                 detail.setJhCKAmount(ckAmount);

@@ -941,12 +941,23 @@ public class InInterface extends HttpServlet {
                 case "终端退库": {
                     switch (operation) {
                         case "create": {
-                            String whereCase = "exists (select * from tblZDBackWareHouseList list left join viewGYSPartContainerInfo gys"
-                                    + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
-                                    + " where list.ZDBackWareHouseID = viewZDBackWareHouse.ZDBackWareHouseID"
-                                    + " and list.WareHouseManagername is null"
-                                    + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
-                            whereCase = (operateType.compareTo("app") == 0) ? (whereCase) : ("");
+                            String whereCase = "";
+                            if (operateType.compareTo("app") == 0) {
+                                if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
+                                    whereCase = "exists (select * from tblZDBackWareHouseList list left join viewGYSPartContainerInfo gys"
+                                            + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
+                                            + " where list.ZDBackWareHouseID = viewZDBackWareHouse.ZDBackWareHouseID"
+                                            + " and list.WareHouseManagername is null"
+                                            + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "') and ZDTKType <> '不良品'";
+                                }
+
+                                if (employee.getEmployeeTypeCode().compareTo("9") == 0) {
+                                    whereCase = "exists (select * from tblZDBackWareHouseList list"
+                                            + " where list.ZDBackWareHouseID = viewZDBackWareHouse.ZDBackWareHouseID"
+                                            + " and list.WareHouseManagername is null)"
+                                            + " and ZDTKType = '不良品'";
+                                }
+                            }
 
                             json = createOperateOnDate(20, "view", "com/cn/json/in/", "com.cn.bean.in.", "ZDBackWareHouse", datas, rely, whereCase, "ZDBackWareHouseID", opt.getConnect());
                             json = Units.insertStr(json, "\\\"终端退库单据号\\", ",@ZDTK-" + Units.getNowTimeNoSeparator());
@@ -1013,11 +1024,14 @@ public class InInterface extends HttpServlet {
                                 Class objClass = Class.forName("com.cn.bean.in." + "ZDBackWareHouseList");
                                 Method method = objClass.getMethod("getRecordCount", null);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
+                                /*
                                 String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
                                         + " gys.SupplierID = viewZDBackWareHouseList.SupplierID"
                                         + " and gys.PartCode = viewZDBackWareHouseList.PartCode"
                                         + " and viewZDBackWareHouseList.WareHouseManagername is null"
                                         + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
+                                */
+                                String detailWhereCase = "WareHouseManagername is null";
                                 if (!Units.strIsEmpty(whereSql)) {
                                     detailWhereCase = whereSql + " and " + detailWhereCase;
                                 }

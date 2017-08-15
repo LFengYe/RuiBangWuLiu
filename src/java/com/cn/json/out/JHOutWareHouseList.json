@@ -21,7 +21,7 @@
         "jhCKAmount": "计划出库数量,10%",
         "outboundContainerName": "出库盛具,10%",
         "containerAmount": "盛具数量,10%",
-        "cfAddress": "存放地址,10%",
+        "kfCFAddress": "存放地址,10%",
         "jhOutWareHouseListRemark": "备注,10%"
     },
     "detailControl": {},
@@ -34,11 +34,13 @@
         "supplierName": "供应商名称,10%",
         "partName": "部品名称,10%",
         "partCode": "部品件号,20%",
+        "jhDemandTime": "计划需求时间,10%",
         "inboundBatch": "入库批次,10%",
         "packingNumber": "包装编号,10%",
         "packingAmount": "包装数量,10%",
         "finishTime": "完成时间,10%",
         "staffName": "操作人员,10%",
+        "kfCFAddress": "存放地址,10%",
         "progressListRemark": "备注,10%",
         "jhOutWareHouseID": "计划出库单号,10%"
     }

@@ -55,17 +55,16 @@
                 }
                 inputResult += "</div>";
             }
-            return "<div class='div_code_table' id='" + itemId + "'><img alt='条码' class='barcode'/>" + inputResult + "</div>";
+            return "<div class='div_code_table' id='" + itemId + "'><img alt='条码' id='img" + itemId + "' class='div_code_cell_img'/>" + inputResult + "</div>";
         },
         insertValue: function (itemId, itemData) {
-            var str = "JHCK-20170801121212001";
+            var str = "SY2014744208";
             var options = {
                 format: "CODE128",
                 displayValue: false,
-                fontSize: 18,
-                height: 100
+                height: 60
             };
-            this.find("#" + itemId).find("img").JsBarcode(str, options);
+            $("#img" + itemId).JsBarcode(str, options);
             
             var printFiled = this.printFiled;
             for (var i in printFiled) {

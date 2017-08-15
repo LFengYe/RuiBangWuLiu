@@ -27,6 +27,7 @@
         <script type="text/javascript" src="javascript/jquery.PrintArea.js"></script>
         <script type="text/javascript" src="javascript/JsBarcode.all.min.js"></script>
         <script type="text/javascript" src="javascript/script.js"></script>
+        <script type="text/javascript" src="javascript/require.js"></script>
         <script type="text/javascript">
             window.onload = function () {
                 findDimensions();
@@ -43,7 +44,7 @@
                     area: ['1000px', '600px'],
                     content: content,
                     end: function () {
-//                        console.log(callback);
+                        //                        console.log(callback);
                         if (callback) {
                             callback();
                         }
@@ -51,19 +52,24 @@
                 });
             }
         </script>
-        <style>
+        <style type="text/css" id="print_code_style">
+            /*
             .div_table{display: table;width: 100%;margin: auto;margin-top: 10px;text-align: center;border-top: 1px solid;}
             .div_table_2{display: table;width: 90%;text-align: center;border-top: 1px solid;border-right: 1px solid;margin: 0px;padding: 0px;}
             .div_table_2 .col{display: inline-block;text-align: center;font-size: 12px;height: auto;}
             .div_table_2 .col ul{margin: 0px;padding: 0px;}
             .div_table_2 .col ul li{text-align: center;height: 40px;line-height: 40px;border-top: 1px solid;overflow: hidden;white-space:nowrap;}
-            /*.div_top_row{display: table-row;}*/
-            /*.div_top_row .div_cell{display: table-cell;float: left;height: 40px;line-height: 40px;white-space: nowrap;}*/
             .div_row{display: table-row;}
             .div_cell{display: table-column;float: left;height: 40px;line-height: 40px;border-bottom: 1px solid;white-space: nowrap;}
             .div_cell .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
             .div_cell .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
             .div_cell_double{height: 80px;line-height: 80px;}
+            */
+
+            .div_code_table{display: table;width: 250px;text-align: left;border: 0px solid;margin: 0;}
+            .div_code_row{display: table-row;word-break: keep-all;white-space: nowrap;}
+            .div_code_cell{display:block;float: left;border: 0px solid;height: 20px;line-height: 20px;}
+            .div_code_cell_img{display:block;border: 0px solid;width: 200px;text-align: center;}
         </style>
     </head>
     <body>
@@ -83,12 +89,13 @@
                         <!--导航菜单-->
                         <div class="wc-nav">
                             <ul class="nav left-nav hidden-sm hidden-md hidden-lg">
-                                <li id="fold" role="presentation"><a href="#"><span class="glyphicon glyphicon-list-alt"></span></a></li>
+                                <li id="fold" role="presentation">
+                                </li>
                             </ul>
                             <ul class="nav right-nav " role="tablist">
                                 <li role="presentation" class="active"><a href="#"><span class="glyphicon glyphicon-user"></span></a></li>
                                 <li role="presentation"><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
-                                <li role="presentation"><a href="#" title="切换用户"><span class="glyphicon glyphicon-refresh"></span></a></li>
+                                <li role="presentation"><a href="login.html" title="切换用户"><span class="glyphicon glyphicon-refresh"></span></a></li>
                             </ul>
                         </div>
                         <!--指示器-->
@@ -316,6 +323,13 @@
         <script type="text/javascript" src="assets/common-js/page1.js" ></script> 
         <script type="text/javascript" src="assets/common-js/page2.js" ></script>
         <script type="text/javascript" src="assets/common-js/page3.js" ></script>
+
+        <script type="text/javascript" language="javascript" src="assets/JqueryPrintCode/LodopFuncs.js"></script>
+        <object  id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0>
+            <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0>
+            </embed>
+        </object>
+        
         <OBJECT id=factory height=0 width=0 classid=CLSID:8856F961-340A-11D0-A96B-00C04FD705A2></OBJECT> 
     </body>
 </html>

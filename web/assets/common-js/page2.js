@@ -14,7 +14,8 @@
     var $deleteItem = $(".page2-container .page2-deleteItem");
     var $finishItem = $(".page2-container .page2-finishItem");
     var $printItem = $(".page2-container .page2-printItem");
-    var $audit = $("#page2-audit");
+    var $auditItem = $("#page2-audit");
+
     var $inspection = $("#page2-inspection");
     var $search = $(".page2-container .page2-query");
     var $add = $("#page2-add");
@@ -23,7 +24,7 @@
     var $print = $("#page2-print");
     var $import = $("#page2-import");
     var $confirm = $("#page2-confirm");
-    var $auditItem = $("#page2-auditItem");
+    var $audit = $("#page2-auditItem");
     //var $search_on_keyword = $(".page2-container .page2-keyword-query button");
 
     var OPERATION = {
@@ -91,22 +92,6 @@
     }
 
     function bindEvt(moudle) {
-        $auditItem.off("click");
-        $auditItem.on("click", function (e) {
-            var arr = $chidTableBox.getSelectedItem();
-            if (arr && arr.length > 0) {
-                ajaxData("auditItem", {datas: arr}, function (data) {
-                    if (data) {
-                        $chidTableBox.setData(data);
-                    }
-                    $("#page2-return").trigger("click");
-                }, function () {
-                    $("#page2-return").trigger("click");
-                });
-            } else {
-                alert("未选中数据!");
-            }
-        });
 
         $history.find(":checkbox").off("click");
         $history.find(":checkbox").click(function (e) {
@@ -192,7 +177,10 @@
             ajaxData("delete", {del: submitDel}, function (data) {
                 $mainTableBox.del2(arr);
                 mainCancelRows = [];
-            }, function (data) {
+                $mainTableBox.clearSelected();
+            }, function () {
+                mainCancelRows = [];
+                $mainTableBox.clearSelected();
             });
         });
 
@@ -217,8 +205,10 @@
             }
             ajaxData("finish", {del: submitDel}, function () {
                 mainCancelRows = [];
+                $mainTableBox.clearSelected();
             }, function () {
                 mainCancelRows = [];
+                $mainTableBox.clearSelected();
             });
         });
 
@@ -242,14 +232,28 @@
                 }
             }
             ajaxData("print", {del: submitDel, type: "all"}, function (data) {
+                //data.datas.splice(2, data.datas.length - 1);//只取前两条测试用
                 $printArea.render(data.datas);
-                $("#print_area").css({
-                    "height": "auto"
-                    , "overflow": "visible"
-                }).printArea();
+
+                var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
+                var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
+
+                var LODOP = getLodop();
+                LODOP.PRINT_INIT("条码打印");
+                LODOP.SET_PRINT_STYLE("FontSize", 16);
+                LODOP.ADD_PRINT_HTM(10, 10, 300, 400, htmlStr);
+                LODOP.PREVIEW();
+                /*
+                 $("#print_area").css({
+                 "height": "auto"
+                 , "overflow": "visible"
+                 }).printArea();
+                 */
                 mainCancelRows = [];
+                $mainTableBox.clearSelected();
             }, function () {
                 mainCancelRows = [];
+                $mainTableBox.clearSelected();
             });
         });
 
@@ -366,8 +370,8 @@
             }
         });
 
-        $audit.off("click");
-        $audit.on("click", function () {
+        $auditItem.off("click");
+        $auditItem.on("click", function () {
             var item = $mainInputBox.getInputValObj(true);
             whereObj = {};
             for (var proIndex in primary) {
@@ -456,20 +460,43 @@
             cancelRows = [];
         });
 
+        $audit.off("click");
+        $audit.on("click", function (e) {
+            var arr = $chidTableBox.getSelectedItem();
+            if (arr && arr.length > 0) {
+                ajaxData("auditItem", {datas: arr}, function (data) {
+                    if (data) {
+                        $chidTableBox.setData(data);
+                    }
+                    $chidTableBox.clearSelected();
+                    $("#page2-return").trigger("click");
+                }, function () {
+                    $("#page2-return").trigger("click");
+                });
+            } else {
+                alert("未选中数据!");
+            }
+        });
+
         $print.off("click");
         $print.on("click", function () {
             if (moudle === "总成计划" || moudle === "计划出库") {
                 var arr = $chidTableBox.getSelectedItem();
                 if (arr && arr.length > 0) {
-                    ajaxData("print", {del: arr, type: "selected"}, function (data) {
+                    ajaxData("printItem", {del: arr, type: "selected"}, function (data) {
                         $printArea.render(data.datas);
-                        $("#print_area").css({
-                            "height": "auto"
-                            , "overflow": "visible"
-                        }).printArea();
-                        mainCancelRows = [];
+                        var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
+                        var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
+
+                        var LODOP = getLodop();
+                        LODOP.PRINT_INIT("条码打印");
+                        LODOP.SET_PRINT_STYLE("FontSize", 16);
+                        LODOP.ADD_PRINT_HTM(10, 10, 300, 400, htmlStr);
+                        LODOP.PREVIEW();
+                        
+                        $chidTableBox.clearSelected();
                     }, function () {
-                        mainCancelRows = [];
+                        $chidTableBox.clearSelected();
                     });
                 } else {
                     alert("未选中数据!");
@@ -652,33 +679,24 @@
                     });
                 },
                 checkBoxCallBack: function (index, selected, obj) {
-                    if (moudle === "总成计划" || moudle === "计划出库") {
-                        if (selected) {
-                            whereObj = {};
-                            for (var proIndex in detailPrimary) {
-                                var proName = detailPrimary[proIndex];
-                                whereObj[proName] = obj[proName];
-                            }
-                            checkSelected.push(whereObj);
-                        } else {
-                            checkSelected.splice(index, 1);
+                    if (selected) {
+                        whereObj = {};
+                        for (var proIndex in detailPrimary) {
+                            var proName = detailPrimary[proIndex];
+                            whereObj[proName] = obj[proName];
                         }
+                        checkSelected.push(whereObj);
                     } else {
-                        if (selected) {
-                            whereObj = {};
-                            for (var proIndex in detailPrimary) {
-                                var proName = detailPrimary[proIndex];
-                                whereObj[proName] = obj[proName];
-                            }
-                            checkSelected.push(whereObj);
-                        } else {
-                            checkSelected.splice(index, 1);
-                        }
+                        checkSelected.splice(index, 1);
+                    }
+
+                    if (moudle === "总成计划" || moudle === "计划出库") {
+                    } else {
                     }
                 }
             });
-            
-            console.log("url:" + localStorage.getItem("url"));
+
+            //console.log("url:" + localStorage.getItem("url"));
             if (moudle === "总成计划" || moudle === "计划出库") {
                 $printArea.createPrintCode({
                     printArea: data.printArea
@@ -734,7 +752,7 @@
             {
                 $addItem.css("display", "none");
                 $("#page2-submit").css("display", "none");
-                $audit.css("display", "none");
+                $auditItem.css("display", "none");
                 $inspection.css("display", "inline-block");
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
@@ -754,7 +772,7 @@
             {
                 $addItem.css("display", "none");
                 $("#page2-submit").css("display", "none");
-                $audit.css("display", "inline-block");
+                $auditItem.css("display", "inline-block");
                 $inspection.css("display", "none");
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
@@ -768,7 +786,7 @@
                 $cancel.attr("disabled", "disabled");
                 $import.attr("disabled", "disabled");
                 $print.attr("disabled", false);
-                $auditItem.attr("disabled", false);
+                $audit.attr("disabled", false);
                 break;
             }
             case "备货确认":
@@ -777,7 +795,7 @@
             {
                 $addItem.css("display", "none");
                 $("#page2-submit").css("display", "none");
-                $audit.css("display", "none");
+                $auditItem.css("display", "none");
                 $inspection.css("display", "none");
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
@@ -791,7 +809,7 @@
                 $cancel.attr("disabled", "disabled");
                 $import.attr("disabled", "disabled");
                 $print.attr("disabled", "disabled");
-                $auditItem.attr("disabled", false);
+                $audit.attr("disabled", false);
                 break;
             }
             case "分装入库":
@@ -799,7 +817,7 @@
             {
                 $addItem.css("display", "inline-block");
                 $("#page2-submit").css("display", "inline-block");
-                $audit.css("display", "none");
+                $auditItem.css("display", "none");
                 $inspection.css("display", "none");
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
@@ -813,7 +831,7 @@
                 $cancel.attr("disabled", "disabled");
                 $import.attr("disabled", "disabled");
                 $print.attr("disabled", "disabled");
-                $auditItem.attr("disabled", "disabled");
+                $audit.attr("disabled", "disabled");
                 break;
             }
             case "计划出库":
@@ -821,7 +839,7 @@
             {
                 $addItem.css("display", "inline-block");
                 $("#page2-submit").css("display", "inline-block");
-                $audit.css("display", "none");
+                $auditItem.css("display", "none");
                 $inspection.css("display", "none");
                 $confirm.css("display", "inline-block");
                 //$import.css("display", "inline-block");
@@ -835,7 +853,7 @@
                 !type ? $cancel.attr("disabled", false) : $cancel.attr("disabled", "disabled");
                 $import.attr("disabled", false);
                 $print.attr("disabled", false);
-                $auditItem.attr("disabled", "disabled");
+                $audit.attr("disabled", "disabled");
                 break;
             }
             /*case "临时调货":
@@ -867,7 +885,7 @@
             {
                 $addItem.css("display", "inline-block");
                 $("#page2-submit").css("display", "inline-block");
-                !type ? $audit.css("display", "none") : $audit.css("display", "inline-block");
+                !type ? $auditItem.css("display", "none") : $auditItem.css("display", "inline-block");
                 $inspection.css("display", "none");
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
@@ -881,14 +899,14 @@
                 $cancel.attr("disabled", false);
                 $import.attr("disabled", "disabled");
                 $print.attr("disabled", false);
-                !type ? $auditItem.attr("disabled", "disabled") : $auditItem.attr("disabled", false);
+                !type ? $audit.attr("disabled", "disabled") : $audit.attr("disabled", false);
                 break;
             }
             default:
             {
                 $addItem.css("display", "inline-block");
                 $("#page2-submit").css("display", "inline-block");
-                !type ? $audit.css("display", "none") : $audit.css("display", "inline-block");
+                !type ? $auditItem.css("display", "none") : $auditItem.css("display", "inline-block");
                 $inspection.css("display", "none");
                 $confirm.css("display", "none");
                 //$import.css("display", "none");
@@ -902,20 +920,20 @@
                 $cancel.attr("disabled", false);
                 $import.attr("disabled", false);
                 $print.attr("disabled", false);
-                $auditItem.attr("disabled", "disabled");
+                $audit.attr("disabled", "disabled");
                 break;
             }
         }
 
         if (moudle === "待检入库")
-            $audit.css("display", "none");
+            $auditItem.css("display", "none");
     }
 
     function dataIsReadOnly(isReadOnly) {
         if (isReadOnly) {
             $mainInputBox.formDisable();
             $("#page2-submit").css("display", "none");
-            $audit.css("display", "none");
+            $auditItem.css("display", "none");
             $inspection.css("display", "none");
             //$childINputBox.hide();
             //$childINputBox.next().hide();
@@ -924,7 +942,7 @@
             $cancel.attr("disabled", "disabled");
             $import.attr("disabled", "disabled");
             $print.attr("disabled", false);
-            $auditItem.attr("disabled", false);
+            $audit.attr("disabled", false);
         }
     }
 

@@ -6,14 +6,17 @@
 package com.cn.servlet;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cn.bean.AreaLedIPInfo;
 import com.cn.bean.Customer;
 import com.cn.bean.Employee;
 import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
 import com.cn.bean.PartCategory;
+import com.cn.bean.PartStore;
 import com.cn.bean.PlatformRoleRight;
 import com.cn.bean.app.JHOutWareHouseList;
 import com.cn.bean.app.ProcessList;
+import com.cn.bean.app.UnFinishAmount;
 import com.cn.controller.CommonController;
 import com.cn.controller.ProcessListController;
 import com.cn.test.LedControl;
@@ -95,6 +98,7 @@ public class AppInterface extends HttpServlet {
                 }
                 return;
             }
+
             Employee employee = (Employee) session.getAttribute("employee");
             //System.out.println("employee:" + JSONObject.toJSONString(employee));
 
@@ -142,6 +146,17 @@ public class AppInterface extends HttpServlet {
                 }
                 //</editor-fold>
 
+                //<editor-fold desc="用户登陆模板">
+                case "unFinishAmount": {
+                    JSONObject object = new JSONObject();
+                    object.put("EmployeeName", "string," + employee.getEmployeeName());
+                    object.put("EmployeeTypeCode", "int," + employee.getEmployeeTypeCode());
+                    UnFinishAmount amount = (UnFinishAmount) commonController.proceduceQuery("tbGetUnFinishAmount", object, "com.cn.bean.app.UnFinishAmount", opt.getConnect()).get(0);
+                    json = Units.objectToJson(0, "", amount);
+                    break;
+                }
+                //</editor-fold>
+
                 /**
                  * ***************************************部品出库管理**************************************
                  */
@@ -176,8 +191,7 @@ public class AppInterface extends HttpServlet {
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
-                            }
-                            if (employeeType.compareTo("备货员") == 0) {
+                            } else if (employeeType.compareTo("备货员") == 0) {
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("BHStaff", "string," + employee.getEmployeeName());
                                 StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "ProcessList.json"));
@@ -197,6 +211,8 @@ public class AppInterface extends HttpServlet {
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);
                                 }
+                            } else {
+                                json = Units.objectToJson(-1, "数据为空!", null);
                             }
                             break;
                         }
@@ -214,15 +230,25 @@ public class AppInterface extends HttpServlet {
                                         paramsJson.getIntValue("jhStatus"),
                                         paramsJson.getString("jhOutWareHouseListRemark"));
                                 if (result == 0) {
+                                    PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), PartStore.class);
+                                    AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
                                     if (paramsJson.getIntValue("jhStatus") == 0
-                                            || paramsJson.getIntValue("jhStatus") == -2) {
+                                            || paramsJson.getIntValue("jhStatus") == -2) {//库管员开始计划
                                         JsonObject object = new JsonObject();
                                         object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
-                                        PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), "您有新的计划", "2", object);
+                                        PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), ledIPInfo.getAddressCode() + "区您有新的计划", "2", object);
                                         new Thread() {
                                             @Override
                                             public void run() {
-                                                LedControl.setLedPlanList(list);
+                                                LedControl.setLedPlanList(list, ledIPInfo);
+                                            }
+                                        }.start();
+                                    }
+                                    if (paramsJson.getIntValue("jhStatus") == -1) {//库管员确认完成
+                                        new Thread() {
+                                            @Override
+                                            public void run() {
+                                                LedControl.setLedAreaCode(ledIPInfo);
                                             }
                                         }.start();
                                     }
@@ -234,8 +260,7 @@ public class AppInterface extends HttpServlet {
                                 } else {
                                     json = Units.objectToJson(-1, "确认失败!", null);
                                 }
-                            }
-                            if (employeeType.compareTo("备货员") == 0) {
+                            } else if (employeeType.compareTo("备货员") == 0) {
                                 ProcessListController controller = new ProcessListController();
                                 int result = controller.bhConfirmForBHY(
                                         paramsJson.getString("jhOutWareHouseID"),
@@ -248,22 +273,26 @@ public class AppInterface extends HttpServlet {
                                 } else if (result == 1) {
                                     JsonObject object = new JsonObject();
                                     GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), GYSPartContainerInfo.class);
-                                    logger.info("containerInfo:" + JSONObject.toJSONString(containerInfo));
                                     PartCategory partCategory = JSONObject.parseObject(RedisAPI.get("partCategory_" + containerInfo.getPartCategoryName()), PartCategory.class);
-                                    logger.info("partCategory:" + JSONObject.toJSONString(partCategory));
+                                    PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), PartStore.class);
+                                    AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
                                     object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
-                                    logger.info("库管员:" + partCategory.getWareHouseManagerName());
-                                    PushUnits.pushNotifationWithAlias(partCategory.getWareHouseManagerName(), "备货已完成", "1", object);
+                                    //logger.info("库管员:" + partCategory.getWareHouseManagerName());
+                                    PushUnits.pushNotifationWithAlias(partCategory.getWareHouseManagerName(), ledIPInfo.getAddressCode() + "区备货已完成", "1", object);
+                                    /*
                                     new Thread() {
                                         @Override
                                         public void run() {
                                             LedControl.setLedAreaCode(list.getPartCode(), list.getSupplierID());
                                         }
                                     }.start();
+                                     */
                                     json = Units.objectToJson(0, "备货完成!", null);
                                 } else {
                                     json = Units.objectToJson(-1, "确认失败!", null);
                                 }
+                            } else {
+                                json = Units.objectToJson(-1, "确认失败!", null);
                             }
                             break;
                         }
@@ -312,6 +341,15 @@ public class AppInterface extends HttpServlet {
                             } else {
                                 json = Units.objectToJson(-1, "确认失败!", null);
                             }
+
+                            JSONObject checkObj = new JSONObject();
+                            checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
+                            checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
+                            checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+                            checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
+
+                            System.out.println("json:" + checkObj.toJSONString());
+                            commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, opt.getConnect());
                             break;
                         }
                         case "finished": {
@@ -319,8 +357,9 @@ public class AppInterface extends HttpServlet {
                             checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
                             checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
                             checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+                            checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
 
-                            //System.out.println("json:" + checkObj.toJSONString());
+                            System.out.println("json:" + checkObj.toJSONString());
                             commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, opt.getConnect());
                             break;
                         }
@@ -357,12 +396,15 @@ public class AppInterface extends HttpServlet {
                         case "confirm": {
                             PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + paramsJson.getString("partCode").toLowerCase()), PartBaseInfo.class);
                             JSONObject updateObj = new JSONObject();
+                            /*
                             if (baseInfo.getAssemblingStation().compareTo("3") == 0) {
                                 updateObj.put("fzTime", Units.getNowTime());
                             } else {
                                 updateObj.put("sxTime", Units.getNowTime());
                             }
-                            //updateObj.put("sxTime", Units.getNowTime());
+                             */
+                            updateObj.put("sxTime", Units.getNowTime());
+
                             JSONObject whereObj = new JSONObject();
                             whereObj.put("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
                             whereObj.put("partCode", paramsJson.getString("partCode"));
@@ -375,6 +417,13 @@ public class AppInterface extends HttpServlet {
                             } else {
                                 json = Units.objectToJson(-1, "确认失败!", null);
                             }
+
+                            JSONObject checkObj = new JSONObject();
+                            checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
+                            checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
+                            checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+                            checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
+                            commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, opt.getConnect()).get(0);
                             break;
                         }
                         case "finished": {
@@ -382,8 +431,9 @@ public class AppInterface extends HttpServlet {
                             checkObj.put("JHOutWareHouseID", "string," + paramsJson.getString("jhOutWareHouseID"));
                             checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
                             checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
+                            checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
 
-                            //System.out.println("json:" + checkObj.toJSONString());
+                            System.out.println("json:" + checkObj.toJSONString());
                             commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, opt.getConnect()).get(0);
                             break;
                         }
@@ -408,6 +458,7 @@ public class AppInterface extends HttpServlet {
             response.setHeader("Pragma", "no-cache");
             response.setDateHeader("Expires", 0);
             out.print(json);
+            //logger.info("json:" + json);
         } finally {
             if (out != null) {
                 out.close();

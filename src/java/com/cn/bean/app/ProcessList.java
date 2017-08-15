@@ -28,7 +28,7 @@ public class ProcessList {
     private int packingNumber;
     private int packingAmount;
     private String jhOutWareHouseID;
-    private int operate;
+    private int jhStatus;
 
     public String getSupplierID() {
         return supplierID;
@@ -94,12 +94,12 @@ public class ProcessList {
         this.jhOutWareHouseID = jhOutWareHouseID;
     }
 
-    public int getOperate() {
+    public int getJhStatus() {
         return -1;
     }
 
-    public void setOperate(int operate) {
-        this.operate = operate;
+    public void setJhStatus(int jhStatus) {
+        this.jhStatus = jhStatus;
     }
 
     public String getInboundBatch() {
