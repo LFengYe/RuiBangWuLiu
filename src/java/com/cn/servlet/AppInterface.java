@@ -42,7 +42,7 @@ import org.apache.log4j.Logger;
  */
 public class AppInterface extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(DataInterface.class);
+    private static final Logger logger = Logger.getLogger(AppInterface.class);
 
 //    private CommonController commonController;
 //    private DatabaseOpt opt;
@@ -72,7 +72,7 @@ public class AppInterface extends HttpServlet {
         DatabaseOpt opt = new DatabaseOpt();
         String json = null;
         try {
-            logger.info(subUri + ",params:" + params);
+            //logger.info(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
@@ -231,16 +231,19 @@ public class AppInterface extends HttpServlet {
                                         paramsJson.getString("jhOutWareHouseListRemark"));
                                 if (result == 0) {
                                     PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), PartStore.class);
+                                    //logger.info(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()));
                                     AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
+                                    //logger.info(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()));
                                     if (paramsJson.getIntValue("jhStatus") == 0
                                             || paramsJson.getIntValue("jhStatus") == -2) {//库管员开始计划
                                         JsonObject object = new JsonObject();
                                         object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
-                                        PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), ledIPInfo.getAddressCode() + "区您有新的计划", "2", object);
+                                        PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), partStore.getKfCFAddress() + "您有新的计划", "2", object);
                                         new Thread() {
                                             @Override
                                             public void run() {
-                                                LedControl.setLedPlanList(list, ledIPInfo);
+                                                if (ledIPInfo != null)
+                                                    LedControl.setLedPlanList(list, ledIPInfo);
                                             }
                                         }.start();
                                     }
@@ -248,7 +251,8 @@ public class AppInterface extends HttpServlet {
                                         new Thread() {
                                             @Override
                                             public void run() {
-                                                LedControl.setLedAreaCode(ledIPInfo);
+                                                if (ledIPInfo != null)
+                                                    LedControl.setLedAreaCode(ledIPInfo);
                                             }
                                         }.start();
                                     }
@@ -275,10 +279,10 @@ public class AppInterface extends HttpServlet {
                                     GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), GYSPartContainerInfo.class);
                                     PartCategory partCategory = JSONObject.parseObject(RedisAPI.get("partCategory_" + containerInfo.getPartCategoryName()), PartCategory.class);
                                     PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), PartStore.class);
-                                    AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
+                                    //AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
                                     object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
                                     //logger.info("库管员:" + partCategory.getWareHouseManagerName());
-                                    PushUnits.pushNotifationWithAlias(partCategory.getWareHouseManagerName(), ledIPInfo.getAddressCode() + "区备货已完成", "1", object);
+                                    PushUnits.pushNotifationWithAlias(partCategory.getWareHouseManagerName(), partStore.getKfCFAddress() + "备货已完成", "1", object);
                                     /*
                                     new Thread() {
                                         @Override

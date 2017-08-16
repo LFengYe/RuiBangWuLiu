@@ -1841,7 +1841,7 @@ public class ReportInterface extends HttpServlet {
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
-        Method method = objClass.getMethod("getRecordCount", null);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
 
         String whereSql = commonController.getWhereSQLStrWithDate(objClass, datas, rely, true);
         if (Units.strIsEmpty(whereSql)) {
@@ -1855,7 +1855,7 @@ public class ReportInterface extends HttpServlet {
             if (list != null && list.size() > 0) {
                 StringBuffer buffer = new StringBuffer(result);
                 buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
-                buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, null));
+                buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, new Object[]{}));
                 result = buffer.toString();
             }
             json = Units.objectToJson(0, "", result);

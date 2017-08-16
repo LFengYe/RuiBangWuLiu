@@ -180,7 +180,7 @@ public class InInterface extends HttpServlet {
                                 DJInWareHouse djInWareHouse = (DJInWareHouse) list.get(0);
 
                                 Class objClass = Class.forName("com.cn.bean.in." + "DJInWareHouseList");
-                                Method method = objClass.getMethod("getRecordCount", null);
+                                Method method = objClass.getMethod("getRecordCount", new Class[0]);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
                                 List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.in.", "DJInWareHouseList", "*", whereSql, pageSize, pageIndex, "DJInWareHouseID", 0, opt.getConnect());
                                 String result = "{}";
@@ -197,7 +197,7 @@ public class InInterface extends HttpServlet {
                                     } else {
                                         buffer.insert(buffer.lastIndexOf("}"), ",\"readOnly\":true");
                                     }
-                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, new Object[]{}));
                                     //buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
                                     result = buffer.toString();
                                     json = Units.objectToJson(0, "", result);
@@ -380,7 +380,7 @@ public class InInterface extends HttpServlet {
                             String djInWareHouseID = JSONObject.parseObject(rely).getString("djInWareHouseID");
                             String mainTabWhereSql = "DJInWareHouseID = '" + djInWareHouseID + "'";
                             Class objClass = Class.forName("com.cn.bean.in." + "DJInWareHouseList");
-                            Method method = objClass.getMethod("getRecordCount", null);
+                            Method method = objClass.getMethod("getRecordCount", new Class[0]);
                             String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
                             List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "DJInWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "DJInWareHouseID", 0, opt.getConnect());
                             if (list != null && list.size() > 0) {
@@ -400,7 +400,7 @@ public class InInterface extends HttpServlet {
                                     } else {
                                         buffer.insert(buffer.lastIndexOf("}"), ",\"readOnly\":true");
                                     }
-                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, new Object[]{}));
                                     //buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
                                     result = buffer.toString();
                                     json = Units.objectToJson(0, "", result);
@@ -506,7 +506,7 @@ public class InInterface extends HttpServlet {
                                 }
 
                                 Class objClass = Class.forName("com.cn.bean.in." + "SJOutWareHouseList");
-                                Method method = objClass.getMethod("getRecordCount", null);
+                                Method method = objClass.getMethod("getRecordCount", new Class[0]);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
                                 String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
                                         + " gys.SupplierID = viewSJOutWareHouseList.SupplierID"
@@ -533,7 +533,7 @@ public class InInterface extends HttpServlet {
                                     } else {
                                         buffer.insert(buffer.lastIndexOf("}"), ",\"readOnly\":true");
                                     }
-                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, new Object[]{}));
                                     //buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
                                     result = buffer.toString();
                                     json = Units.objectToJson(0, "", result);
@@ -799,7 +799,7 @@ public class InInterface extends HttpServlet {
                                 }
 
                                 Class objClass = Class.forName("com.cn.bean.in." + "SJBackWareHouseList");
-                                Method method = objClass.getMethod("getRecordCount", null);
+                                Method method = objClass.getMethod("getRecordCount", new Class[0]);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
                                 String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
                                         + " gys.SupplierID = viewSJBackWareHouseList.SupplierID"
@@ -826,7 +826,7 @@ public class InInterface extends HttpServlet {
                                     } else {
                                         buffer.insert(buffer.lastIndexOf("}"), ",\"readOnly\":true");
                                     }
-                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, new Object[]{}));
                                     //buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
                                     result = buffer.toString();
                                     json = Units.objectToJson(0, "", result);
@@ -1022,7 +1022,7 @@ public class InInterface extends HttpServlet {
                                 proParams.put("ZDCustomerID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("zdCustomerID"));
 
                                 Class objClass = Class.forName("com.cn.bean.in." + "ZDBackWareHouseList");
-                                Method method = objClass.getMethod("getRecordCount", null);
+                                Method method = objClass.getMethod("getRecordCount", new Class[0]);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
                                 /*
                                 String detailWhereCase = "exists(select * from viewGYSPartContainerInfo gys where"
@@ -1080,7 +1080,7 @@ public class InInterface extends HttpServlet {
                                     } else {
                                         buffer.insert(buffer.lastIndexOf("}"), ",\"readOnly\":true");
                                     }
-                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+                                    buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, new Object[]{}));
                                     //buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
                                     result = buffer.toString();
                                     json = Units.objectToJson(0, "", result);
@@ -1271,13 +1271,13 @@ public class InInterface extends HttpServlet {
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
-        Method method = objClass.getMethod("getRecordCount", null);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
         if (result != null) {
             List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", whereCase, pageSize, 1, orderField, 0, conn);
             if (list != null && list.size() > 0) {
                 StringBuffer buffer = new StringBuffer(result);
                 buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
-                buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, null));
+                buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, new Object[]{}));
                 result = buffer.toString();
             }
             json = Units.objectToJson(0, "", result);
@@ -1294,7 +1294,7 @@ public class InInterface extends HttpServlet {
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
-        Method method = objClass.getMethod("getRecordCount", null);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
 
         String whereSql = commonController.getWhereSQLStrWithDate(objClass, datas, rely, true);
         if (Units.strIsEmpty(whereSql)) {
@@ -1308,7 +1308,7 @@ public class InInterface extends HttpServlet {
             if (list != null && list.size() > 0) {
                 StringBuffer buffer = new StringBuffer(result);
                 buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
-                buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, null));
+                buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, new Object[]{}));
                 result = buffer.toString();
             }
             json = Units.objectToJson(0, "", result);
@@ -1339,7 +1339,7 @@ public class InInterface extends HttpServlet {
         String result = "{}";
         CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
-        Method method = objClass.getMethod("getRecordCount", null);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
         String whereSql = commonController.getWhereSQLStr(objClass, keyWord, rely, isAll);
         if (Units.strIsEmpty(whereSql)) {
             whereSql = whereCase;
@@ -1351,7 +1351,7 @@ public class InInterface extends HttpServlet {
         if (list != null && list.size() > 0) {
             StringBuffer buffer = new StringBuffer(result);
             buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
-            buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+            buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, new Object[]{}));
             //buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
             result = buffer.toString();
 
@@ -1385,7 +1385,7 @@ public class InInterface extends HttpServlet {
         String result = "{}";
         CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
-        Method method = objClass.getMethod("getRecordCount", null);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
 
         String whereSql = commonController.getWhereSQLStrWithDate(objClass, keyWord, rely, isAll);
         if (Units.strIsEmpty(whereSql)) {
@@ -1399,7 +1399,7 @@ public class InInterface extends HttpServlet {
         if (list != null && list.size() > 0) {
             StringBuffer buffer = new StringBuffer(result);
             buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
-            buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, null));
+            buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, new Object[]{}));
             //buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
             result = buffer.toString();
 
@@ -1434,7 +1434,7 @@ public class InInterface extends HttpServlet {
         String json;
         CommonController commonController = new CommonController();
         Class objClass = Class.forName(beanPackage + tableName);
-        Method method = objClass.getMethod("getRecordCount", null);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
         List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);
         if (null != list && list.size() > 0) {
             StringBuffer buffer = new StringBuffer();
@@ -1458,7 +1458,7 @@ public class InInterface extends HttpServlet {
             }
             buffer.deleteCharAt(buffer.length() - 1);
             buffer.append("]");
-            buffer.append(",\"counts\":").append(method.invoke(null, null));
+            buffer.append(",\"counts\":").append(method.invoke(null, new Object[]{}));
             buffer.append(",\"target\":").append("\"").append(target).append("\"");
             buffer.append(",\"rely\":").append(rely);
 
@@ -1479,7 +1479,7 @@ public class InInterface extends HttpServlet {
     private String getSpecialTableJsonStr(List<Object> list, String className, String[] keys, String[] keysName, int[] keysWidth, String[] fieldsName,
             String target, String rely) throws Exception {
         Class objClass = Class.forName(className);
-        Method method = objClass.getMethod("getRecordCount", null);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
         StringBuffer buffer = new StringBuffer();
         buffer.append("{\"titles\":{");
         for (int i = 0; i < keys.length; i++) {
@@ -1501,7 +1501,7 @@ public class InInterface extends HttpServlet {
         }
         buffer.deleteCharAt(buffer.length() - 1);
         buffer.append("]");
-        buffer.append(",\"counts\":").append(method.invoke(null, null));
+        buffer.append(",\"counts\":").append(method.invoke(null, new Object[]{}));
         buffer.append(",\"target\":").append("\"").append(target).append("\"");
         buffer.append(",\"rely\":").append(rely);
 

@@ -28,27 +28,10 @@ public class LedControl {
         setAllLed(2, 1);
     }
 
-    public static void setImage(AreaLedIPInfo ledIPInfo, String fileName) throws Exception {
-        String filePath = "exportFile/" + fileName;
-        int count = 0;
-        while (true) {
-            int hProgram;
-            hProgram = led.CreateProgram(544, 32, 1);
-            led.AddProgram(hProgram, 1, 0, 0);
-            led.AddImageTextArea(hProgram, 1, 1, 0, 0, 544, 32, 0);
-            led.AddFileToImageTextArea(hProgram, 1, 1, filePath, 6, 5, 15);
-            led.SetBasicInfo(ledIPInfo.getIpAddress(), 1, 544, 32);
-            led.SetOEDA(ledIPInfo.getIpAddress(), 0, 1);
-            int result = led.NetWorkSend(ledIPInfo.getIpAddress(), hProgram);
-            led.DeleteProgram(hProgram);
-            if (result == 0 || count >= 5) {
-                System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
-                break;
-            }
-            count++;
-        }
-    }
-
+    /**
+     * 测试计划设置
+     * @throws Exception 
+     */
     public static void setC01Plan() throws Exception {
         AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
         ledIPInfo.setIpAddress("192.168.10.27");
@@ -56,6 +39,10 @@ public class LedControl {
         setLedAreaCode(ledIPInfo);
     }
 
+    /**
+     * 测试部品状态设置
+     * @throws Exception 
+     */
     public static void setC01PartStauts() throws Exception {
         AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
         ledIPInfo.setIpAddress("192.168.7.46");
@@ -70,57 +57,7 @@ public class LedControl {
         partStatus.setRejectReason("产品不合格");
         setLedPartStatus(ledIPInfo, partStatus, 2);
     }
-
-    public static void setLedAreaCode(String partCode, String supplierID) {
-        //System.out.println("partStore:" + RedisAPI.get("partStore_" + supplierID + "_" + partCode));
-        PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + supplierID + "_" + partCode.toLowerCase()), PartStore.class);
-        //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
-        AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
-        setLedAreaCode(ledIPInfo);
-    }
-
-    public static void setLedPlanList(JHOutWareHouseList list) {
-        try {
-            //System.out.println("partStore:" + RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode()));
-            PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode().toLowerCase()), PartStore.class);
-            //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
-            AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
-            LedPlan plan = new LedPlan();
-            plan.setPartCode(list.getPartCode());
-            plan.setPartName(list.getPartName());
-            plan.setSupplierID(list.getSupplierID());
-            plan.setSupplierName(list.getSupplierName());
-            plan.setPlanNum(String.valueOf(list.getJhCKAmount()));
-            plan.setInboundBatch(list.getInboundBatch());
-            plan.setAreaCode(partStore.getKfCFAddress());
-            plan.setContainer(list.getOutboundContainerName());
-            plan.setContainerAmount(String.valueOf(list.getOutboundPackageAmount()));
-            plan.setContainerBoxAmount(String.valueOf(list.getContainerAmount()));
-            setLedPlan(ledIPInfo, plan, 1);
-        } catch (Exception e) {
-            logger.error("设置Led信息出错!", e);
-        }
-    }
     
-    public static void setLedPlanList(JHOutWareHouseList list, AreaLedIPInfo ledIPInfo) {
-        try {
-            LedPlan plan = new LedPlan();
-            plan.setPartCode(list.getPartCode());
-            plan.setPartName(list.getPartName());
-            plan.setSupplierID(list.getSupplierID());
-            plan.setSupplierName(list.getSupplierName());
-            plan.setPlanNum(String.valueOf(list.getJhCKAmount()));
-            plan.setInboundBatch(list.getInboundBatch());
-            plan.setAreaCode(ledIPInfo.getAddressCode());
-            plan.setContainer(list.getOutboundContainerName());
-            plan.setContainerAmount(String.valueOf(list.getOutboundPackageAmount()));
-            plan.setContainerBoxAmount(String.valueOf(list.getContainerAmount()));
-            setLedPlan(ledIPInfo, plan, 1);
-        } catch (Exception e) {
-            logger.error("设置Led信息出错!", e);
-        }
-    }
-
     /**
      * 设置所有显示屏(测试用)
      *
@@ -166,7 +103,87 @@ public class LedControl {
             }
         }
     }
+    
+    public static void setImage(AreaLedIPInfo ledIPInfo, String fileName) throws Exception {
+        String filePath = "exportFile/" + fileName;
+        int count = 0;
+        while (true) {
+            int hProgram;
+            hProgram = led.CreateProgram(544, 32, 1);
+            led.AddProgram(hProgram, 1, 0, 0);
+            led.AddImageTextArea(hProgram, 1, 1, 0, 0, 544, 32, 0);
+            led.AddFileToImageTextArea(hProgram, 1, 1, filePath, 6, 5, 15);
+            led.SetBasicInfo(ledIPInfo.getIpAddress(), 1, 544, 32);
+            led.SetOEDA(ledIPInfo.getIpAddress(), 0, 1);
+            int result = led.NetWorkSend(ledIPInfo.getIpAddress(), hProgram);
+            led.DeleteProgram(hProgram);
+            if (result == 0 || count >= 5) {
+                System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
+                break;
+            }
+            count++;
+        }
+    }
 
+    /**
+     * 设置LED计划显示
+     * @param list 
+     */
+    public static void setLedPlanList(JHOutWareHouseList list) {
+        try {
+            //System.out.println("partStore:" + RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode()));
+            PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + list.getSupplierID() + "_" + list.getPartCode().toLowerCase()), PartStore.class);
+            //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
+            AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
+            LedPlan plan = new LedPlan();
+            plan.setPartCode(list.getPartCode());
+            plan.setPartName(list.getPartName());
+            plan.setSupplierID(list.getSupplierID());
+            plan.setSupplierName(list.getSupplierName());
+            plan.setPlanNum(String.valueOf(list.getJhCKAmount()));
+            plan.setInboundBatch(list.getInboundBatch());
+            plan.setAreaCode(partStore.getKfCFAddress());
+            plan.setContainer(list.getOutboundContainerName());
+            plan.setContainerAmount(String.valueOf(list.getOutboundPackageAmount()));
+            plan.setContainerBoxAmount(String.valueOf(list.getContainerAmount()));
+            setLedPlan(ledIPInfo, plan, 1);
+        } catch (Exception e) {
+            logger.error("设置Led信息出错!", e);
+        }
+    }
+    
+    /**
+     * 设置LED计划显示
+     * @param list 
+     * @param ledIPInfo 
+     */
+    public static void setLedPlanList(JHOutWareHouseList list, AreaLedIPInfo ledIPInfo) {
+        try {
+            LedPlan plan = new LedPlan();
+            plan.setPartCode(list.getPartCode());
+            plan.setPartName(list.getPartName());
+            plan.setSupplierID(list.getSupplierID());
+            plan.setSupplierName(list.getSupplierName());
+            plan.setPlanNum(String.valueOf(list.getJhCKAmount()));
+            plan.setInboundBatch(list.getInboundBatch());
+            plan.setAreaCode(ledIPInfo.getAddressCode());
+            plan.setContainer(list.getOutboundContainerName());
+            plan.setContainerAmount(String.valueOf(list.getOutboundPackageAmount()));
+            plan.setContainerBoxAmount(String.valueOf(list.getContainerAmount()));
+            setLedPlan(ledIPInfo, plan, 1);
+        } catch (Exception e) {
+            logger.error("设置Led信息出错!", e);
+        }
+    }
+
+    public static void setLedAreaCode(String partCode, String supplierID) {
+        //System.out.println("partStore:" + RedisAPI.get("partStore_" + supplierID + "_" + partCode));
+        PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + supplierID + "_" + partCode.toLowerCase()), PartStore.class);
+        //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
+        AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
+        setLedAreaCode(ledIPInfo);
+    }
+    
     /**
      * 设置LED显示屏显示区域号
      *
