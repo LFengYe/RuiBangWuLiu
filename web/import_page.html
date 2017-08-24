@@ -23,6 +23,7 @@ and open the template in the editor.
 //                console.log(getUrlParam("method"));
                 $("#importData").bind("click", function () {
                     uploadExcel();
+                    $("#importData").attr("disabled", "disabled");
                 });
                 $("#loadTemplate").bind("click", function () {
                     ajaxData("exportTemplate", null, function(data) {
@@ -38,10 +39,10 @@ and open the template in the editor.
                         sendBody.item = getUrlParam("item");
                         sendBody.detail = getUrlParam("detail");
                         ajaxData(getUrlParam("method"), sendBody, function(data) {
+                            //console.log(data);
                             parent.$("#import_result").val(0);
                             if (data) {
                                 parent.$("#import_return_data").val(JSON.stringify(data));
-                                //parent.$(".page2-container .page2-detail-list .page2-show-table").render(data.datas);
                             }
                             var index = parent.layer.getFrameIndex(window.name);
                             parent.layer.close(index);
@@ -53,6 +54,7 @@ and open the template in the editor.
                             var index = parent.layer.getFrameIndex(window.name);
                             parent.layer.close(index);
                         });
+                        $("#importData").attr("disabled", true);
                     } else {
                         alert(obj.message);
                     }

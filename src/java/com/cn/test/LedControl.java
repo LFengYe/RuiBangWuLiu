@@ -24,10 +24,16 @@ public class LedControl {
 
     private static final Logger logger = Logger.getLogger(DataInterface.class);
 
-    public static void main(String[] args) throws Exception {
-        setAllLed(2, 1);
+    public static void main(String[] args) {
+        /*
+        AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
+        ledIPInfo.setAddressCode("C-50");//C-20
+        ledIPInfo.setIpAddress("192.168.8.142");//192.168.7.84
+        setLedAreaCode(ledIPInfo);
+        */
+        setLedAreaCode("2906130-CA01", "1121");
     }
-
+    
     /**
      * 测试计划设置
      * @throws Exception 
@@ -176,10 +182,16 @@ public class LedControl {
         }
     }
 
+    /**
+     * 根据件号和供应商信息设置显示屏显示区域号
+     * @param partCode
+     * @param supplierID 
+     */
     public static void setLedAreaCode(String partCode, String supplierID) {
-        //System.out.println("partStore:" + RedisAPI.get("partStore_" + supplierID + "_" + partCode));
+//        System.out.println("partStore_" + supplierID + "_" + partCode.toLowerCase());
+//        System.out.println("partStore:" + RedisAPI.get("partStore_" + supplierID + "_" + partCode.toLowerCase()));
         PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + supplierID + "_" + partCode.toLowerCase()), PartStore.class);
-        //System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress()));
+//        System.out.println("ledIPInfo:" + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()));
         AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
         setLedAreaCode(ledIPInfo);
     }
@@ -244,14 +256,16 @@ public class LedControl {
                 System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
                 break;
             }
+            if (result != 0) {
+                System.out.println(ledIPInfo.getAddressCode() + "设置失败!");
+            }
             count++;
         }
-        /*
+        
         File file = new File(fileName);
         if (!file.delete()) {
             System.out.println(fileName + "删除失败!");
         }
-         */
     }
 
     /**
@@ -351,7 +365,7 @@ public class LedControl {
         String pngFilePath = filePath + nowTime + ".png";
         int[] fromIndex = {0, 0};
         int[] toIndex = {1, 5};
-        System.out.println("filePath:" + file.getAbsolutePath());
+        //System.out.println("filePath:" + file.getAbsolutePath());
         DrawFromExcel.drawExcelToPNG(file.getAbsolutePath(), pngFilePath, fromIndex, toIndex);
         return pngFilePath;
     }

@@ -231,14 +231,15 @@ public class AppInterface extends HttpServlet {
                                         paramsJson.getString("jhOutWareHouseListRemark"));
                                 if (result == 0) {
                                     PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), PartStore.class);
+                                    if (partStore == null) {
+                                        json = Units.objectToJson(-1, "请补全存放地址!", null);
+                                        break;
+                                    }
                                     //logger.info(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()));
                                     AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
-                                    //logger.info(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()));
+                                    logger.info(paramsJson.getString("supplierID") + "-" + paramsJson.getString("partCode") + "库房存放地址:" + partStore.getKfCFAddress() + "," + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()));
                                     if (paramsJson.getIntValue("jhStatus") == 0
                                             || paramsJson.getIntValue("jhStatus") == -2) {//库管员开始计划
-                                        JsonObject object = new JsonObject();
-                                        object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
-                                        PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), partStore.getKfCFAddress() + "您有新的计划", "2", object);
                                         new Thread() {
                                             @Override
                                             public void run() {
@@ -246,6 +247,10 @@ public class AppInterface extends HttpServlet {
                                                     LedControl.setLedPlanList(list, ledIPInfo);
                                             }
                                         }.start();
+                                        
+                                        JsonObject object = new JsonObject();
+                                        object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
+                                        PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), partStore.getKfCFAddress() + "您有新的计划", "2", object);
                                     }
                                     if (paramsJson.getIntValue("jhStatus") == -1) {//库管员确认完成
                                         new Thread() {

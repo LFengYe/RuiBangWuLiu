@@ -63,7 +63,7 @@ public class JHOutWareHouseList implements Comparable{
     private String jhDemandTime;
     @FieldDescription(description = "库房存放地址", operate = "display")
     private String kfCFAddress;
-
+    
     public String getSupplierID() {
         return supplierID;
     }

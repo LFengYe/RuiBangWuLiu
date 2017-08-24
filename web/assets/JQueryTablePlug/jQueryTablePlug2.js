@@ -299,6 +299,9 @@
         clearSelected: function() {
             this.$container.find("ul li").removeClass("clicked");
         },
+        clearDoubleClick: function() {
+            this.$container.find("ul li .dbclicked").removeClass("dbclicked");
+        },
         selectAllClear: function() {
             this.find(".select-all button").trigger("click");
         }

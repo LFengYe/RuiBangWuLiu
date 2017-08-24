@@ -47,7 +47,7 @@ public class JHOutWareHouse {
     @FieldDescription(description = "备注")
     private String jhOutWareHouseRemark;
     @FieldDescription(description = "计划是否确认")
-    private boolean jhConfirm;
+    private String jhConfirm;
 
     public String getJhOutWareHouseID() {
         return jhOutWareHouseID;
@@ -137,19 +137,19 @@ public class JHOutWareHouse {
         this.jhOutWareHouseRemark = jhOutWareHouseRemark;
     }
 
-    public boolean isJhConfirm() {
-        return jhConfirm;
-    }
-
-    public void setJhConfirm(boolean jhConfirm) {
-        this.jhConfirm = jhConfirm;
-    }
-
     public String getJhMethod() {
         return jhMethod;
     }
 
     public void setJhMethod(String jhMethod) {
         this.jhMethod = jhMethod;
+    }
+
+    public String getJhConfirm() {
+        return jhConfirm;
+    }
+
+    public void setJhConfirm(String jhConfirm) {
+        this.jhConfirm = jhConfirm;
     }
 }

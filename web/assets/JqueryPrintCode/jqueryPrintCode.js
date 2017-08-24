@@ -80,6 +80,19 @@
         render: function (datas) {
             this.datas = datas;
             _funs_.insertData.call(this, this.datas);
+        },
+        getHtmlWithData: function(itemData) {
+            var inputResult = "";
+            var printArea = this.printArea;
+            for (var i in printArea) {
+                inputResult += "<div class='div_code_row' name='" + i + "'>";
+                var row = printArea[i];
+                for (var j in row) {
+                    var rowItems = row[j].split(",");
+                    inputResult += "<div class='div_code_cell' style='width: " + rowItems[0] + ";' name='" + j + "'>" + (rowItems[1] ? rowItems[1] : "") + "</div>";
+                }
+                inputResult += "</div>";
+            }
         }
     };
     $.fn.createPrintCode = function (options) {

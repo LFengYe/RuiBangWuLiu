@@ -6,7 +6,6 @@
 package com.cn.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.cn.bean.out.FJHOutWareHouse;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.Units;
 import java.lang.reflect.Field;

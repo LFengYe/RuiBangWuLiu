@@ -56,14 +56,15 @@ public class CommonController {
     public ArrayList<Integer> dataBaseOperate(String datas, String beanPackage, String tableName, String operate, Connection conn) throws Exception {
         ArrayList<Integer> results = new ArrayList<>();
         int[] exeResult = null;
-        JSONArray arrayData = JSONArray.parseArray(datas);
-        if (arrayData == null || arrayData.isEmpty()) {
-            results.add(0, 2);
-            return results;
-        }
         Class objClass = Class.forName(beanPackage + tableName);
         CallableStatement statement = null;
+        
         try {
+            JSONArray arrayData = JSONArray.parseArray(datas);
+            if (arrayData == null || arrayData.isEmpty()) {
+                results.add(0, 2);
+                return results;
+            }
             switch (operate) {
                 //<editor-fold desc="数据添加操作">
                 case "add": {
@@ -912,7 +913,7 @@ public class CommonController {
         }
         return result;
     }
-    
+
     public String getWhereSQLStrAllField(Class objClass, String keyWord) {
         Field[] fields = objClass.getDeclaredFields();
         String commonResult = null;

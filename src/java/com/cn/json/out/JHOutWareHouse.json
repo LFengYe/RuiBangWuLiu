@@ -21,7 +21,8 @@
         "jhType": "计划类型,10%",
         "jhShift": "计划班次,5%",
         "jhCKProducerName": "制单人员姓名,5%",
-        "jhCKProduceTime": "制单时间,10%",
+        "jhCKProduceTime": "制单时间,15%",
+        "jhConfirm": "是否确认,5%",
         "jhOutWareHouseRemark": "备注,20%"
     },
     "detailControl": {
@@ -81,10 +82,10 @@
             "jhDemandTime": "40%"
         },
         "row6": {
-            "集配": "20%,集配:",
-            "集配地址": "40%,JP-LK-LE-001",
-            "上线": "20%,上线:",
-            "工位地址": "20%,涂装"
+            "jpqCFAddressName": "20%,集配:",
+            "jpqCFAddress": "40%",
+            "assemblingStationName": "20%,工位:",
+            "assemblingStation": "20%"
         }
     }
 }

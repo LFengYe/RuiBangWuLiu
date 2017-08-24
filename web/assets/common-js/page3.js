@@ -71,9 +71,7 @@
                 }
             });
         }, function () {
-
         });
-
     }
 
     function bindEvt() {
@@ -120,9 +118,9 @@
                 request.partStatus = tmp.partStatus;
             }
             ajaxData("create", request, function (data) {
-                console.log(data);
+                //console.log(data);
                 $mainTableBox.render(data.datas);
-            }, function () {});
+            }, function() {});
         });
 
         $keysword.change(function () {

@@ -244,10 +244,12 @@ public class InInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else if (result == 2627) {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect()).get(0);
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "djInWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect()).get(0);
                                         json = Units.objectToJson(-1, "明细中件号有重复!", null);
                                     } else {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect()).get(0);
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "djInWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect()).get(0);
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else if (result == 2627) {
@@ -333,12 +335,15 @@ public class InInterface extends HttpServlet {
                                         //System.out.println("import:" + JSONObject.toJSONString(importData));
                                         result = commonController.dataBaseOperate(JSONObject.toJSONString(importData, Units.features), "com.cn.bean.in.", "DJInWareHouseList", "add", opt.getConnect()).get(0);
                                         if (result == 0) {
-                                            json = Units.objectToJson(0, "数据添加成功!", JSONObject.toJSONString(importData));
+                                            JSONObject object = new JSONObject();
+                                            object.put("datas", importData);
+                                            json = Units.objectToJson(0, "数据添加成功!", object.toJSONString());
                                         } else if (result == 2627) {
                                             json = Units.objectToJson(-1, "明细中件号有重复!", null);
                                         } else {
+                                            if (!Units.strIsEmpty(Units.getSubJsonStr(item, "djInWareHouseID")))
+                                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect());
                                             json = Units.objectToJson(-1, "明细添加失败!", null);
-                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "djInWareHouseID") + "]", "com.cn.bean.in.", "DJInWareHouse", "delete", opt.getConnect());
                                         }
                                     } else if (result == 2627) {
                                         json = Units.objectToJson(-1, "数据以保存, 请勿重复提交!", null);
@@ -656,7 +661,8 @@ public class InInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "sjOutWareHouseID") + "]", "com.cn.bean.in.", "SJOutWareHouse", "delete", opt.getConnect());
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "sjOutWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "sjOutWareHouseID") + "]", "com.cn.bean.in.", "SJOutWareHouse", "delete", opt.getConnect());
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {
@@ -681,8 +687,9 @@ public class InInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", queryOperate("com.cn.bean.in.", "view", "SJOutWareHouse", "SJOutWareHouseID", "", item, true, opt.getConnect(), 10, 1));
                                     } else {
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "sjOutWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "sjOutWareHouseID") + "]", "com.cn.bean.in.", "SJOutWareHouse", "delete", opt.getConnect());
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "sjOutWareHouseID") + "]", "com.cn.bean.in.", "SJOutWareHouse", "delete", opt.getConnect());
                                     }
                                 } else {
                                     json = Units.objectToJson(-1, "数据添加失败!", null);
@@ -896,7 +903,8 @@ public class InInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "sjBackWareHouseID") + "]", "com.cn.bean.in.", "SJBackWareHouse", "delete", opt.getConnect());
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "sjBackWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "sjBackWareHouseID") + "]", "com.cn.bean.in.", "SJBackWareHouse", "delete", opt.getConnect());
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {
@@ -921,7 +929,8 @@ public class InInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", queryOperate("com.cn.bean.in.", "view", "SJBackWareHouse", "SJBackWareHouseID", "", item, true, opt.getConnect(), 10, 1));
                                     } else {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "sjBackWareHouseID") + "]", "com.cn.bean.in.", "SJBackWareHouse", "delete", opt.getConnect());
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "sjBackWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "sjBackWareHouseID") + "]", "com.cn.bean.in.", "SJBackWareHouse", "delete", opt.getConnect());
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {
@@ -1209,7 +1218,8 @@ public class InInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "zdBackWareHouseID") + "]", "com.cn.bean.in.", "ZDBackWareHouse", "delete", opt.getConnect());
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "zdBackWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "zdBackWareHouseID") + "]", "com.cn.bean.in.", "ZDBackWareHouse", "delete", opt.getConnect());
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {

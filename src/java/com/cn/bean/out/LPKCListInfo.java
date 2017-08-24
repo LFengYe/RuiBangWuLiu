@@ -114,6 +114,6 @@ public class LPKCListInfo {
     }
     
     public String getType() {
-        return this.supplierID + "_" + this.partCode;
+        return this.supplierID + "_" + this.partCode.toLowerCase();
     }
 }

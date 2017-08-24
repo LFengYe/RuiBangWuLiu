@@ -467,7 +467,8 @@ public class MoveInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fxOutWareHouseID") + "]", "com.cn.bean.move.", "FXOutWareHouse", "delete", opt.getConnect());
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fxOutWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fxOutWareHouseID") + "]", "com.cn.bean.move.", "FXOutWareHouse", "delete", opt.getConnect());
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {
@@ -661,7 +662,8 @@ public class MoveInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fxOutWareHouseID") + "]", "com.cn.bean.move.", "FXInWareHouse", "delete", opt.getConnect());
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fxInWareHouseID")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fxInWareHouseID") + "]", "com.cn.bean.move.", "FXInWareHouse", "delete", opt.getConnect());
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {
@@ -774,7 +776,8 @@ public class MoveInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "tzYMonth") + "]", "com.cn.bean.move.", "AdjustAccount", "delete", opt.getConnect());
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "tzYMonth")))
+                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "tzYMonth") + "]", "com.cn.bean.move.", "AdjustAccount", "delete", opt.getConnect());
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {

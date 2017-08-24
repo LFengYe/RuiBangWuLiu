@@ -512,10 +512,14 @@ public class Units {
         return false;
     }
 
-    public static String getSubJsonStr(String jsonStr, String itemName) {
+    public static String getSubJsonStr(String jsonStr, String keyName) {
         JSONObject obj = new JSONObject();
-        obj.put(itemName, JSONObject.parseObject(jsonStr).getString(itemName));
+        obj.put(keyName, JSONObject.parseObject(jsonStr).getString(keyName));
         return obj.toJSONString();
+    }
+    
+    public static String getSubJsonValue(String jsonStr, String keyName) {
+        return JSONObject.parseObject(jsonStr).getString(keyName);
     }
 
     /**

@@ -53,23 +53,10 @@
             }
         </script>
         <style type="text/css" id="print_code_style">
-            /*
-            .div_table{display: table;width: 100%;margin: auto;margin-top: 10px;text-align: center;border-top: 1px solid;}
-            .div_table_2{display: table;width: 90%;text-align: center;border-top: 1px solid;border-right: 1px solid;margin: 0px;padding: 0px;}
-            .div_table_2 .col{display: inline-block;text-align: center;font-size: 12px;height: auto;}
-            .div_table_2 .col ul{margin: 0px;padding: 0px;}
-            .div_table_2 .col ul li{text-align: center;height: 40px;line-height: 40px;border-top: 1px solid;overflow: hidden;white-space:nowrap;}
-            .div_row{display: table-row;}
-            .div_cell{display: table-column;float: left;height: 40px;line-height: 40px;border-bottom: 1px solid;white-space: nowrap;}
-            .div_cell .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
-            .div_cell .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
-            .div_cell_double{height: 80px;line-height: 80px;}
-            */
-
-            .div_code_table{display: table;width: 250px;text-align: left;border: 0px solid;margin: 0;}
-            .div_code_row{display: table-row;word-break: keep-all;white-space: nowrap;}
-            .div_code_cell{display:block;float: left;border: 0px solid;height: 20px;line-height: 20px;}
-            .div_code_cell_img{display:block;border: 0px solid;width: 200px;text-align: center;}
+            .div_code_table{display: table;width: 250px;text-align: left;border: 0px solid;margin: 0;font-size: 11pt;}
+            .div_code_row{display: table-row;word-break: keep-all;white-space: nowrap;font-size: 11pt;}
+            .div_code_cell{display:block;float: left;border: 0px solid;height: 20px;line-height: 20px;font-size: 11pt;}
+            .div_code_cell_img{display:block;border: 0px solid;width: 200px;text-align: center;font-size: 11pt;}
         </style>
     </head>
     <body>
@@ -172,6 +159,7 @@
                                         <button class="button btn" id="page2-modify">修改</button>
                                         <button class="button btn" id="page2-cancel">删除</button>
                                         <button class="button btn" id="page2-print">打印</button>
+                                        <button class="button btn" id="page2-printPatch" style="display: none;">补签</button>
                                         <button class="button btn" id="page2-auditItem">确认</button>
                                         <button class="button btn" id="page2-import">导入</button>
                                         <button class="button btn" id="page2-export" style="display: none;">导出</button>
@@ -325,9 +313,8 @@
         <script type="text/javascript" src="assets/common-js/page3.js" ></script>
 
         <script type="text/javascript" language="javascript" src="assets/JqueryPrintCode/LodopFuncs.js"></script>
-        <object  id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0>
-            <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0>
-            </embed>
+        <object  id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
+            <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
         </object>
         
         <OBJECT id=factory height=0 width=0 classid=CLSID:8856F961-340A-11D0-A96B-00C04FD705A2></OBJECT> 

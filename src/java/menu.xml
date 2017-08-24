@@ -29,7 +29,7 @@
     </first>
     <first hypelnk=""  id="104" text="部品出库管理" url="out.do">
         <second hypelnk="page2"  id="10401" text="计划出库" url="out.do"></second>
-        <second hypelnk="page2"  id="10413" text="总成计划" url="out.do"></second>
+        <!--<second hypelnk="page2"  id="10413" text="总成计划" url="out.do"></second>-->
         <second hypelnk="page2"  id="10412" text="临时调货" url="out.do"></second>
         <second hypelnk="page2"  id="10402" text="非生产领料" url="out.do"></second>
         <second hypelnk="page2"  id="10403" text="现场结算" url="out.do"></second>
@@ -41,7 +41,7 @@
         <second hypelnk="page2"  id="10406" text="领货管理" url="out.do"></second>
         <second hypelnk="page2"  id="10407" text="配送管理" url="out.do"></second>
         <second hypelnk="page3"  id="10408" text="良品库存" url="out.do"></second>
-        <!--<second hypelnk="page2"  id="10409" text="排序卡打印" url="out.do"></second>-->
+        <second hypelnk="page2"  id="10409" text="条码打印" url="out.do"></second>
         <!--<second hypelnk="page3"  id="10410" text="送货清单" url="out.do"></second>-->
         <!--<second hypelnk="page1"  id="10411" text="下线信息" url="out.do"></second>-->
     </first>
