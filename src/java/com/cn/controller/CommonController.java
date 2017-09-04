@@ -921,6 +921,13 @@ public class CommonController {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
+            
+            if (field.isAnnotationPresent(FieldDescription.class)) {
+                FieldDescription description = field.getAnnotation(FieldDescription.class);
+                if (description.type() != null && description.operate().compareTo("display") == 0) {
+                    continue;
+                }
+            }
 
             String fieldType = field.getGenericType().toString();
             if (fieldType.contains("Integer") || fieldType.contains("Double") || fieldType.contains("Float")) {

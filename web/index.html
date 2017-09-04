@@ -201,13 +201,20 @@
                                         <button class="page3-export">导出</button>
                                     </div>
                                     <div class="page3-show-table"><!--动态添加--></div>
+                                    <div class="text-center">
+                                        <nav>
+                                            <ul class="pagination page3-pagination">
+                                                <li><a class="page3-left">&laquo;</a></li>
+                                                <li><a class="page3-right">&raquo;</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </div>
 
                                 <div class="page3-detail-list">
                                     <div class="page3-main-input-box">
                                         <!--动态添加-->
                                     </div>
-
                                     <div class="page3-button-area">
                                         <button class="btn btn-info" id="page3-return">返回</button>
                                     </div>
@@ -225,71 +232,9 @@
 
         <!--打印区域-->
         <div class="print_area content_hidden" id="print_area">
-            <div class="div_table_2">
-                <div class="div_row">
-                    <div class="div_cell" style="width: 100%;"><div class="cell_start"></div>待检入库单</div>
-                </div>
-                <div class="div_row">
-                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div>单据编号</div>
-                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div></div>
-                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>供应商</div>
-                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div></div>
-                    <div class="div_cell" style="width: 5%;"><div class="cell_start"></div></div>
-                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>制单人</div>
-                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div></div>
-                </div>
-                <div class="div_row">
-                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div>入库批次</div>
-                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div>20170223227092511</div>
-                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>制单时间</div>
-                    <div class="div_cell" style="width: 20%;"><div class="cell_start"></div>17/2/27 9:25</div>
-                    <div class="div_cell" style="width: 35%;"><div class="cell_start"></div>第   1   页共 1    页</div>
-                </div>
-                <div class="div_row">
-                    <div class="div_cell col" style="width: 10%;"><div class="cell_start"></div>序号
-                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>部品名称
-                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>部品件号
-                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 5%;"><div class="cell_start"></div>单位
-                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 10%;"><div class="cell_start"></div>入库数量
-                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>原厂批次
-                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>检验结论
-                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 15%;"><div class="cell_start"></div>备注
-                        <div><ul><li><div class="cell_start"></div>test</li><li><div class="cell_start"></div>test</li></ul></div>
-                    </div>
-                </div>
-                <div class="div_row">
-                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>总计</div>
-                    <div class="div_cell" style="width: 90%;"><div class="cell_start"></div>3306</div>
-                </div>
-                <div class="div_row">
-                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>供应商</div>
-                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div></div>
-                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>库管员</div>
-                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div></div>
-                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>审核人</div>
-                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div></div>
-                    <div class="div_cell" style="width: 10%;"><div class="cell_start"></div>检验人</div>
-                    <div class="div_cell" style="width: 15%;"><div class="cell_start"></div></div>
-                </div>
-                <div class="div_row">
-                    <div class="div_cell" style="width: 100%;"><div class="cell_start"></div>备注：白-->存根；红色-->客户；蓝-->库房；绿色-->检验；黄-->返回；</div>
-                </div>
-            </div>
         </div>
+
+        <div id="code_img_div" class="content_hidden"><img alt="条码" src="" class="div_code_cell_img content_hidden"/></div>
 
         <!--导入回写数据-->
         <div class="no_print content_hidden">
@@ -316,7 +261,7 @@
         <object  id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
             <embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
         </object>
-        
+
         <OBJECT id=factory height=0 width=0 classid=CLSID:8856F961-340A-11D0-A96B-00C04FD705A2></OBJECT> 
     </body>
 </html>

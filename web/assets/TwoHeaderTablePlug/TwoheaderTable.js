@@ -89,7 +89,7 @@
             this.$container.append(result);
             this.$container.chromatable({
                 width: this.$container.width() + "px",
-                height: "600px",
+                height: "540px",
                 scrolling: "yes",
                 headerClickCallback: function (name) {
                     if (that.sortMethod) {

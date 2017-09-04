@@ -5,7 +5,6 @@
         "jhType": "计划类型,1,1,10%,false",
         "jhProduceTime": "制单时间,1,1,10%,false",
         "jhDemandTime": "计划需求时间,1,1,10%,false",
-        "bhStaffName": "备货员,1,1,10%,false",
         "supplierID": "供应商编号,1,1,10%,false",
         "supplierName": "供应商,1,1,10%,false",
         "partName": "部品名称,1,1,10%,false",

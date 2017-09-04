@@ -34,6 +34,8 @@ public class UnFinishAmount {
     private int bj;
     @FieldDescription(description = "非计划未完整数量")
     private int fjh;
+    @FieldDescription(description = "临时调货未完整数量")
+    private int lsdh;
     @FieldDescription(description = "部品退货未完整数量")
     private int th;
     @FieldDescription(description = "终端退库未完整数量")
@@ -161,6 +163,14 @@ public class UnFinishAmount {
 
     public void setFxOut(int fxOut) {
         this.fxOut = fxOut;
+    }
+
+    public int getLsdh() {
+        return lsdh;
+    }
+
+    public void setLsdh(int lsdh) {
+        this.lsdh = lsdh;
     }
     
 }

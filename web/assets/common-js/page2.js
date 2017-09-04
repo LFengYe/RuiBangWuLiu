@@ -61,7 +61,7 @@
         del: []
     };
     var operate = "add";
-    var importSuccess = false;
+    var importOperate = false;
     var isHistory = 0;
 
     function initData() {
@@ -84,7 +84,7 @@
             del: []
         };
         operate = "add";
-        importSuccess = false;
+        importOperate = false;
         if ($history.find(":checkbox").is(":checked")) {
             isHistory = 1;
         } else {
@@ -133,7 +133,7 @@
 
         $addItem.off("click");
         $addItem.click(function () {
-            importSuccess = false;
+            importOperate = false;
             ajaxData(OPERATION.ADD, {}, function (data) {
                 operate = "add";
                 updateInputBox(data);
@@ -233,23 +233,18 @@
                 }
             }
             ajaxData("print", {del: submitDel, type: "all"}, function (data) {
+                $printArea.printCode(data.datas);
                 //data.datas.splice(2, data.datas.length - 1);//只取前两条测试用
+                /*
                 $printArea.render(data.datas);
-
                 var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
                 var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
-
                 var LODOP = getLodop();
                 LODOP.PRINT_INIT("条码打印");
                 LODOP.SET_PRINT_STYLE("FontSize", 14);
                 LODOP.ADD_PRINT_HTML(8, 10, 300, 400, htmlStr);
                 LODOP.PREVIEW();
-                /*
-                 $("#print_area").css({
-                 "height": "auto"
-                 , "overflow": "visible"
-                 }).printArea();
-                 */
+                */
                 mainCancelRows = [];
                 $mainTableBox.clearSelected();
             }, function () {
@@ -260,7 +255,7 @@
 
         $("#page2-return").off("click");
         $("#page2-return").click(function () {
-            importSuccess = false;
+            importOperate = false;
             $childINputBox.clearInputsArea();
             $mainInputBox.clearInputsArea();
             $chidTableBox.emptyTable();
@@ -277,10 +272,12 @@
 
         $confirm.off("click");
         $confirm.on("click", function () {
-            if (!importSuccess) {
+            /*
+            if (!importOperate) {
                 alert("计划添加未成功!不能确认");
                 return;
             }
+            */
             var item = $mainInputBox.getInputValObj(true);
             whereObj = {};
             for (var proIndex in primary) {
@@ -320,9 +317,13 @@
         $("#page2-submit").off("click");
         $("#page2-submit").click(function () {
             if (operate === "add") {
+                if (importOperate) {
+                    alert("当前数据不能提交！");
+                    return;
+                }
                 var arr = $chidTableBox.getAllDatas();
                 if (arr.length == 0) {
-                    console.log("请将表格添加数据后再提交");
+                    //console.log("请将表格添加数据后再提交");
                     alert("请将表格添加数据后再提交！");
                     return;
                 }
@@ -336,7 +337,7 @@
                     operate: operate
                 };
                 ajaxData(OPERATION.SUBMIT, obj, function (data) {
-                    importSuccess = true;
+                    importOperate = false;
                     //console.log(data);
                     if (data) {
                         if (moudle === "计划出库" || moudle === "总成计划") {
@@ -354,7 +355,7 @@
                         $("#page2-return").trigger("click");
                     }
                 }, function (data) {
-                    importSuccess = false;
+                    importOperate = false;
                     if (data) {
                         $chidTableBox.render(data);
                     } else {
@@ -494,16 +495,34 @@
                 var arr = $chidTableBox.getSelectedItem();
                 if (arr && arr.length > 0) {
                     ajaxData("printItem", {del: arr, type: "selected"}, function (data) {
-                        $printArea.render(data.datas);
-                        var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
-                        var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
-
+                        $printArea.printCode(data.datas);
+                        /*
                         var LODOP = getLodop();
                         LODOP.PRINT_INIT("条码打印");
-                        LODOP.SET_PRINT_STYLE("FontSize", 14);
-                        LODOP.ADD_PRINT_HTM(8, 10, 300, 400, htmlStr);
-                        LODOP.PREVIEW();
+                        LODOP.SET_PRINT_PAGESIZE(1, "70mm", "50mm", "");
 
+                        for (var i = 0; i < data.datas.length; i++) {
+                            var itemData = data.datas[i];
+                            var htmlStr = $printArea.getHtmlWithData(itemData);
+                            var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
+                            htmlStr = strBodyStyle + "<body>" + htmlStr + "</body>";
+                            //LODOP.ADD_PRINT_BARCODE(0, 0, "70mm", "18mm", "128A", "SY2014744208");
+                            LODOP.ADD_PRINT_HTM(0, 0, "70mm", "50mm", htmlStr);
+                            LODOP.NEWPAGE();
+                        }
+                        LODOP.PREVIEW();
+                        */
+                        /*
+                         $printArea.render(data.datas);
+                         var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
+                         var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
+                         
+                         var LODOP = getLodop();
+                         LODOP.PRINT_INIT("条码打印");
+                         LODOP.SET_PRINT_STYLE("FontSize", 14);
+                         LODOP.ADD_PRINT_HTM(8, 10, 300, 400, htmlStr);
+                         LODOP.PREVIEW();
+                         */
                         $chidTableBox.clearSelected();
                     }, function () {
                         $chidTableBox.clearSelected();
@@ -528,11 +547,11 @@
                 } else {
                     var packNumber = prompt("请输入箱签范围", "1-1");
                     if (packNumber) {
-                        console.log(packNumber);
                         var str = packNumber.split("-");
-                        console.log(str);
                         if (str.length === 2) {
                             ajaxData("printPatch", {del: arr, patch: packNumber}, function (data) {
+                                $printArea.printCode(data.datas);
+                                /*
                                 $printArea.render(data.datas);
                                 var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
                                 var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
@@ -542,7 +561,7 @@
                                 LODOP.SET_PRINT_STYLE("FontSize", 14);
                                 LODOP.ADD_PRINT_HTM(10, 10, 300, 400, htmlStr);
                                 LODOP.PREVIEW();
-
+                                */
                                 $chidTableBox.clearSelected();
                             }, function () {
                                 $chidTableBox.clearSelected();
@@ -568,6 +587,7 @@
             //console.log("import_page.html?method=importDetail&item=" + JSON.stringify(item) + "&detail=" + JSON.stringify(child));
             displayLayer(2, "import_page.html?method=importDetail&item=" + escape(JSON.stringify(item)) + "&detail=" + escape(JSON.stringify(child)),
                     "数据导入", function () {
+                        importOperate = true;
                         var data = JSON.parse($("#import_return_data").val());
                         //console.log(data);
                         if (data.datas) {
@@ -576,12 +596,14 @@
                         if (data.fileUrl) {
                             location.href = data.fileUrl;
                         }
+                        /*
                         var importRes = $("#import_result").val();
                         if (importRes === 0) {
-                            importSuccess = true;
+                            importOperate = true;
                         } else {
-                            importSuccess = false;
+                            importOperate = false;
                         }
+                        */
                         $("#import_return_data").val("");
                     });
         });
@@ -624,7 +646,6 @@
                 },
                 dbclickRowCallBack: function (index, maps) {
                     //var whereObj = new Object();
-                    importSuccess = true;
                     mainClickRow = index;
 
                     whereObj = {};
@@ -640,8 +661,10 @@
                             if (data.datas) {
                                 $chidTableBox.render(data.datas);
                                 $childINputBox.parentFieldValue($mainInputBox);
-                                $printArea.controlData(maps);
-                                $printArea.render(data.datas);
+                                if (moudle != "条码打印") {
+                                    $printArea.controlData(maps);
+                                    $printArea.render(data.datas);
+                                }
                             } else {
                                 alert("没有明细!");
                             }

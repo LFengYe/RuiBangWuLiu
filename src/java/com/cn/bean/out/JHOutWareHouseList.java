@@ -57,7 +57,7 @@ public class JHOutWareHouseList implements Comparable{
     private String jhOutWareHouseID;
     @FieldDescription(description = "状态", operate = "display")
     private int jhStatus;
-    @FieldDescription(description = "制单时间", type = "date", operate = "display")
+    @FieldDescription(description = "制单时间", operate = "display")
     private String jhCKProduceTime;
     @FieldDescription(description = "计划需求时间", operate = "display")
     private String jhDemandTime;

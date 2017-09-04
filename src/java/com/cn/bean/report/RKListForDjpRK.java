@@ -5,25 +5,41 @@
  */
 package com.cn.bean.report;
 
+import com.cn.bean.FieldDescription;
+
 /**
  *
  * @author LFeng
  */
 public class RKListForDjpRK {
 
+    @FieldDescription(description = "入库时间")
     private String djRKProduceTime;
+    @FieldDescription(description = "入库单号")
     private String djInWareHouseID;
+    @FieldDescription(description = "出入类型")
     private String outInType;
+    @FieldDescription(description = "出入方式")
     private String outInWethod;
+    @FieldDescription(description = "供应商编号")
     private String supplierID;
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
+    @FieldDescription(description = "部品件号")
     private String partCode;
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
+    @FieldDescription(description = "入库批次")
     private String inboundBatch;
+    @FieldDescription(description = "原厂批次")
     private String originalBatch;
+    @FieldDescription(description = "入库数量")
     private String djRKAmount;
+    @FieldDescription(description = "制单员")
     private String djRKProducerName;
+    @FieldDescription(description = "备注")
     private String djInWareHouseListRemark;
 
     public String getDjRKProduceTime() {

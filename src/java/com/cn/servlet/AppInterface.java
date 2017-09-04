@@ -72,7 +72,7 @@ public class AppInterface extends HttpServlet {
         DatabaseOpt opt = new DatabaseOpt();
         String json = null;
         try {
-            //logger.info(subUri + ",params:" + params);
+            logger.info(subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
@@ -146,7 +146,7 @@ public class AppInterface extends HttpServlet {
                 }
                 //</editor-fold>
 
-                //<editor-fold desc="用户登陆模板">
+                //<editor-fold desc="未完成数量_unFinishAmount">
                 case "unFinishAmount": {
                     JSONObject object = new JSONObject();
                     object.put("EmployeeName", "string," + employee.getEmployeeName());
@@ -236,26 +236,30 @@ public class AppInterface extends HttpServlet {
                                         break;
                                     }
                                     //logger.info(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()));
-                                    AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
-                                    logger.info(paramsJson.getString("supplierID") + "-" + paramsJson.getString("partCode") + "库房存放地址:" + partStore.getKfCFAddress() + "," + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()));
+                                    //AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
+                                    //logger.info(paramsJson.getString("supplierID") + "-" + paramsJson.getString("partCode") + "库房存放地址:" + partStore.getKfCFAddress() + "," + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()));
                                     if (paramsJson.getIntValue("jhStatus") == 0
                                             || paramsJson.getIntValue("jhStatus") == -2) {//库管员开始计划
                                         new Thread() {
                                             @Override
                                             public void run() {
+                                                AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
+                                                logger.info(paramsJson.getString("supplierID") + "-" + paramsJson.getString("partCode") + "库房存放地址:" + partStore.getKfCFAddress() + "," + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()));
                                                 if (ledIPInfo != null)
                                                     LedControl.setLedPlanList(list, ledIPInfo);
+                                                
+                                                JsonObject object = new JsonObject();
+                                                object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
+                                                PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), partStore.getKfCFAddress() + "您有新的计划", "2", object);
                                             }
                                         }.start();
-                                        
-                                        JsonObject object = new JsonObject();
-                                        object.addProperty("jhOutWareHouseID", paramsJson.getString("jhOutWareHouseID"));
-                                        PushUnits.pushNotifationWithAlias(list.getBhEmployeeName(), partStore.getKfCFAddress() + "您有新的计划", "2", object);
                                     }
                                     if (paramsJson.getIntValue("jhStatus") == -1) {//库管员确认完成
                                         new Thread() {
                                             @Override
                                             public void run() {
+                                                AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
+                                                logger.info(paramsJson.getString("supplierID") + "-" + paramsJson.getString("partCode") + "库房存放地址:" + partStore.getKfCFAddress() + "," + RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()));
                                                 if (ledIPInfo != null)
                                                     LedControl.setLedAreaCode(ledIPInfo);
                                             }

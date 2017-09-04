@@ -5,6 +5,8 @@
  */
 package com.cn.bean.report;
 
+import com.cn.bean.FieldDescription;
+
 /**
  *
  * @author LFeng
@@ -12,16 +14,24 @@ package com.cn.bean.report;
 public class CKListForJPSX {
 
     private String sxTime;
+    @FieldDescription(description = "出入类型")
     private String outInType;
+    @FieldDescription(description = "出入方式")
     private String outInMethod;
+    @FieldDescription(description = "供应商编号")
     private String supplierID;
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
+    @FieldDescription(description = "部品件号")
     private String partCode;
-    private String partName;
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
+    @FieldDescription(description = "部品名称", operate = "display")
+    private String partName;
     private String packingNumber;
     private String sxAmount;
     private String zdCustomerID;
+    @FieldDescription(description = "终端客户名称", operate = "display")
     private String zdCustomerName;
     private String sxStaffName;
     private String sxProgressListRemark;

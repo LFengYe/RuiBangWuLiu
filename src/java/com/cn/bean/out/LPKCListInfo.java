@@ -24,21 +24,21 @@ public class LPKCListInfo {
     
     @FieldDescription(description = "供应商编号")
     private String supplierID;//供应商ID
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
     @FieldDescription(description = "部品件号")
     private String partCode;//件号
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "入库批次")
+    @FieldDescription(description = "入库批次", operate = "display")
     private String inboundBatch;//入库批次
-    @FieldDescription(description = "良品数量")
+    @FieldDescription(description = "良品数量", operate = "display")
     private int lpAmount;//良品数量
-    @FieldDescription(description = "出库包装盛具")
+    @FieldDescription(description = "出库包装盛具", operate = "display")
     private String outboundContainerName;
-    @FieldDescription(description = "出库包装数量")
+    @FieldDescription(description = "出库包装数量", operate = "display")
     private int outboundPackageAmount;
 
     public String getSupplierID() {

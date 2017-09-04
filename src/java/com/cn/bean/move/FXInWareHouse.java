@@ -32,7 +32,7 @@ public class FXInWareHouse {
     private String partState;
     @FieldDescription(description = "制单人员姓名")
     private String fxRKProducerName;
-    @FieldDescription(description = "制单时间")
+    @FieldDescription(description = "制单时间", type = "date")
     private String fxRKProduceTime;
     @FieldDescription(description = "审核人员姓名")
     private String fxRKAuditStaffName;

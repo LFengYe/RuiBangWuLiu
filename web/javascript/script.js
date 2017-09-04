@@ -24,12 +24,13 @@ function findDimensions() {
         $(".wc-wc-menu-parent").css("height", winHeight - 80);
     }
     if ($(".wc-menu")) {
-        $(".wc-menu").css("height", winHeight - 100);
+        $(".wc-menu").css("height", winHeight - 120);
     }
-
+    /*
     if ($(".wc-page")) {
-        $(".wc-page").css("min-height", winHeight - 40);
+        $(".wc-page").css("height", winHeight - 60);
     }
+    */
 }
 
 function getRootPath() {

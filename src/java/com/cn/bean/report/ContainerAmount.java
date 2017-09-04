@@ -5,12 +5,16 @@
  */
 package com.cn.bean.report;
 
+import com.cn.bean.FieldDescription;
+
 /**
  *
  * @author LFeng
  */
 public class ContainerAmount {
+    @FieldDescription(description = "供应商编号")
     private String supplierID;
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
     private String containerName;
     private int containerIn;

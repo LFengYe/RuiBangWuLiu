@@ -5,6 +5,8 @@
  */
 package com.cn.bean.report;
 
+import com.cn.bean.FieldDescription;
+
 /**
  *
  * @author LFeng
@@ -13,13 +15,21 @@ public class CKListForFJHCK {
 
     private String fjHCKTime;
     private String fjHOutWareHouseID;
+    @FieldDescription(description = "出入类型")
     private String outInType;
+    @FieldDescription(description = "出入方式")
     private String outInMethod;
+    @FieldDescription(description = "供应商编号")
     private String supplierID;
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
+    @FieldDescription(description = "部品件号")
     private String partCode;
-    private String partName;
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
+    @FieldDescription(description = "部品名称", operate = "display")
+    private String partName;
+    @FieldDescription(description = "入库批次")
     private String inboundBatch;
     private String fjHCKAmount;
     private String fzDCustomerID;

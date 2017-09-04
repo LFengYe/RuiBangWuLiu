@@ -24,19 +24,19 @@ public class SFCTotalData {
     }
     @FieldDescription(description = "供应商编号")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
-    @FieldDescription(description = "车型")
+    @FieldDescription(description = "车型", operate = "display")
     private String autoStylingName;
-    @FieldDescription(description = "单车用量")
+    @FieldDescription(description = "单车用量", operate = "display")
     private String dcAmount;
-    @FieldDescription(description = "部品单位")
+    @FieldDescription(description = "部品单位", operate = "display")
     private String partUnit;
     @FieldDescription(description = "库房期初")
     private String kfQC;
@@ -60,8 +60,10 @@ public class SFCTotalData {
     private String kfJC;
     @FieldDescription(description = "库房调账")
     private String kfTZ;
-    @FieldDescription(description = "现场调账")
-    private String xcTZ;
+    @FieldDescription(description = "集配区调账")
+    private String jpqTZ;
+    @FieldDescription(description = "线旁调账")
+    private String xpTZ;
     @FieldDescription(description = "现场结算")
     private String xcJS;
     @FieldDescription(description = "集配区结存")
@@ -215,14 +217,6 @@ public class SFCTotalData {
         this.kfTZ = kfTZ;
     }
 
-    public String getXcTZ() {
-        return xcTZ;
-    }
-
-    public void setXcTZ(String xcTZ) {
-        this.xcTZ = xcTZ;
-    }
-
     public String getXcJS() {
         return xcJS;
     }
@@ -261,5 +255,21 @@ public class SFCTotalData {
 
     public void setJcTotal(String jcTotal) {
         this.jcTotal = jcTotal;
+    }
+
+    public String getJpqTZ() {
+        return jpqTZ;
+    }
+
+    public void setJpqTZ(String jpqTZ) {
+        this.jpqTZ = jpqTZ;
+    }
+
+    public String getXpTZ() {
+        return xpTZ;
+    }
+
+    public void setXpTZ(String xpTZ) {
+        this.xpTZ = xpTZ;
     }
 }

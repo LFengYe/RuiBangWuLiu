@@ -12,17 +12,16 @@ import com.cn.bean.FieldDescription;
  * @author LFeng
  */
 public class CKFenLuData {
-
     @FieldDescription(description = "供应商编号")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
-    private String partID;
-    @FieldDescription(description = "部品名称")
-    private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
+    @FieldDescription(description = "部品编号", operate = "display")
+    private String partID;
+    @FieldDescription(description = "部品名称", operate = "display")
+    private String partName;
     @FieldDescription(description = "一工厂计划出库")
     private int jhck1;
     @FieldDescription(description = "一工厂临时调货")

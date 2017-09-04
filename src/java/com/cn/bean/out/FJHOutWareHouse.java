@@ -33,7 +33,7 @@ public class FJHOutWareHouse {
     private String fhStaffName;
     @FieldDescription(description = "制单人员姓名")
     private String fjhCKProducerName;
-    @FieldDescription(description = "制单时间")
+    @FieldDescription(description = "制单时间", type = "date")
     private String fjhCKProduceTime;
     @FieldDescription(description = "打印标志")
     private String printFlag;
@@ -102,5 +102,13 @@ public class FJHOutWareHouse {
 
     public void setFjhOutWareHouseRemark(String fjhOutWareHouseRemark) {
         this.fjhOutWareHouseRemark = fjhOutWareHouseRemark;
+    }
+
+    public String getFjhType() {
+        return fjhType;
+    }
+
+    public void setFjhType(String fjhType) {
+        this.fjhType = fjhType;
     }
 }

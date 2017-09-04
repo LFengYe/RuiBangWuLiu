@@ -5,23 +5,37 @@
  */
 package com.cn.bean.report;
 
+import com.cn.bean.FieldDescription;
+
 /**
  *
  * @author LFeng
  */
 public class RKListForLpRK {
 
+    @FieldDescription(description = "入库时间")
     private String lpRKTime;
+    @FieldDescription(description = "出入类型")
     private String outInType;
+    @FieldDescription(description = "出入方式")
     private String outInWethod;
+    @FieldDescription(description = "供应商编号")
     private String supplierID;
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
+    @FieldDescription(description = "部品件号")
     private String partCode;
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
+    @FieldDescription(description = "入库批次")
     private String inboundBatch;
+    @FieldDescription(description = "入库数量")
     private String lpRKAmount;
+    @FieldDescription(description = "入库操作员")
     private String lpRKProducerName;
+    @FieldDescription(description = "备注")
     private String lpRKListRemark;
 
     public String getLpRKTime() {

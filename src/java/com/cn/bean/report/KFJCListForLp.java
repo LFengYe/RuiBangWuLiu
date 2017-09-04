@@ -5,16 +5,24 @@
  */
 package com.cn.bean.report;
 
+import com.cn.bean.FieldDescription;
+
 /**
  *
  * @author LFeng
  */
 public class KFJCListForLp {
+    @FieldDescription(description = "供应商编号")
     private String supplierID;
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    private String partID;
-    private String partName;
+    @FieldDescription(description = "部品件号")
     private String partCode;
+    @FieldDescription(description = "部品编号", operate = "display")
+    private String partID;
+    @FieldDescription(description = "部品名称", operate = "display")
+    private String partName;
+    @FieldDescription(description = "入库批次", operate = "display")
     private String inboundBatch;
     private String kcLpAmount;
     private String partState;

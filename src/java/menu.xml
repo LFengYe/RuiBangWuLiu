@@ -71,7 +71,7 @@
             
             <three  hypelnk="page3"  id="1050106" text="良品返修出库" url="report.do"></three>
             <three  hypelnk="page3"  id="1050107" text="不良品返修出库" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050110" text="计划出库报表" url="report.do"></three>
+            <!--<three  hypelnk="page3"  id="1050110" text="计划出库报表" url="report.do"></three>-->
             <three  hypelnk="page3"  id="1050111" text="配送上线报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050112" text="非生产领料报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050113" text="退货出库报表" url="report.do"></three>
@@ -178,6 +178,7 @@
         <second hypelnk="page3" icon="ic_rework_in"  id="80510" text="返修良品入库" url="report.do"></second>
         <second hypelnk="page3" icon="ic_rework_in"  id="80511" text="返修不良品入库" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="80512" text="不良品库存报表" url="report.do"></second>
+        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80513" text="良品库存" url="out.do"></second>
     </first>
     <first hypelnk="app"  id="806" text="系统设置" url="app.do">
         <second hypelnk="page1" icon="ic_system_setting"  id="8061" text="修改密码" url=""></second>

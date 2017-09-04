@@ -65,7 +65,7 @@
                 height: 60
             };
             $("#img" + itemId).JsBarcode(str, options);
-            
+
             var printFiled = this.printFiled;
             for (var i in printFiled) {
                 this.find("#" + itemId).find("div[name='" + printFiled[i] + "']").text(itemData[printFiled[i]]);
@@ -81,7 +81,7 @@
             this.datas = datas;
             _funs_.insertData.call(this, this.datas);
         },
-        getHtmlWithData: function(itemData) {
+        getHtmlWithData: function (itemData) {
             var inputResult = "";
             var printArea = this.printArea;
             for (var i in printArea) {
@@ -89,10 +89,38 @@
                 var row = printArea[i];
                 for (var j in row) {
                     var rowItems = row[j].split(",");
-                    inputResult += "<div class='div_code_cell' style='width: " + rowItems[0] + ";' name='" + j + "'>" + (rowItems[1] ? rowItems[1] : "") + "</div>";
+                    inputResult += "<div class='div_code_cell' style='width: " + rowItems[0] + ";' name='" + j + "'>" + (rowItems[1] ? rowItems[1] : itemData[j]) + "</div>";
                 }
                 inputResult += "</div>";
             }
+
+            var str = "SY2014744208";
+            var options = {
+                format: "CODE128",
+                displayValue: false,
+                height: 50
+            };
+            $("#code_img_div img").JsBarcode(str, options);
+
+            return "<div class='div_code_table'>" + $("#code_img_div").html() + inputResult + "</div>";
+        },
+        printCode: function (datas) {
+            var LODOP = getLodop();
+            LODOP.PRINT_INIT("条码打印");
+            LODOP.SET_PRINT_PAGESIZE(1, "70mm", "50mm", "");
+
+            for (var i = 0; i < datas.length; i++) {
+                var itemData = datas[i];
+                console.log(itemData);
+                var htmlStr = this.getHtmlWithData(itemData);
+                var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
+                htmlStr = strBodyStyle + "<body>" + htmlStr + "</body>";
+                //LODOP.ADD_PRINT_BARCODE(0, 0, "70mm", "18mm", "128A", "SY2014744208");
+                LODOP.ADD_PRINT_HTM(0, 0, "70mm", "50mm", htmlStr);
+                LODOP.NEWPAGE();
+            }
+            //LODOP.PRINT();
+            LODOP.PREVIEW();
         }
     };
     $.fn.createPrintCode = function (options) {

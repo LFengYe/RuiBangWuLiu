@@ -14,15 +14,15 @@ import com.cn.bean.FieldDescription;
 public class KFTZFenLuData {
     @FieldDescription(description = "供应商编号")
     private String supplierID;
-    @FieldDescription(description = "供应商名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
     private String supplierName;
-    @FieldDescription(description = "部品编号")
+    @FieldDescription(description = "部品编号", operate = "display")
     private String partID;
-    @FieldDescription(description = "部品名称")
+    @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
-    @FieldDescription(description = "待检品")
+    @FieldDescription(description = "待检品账实差异")
     private int djzscy;
     @FieldDescription(description = "送检品")
     private int sjzscy;

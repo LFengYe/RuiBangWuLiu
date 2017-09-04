@@ -34,6 +34,8 @@ public class JHOutWareHouseZCList{
     private String partCode;
     @FieldDescription(description = "总成数量", operate = "import")
     private int zcAmount;
+    @FieldDescription(description = "总成数量", operate = "display")
+    private int jhCKAmount;
     @FieldDescription(description = "计划出库单号")
     private String jhOutWareHouseID;
     @FieldDescription(description = "计划需求时间", operate = "display")
@@ -46,6 +48,8 @@ public class JHOutWareHouseZCList{
     private String outboundContainerName;
     @FieldDescription(description = "包装数量", operate = "display")
     private int outboundPackageAmount;
+    @FieldDescription(description = "盛具数量", operate = "display")
+    private int containerAmount;
 
     public String getSupplierID() {
         return supplierID;
@@ -141,5 +145,21 @@ public class JHOutWareHouseZCList{
 
     public void setOutboundPackageAmount(int outboundPackageAmount) {
         this.outboundPackageAmount = outboundPackageAmount;
+    }
+
+    public int getJhCKAmount() {
+        return jhCKAmount;
+    }
+
+    public void setJhCKAmount(int jhCKAmount) {
+        this.jhCKAmount = jhCKAmount;
+    }
+
+    public int getContainerAmount() {
+        return containerAmount;
+    }
+
+    public void setContainerAmount(int containerAmount) {
+        this.containerAmount = containerAmount;
     }
 }
