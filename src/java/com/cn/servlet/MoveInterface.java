@@ -684,9 +684,9 @@ public class MoveInterface extends HttpServlet {
                                 json = queryOperate(target, "com.cn.bean.", "table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("partCode") == 0) {
-                                String[] keys = {"partCode", "partID", "partName", "inboundBatch", "fxAmount"};
-                                String[] keysName = {"部品件号", "部品代码", "部品名称", "入库批次", "返修数量"};
-                                int[] keysWidth = {20, 20, 20, 20, 20};
+                                String[] keys = {"partCode", "partID", "partName", "inboundBatch", "fxAmount", "fxRKAmount"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "入库批次", "返修数量", ""};
+                                int[] keysWidth = {20, 20, 20, 20, 20, 0};
 
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
@@ -707,7 +707,7 @@ public class MoveInterface extends HttpServlet {
 //                                        fxrk.setWareHouseManagerName(category.getWareHouseManagerName());
                                     }
 
-                                    String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "fxPAmount"};
+                                    String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "fxPAmount", "fxPAmount"};
                                     json = getSpecialTableJsonStr(filterList, "com.cn.bean.pro.KFJCFXPForFXRK", keys, keysName, keysWidth, fieldsName, target, rely);
                                 } else {
                                     json = Units.objectToJson(-1, "数据为空!", null);

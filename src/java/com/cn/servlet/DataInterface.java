@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -130,6 +129,7 @@ public class DataInterface extends HttpServlet {
                                 Employee employee = (Employee) res.get(0);
                                 if (employee.getEmployeePassword().compareTo(paramsJson.getString("password")) == 0) {
                                     session.setAttribute("user", paramsJson.getString("username"));
+                                    session.setAttribute("loginType", "employeeLogin");
                                     session.setAttribute("employee", employee);
                                     String whereCase = "RoleCode in ('" + employee.getEmployeeTypeCode() + "')";
                                     List<Object> roleRight = commonController.dataBaseQuery("table", "com.cn.bean.", "PlatformRoleRight", "*", whereCase, Integer.MAX_VALUE, 1, "RoleCode", 0, opt.getConnectBase());
@@ -181,6 +181,7 @@ public class DataInterface extends HttpServlet {
                             switch (result) {
                                 case 0:
                                     session.setAttribute("user", paramsJson.getString("username"));
+                                    session.setAttribute("loginType", "login");
                                     session.setAttribute("employee", null);
                                     /*获取用户角色信息*/
                                     String whereCase = "UserLoginAccount = '" + paramsJson.getString("username") + "'";
@@ -232,6 +233,59 @@ public class DataInterface extends HttpServlet {
                                 default:
                                     json = Units.objectToJson(result, "服务器出错!", null);
                                     break;
+                            }
+                            break;
+                        }
+                        //</editor-fold>
+                        
+                        //<editor-fold desc="供应商登陆">
+                        case "customerLogin": {
+                            String whereSql = "CustomerID = '" + paramsJson.getString("username") + "'";
+                            List<Object> res = commonController.dataBaseQuery("view", "com.cn.bean.", "Customer", "*", whereSql, 1, 1, "CustomerID", 1, opt.getConnect());
+                            if (res != null && res.size() > 0) {
+                                Customer customer = (Customer) res.get(0);
+                                if (customer.getCustomerPassword().compareTo(paramsJson.getString("password")) == 0) {
+                                    session.setAttribute("user", paramsJson.getString("username"));
+                                    session.setAttribute("loginType", "customerLogin");
+                                    session.setAttribute("customer", customer);
+                                    String whereCase = "RoleCode in ('" + customer.getCustomerRoleCode()+ "')";
+                                    List<Object> roleRight = commonController.dataBaseQuery("table", "com.cn.bean.", "PlatformRoleRight", "*", whereCase, Integer.MAX_VALUE, 1, "RoleCode", 0, opt.getConnectBase());
+                                    if (roleRight != null && roleRight.size() > 0) {
+                                        ArrayList<String> roleRightList = new ArrayList<>();
+                                        roleRight.stream().map((obj) -> (PlatformRoleRight) obj).forEach((right) -> {
+                                            roleRightList.add(right.getRightCode());
+                                        });
+
+                                        /*根据角色权限信息生成用户菜单*/
+                                        String menuJson = "{";
+                                        SAXReader reader = new SAXReader();
+                                        Document document = reader.read(new File(path + "menu.xml"));
+                                        Element root = document.getRootElement();
+                                        Iterator<Element> iterator = root.elementIterator();
+                                        while (iterator.hasNext()) {
+                                            menuJson += commonController.hasRight(iterator.next(), roleRightList);
+                                        }
+                                        menuJson = menuJson.substring(0, menuJson.length() - 1) + "}";
+                                        json = Units.objectToJson(0, "登陆成功!", menuJson);
+                                        /*
+                                        if (type.compareTo("pc") == 0) {
+                                            json = Units.objectToJson(0, "登陆成功!", menuJson);
+                                        }
+                                        if (type.compareTo("app") == 0) {
+                                            JSONObject object = new JSONObject();
+                                            object.put("menuJson", menuJson);
+                                            object.put("employee", customer);
+                                            json = Units.objectToJson(0, "登陆成功!", object);
+                                        }
+                                        */
+                                    } else {
+                                        json = Units.objectToJson(-1, "没有为用户分配权限!", null);
+                                    }
+                                } else {
+                                    json = Units.objectToJson(-1, "用户名或密码不正确!", null);
+                                }
+                            } else {
+                                json = Units.objectToJson(-1, "用户名不存在!", null);
                             }
                             break;
                         }

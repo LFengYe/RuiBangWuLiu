@@ -44,8 +44,9 @@
                         <div class="form-group">
                             <label>登录类型:</label>
                             <select class="form-control" id="loginType">
-                                <option selected="selected" value="1">员工登录</option>
-                                <option value="2">平台登录</option>
+                                <option selected="selected" value="0">员工登录</option>
+                                <option value="1">平台登录</option>
+                                <option value="2">客户登录</option>
                             </select>
                         </div>
                         <button class="btn btn-success btn-block" id="loginBtn">login</button>
@@ -87,13 +88,14 @@
 
             function loginSubmit() {
                 if (checkForm()) {
+                    var operatetion = ["employeeLogin", "login", "customerLogin"];
                     var loginType = $("#loginType").val();
                     var loginUser = $("#loginUserName").val();
                     var pswd = $("#loginPassword").val();
                     if (loginUser !== '' && pswd !== '') {
                         var obj = new Object();
                         obj.module = "userLogin";
-                        obj.operation = (loginType == 1) ? "employeeLogin": "login";
+                        obj.operation = operatetion[loginType];
                         obj.username = loginUser;
                         obj.password = pswd;
                         obj.type = "pc";

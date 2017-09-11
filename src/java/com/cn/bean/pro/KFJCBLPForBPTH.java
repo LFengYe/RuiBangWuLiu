@@ -73,5 +73,12 @@ public class KFJCBLPForBPTH {
     public void setWareHouseManagerName(String wareHouseManagerName) {
         this.wareHouseManagerName = wareHouseManagerName;
     }
-    
+    private String checkBox;
+    public String getCheckBox() {
+        return "";
+    }
+
+    public void setCheckBox(String checkBox) {
+        this.checkBox = checkBox;
+    }
 }

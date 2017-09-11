@@ -1,6 +1,7 @@
 {
     "control": {
         "customerID": "客户代码,string,10",
+        "customerPassword": "客户密码,string,64",
         "customerName": "客户名称,string,50",
         "customerAbbName": "客户名称简称,string,50",
         "customerTypeName": "客户类型,@table",
@@ -21,6 +22,7 @@
     "primary": "customerID",
     "titles": {
         "customerID": "客户代码,10%",
+        "customerPassword": "客户密码,15%",
         "customerName": "客户名称,10%",
         "customerAbbName": "客户名称简称,10%",
         "customerTypeName": "客户类型,10%",

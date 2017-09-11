@@ -23,6 +23,10 @@ public class CustomerType {
     
     @FieldDescription(description = "客户类别", operate = "import")
     private String customerTypeName;
+    @FieldDescription(description = "客户角色代码", operate = "import")
+    private int customerRoleCode;
+    @FieldDescription(description = "客户角色名称", operate = "import")
+    private String customerRoleName;
 
     public String getCustomerTypeName() {
         return customerTypeName;
@@ -30,5 +34,21 @@ public class CustomerType {
 
     public void setCustomerTypeName(String customerTypeName) {
         this.customerTypeName = customerTypeName;
+    }
+
+    public int getCustomerRoleCode() {
+        return customerRoleCode;
+    }
+
+    public void setCustomerRoleCode(int customerRoleCode) {
+        this.customerRoleCode = customerRoleCode;
+    }
+
+    public String getCustomerRoleName() {
+        return customerRoleName;
+    }
+
+    public void setCustomerRoleName(String customerRoleName) {
+        this.customerRoleName = customerRoleName;
     }
 }

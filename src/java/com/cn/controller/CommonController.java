@@ -58,7 +58,7 @@ public class CommonController {
         int[] exeResult = null;
         Class objClass = Class.forName(beanPackage + tableName);
         CallableStatement statement = null;
-        
+
         try {
             JSONArray arrayData = JSONArray.parseArray(datas);
             if (arrayData == null || arrayData.isEmpty()) {
@@ -133,7 +133,7 @@ public class CommonController {
                     JSONObject firstWhereObj = arrayData.getJSONObject(1);
 
                     //拼接set字段sql
-                    int itemCount = 0;
+                    boolean isFirse = true;
                     Iterator<String> keysIterator = firstSetObj.keySet().iterator();
                     while (keysIterator.hasNext()) {
                         String key = keysIterator.next();
@@ -143,16 +143,16 @@ public class CommonController {
                         if (!isInput(objClass, key)) {
                             continue;
                         }
-
-                        if (itemCount > 0) {
-                            builder.append(",").append(key).append(" = ").append("?");
-                        } else {
+                        
+                        if (isFirse) {
                             builder.append(" set ").append(key).append(" = ").append("?");
+                            isFirse = false;
+                        } else {
+                            builder.append(",").append(key).append(" = ").append("?");
                         }
-                        itemCount++;
                     }
                     //拼接where条件sql
-                    itemCount = 0;
+                    isFirse = true;
                     keysIterator = firstWhereObj.keySet().iterator();
                     while (keysIterator.hasNext()) {
                         String key = keysIterator.next();
@@ -162,12 +162,12 @@ public class CommonController {
                         if (!isInput(objClass, key)) {
                             continue;
                         }
-                        if (itemCount > 0) {
-                            builder.append(" and ").append(key).append(" = ").append("?");
-                        } else {
+                        if (isFirse) {
                             builder.append(" where ").append(key).append(" = ").append("?");
+                            isFirse = false;
+                        } else {
+                            builder.append(" and ").append(key).append(" = ").append("?");
                         }
-                        itemCount++;
                     }
 
                     String sql = builder.toString();
@@ -182,7 +182,7 @@ public class CommonController {
                         JSONObject whereObject = arrayData.getJSONObject(i + 1);
 
                         //设置set的参数值
-                        itemCount = 1;
+                        int itemCount = 1;
                         keysIterator = setObject.keySet().iterator();
                         while (keysIterator.hasNext()) {
                             String key = keysIterator.next();
@@ -234,37 +234,9 @@ public class CommonController {
                     JSONObject firstObj = arrayData.getJSONObject(0);
 
                     //拼接set字段sql
-                    int itemCount = 0;
-                    Iterator<String> keysIterator = firstObj.keySet().iterator();
-                    while (keysIterator.hasNext()) {
-                        String key = keysIterator.next();
-                        if (!hasField(objClass, key)) {
-                            continue;
-                        }
-                        if (!isInput(objClass, key)) {
-                            continue;
-                        }
-                        if (itemCount > 0) {
-                            builder.append(" and ").append(key).append(" = ").append("?");
-                        } else {
-                            builder.append(" where ").append(key).append(" = ").append("?");
-                        }
-                        itemCount++;
-                    }
-
-                    String sql = builder.toString();
-                    //System.out.println("delete sql:" + sql);
-
-                    conn.setAutoCommit(false);
-                    statement = conn.prepareCall(sql);
-
-                    //批量设置参数
-                    for (int i = 0; i < arrayData.size(); i++) {
-                        JSONObject setObject = arrayData.getJSONObject(i);
-
-                        //设置set的参数值
-                        itemCount = 1;
-                        keysIterator = setObject.keySet().iterator();
+                    boolean isFirst = true;
+                    synchronized (this) {
+                        Iterator<String> keysIterator = firstObj.keySet().iterator();
                         while (keysIterator.hasNext()) {
                             String key = keysIterator.next();
                             if (!hasField(objClass, key)) {
@@ -273,16 +245,45 @@ public class CommonController {
                             if (!isInput(objClass, key)) {
                                 continue;
                             }
-                            try {
-                                setFieldValue(objClass, key, setObject.getString(key), statement, itemCount);
-                            } catch (NoSuchFieldException ex) {
-                                logger.error("未找到指定字段", ex);
-                                statement.setString(itemCount, setObject.getString(key));
+                            if (isFirst) {
+                                builder.append(" where ").append(key).append(" = ").append("?");
+                                isFirst = false;
+                            } else {
+                                builder.append(" and ").append(key).append(" = ").append("?");
                             }
-                            itemCount++;
                         }
 
-                        statement.addBatch();
+                        String sql = builder.toString();
+                        //System.out.println("delete sql:" + sql);
+
+                        conn.setAutoCommit(false);
+                        statement = conn.prepareCall(sql);
+
+                        //批量设置参数
+                        for (int i = 0; i < arrayData.size(); i++) {
+                            JSONObject setObject = arrayData.getJSONObject(i);
+
+                            //设置set的参数值
+                            int itemCount = 1;
+                            keysIterator = setObject.keySet().iterator();
+                            while (keysIterator.hasNext()) {
+                                String key = keysIterator.next();
+                                if (!hasField(objClass, key)) {
+                                    continue;
+                                }
+                                if (!isInput(objClass, key)) {
+                                    continue;
+                                }
+                                try {
+                                    setFieldValue(objClass, key, setObject.getString(key), statement, itemCount);
+                                } catch (NoSuchFieldException ex) {
+                                    logger.error("未找到指定字段", ex);
+                                    statement.setString(itemCount, setObject.getString(key));
+                                }
+                                itemCount++;
+                            }
+                            statement.addBatch();
+                        }
                     }
                     break;
                 }
@@ -799,6 +800,9 @@ public class CommonController {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
+            if (!isInput(objClass, field.getName())) {
+                continue;
+            }
             //如果特定字段中包含改字段, 则拼接相等条件
             if (keySet != null && keySet.contains(field.getName())) {
                 continue;
@@ -921,7 +925,7 @@ public class CommonController {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
-            
+
             if (field.isAnnotationPresent(FieldDescription.class)) {
                 FieldDescription description = field.getAnnotation(FieldDescription.class);
                 if (description.type() != null && description.operate().compareTo("display") == 0) {
@@ -1017,6 +1021,13 @@ public class CommonController {
         return false;
     }
 
+    /**
+     * 判断指定类名中指定的字段名是否是输入字段
+     *
+     * @param objClass
+     * @param fieldName
+     * @return
+     */
     public boolean isInput(Class objClass, String fieldName) {
         Field[] fields = objClass.getDeclaredFields();
         for (Field field : fields) {

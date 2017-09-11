@@ -24,6 +24,7 @@ interface.txt文件用来描述睿邦物流信息管理系统客户端与服务�
 【返回数据说明：control格式：
            "name":"中文lable,类型,最大长度" 类型可取值"string"|"number"|"data"|"website"|"bool"
            "m3"："中文lable,@table,@m1,@m2:@m4,@m5" 表示请求的数据为表格      m3的填写依赖于m1、m2, m4和m5为m3携带的不可见字段
+           "m3"："中文lable,@mulOptionTable,@m1,@m2:@m4,@m5" 表示请求的数据为表格,可多选      m3的填写依赖于m1、m2, m4和m5为m3携带的不可见字段
            "name":"中文lable,@value1,@value2,@value3" 表示值必须在给定值选择，当给定值只有一个，自动填充到字段中 】
 
 ③点击输入框ajax请求table数据         说明：该ajax请求发生在第一种页面和第二种页面

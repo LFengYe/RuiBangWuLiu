@@ -80,10 +80,10 @@ TableSelectPanel.prototype.render = function () {
             layer.closeAll('page');
         },
         dbclickRowCallBack: function (index, obj) {
-            console.log(obj);
+            //console.log(obj);
         },
         pageCallBack: function (pageIndex, keyword) {
-            console.log(keyword);
+            //console.log(keyword);
             var tmp = JSON.parse(keyword);
             var obj = {"pageIndex": pageIndex, "pageSize": that.pageSize, "datas": tmp.keywords, "target": that.data.target, "rely": that.data.rely};
             ajaxData("request_table", obj, function (data) {
@@ -93,7 +93,7 @@ TableSelectPanel.prototype.render = function () {
             });
         },
         searchCallBack: function (keyword) {
-            console.log(keyword);
+            //console.log(keyword);
             var tmp = JSON.parse(keyword);
             var obj = {"pageIndex": 1, "pageSize": that.pageSize, "datas": tmp.keywords, "target": that.data.target, "rely": that.data.rely};
             ajaxData("request_table", obj, function (data) {
@@ -143,7 +143,7 @@ TableMultiSelectPanel.prototype.render = function () {
         },
         isLocalSearch: true
     });
-    this.$container.find(".jtb-header .LocalFilter").after("<button class='btn btn-info my-sure'>保存</button>");
+    this.$container.find(".jtb-header .LocalFilter").after("<button class='btn btn-info my-sure'>确认</button>");
 };
 TableMultiSelectPanel.prototype.bindClickEvt = function () {
     var that = this;
@@ -155,7 +155,6 @@ TableMultiSelectPanel.prototype.bindClickEvt = function () {
             }
         }
         that.callback(resArr);
-        //that.$container.hide(500);
         layer.closeAll('page');
     });
 };

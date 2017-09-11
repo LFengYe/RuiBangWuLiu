@@ -2203,9 +2203,9 @@ public class OutInterface extends HttpServlet {
                                 json = queryOperate(target, "com.cn.bean.", "table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("partCode") == 0) {
-                                String[] keys = {"partCode", "partID", "partName", "inboundBatch", "thAmount"};
-                                String[] keysName = {"部品件号", "部品代码", "部品名称", "入库批次", "退货数量"};
-                                int[] keysWidth = {20, 20, 20, 20, 20};
+                                String[] keys = { "partCode", "partID", "partName", "inboundBatch", "thAmount", "thCKAmount"};
+                                String[] keysName = {"部品件号", "部品代码", "部品名称", "入库批次", "退货数量", ""};
+                                int[] keysWidth = {20, 20, 20, 20, 20, 0};
 
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
@@ -2227,7 +2227,7 @@ public class OutInterface extends HttpServlet {
 //                                            bpth.setWareHouseManagerName(category.getWareHouseManagerName());
                                         }
 
-                                        String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfDjpJCAmount"};
+                                        String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfDjpJCAmount", "kfDjpJCAmount"};
                                         json = getSpecialTableJsonStr(filterList, "com.cn.bean.pro.KFJCDJPForBPTH", keys, keysName, keysWidth, fieldsName, target, rely);
                                     } else {
                                         json = Units.objectToJson(-1, "数据为空!", null);
@@ -2251,7 +2251,7 @@ public class OutInterface extends HttpServlet {
 //                                            bpth.setWareHouseManagerName(category.getWareHouseManagerName());
                                         }
 
-                                        String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfJCLpAmount"};
+                                        String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfJCLpAmount", "kfJCLpAmount"};
                                         json = getSpecialTableJsonStr(filterList, "com.cn.bean.pro.KFJCLPForBPTH", keys, keysName, keysWidth, fieldsName, target, rely);
                                     } else {
                                         json = Units.objectToJson(-1, "数据为空!", null);
@@ -2274,7 +2274,7 @@ public class OutInterface extends HttpServlet {
 //                                            PartCategory category = JSONObject.parseObject(RedisAPI.get("partCategory_" + baseInfo.getPartCategoryName()), PartCategory.class);
 //                                            fxck.setWareHouseManagerName(category.getWareHouseManagerName());
                                         }
-                                        String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfJCBLpAmount"};
+                                        String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfJCBLpAmount", "kfJCBLpAmount"};
                                         json = getSpecialTableJsonStr(filterList, "com.cn.bean.pro.KFJCBLPForBPTH", keys, keysName, keysWidth, fieldsName, target, rely);
                                     } else {
                                         json = Units.objectToJson(-1, "数据为空!", null);
@@ -2297,7 +2297,7 @@ public class OutInterface extends HttpServlet {
 //                                            PartCategory category = JSONObject.parseObject(RedisAPI.get("partCategory_" + baseInfo.getPartCategoryName()), PartCategory.class);
 //                                            fxck.setWareHouseManagerName(category.getWareHouseManagerName());
                                         }
-                                        String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfJCFXpAmount"};
+                                        String[] fieldsName = {"partCode", "partID", "partName", "inboundBatch", "kfJCFXpAmount", "kfJCFXpAmount"};
                                         json = getSpecialTableJsonStr(filterList, "com.cn.bean.pro.KFJCFXPForBPTH", keys, keysName, keysWidth, fieldsName, target, rely);
                                     } else {
                                         json = Units.objectToJson(-1, "数据为空!", null);
@@ -2784,7 +2784,7 @@ public class OutInterface extends HttpServlet {
                                     info.setPartName(baseInfo.getPartName());
                                 }
                                 if (operateType.compareTo("export") == 0) {
-                                    json = exportData("com.cn.bean.report.", "LPKCListInfo", (ArrayList<Object>) list);
+                                    json = exportData("com.cn.bean.out.", "LPKCListInfo", (ArrayList<Object>) list);
                                 } else if (operateType.compareTo("create") == 0) {
                                     StringBuffer buffer = new StringBuffer(result);
                                     buffer.insert(buffer.lastIndexOf("}"), ",\"datas\":" + JSONObject.toJSONString(list, Units.features));

@@ -463,11 +463,11 @@ public class BaseInterface extends HttpServlet {
                 case "客户档案": {
                     switch (operation) {
                         case "create": {
-                            json = createOperate(15, "table", "com/cn/json/", "com.cn.bean.", "Customer", "CustomerID", opt.getConnect());
+                            json = createOperate(15, "view", "com/cn/json/", "com.cn.bean.", "Customer", "CustomerID", opt.getConnect());
                             break;
                         }
                         case "request_page": {
-                            json = queryOperate("com.cn.bean.", "table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOperate("com.cn.bean.", "view", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             break;
                         }
                         case "import": {
@@ -494,7 +494,7 @@ public class BaseInterface extends HttpServlet {
                             break;
                         }
                         case "export": {
-                            json = exportData("com.cn.bean.", "Customer", (ArrayList<Object>) queryData("com.cn.bean.", "table", "Customer", "CustomerID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                            json = exportData("com.cn.bean.", "Customer", (ArrayList<Object>) queryData("com.cn.bean.", "view", "Customer", "CustomerID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
                             break;
                         }
                         case "request_table": {
@@ -906,6 +906,16 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "request_page": {
                             json = queryOperate("com.cn.bean.", "table", "CustomerType", "CustomerTypeName", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            break;
+                        }
+                        case "request_table": {
+                            if (target.compareToIgnoreCase("customerRoleCode") == 0) {
+                                String[] keys = {"customerRoleCode", "customerRoleName"};
+                                String[] keysName = {"角色代码", "角色名称"};
+                                int[] keysWidth = {50, 50};
+                                String[] fieldsName = {"roleCode", "roleName"};
+                                json = queryOperate(target, "com.cn.bean.", "table", "PlatformRole", "RoleCode", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                            }
                             break;
                         }
                         case "import": {

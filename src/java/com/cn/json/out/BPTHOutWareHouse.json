@@ -30,7 +30,7 @@
         "thPartState": "部品状态,parent,@待检品",
         "thAmount": "退货数量,hidden",
         "inboundBatch": "入库批次,hidden",
-        "partCode": "部品件号,@table,@supplierID,@thPartState:@partID,@partName,@wareHouseManagerName,@inboundBatch,@thAmount",
+        "partCode": "部品件号,@mulOptionTable,@supplierID,@thPartState:@partID,@partName,@wareHouseManagerName,@inboundBatch,@thAmount,@thCKAmount",
         "thCKAmount": "退货出库数量,check,小于,thAmount",
         "fjhOutWareHouseListRemark": "备注,string,500"
     },

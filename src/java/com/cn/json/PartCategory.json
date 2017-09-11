@@ -5,7 +5,7 @@
         "wareHouseManagerName": "库管员,@table,@employeeType"
     },
     "mustwrite": ["partCategoryName", "wareHouseManagerName"],
-    "unique": [""],
+    "unique": ["partCategoryName"],
     "primary": "partCategoryName",
     "titles": {
         "partCategoryName": "部品类别,50%",

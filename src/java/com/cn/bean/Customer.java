@@ -23,6 +23,10 @@ public class Customer {
     }
     @FieldDescription(description = "客户代码", operate = "import")
     private String customerID;
+    @FieldDescription(description = "客户密码", operate = "import")
+    private String customerPassword;
+    @FieldDescription(description = "客户角色代码", operate = "display")
+    private String customerRoleCode;
     @FieldDescription(description = "客户名称", operate = "import")
     private String customerName;
     @FieldDescription(description = "客户名称简称", operate = "import")
@@ -170,5 +174,21 @@ public class Customer {
 
     public void setSmsSendTime(String smsSendTime) {
         this.smsSendTime = smsSendTime;
+    }
+
+    public String getCustomerPassword() {
+        return customerPassword;
+    }
+
+    public void setCustomerPassword(String customerPassword) {
+        this.customerPassword = customerPassword;
+    }
+    
+    public String getCustomerRoleCode() {
+        return customerRoleCode;
+    }
+
+    public void setCustomerRoleCode(String customerRoleCode) {
+        this.customerRoleCode = customerRoleCode;
     }
 }

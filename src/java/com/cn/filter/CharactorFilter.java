@@ -104,7 +104,7 @@ public class CharactorFilter implements Filter {
                     && (!servletRequest.getServletPath().endsWith(".map"))
                     && (!servletRequest.getServletPath().endsWith(".do"))
                     && (!servletRequest.getServletPath().startsWith("/assets/img"))) {
-                if (session.getAttribute("user") == null) {
+                if (session.getAttribute("user") == null || session.getAttribute("loginType") == null) {
                     session.invalidate();
                     response.setContentType("text/html;charset=UTF-8");
                     PrintWriter out = response.getWriter();

@@ -236,15 +236,15 @@
                 $printArea.printCode(data.datas);
                 //data.datas.splice(2, data.datas.length - 1);//只取前两条测试用
                 /*
-                $printArea.render(data.datas);
-                var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
-                var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
-                var LODOP = getLodop();
-                LODOP.PRINT_INIT("条码打印");
-                LODOP.SET_PRINT_STYLE("FontSize", 14);
-                LODOP.ADD_PRINT_HTML(8, 10, 300, 400, htmlStr);
-                LODOP.PREVIEW();
-                */
+                 $printArea.render(data.datas);
+                 var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
+                 var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
+                 var LODOP = getLodop();
+                 LODOP.PRINT_INIT("条码打印");
+                 LODOP.SET_PRINT_STYLE("FontSize", 14);
+                 LODOP.ADD_PRINT_HTML(8, 10, 300, 400, htmlStr);
+                 LODOP.PREVIEW();
+                 */
                 mainCancelRows = [];
                 $mainTableBox.clearSelected();
             }, function () {
@@ -273,11 +273,11 @@
         $confirm.off("click");
         $confirm.on("click", function () {
             /*
-            if (!importOperate) {
-                alert("计划添加未成功!不能确认");
-                return;
-            }
-            */
+             if (!importOperate) {
+             alert("计划添加未成功!不能确认");
+             return;
+             }
+             */
             var item = $mainInputBox.getInputValObj(true);
             whereObj = {};
             for (var proIndex in primary) {
@@ -428,8 +428,12 @@
             console.log(modifyRow);
             if (modifyRow >= 0 && $childINputBox.isFinishForm()) {
                 if ($childINputBox.checkValue() && $childINputBox.calculateValue()) {
+                    console.log(obj);
                     var obj = $childINputBox.getInputValObj(true);
+                    console.log(obj);
                     $.extend(oriObj, obj);
+                    console.log(obj);
+                    console.log(oriObj);
                     $chidTableBox.update(modifyRow, oriObj);
 
                     var updateObj = deepCopy(obj);
@@ -497,21 +501,21 @@
                     ajaxData("printItem", {del: arr, type: "selected"}, function (data) {
                         $printArea.printCode(data.datas);
                         /*
-                        var LODOP = getLodop();
-                        LODOP.PRINT_INIT("条码打印");
-                        LODOP.SET_PRINT_PAGESIZE(1, "70mm", "50mm", "");
-
-                        for (var i = 0; i < data.datas.length; i++) {
-                            var itemData = data.datas[i];
-                            var htmlStr = $printArea.getHtmlWithData(itemData);
-                            var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
-                            htmlStr = strBodyStyle + "<body>" + htmlStr + "</body>";
-                            //LODOP.ADD_PRINT_BARCODE(0, 0, "70mm", "18mm", "128A", "SY2014744208");
-                            LODOP.ADD_PRINT_HTM(0, 0, "70mm", "50mm", htmlStr);
-                            LODOP.NEWPAGE();
-                        }
-                        LODOP.PREVIEW();
-                        */
+                         var LODOP = getLodop();
+                         LODOP.PRINT_INIT("条码打印");
+                         LODOP.SET_PRINT_PAGESIZE(1, "70mm", "50mm", "");
+                         
+                         for (var i = 0; i < data.datas.length; i++) {
+                         var itemData = data.datas[i];
+                         var htmlStr = $printArea.getHtmlWithData(itemData);
+                         var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
+                         htmlStr = strBodyStyle + "<body>" + htmlStr + "</body>";
+                         //LODOP.ADD_PRINT_BARCODE(0, 0, "70mm", "18mm", "128A", "SY2014744208");
+                         LODOP.ADD_PRINT_HTM(0, 0, "70mm", "50mm", htmlStr);
+                         LODOP.NEWPAGE();
+                         }
+                         LODOP.PREVIEW();
+                         */
                         /*
                          $printArea.render(data.datas);
                          var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
@@ -552,16 +556,16 @@
                             ajaxData("printPatch", {del: arr, patch: packNumber}, function (data) {
                                 $printArea.printCode(data.datas);
                                 /*
-                                $printArea.render(data.datas);
-                                var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
-                                var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
-
-                                var LODOP = getLodop();
-                                LODOP.PRINT_INIT("条码打印");
-                                LODOP.SET_PRINT_STYLE("FontSize", 14);
-                                LODOP.ADD_PRINT_HTM(10, 10, 300, 400, htmlStr);
-                                LODOP.PREVIEW();
-                                */
+                                 $printArea.render(data.datas);
+                                 var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
+                                 var htmlStr = strBodyStyle + "<body>" + $("#print_area").html() + "</body>";
+                                 
+                                 var LODOP = getLodop();
+                                 LODOP.PRINT_INIT("条码打印");
+                                 LODOP.SET_PRINT_STYLE("FontSize", 14);
+                                 LODOP.ADD_PRINT_HTM(10, 10, 300, 400, htmlStr);
+                                 LODOP.PREVIEW();
+                                 */
                                 $chidTableBox.clearSelected();
                             }, function () {
                                 $chidTableBox.clearSelected();
@@ -597,13 +601,13 @@
                             location.href = data.fileUrl;
                         }
                         /*
-                        var importRes = $("#import_result").val();
-                        if (importRes === 0) {
-                            importOperate = true;
-                        } else {
-                            importOperate = false;
-                        }
-                        */
+                         var importRes = $("#import_result").val();
+                         if (importRes === 0) {
+                         importOperate = true;
+                         } else {
+                         importOperate = false;
+                         }
+                         */
                         $("#import_return_data").val("");
                     });
         });
@@ -718,10 +722,10 @@
                 selectpanel: sp,
                 lastInputCallBack: function () {
                     $add.trigger("click");
-                }/*,
-                 tableInputCallBack: function (resarr) {
-                 console.log(resarr);
-                 }*/
+                },
+                tableInputCallBack: function () {
+                    $add.trigger("click");
+                }
             });
             $chidTableBox.insertTable({
                 titles: data.detailTitles,
@@ -760,7 +764,6 @@
                     } else {
                         checkSelected.splice(index, 1);
                     }
-
                     if (moudle === "总成计划" || moudle === "计划出库") {
                     } else {
                     }
@@ -1072,10 +1075,10 @@
             selectpanel: sp,
             lastInputCallBack: function () {
                 $add.trigger("click");
-            }/*,
-             tableInputCallBack: function (resarr) {
-             console.log(resarr);
-             }*/
+            },
+            tableInputCallBack: function () {
+                $add.trigger("click");
+            }
         });
         $chidTableBox.insertTable({
             titles: data.detailTitles,
