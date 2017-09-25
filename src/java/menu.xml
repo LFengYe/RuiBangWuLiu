@@ -51,6 +51,7 @@
         <second  hypelnk="page1"  id="10903" text="返修入库" url="container.do"></second>
         <second  hypelnk="page1"  id="10904" text="盛具出库" url="container.do"></second>
         <second  hypelnk="page3"  id="10905" text="盛具报表" url="report.do"></second>
+        <second  hypelnk="page3"  id="10906" text="盛具需求" url="report.do"></second>
     </first>
     <first  hypelnk=""  id="105" text="数据报表管理" url="report.do">
         <second text="部品期初明细" url="report.do">

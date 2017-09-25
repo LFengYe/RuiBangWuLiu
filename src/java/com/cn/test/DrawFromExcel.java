@@ -38,7 +38,8 @@ public class DrawFromExcel {
         int imageWidth = 0;
         int imageHeight = 0;
 
-        Workbook wb = WorkbookFactory.create(new File(excelFilePath));
+        File file = new File(excelFilePath);
+        Workbook wb = WorkbookFactory.create(file);
         Sheet sheet = wb.getSheetAt(0);
         List<CellRangeAddress> rangeAddress = sheet.getMergedRegions(); // 获取整个sheet中合并单元格组合的集合
 
@@ -92,8 +93,7 @@ public class DrawFromExcel {
         }
 
         imageHeight = imageHeight * 96 / 80 + 2;
-//        imageWidth = imageWidth;
-
+        
         wb.close();
 
         List<Grid> grids = new ArrayList<>();

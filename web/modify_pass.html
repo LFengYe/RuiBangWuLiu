@@ -1,0 +1,89 @@
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>修改密码</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" type="text/css"/>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script type="text/javascript" src="javascript/respond.min.js"></script>
+          <script type="text/javascript" src="javascript/html5shiv.min.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="assets/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/common-js/common.js"></script>
+        <script type="text/javascript" src="javascript/script.js"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                $("#modifyPass").bind("click", function(){
+                    if (inputCheck()) {
+                        
+                    }
+                });
+            };
+            
+            function inputCheck() {
+                if ($.trim($("#old_password").val()) === "") {
+                    $("#old_password").focus();
+                    alert("旧密码不能为空！");
+                    return false;
+                }
+                if ($.trim($("#new_password").val()) === "") {
+                    $("#new_password").focus();
+                    alert("新密码不能为空！");
+                    return false;
+                }
+                if ($.trim($("#confirm_password").val()) === "") {
+                    $("#confirm_password").focus();
+                    alert("确认密码不能为空！");
+                    return false;
+                }
+                if ($.trim($("#confirm_password").val()) !== $.trim($("#new_password").val())) {
+                    alert("新密码与确认密码不一致！");
+                    return false;
+                }
+                return true;
+            }
+        </script>
+        <style>
+            .button{margin-right:20px;background-color: #403939;border: none;margin-top: 10px;}
+            .layer-content{height: 300px;padding: 20px;}
+        </style>
+    </head>
+    <body>
+        <div class="layer-content">
+            <form class="form-horizontal" id="data_form">
+                <div class="form-group-sm form-group">
+                    <label for="old_password" class="col-sm-2 control-label">原密码</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="old_password" name="old_password" placeholder="原密码"/>
+                    </div>
+                </div>
+                <div class="form-group-sm form-group">
+                    <label for="new_password" class="col-sm-2 control-label">新密码</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="new_password" name="new_password" placeholder="新密码"/>
+                    </div>
+                </div>
+                <div class="form-group-sm form-group">
+                    <label for="confirm_password" class="col-sm-2 control-label">确认密码</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="确认密码"/>
+                    </div>
+                </div>
+                <div class="form-group-sm form-group">
+                    <div class="col-sm-offset-2 col-sm-9 function">
+                        <a class="btn btn-default" id="modifyPass">修改</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </body>
+</html>

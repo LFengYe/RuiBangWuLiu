@@ -58,7 +58,7 @@
         "djInWareHouseListRemark": "备注,10%"
     },
     "printArea": {
-        "title": {"djInWareHouse":"100%,待检入库单"},
+        "title": {"djInWareHouse":"100%,待检入库单,title"},
         "rows1": {
             "djInWareHouseIDName":"15%,单据编号",
             "djInWareHouseID":"20%",

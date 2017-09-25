@@ -28,7 +28,7 @@
     },
     "printArea": {
         "title": {
-            "containerManager": "100%,盛具管理"
+            "containerManager": "100%,盛具管理,title"
         },
         "datasTitle": {
             "supplierName": "15%,供应商名称",

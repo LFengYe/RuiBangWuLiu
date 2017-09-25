@@ -143,7 +143,7 @@ public class CommonController {
                         if (!isInput(objClass, key)) {
                             continue;
                         }
-                        
+
                         if (isFirse) {
                             builder.append(" set ").append(key).append(" = ").append("?");
                             isFirse = false;
@@ -892,6 +892,26 @@ public class CommonController {
 
 //        System.out.println("where date sql:" + result);
         return (result == null) ? "" : "(" + result + ")";
+    }
+
+    public String getWhereSQLStrWithObject(Class objClass, JSONObject obj) {
+        Iterator iterator = obj.entrySet().iterator();
+        String item = null;
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> entry = (Map.Entry<String, String>) iterator.next();
+            
+            if (!isInput(objClass, entry.getKey())) {
+                continue;
+            }
+            
+            if (item != null) {
+                item += " and " + entry.getKey() + " = '" + entry.getValue() + "'";
+            } else {
+                item = entry.getKey() + " = '" + entry.getValue() + "'";
+            }
+        }
+
+        return "(" + item + ")";
     }
 
     public String getWhereSQLStrWithArray(JSONArray array) {

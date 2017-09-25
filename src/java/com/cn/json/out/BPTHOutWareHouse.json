@@ -51,7 +51,7 @@
         "wareHouseManagerName": "库管员,10%"
     },
     "printArea": {
-        "title": {"djInWareHouse":"100%,部品退货出库单"},
+        "title": {"djInWareHouse":"100%,部品退货出库单,title"},
         "rows1": {
             "bpTHOutWareHoseIDName":"15%,单据编号",
             "bpTHOutWareHoseID":"20%",
@@ -71,7 +71,7 @@
             "partName":"20%,部品名称",
             "partCode":"20%,部品件号",
             "partUnit":"5%,单位",
-            "inboundAmount":"20%,入库批次",
+            "inboundBatch":"20%,入库批次",
             "thCKAmount":"10%,退货数量",
             "bpTHOutWareHouseListRemark":"25%,备注"
         },

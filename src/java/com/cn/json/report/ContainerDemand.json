@@ -1,0 +1,9 @@
+{
+    "titles": {
+        "outboundContainerName": "出库盛具名称,1,1,20%,false",
+        "containerAmount": "盛具需求,1,1,20%,false",
+        "containerLPTotal": "盛具良品数量,1,1,20%,false",
+        "shortAmount": "盛具短缺,1,1,20%,false",
+        "demandStatus": "需求状态,1,1,20%,false"
+    }
+}

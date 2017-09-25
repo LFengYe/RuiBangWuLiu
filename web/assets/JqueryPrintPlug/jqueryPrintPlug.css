@@ -13,6 +13,7 @@ and open the template in the editor.
 
 .div_table{display: table;width: 100%;margin: auto;margin-top: 10px;text-align: center;border-top: 1px solid;}
 
+/*
 .div_table_1{display: table;width: 90%;text-align: center;border-top: 1px solid;border-right: 1px solid;margin: 0px;padding: 0px;}
 .div_table_1 .col{display: inline-block;text-align: center;font-size: 12px;height: auto;}
 .div_table_1 .col ul{margin: 0px;padding: 0px;}
@@ -21,6 +22,22 @@ and open the template in the editor.
 .div_table_1 .div_cell{display: table-cell;float: left;height: 40px;line-height: 40px;border-bottom: 1px solid;white-space: nowrap;}
 .div_table_1 .div_cell .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
 .div_table_1 .div_cell .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
+.div_table_1 .div_cell[flag='title']{height: 40px;line-height: 40px;font-weight: bold;font-size: x-large;background-image: url(../img/rbwl_logo.png);background-repeat: no-repeat;background-size: 139px 40px;}
+.div_table_1 .div_cell[flag='title'] .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
+.div_table_1 .div_cell[flag='title'] .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
+*/
+.div_table_1{display: table;width: 90%;text-align: center;border-top: 1px solid;border-right: 1px solid;margin: 0px;padding: 0px;}
+.div_table_1 .col{display: inline-block;text-align: center;font-size: 12px;height: auto;}
+.div_table_1 .col ul{margin: 0px;padding: 0px;}
+.div_table_1 .col ul li{text-align: center;height: 40px;line-height: 40px;border-top: 1px solid;overflow: hidden;white-space:nowrap;}
+.div_table_1 .div_row{display: table-row;}
+.div_table_1 .div_cell{display: table-cell;float: left;height: 40px;line-height: 40px;border-bottom: 1px solid;white-space: nowrap;}
+.div_table_1 .div_cell .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
+.div_table_1 .div_cell .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
+.div_table_1 .div_cell[flag='title']{height: 40px;line-height: 40px;font-weight: bold;font-size: x-large;background-image: url(../img/rbwl_logo.png);background-repeat: no-repeat;background-size: 139px 40px}
+.div_table_1 .div_cell[flag='title'] .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
+.div_table_1 .div_cell[flag='title'] .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
+.div_table_1 .div_cell_double{height: 80px;line-height: 80px;}
 
 .div_table_2{display: table;width: 90%;text-align: center;border-top: 1px solid;border-right: 1px solid;margin: 0px;padding: 0px;}
 .div_table_2 .col{display: inline-block;text-align: center;font-size: 12px;height: auto;}
@@ -30,6 +47,9 @@ and open the template in the editor.
 .div_table_2 .div_cell{display: table-cell;float: left;height: 20px;line-height: 20px;border-bottom: 1px solid;white-space: nowrap;}
 .div_table_2 .div_cell .cell_separate{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: right;}
 .div_table_2 .div_cell .cell_start{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: left;}
+.div_table_2 .div_cell[flag='title']{height: 40px;line-height: 40px;font-weight: bold;font-size: x-large;background-image: url(../img/rbwl_logo.png);background-repeat: no-repeat;background-size: 139px 40px}
+.div_table_2 .div_cell[flag='title'] .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
+.div_table_2 .div_cell[flag='title'] .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
 .div_table_2 .div_cell_double{height: 40px;line-height: 40px;}
 
 .div_code_table{display: table;width: 100%;text-align: center;border: 0px solid;}

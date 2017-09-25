@@ -166,16 +166,22 @@
                 for (var i in that.public_obj) {
                     obj2[i] = obj[i];
                 }
-                //obj2[name] = $(this).text();
-                //console.log(obj2);
                 that.dbclickRowCallBack(module, obj2);
+                /*
+                var request = {};
+                request.type = "create";
+                request.datas = obj2;
+                ajax(module, "report.do", "request_detail", request, function(data) {
+                    
+                });
+                */
             });
 
             this.$container.find("thead").find("tr").children("th").click(function (e) {
                 var name = $(this).attr("name");
                 that.datas.sort(function (a, b) {
-                    console.log(a);
-                    console.log(b);
+                    //console.log(a);
+                    //console.log(b);
                     return a[name] - b[name];
                 });
                 _funs_.getTableDataDOM.call(that, that.datas);

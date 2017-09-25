@@ -46,8 +46,6 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1552,7 +1550,7 @@ public class OutInterface extends HttpServlet {
                                 JSONArray updateArray = new JSONArray();
                                 for (int i = 0; i < arrayParam.size(); i++) {
                                     JSONObject obj = new JSONObject();
-                                    obj.put("fjkCKTime", Units.getNowTime());
+                                    obj.put("fjhCKTime", Units.getNowTime());
                                     obj.put("wareHouseManagerName", session.getAttribute("user"));
                                     updateArray.add(obj);
                                     updateArray.add(arrayParam.getJSONObject(i));
@@ -1569,6 +1567,32 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 json = Units.objectToJson(-1, "输入参数错误!", null);
                             }
+                            /*
+                            JSONArray arrayParam = JSONArray.parseArray(datas);
+                            String fjhOutWareHouseID = arrayParam.getJSONObject(0).getString("fjhOutWareHouseID");
+                            String mainTabWhereSql = "FJHOutWareHouseID = '" + fjhOutWareHouseID + "'";
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.out.", "FJHOutWareHouse", "*", mainTabWhereSql, 11, 1, "FJHOutWareHouseID", 0, opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                JSONArray updateArray = new JSONArray();
+                                for (int i = 0; i < arrayParam.size(); i++) {
+                                    JSONObject obj = new JSONObject();
+                                    obj.put("fjkCKTime", Units.getNowTime());
+                                    obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                    updateArray.add(obj);
+                                    updateArray.add(arrayParam.getJSONObject(i));
+                                }
+                                int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.out.", "FJHOutWareHouseList", "update", opt.getConnect()).get(0);
+                                if (result == 0) {
+                                    JSONObject obj = new JSONObject();
+                                    obj.put("wareHouseManagerName", session.getAttribute("user"));
+                                    json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                                } else {
+                                    json = Units.objectToJson(-1, "审核失败!", null);
+                                }
+
+                            } else {
+                                json = Units.objectToJson(-1, "输入参数错误!", null);
+                            }*/
                             break;
                         }
                         case "importDetail": {
@@ -2056,6 +2080,20 @@ public class OutInterface extends HttpServlet {
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
                             break;
                         }
+                        case "audit": {
+                            JSONObject obj = new JSONObject();
+                            obj.put("bpTHAuditStaffName", session.getAttribute("user"));
+                            obj.put("bpTHAuditTime", Units.getNowTime());
+                            String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
+                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.out.", "BPTHOutWareHouse", "update", opt.getConnect());
+                            //System.out.println(Arrays.toString(updateResult.toArray()));
+                            if (updateResult.get(0) == 0) {
+                                json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                            } else {
+                                json = Units.objectToJson(-1, "审核失败!", null);
+                            }
+                            break;
+                        }
                         case "auditItem": {
                             JSONArray arrayParam = JSONArray.parseArray(datas);
                             String bpTHOutWareHoseID = arrayParam.getJSONObject(0).getString("bpTHOutWareHoseID");
@@ -2338,20 +2376,6 @@ public class OutInterface extends HttpServlet {
                             }
                             break;
                         }
-                        case "audit": {
-                            JSONObject obj = new JSONObject();
-                            obj.put("bpTHAuditStaffName", session.getAttribute("user"));
-                            obj.put("bpTHAuditTime", Units.getNowTime());
-                            String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
-                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.out.", "BPTHOutWareHouse", "update", opt.getConnect());
-                            //System.out.println(Arrays.toString(updateResult.toArray()));
-                            if (updateResult.get(0) == 0) {
-                                json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
-                            } else {
-                                json = Units.objectToJson(-1, "审核失败!", null);
-                            }
-                            break;
-                        }
                     }
                     break;
                 }
@@ -2425,10 +2449,10 @@ public class OutInterface extends HttpServlet {
                         case "request_detail": {
                             String detailCase = "FinishTime is null";
                             if (isHistory == 0) {
-                                json = queryOperateWithFilter("com.cn.bean.out.", "view", "BHProgressList", "JHDemandTime", datas, rely, detailCase, false, opt.getConnect(), pageSize, pageIndex);
+                                json = queryOperateWithFilter("com.cn.bean.out.", "view", "BHProgressList", "JHOutWareHouseID", datas, rely, detailCase, false, opt.getConnect(), pageSize, pageIndex);
                             }
                             if (isHistory == 1) {
-                                json = queryOperateWithFilter("com.cn.bean.out.", "view", "BHProgressList", "JHDemandTime", datas, rely, "", false, opt.getConnect(), pageSize, pageIndex);
+                                json = queryOperateWithFilter("com.cn.bean.out.", "view", "BHProgressList", "JHOutWareHouseID", datas, rely, "", false, opt.getConnect(), pageSize, pageIndex);
                             }
                             break;
                         }
@@ -2444,10 +2468,10 @@ public class OutInterface extends HttpServlet {
                         }
                         case "request_on_date": {
                             if (isHistory == 0) {
-                                json = queryOnDateOperate("com.cn.bean.out.", "view", "JHOutWareHouseList", "JHOutWareHouseID", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                                json = queryOnDateOperate("com.cn.bean.out.", "view", "JHOutWareHouseList", "JHDemandTime", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
                             }
                             if (isHistory == 1) {
-                                json = queryOnDateOperate("com.cn.bean.out.", "view", "JHOutWareHouseList", "JHOutWareHouseID", datas, rely, "", true, opt.getConnect(), pageSize, pageIndex);
+                                json = queryOnDateOperate("com.cn.bean.out.", "view", "JHOutWareHouseList", "JHDemandTime", datas, rely, "", true, opt.getConnect(), pageSize, pageIndex);
                             }
                             break;
                         }

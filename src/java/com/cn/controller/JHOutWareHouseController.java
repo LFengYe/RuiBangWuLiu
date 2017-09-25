@@ -11,7 +11,6 @@ import com.cn.bean.Customer;
 import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
 import com.cn.bean.PartBomInfo;
-import com.cn.bean.base.CustomPredicate;
 import com.cn.bean.out.JHOutWareHouse;
 import com.cn.bean.out.JHOutWareHouseList;
 import com.cn.bean.out.JHOutWareHouseZCList;
@@ -37,11 +36,10 @@ import org.apache.log4j.Logger;
  * @author LFeng
  */
 public class JHOutWareHouseController {
-
     private static final Logger logger = Logger.getLogger(JHOutWareHouseController.class);
 
     /**
-     *
+     * 添加计划
      * @param jhInfo
      * @return 0 计划添加成功, 否则添加失败
      * @throws Exception
@@ -181,12 +179,12 @@ public class JHOutWareHouseController {
                     /**
                      * 该计划明细的筛选字符串(供应商ID + 逗号 + 件号)
                      */
-                    String filterStr = item.getSupplierID() + "," + item.getPartCode();
+                    //String filterStr = item.getSupplierID() + "," + item.getPartCode();
                     /**
                      * 谓语对象, 用户筛选库存列表
                      */
-                    CustomPredicate predicate = new CustomPredicate(filterStr);
-                    CustomPredicate.setKcCount(0);//部件编号对应库存总量初始化
+                    //CustomPredicate predicate = new CustomPredicate(filterStr);
+                    //CustomPredicate.setKcCount(0);//部件编号对应库存总量初始化
                     //Predicate<LPKCList> predicate = (LPKCList input) -> (input.getSupplierID() + "," + input.getPartCode()).compareToIgnoreCase(filterStr) == 0;
 
                     /**
@@ -229,7 +227,6 @@ public class JHOutWareHouseController {
                             } else {
                                 detail.setJhCKAmount(ckAmount);
                                 detail.setContainerAmount((ckAmount % containerInfo.getOutboundPackageAmount() == 0) ? (ckAmount / containerInfo.getOutboundPackageAmount()) : (ckAmount / containerInfo.getOutboundPackageAmount() + 1));//containerAmount当一个批次不满一个盛具如何处理, 待解决
-//                                break;
                             }
                             detail.setOutboundContainerName(containerInfo.getOutboundContainerName());
                             detail.setJhOutWareHouseListRemark(item.getJhOutWareHouseListRemark());
@@ -238,7 +235,6 @@ public class JHOutWareHouseController {
                             completeResult.add(detail);
                             ckAmount -= lpkcl.getLpAmount();
                         }
-//                        return completeResult;
                     } else {
                         item.setListNumber(-1);//库存不能够满足计划
                         item.setFailedReason("库存不足");
@@ -311,7 +307,6 @@ public class JHOutWareHouseController {
                     List<String> bomInfos = RedisAPI.getSet(bomRedisKey);
                     if (bomInfos != null && bomInfos.size() > 0) {
                         for (String str : bomInfos) {
-
                             PartBomInfo bomInfo = JSONObject.parseObject(str, PartBomInfo.class);
                             if (detailMap.containsKey(item.getSupplierID() + "_" + bomInfo.getDetailPartCode())) {
                                 JHOutWareHouseList list = detailMap.get(item.getSupplierID() + "_" + bomInfo.getDetailPartCode());

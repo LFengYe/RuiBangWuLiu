@@ -222,16 +222,20 @@ public class AppInterface extends HttpServlet {
                             String employeeType = employee.getEmployeeType();
                             if (employeeType.compareTo("仓管员") == 0) {
                                 ProcessListController controller = new ProcessListController();
-                                int result = controller.bhConfirmForKGY(
+                                int result;
+                                synchronized(this) {
+                                    result = controller.bhConfirmForKGY(
                                         paramsJson.getString("jhOutWareHouseID"),
                                         paramsJson.getString("partCode"),
                                         paramsJson.getString("supplierID"),
                                         paramsJson.getString("inboundBatch"),
                                         paramsJson.getIntValue("jhStatus"),
                                         paramsJson.getString("jhOutWareHouseListRemark"));
+                                }
                                 if (result == 0) {
                                     PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), PartStore.class);
                                     if (partStore == null) {
+                                        logger.info(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()) + "缺少存放地址信息");
                                         json = Units.objectToJson(-1, "请补全存放地址!", null);
                                         break;
                                     }
@@ -275,12 +279,15 @@ public class AppInterface extends HttpServlet {
                                 }
                             } else if (employeeType.compareTo("备货员") == 0) {
                                 ProcessListController controller = new ProcessListController();
-                                int result = controller.bhConfirmForBHY(
+                                int result;
+                                synchronized(this) {
+                                    result = controller.bhConfirmForBHY(
                                         paramsJson.getString("jhOutWareHouseID"),
                                         paramsJson.getString("partCode"),
                                         paramsJson.getString("supplierID"),
                                         paramsJson.getIntValue("packingNumber"),
                                         paramsJson.getString("inboundBatch"));
+                                }
                                 if (result == 0) {
                                     json = Units.objectToJson(0, "确认成功!", null);
                                 } else if (result == 1) {

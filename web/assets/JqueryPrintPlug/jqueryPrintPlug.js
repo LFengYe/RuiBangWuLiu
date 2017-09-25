@@ -19,13 +19,13 @@
                 }
                 for (var j in row) {
                     var rowItems = row[j].split(",");
-                    inputResult += "<div class='div_cell col' style='width: " + rowItems[0] + ";' name='" + j + "'><div class='cell_start'></div>" + (rowItems[1] ? rowItems[1] : "") + "<div><ul></ul></div></div>";
+                    inputResult += "<div class='div_cell col' style='width: " + rowItems[0] + ";' name='" + j + "' flag='" + rowItems[2] + "'><div class='cell_start'></div>" + (rowItems[1] ? rowItems[1] : "") + "<div><ul></ul></div></div>";
                 }
                 inputResult += "</div>";
             }
             
             if (this.type == 1)
-                this.html("<div class='div_table_1'>" + inputResult + "</div>");
+                this.html("<div class='div_table_2'>" + inputResult + "</div>");
             if (this.type == 2)
                 this.html("<div class='div_table_2'>" + inputResult + "</div>");
             
@@ -33,11 +33,13 @@
             return this;
         },
         insertData: function(datas) {
-            console.log(datas);
+            //console.log(datas);
             this.$detasTitle.find("ul").html("");
             var obj = null;
             for (var i = 0; i < datas.length; i++) {
                 obj = datas[i];
+                if (!obj)
+                    continue;
                 for (var j in this.datasTitle) {
                     if (obj[j]) {
                         this.$detasTitle.children("div[name='" + j + "']").find("ul").append("<li><div class='cell_start'></div>" + obj[j] + "</li>");
@@ -53,6 +55,8 @@
             var obj = null;
             for (var i = 0; i < datas.length; i++) {
                 obj = datas[i];
+                if (!obj)
+                    continue;
                 for (var j in this.datasTitle) {
                     if (obj[j]) {
                         this.$detasTitle.children("div[name='" + j + "']").find("ul").append("<li><div class='cell_start'></div>" + obj[j] + "</li>");

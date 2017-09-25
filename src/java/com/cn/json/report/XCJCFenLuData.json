@@ -16,6 +16,6 @@
         "fjhck": "非计划出库,1,1,10%,true",
         "lpfxck": "良品返修出库,1,1,10%,true",
         "blpfxck": "不良品返修出库,1,1,10%,true",
-        "ckTotal": "出库总数,1,1,10%,true"
+        "ckTotal": "出库总数,1,1,10%,flase"
     }
 }

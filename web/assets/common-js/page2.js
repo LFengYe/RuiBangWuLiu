@@ -428,12 +428,12 @@
             console.log(modifyRow);
             if (modifyRow >= 0 && $childINputBox.isFinishForm()) {
                 if ($childINputBox.checkValue() && $childINputBox.calculateValue()) {
-                    console.log(obj);
+                    //console.log(obj);
                     var obj = $childINputBox.getInputValObj(true);
-                    console.log(obj);
+                    //console.log(obj);
                     $.extend(oriObj, obj);
-                    console.log(obj);
-                    console.log(oriObj);
+                    //console.log(obj);
+                    //console.log(oriObj);
                     $chidTableBox.update(modifyRow, oriObj);
 
                     var updateObj = deepCopy(obj);
@@ -733,6 +733,7 @@
                 primary: data.detailPrimary.split(","),
                 isLocalSearch: true,
                 dbclickRowCallBack: function (index, obj) {
+                    console.log(obj);
                     $childINputBox.objInInputs(obj);
                     $childINputBox.formDisable(data.detailPrimary.split(","));
                     modifyRow = index;

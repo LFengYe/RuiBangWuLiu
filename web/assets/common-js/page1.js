@@ -75,6 +75,7 @@
                 },
                 clickRowCallBack: function (index, obj) {
                     if (selectedSet[index]) {
+                        //selectedSet.splice(index, 1);
                         selectedSet[index] = null;
                     } else {
                         selectedSet[index] = obj;
@@ -229,14 +230,16 @@
         });
         $("#page1-print").off("click");
         $("#page1-print").on("click", function (e) {
-            $printArea.render(selectedSet);
             var inboundCount = 0;
             for (var i = 0; i < selectedSet.length; i++) {
                 var obj = selectedSet[i];
-                inboundCount += obj.operateAmount;
+                if (obj) {
+                    inboundCount += obj.operateAmount;
+                }
             }
             var obj = {};obj.inboundCount = inboundCount;
             $printArea.controlData(obj);
+            $printArea.render(selectedSet);
             $("#print_area").css({
                 "height": "auto"
                 , "overflow": "visible"
@@ -245,7 +248,7 @@
     }
 
     function moduleOperate(module) {
-        console.log(module);
+        //console.log(module);
         switch (module) {
             case "分装入库":
             case "分装出库":

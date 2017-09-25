@@ -24,19 +24,21 @@ public class LedControl {
 
     private static final Logger logger = Logger.getLogger(DataInterface.class);
 
+    /*
     public static void main(String[] args) {
-        /*
-        AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
-        ledIPInfo.setAddressCode("C-50");//C-20
-        ledIPInfo.setIpAddress("192.168.8.142");//192.168.7.84
-        setLedAreaCode(ledIPInfo);
-        */
-        setLedAreaCode("2906130-CA01", "1121");
+        try {
+            //setLedAreaCode("2906130-CA01", "1121");
+            setC01PartStauts();
+        } catch (Exception ex) {
+            
+        }
     }
-    
+    */
+
     /**
      * 测试计划设置
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     public static void setC01Plan() throws Exception {
         AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
@@ -47,7 +49,8 @@ public class LedControl {
 
     /**
      * 测试部品状态设置
-     * @throws Exception 
+     *
+     * @throws Exception
      */
     public static void setC01PartStauts() throws Exception {
         AreaLedIPInfo ledIPInfo = new AreaLedIPInfo();
@@ -63,7 +66,7 @@ public class LedControl {
         partStatus.setRejectReason("产品不合格");
         setLedPartStatus(ledIPInfo, partStatus, 2);
     }
-    
+
     /**
      * 设置所有显示屏(测试用)
      *
@@ -109,7 +112,7 @@ public class LedControl {
             }
         }
     }
-    
+
     public static void setImage(AreaLedIPInfo ledIPInfo, String fileName) throws Exception {
         String filePath = "exportFile/" + fileName;
         int count = 0;
@@ -133,7 +136,8 @@ public class LedControl {
 
     /**
      * 设置LED计划显示
-     * @param list 
+     *
+     * @param list
      */
     public static void setLedPlanList(JHOutWareHouseList list) {
         try {
@@ -157,11 +161,12 @@ public class LedControl {
             logger.error("设置Led信息出错!", e);
         }
     }
-    
+
     /**
      * 设置LED计划显示
-     * @param list 
-     * @param ledIPInfo 
+     *
+     * @param list
+     * @param ledIPInfo
      */
     public static void setLedPlanList(JHOutWareHouseList list, AreaLedIPInfo ledIPInfo) {
         try {
@@ -184,8 +189,9 @@ public class LedControl {
 
     /**
      * 根据件号和供应商信息设置显示屏显示区域号
+     *
      * @param partCode
-     * @param supplierID 
+     * @param supplierID
      */
     public static void setLedAreaCode(String partCode, String supplierID) {
 //        System.out.println("partStore_" + supplierID + "_" + partCode.toLowerCase());
@@ -195,7 +201,7 @@ public class LedControl {
         AreaLedIPInfo ledIPInfo = JSONObject.parseObject(RedisAPI.get("ledIpInfo_" + partStore.getKfCFAddress().toLowerCase()), AreaLedIPInfo.class);
         setLedAreaCode(ledIPInfo);
     }
-    
+
     /**
      * 设置LED显示屏显示区域号
      *
@@ -253,18 +259,21 @@ public class LedControl {
             int result = led.NetWorkSend(ledIPInfo.getIpAddress(), hProgram);
             led.DeleteProgram(hProgram);
             if (result == 0 || count >= 5) {
-                System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
+                logger.info(ledIPInfo.getAddressCode() + "设置完成!");
+                //System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
                 break;
             }
             if (result != 0) {
-                System.out.println(ledIPInfo.getAddressCode() + "设置失败!");
+                logger.info(ledIPInfo.getAddressCode() + "设置失败!");
+                //System.out.println(ledIPInfo.getAddressCode() + "设置失败!");
             }
             count++;
         }
-        
+
         File file = new File(fileName);
         if (!file.delete()) {
-            System.out.println(fileName + "删除失败!");
+            logger.info(fileName + "删除失败!");
+            //System.out.println(fileName + "删除失败!");
         }
     }
 
@@ -297,14 +306,20 @@ public class LedControl {
             int result = led.NetWorkSend(ledIPInfo.getIpAddress(), hProgram);
             led.DeleteProgram(hProgram);
             if (result == 0 || count >= 5) {
-                System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
+                logger.info(ledIPInfo.getAddressCode() + "设置完成!");
+                //System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
                 break;
+            }
+            if (result != 0) {
+                logger.info(ledIPInfo.getAddressCode() + "设置失败!");
+                //System.out.println(ledIPInfo.getAddressCode() + "设置失败!");
             }
             count++;
         }
         File file = new File(fileName);
         if (!file.delete()) {
-            System.out.println(fileName + "删除失败!");
+            logger.info(fileName + "删除失败!");
+            //System.out.println(fileName + "删除失败!");
         }
     }
 
@@ -325,8 +340,11 @@ public class LedControl {
             while (true) {
                 int result = led.PowerOnOff(ledIPInfo.getIpAddress(), onOff);
                 if (result == 0 || count >= 5) {
-                    System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
+                    logger.info(ledIPInfo.getAddressCode() + "设置完成!");
                     break;
+                }
+                if (result != 0) {
+                    logger.info(ledIPInfo.getAddressCode() + "设置失败!");
                 }
                 count++;
             }
@@ -357,16 +375,21 @@ public class LedControl {
         datas.add(display);
 
         String nowTime = Units.getNowTimeNoSeparator();
-        File file = Units.createNewFile(filePath, "temp.xls");
+        File file = Units.createNewFile(filePath, nowTime + "_" + plan.getPartCode().toLowerCase() + ".xls");
         OutputStream stream = new FileOutputStream(file);
-
         ExportExcel exportExcel = new ExportExcel();
         exportExcel.exportExcel("导出", headers, datas, stream, "yyyy-MM-dd HH:mm:ss");
-        String pngFilePath = filePath + nowTime + ".png";
+        stream.close();
+        
+        String pngFilePath = filePath + nowTime + "_" + plan.getPartCode().toLowerCase() + ".png";
         int[] fromIndex = {0, 0};
         int[] toIndex = {1, 5};
         //System.out.println("filePath:" + file.getAbsolutePath());
         DrawFromExcel.drawExcelToPNG(file.getAbsolutePath(), pngFilePath, fromIndex, toIndex);
+        
+        if (!file.delete()) {
+            logger.info(nowTime + ".xls删除失败!");
+        }
         return pngFilePath;
     }
 
@@ -394,15 +417,19 @@ public class LedControl {
         datas.add(display);
 
         String nowTime = Units.getNowTimeNoSeparator();
-        File file = Units.createNewFile(filePath, "temp.xls");
+        File file = Units.createNewFile(filePath, nowTime + "_" + plan.getPartCode().toLowerCase() + ".xls");
         OutputStream stream = new FileOutputStream(file);
-
         ExportExcel exportExcel = new ExportExcel();
         exportExcel.exportExcel("导出", headers, datas, stream, "yyyy-MM-dd HH:mm:ss");
-        String bmpFilePath = filePath + nowTime + ".bmp";
+        stream.close();
+        
+        String bmpFilePath = filePath + nowTime + "_" + plan.getPartCode().toLowerCase() + ".bmp";
         int[] fromIndex = {0, 0};
         int[] toIndex = {1, 5};
         DrawFromExcel.drawExcelToBMP(file.getAbsolutePath(), bmpFilePath, fromIndex, toIndex);
+        if (!file.delete()) {
+            logger.info(nowTime + ".xls删除失败!");
+        }
         return bmpFilePath;
     }
 
@@ -427,16 +454,20 @@ public class LedControl {
         datas.add(display);
 
         String nowTime = Units.getNowTimeNoSeparator();
-        File file = Units.createNewFile(filePath, "temp.xls");
+        File file = Units.createNewFile(filePath, nowTime + "_" + partStatus.getPartCode().toLowerCase() + ".xls");
         OutputStream stream = new FileOutputStream(file);
-
         ExportExcel exportExcel = new ExportExcel();
         exportExcel.exportExcel("导出", headers, datas, stream, "yyyy-MM-dd HH:mm:ss");
-        String pngFilePath = filePath + nowTime + ".png";
+        stream.close();
+        
+        String pngFilePath = filePath + nowTime + "_" + partStatus.getPartCode().toLowerCase() + ".png";
 
         int[] fromIndex = {0, 0};
         int[] toIndex = {1, 4};
         DrawFromExcel.drawExcelToPNG(file.getAbsolutePath(), pngFilePath, fromIndex, toIndex);
+        if (!file.delete()) {
+            logger.info(nowTime + ".xls删除失败!");
+        }
         return pngFilePath;
     }
 
@@ -461,16 +492,20 @@ public class LedControl {
         datas.add(display);
 
         String nowTime = Units.getNowTimeNoSeparator();
-        File file = Units.createNewFile(filePath, "temp.xls");
+        File file = Units.createNewFile(filePath, nowTime + "_" + partStatus.getPartCode().toLowerCase() + ".xls");
         OutputStream stream = new FileOutputStream(file);
-
         ExportExcel exportExcel = new ExportExcel();
         exportExcel.exportExcel("导出", headers, datas, stream, "yyyy-MM-dd HH:mm:ss");
-        String bmpFilePath = filePath + nowTime + ".bmp";
+        stream.close();
+        
+        String bmpFilePath = filePath + nowTime + "_" + partStatus.getPartCode().toLowerCase() + ".bmp";
 
         int[] fromIndex = {0, 0};
         int[] toIndex = {1, 4};
         DrawFromExcel.drawExcelToBMP(file.getAbsolutePath(), bmpFilePath, fromIndex, toIndex);
+        if (!file.delete()) {
+            logger.info(nowTime + ".xls删除失败!");
+        }
         return bmpFilePath;
     }
 }

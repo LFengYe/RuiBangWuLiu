@@ -138,8 +138,25 @@ TableMultiSelectPanel.prototype.render = function () {
         dbclickRowCallBack: function (index, obj) {
             console.log(obj);
         },
-        searchCallBack: function(keyword) {
-            that.$container.dataFilter(keyword);
+        pageCallBack: function (pageIndex, keyword) {
+            //console.log(keyword);
+            var tmp = JSON.parse(keyword);
+            var obj = {"pageIndex": pageIndex, "pageSize": that.pageSize, "datas": tmp.keywords, "target": that.data.target, "rely": that.data.rely};
+            ajaxData("request_table", obj, function (data) {
+                that.$container.render(data.datas);
+                that.$container.page(data.counts, pageIndex, that.pageSize);
+            }, function () {
+            });
+        },
+        searchCallBack: function (keyword) {
+            //console.log(keyword);
+            var tmp = JSON.parse(keyword);
+            var obj = {"pageIndex": 1, "pageSize": that.pageSize, "datas": tmp.keywords, "target": that.data.target, "rely": that.data.rely};
+            ajaxData("request_table", obj, function (data) {
+                that.$container.render(data.datas);
+                that.$container.page(data.counts, 1, that.pageSize);
+            }, function () {
+            });
         },
         isLocalSearch: true
     });

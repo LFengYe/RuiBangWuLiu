@@ -2,6 +2,8 @@
     var $mainTableBox = $(".page3-container .page3-main-table .page3-show-table");
     var $mainInputBox = $(".page3-container .page3-detail-list .page3-main-input-box");
     var $chidTableBox = $(".page3-container .page3-detail-list .page3-show-table");
+    var $thirdTableBox = $(".page3-container .page3-third-list .page3-show-table");
+    var $thirdList = $(".page3-container .page3-third-list");
     var $detailList = $(".page3-container .page3-detail-list");
     var $mainTable = $(".page3-container .page3-main-table");
     var $pageTurn = $(".page3-container .page3-pagination li a");
@@ -17,12 +19,14 @@
         REQUEST_PAGE: "request_page"
     };
 
-    $detailList.hide();
     var pageSize = 15;
     var dataType = "";
     var pageIndex = 1;
 
     function initData(moudle) {
+        $mainTable.show();
+        $detailList.hide();
+        $thirdList.hide();
         pageSize = 15;
         pageIndex = 1;
         if (moudle === "退货出库报表") {
@@ -67,20 +71,37 @@
                 datas: arr.datas,
                 pageSize: pageSize,
                 dbclickRowCallBack: function (module, maps) {
-                    //$mainInputBox.objInInputs(maps);
-                    //request.name = name;
+                    request.pageIndex = 1;
+                    request.pageSize = pageSize;
+                    request.start = null;
                     request.datas = maps;
                     ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
-                        //console.log(data);
                         $detailList.show();
                         $mainTable.hide();
+                        $thirdList.hide();
                         $chidTableBox.insertTwoHeaderTable({
                             title0: data.titles,
                             title1: null,
-                            datas: data.datas
+                            datas: data.datas,
+                            pageSize: pageSize,
+                            dbclickRowCallBack: function (module, maps) {
+                                request.pageIndex = 1;
+                                request.pageSize = pageSize;
+                                request.start = null;
+                                request.datas = maps;
+                                ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
+                                    $thirdList.show();
+                                    $detailList.hide();
+                                    $mainTable.hide();
+                                    $thirdTableBox.insertTwoHeaderTable({
+                                        title0: data.titles,
+                                        title1: null,
+                                        datas: data.datas
+                                    });
+                                }, function () {});
+                            }
                         });
-                    }, function () {
-                    });
+                    }, function () {});
                 }
             });
         }, function () {
@@ -94,10 +115,18 @@
             $(this).prev().val($(this).val());
         });
 
-        $("#page3-return").off("click");
-        $("#page3-return").click(function () {
+        $(".page3-detail-list .page3-return").off("click");
+        $(".page3-detail-list .page3-return").click(function () {
             $detailList.hide();
+            $thirdList.hide();
             $mainTable.show();
+        });
+
+        $(".page3-third-list .page3-return").off("click");
+        $(".page3-third-list .page3-return").click(function () {
+            $thirdList.hide();
+            $mainTable.hide();
+            $detailList.show();
         });
 
         $export.off("click");
@@ -146,19 +175,19 @@
              */
         });
         /*
-        $keysword.change(function () {
-        });
-        $keysword.keypress(function (event) {
-            switch (event.keyCode) {
-                case 13:
-                    if (moudle === "良品库存") {
-                        var keyword = $(this).val();
-                        $mainTableBox.filter(keyword);
-                    }
-                    break;
-            }
-        });
-        */
+         $keysword.change(function () {
+         });
+         $keysword.keypress(function (event) {
+         switch (event.keyCode) {
+         case 13:
+         if (moudle === "良品库存") {
+         var keyword = $(this).val();
+         $mainTableBox.filter(keyword);
+         }
+         break;
+         }
+         });
+         */
 
         $pageLeft.off("click");
         $pageLeft.click(function (e) {

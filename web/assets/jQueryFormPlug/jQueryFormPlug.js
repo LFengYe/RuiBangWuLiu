@@ -172,6 +172,9 @@ $.fn.insertInputForm = function (options) {
                     name = this.$inputs.eq(i).attr("name");
                     value = this.$inputs.eq(i).val();
                     obj[name] = value;
+                    if (this.extraDatas[name]) {
+                        this.extraDatas[name] = value;
+                    }
                 } else {
                     type = this.$inputs.eq(i).attr("type");
                     if (type === "hidden")
@@ -179,6 +182,9 @@ $.fn.insertInputForm = function (options) {
                     name = this.$inputs.eq(i).attr("name");
                     value = this.$inputs.eq(i).val();
                     obj[name] = value;
+                    if (this.extraDatas[name]) {
+                        this.extraDatas[name] = value;
+                    }
                 }
             }
             for (var i = 0; i < this.$radios.length; i++) {
@@ -202,6 +208,9 @@ $.fn.insertInputForm = function (options) {
             for (var i in obj) {
                 if (obj[i]) {
                     this.$inputs.filter("[name='" + i + "']").val(obj[i]);
+                    if (this.extraDatas[i]) {
+                        this.extraDatas[i] = obj[i];
+                    }
                 }
                 var selectInput = this.$inputs.filter("[name='" + i + "']").next("select");
                 if (selectInput && obj[i]) {

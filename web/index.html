@@ -35,6 +35,18 @@
             window.onresize = function () {
                 findDimensions();
             };
+            function modifyPassLayer() {
+                layer.closeAll();
+                layer.open({
+                    type: 2,
+                    title: "密码修改",
+                    skin: 'layui-layer-rim',
+                    area: ['800px', '360px'],
+                    content: "modify_pass.html",
+                    end: function () {
+                    }
+                });
+            }
             function displayLayer(type, content, title, callback) {
                 layer.closeAll();
                 layer.open({
@@ -44,7 +56,6 @@
                     area: ['1000px', '600px'],
                     content: content,
                     end: function () {
-                        //                        console.log(callback);
                         if (callback) {
                             callback();
                         }
@@ -80,8 +91,8 @@
                                 </li>
                             </ul>
                             <ul class="nav right-nav " role="tablist">
-                                <li role="presentation" class="active"><a href="#"><span class="glyphicon glyphicon-user"></span></a></li>
-                                <li role="presentation"><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
+                                <li role="presentation"><a href="javascript:modifyPassLayer();"><span class="glyphicon glyphicon-user"></span></a></li>
+                                <li role="presentation"><a href=""><span class="glyphicon glyphicon-home"></span></a></li>
                                 <li role="presentation"><a href="login.html" title="切换用户"><span class="glyphicon glyphicon-refresh"></span></a></li>
                             </ul>
                         </div>
@@ -216,13 +227,26 @@
                                         <!--动态添加-->
                                     </div>
                                     <div class="page3-button-area">
-                                        <button class="btn btn-info" id="page3-return">返回</button>
+                                        <button class="btn btn-info page3-return">返回</button>
                                     </div>
 
                                     <div class="page3-show-table">
                                         <!--动态添加-->
                                     </div>
-                                </div>			
+                                </div>
+                                
+                                <div class="page3-third-list">
+                                    <div class="page3-main-input-box">
+                                        <!--动态添加-->
+                                    </div>
+                                    <div class="page3-button-area">
+                                        <button class="btn btn-info page3-return">返回</button>
+                                    </div>
+
+                                    <div class="page3-show-table">
+                                        <!--动态添加-->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

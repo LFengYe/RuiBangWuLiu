@@ -332,12 +332,12 @@ public class InInterface extends HttpServlet {
                                 if (importSuccess) {
                                     int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "DJInWareHouse", "add", opt.getConnect()).get(0);
                                     if (result == 0) {
-                                        //System.out.println("import:" + JSONObject.toJSONString(importData));
+                                        System.out.println("import:" + JSONObject.toJSONString(importData));
                                         result = commonController.dataBaseOperate(JSONObject.toJSONString(importData, Units.features), "com.cn.bean.in.", "DJInWareHouseList", "add", opt.getConnect()).get(0);
                                         if (result == 0) {
                                             JSONObject object = new JSONObject();
                                             object.put("datas", importData);
-                                            json = Units.objectToJson(0, "数据添加成功!", object.toJSONString());
+                                            json = Units.objectToJson(0, "数据添加成功!", JSONObject.toJSONString(object, Units.features));
                                         } else if (result == 2627) {
                                             json = Units.objectToJson(-1, "明细中件号有重复!", null);
                                         } else {
