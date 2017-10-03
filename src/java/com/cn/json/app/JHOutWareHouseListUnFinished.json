@@ -1,0 +1,16 @@
+{
+    "titles": {
+        "supplierID": "供应商代码",
+        "partName": "部品名称",
+        "partCode": "部品件号",
+        "jhCKAmount": "计划数量",
+        "unFinishAmount": "未完成数量",
+        "inboundBatch": "入库批次",
+        "bhEmployeeName": "备货员",
+        "outboundContainerName": "出库盛具",
+        "outboundPackageAmount": "包装数量",
+        "containerAmount": "盛具数量",
+        "unFinishPacking": "未完成箱数",
+        "jhOutWareHouseListRemark": "备注"
+    }
+}
