@@ -3,12 +3,13 @@
     var _default = {
         title0: {},
         title1: {},
+        params: {},
         datas: [],
         pageIndex: 1,
         pageSize: 15,
         dataCount: 0,
         clickRowCallBack: function (index, obj) {
-            console.log(index);
+            //console.log(index);
         },
         dbclickRowCallBack: function (module, obj) {
         },
@@ -30,7 +31,7 @@
             //加载表头
             var title0 = this.title0;
             var title0_str = '';
-            var colspans, rowspans, txt, width, detail;
+            var colspans, rowspans, txt, width, detail, params;
             this.arr = [];
             this.public_obj = {};
             for (var i in title0) {
@@ -39,6 +40,7 @@
                 rowspans = parseInt(title0[i].split(',')[2]);
                 width = title0[i].split(',')[3];
                 detail = title0[i].split(',')[5];
+                params = title0[i].split(',')[6];
                 //console.log(title0[i].split(',')[4]);
                 if (title0[i].split(',')[4] === "false") {
                     this.public_obj[i] = true;
@@ -47,16 +49,16 @@
                     for (var k = 0; k < colspans; k++) {
                         this.arr.push(i);
                     }
-                    title0_str += "<th name='" + i + "' colspan='" + colspans + "' detail='" + detail + "'>" + txt + "</th>";
+                    title0_str += "<th name='" + i + "' colspan='" + colspans + "' detail='" + detail + "' params='" + params + "'>" + txt + "</th>";
 //                    title0_str += "<td name='" + i + "' style='width:" + width + "'  colspan='" + colspans + "' detail='" + detail + "'>" + txt + "</td>";
                     _style.colGroup += "<col width='" + width + "'></col>";
                 } else {
                     this.arr.push(i);
                     if (rowspans > 1)
-                        title0_str += "<th name='" + i + "' class='cols'  rowspan='" + rowspans + "' detail='" + detail + "'>" + txt + "</th>";
+                        title0_str += "<th name='" + i + "' class='cols'  rowspan='" + rowspans + "' detail='" + detail + "' params='" + params + "'>" + txt + "</th>";
 //                    title0_str += "<td name='" + i + "' style='width:" + width + "' class='cols'  rowspan='" + rowspans + "' detail='" + detail + "'>" + txt + "</td>";
                     else
-                        title0_str += "<th name='" + i + "' detail='" + detail + "'>" + txt + "</th>";
+                        title0_str += "<th name='" + i + "' detail='" + detail + "' params='" + params + "'>" + txt + "</th>";
 //                    title0_str += "<td name='" + i + "' style='width:" + width + "' detail='" + detail + "'>" + txt + "</td>";
                     _style.colGroup += "<col width='" + width + "'></col>";
                 }
@@ -154,6 +156,10 @@
                 var name = $(this).attr("name");
                 var titleTd = that.$container.find("thead").find("tr:eq(0)").children("th[name='" + name + "']");
                 var module = titleTd.attr("detail");
+                var params;
+                if (that.params) {
+                    params = that.params[name];
+                }
 
                 if (that.public_obj[name]) {
                     return;
@@ -162,11 +168,13 @@
 
                 var obj = that.datas[index];
 
-                var obj2 = {};
-                for (var i in that.public_obj) {
-                    obj2[i] = obj[i];
+                if (!params) {
+                    params = {};
                 }
-                that.dbclickRowCallBack(module, obj2);
+                for (var i in that.public_obj) {
+                    params[i] = obj[i];
+                }
+                that.dbclickRowCallBack(module, params);
                 /*
                 var request = {};
                 request.type = "create";

@@ -114,7 +114,8 @@ public class BaseInterface extends HttpServlet {
             String importPath = getServletContext().getRealPath("/").replace("\\", "/") + "excelFile/";
             
             /*验证是否登陆*/
-            if ((!"userLogin".equals(module) || !"版本信息".equals(module)) && session.getAttribute("user") == null) {
+            if ((!"userLogin".equals(module) || !"版本信息".equals(module))
+                    && (session.getAttribute("user") == null || session.getAttribute("loginType") == null)) {
                 session.invalidate();
                 json = Units.objectToJson(-99, "未登陆", null);
                 PrintWriter out = response.getWriter();
@@ -324,7 +325,9 @@ public class BaseInterface extends HttpServlet {
                                 String[] keysName = {"模块代码", "模块名称"};
                                 int[] keysWidth = {50, 50};
                                 String[] fieldsName = {"rightCode", "rightName"};
-                                json = queryOperate(target, "com.cn.bean.", "table", "PlatformRight", "RightCode", datas, rely, true, opt.getConnectBase(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
+                                String whereCase = "RightCode not in (select RightCode from tblPlatformRoleRight where RoleCode = '" + Units.getSubJsonValue(rely, "roleCode") + "')";
+                                json = queryOperate(target, "com.cn.bean.", "table", "PlatformRight", "RightCode", datas, rely, whereCase, true, opt.getConnectBase(), Integer.MAX_VALUE, pageIndex, keys, keysName, keysWidth, fieldsName);
+                                //System.out.println("json:" + json);
                             }
                             break;
                         }
@@ -1449,6 +1452,58 @@ public class BaseInterface extends HttpServlet {
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", new Class[0]);
         List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", commonController.getWhereSQLStr(objClass, keyWord, rely, isAll), pageSize, pageIndex, orderField, 0, conn);
+        if (null != list && list.size() > 0) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("{\"titles\":{");
+            for (int i = 0; i < keys.length; i++) {
+                buffer.append("\"").append(keys[i]).append("\"").append(":");
+                buffer.append("\"").append(keysName[i]).append(",").append(keysWidth[i]).append("%").append("\"").append(",");
+            }
+            buffer.deleteCharAt(buffer.length() - 1);
+            buffer.append("},\"datas\":[");
+            for (Iterator<Object> it = list.iterator(); it.hasNext();) {
+                Object object = it.next();
+                buffer.append("{");
+                for (int i = 0; i < keys.length; i++) {
+                    PropertyDescriptor descriptor = new PropertyDescriptor(fieldsName[i], objClass);
+                    Method getMethod = descriptor.getReadMethod();
+                    buffer.append("\"").append(keys[i]).append("\":").append("\"").append(getMethod.invoke(object)).append("\"").append(",");
+                }
+                buffer.deleteCharAt(buffer.length() - 1);
+                buffer.append("},");
+            }
+            buffer.deleteCharAt(buffer.length() - 1);
+            buffer.append("]");
+            buffer.append(",\"counts\":").append(method.invoke(null, new Object[]{}));
+            buffer.append(",\"target\":").append("\"").append(target).append("\"");
+            buffer.append(",\"rely\":").append(rely);
+
+            if (objClass.isAnnotationPresent(ClassDescription.class)) {
+                ClassDescription description = (ClassDescription) objClass.getAnnotation(ClassDescription.class);
+                buffer.append(",\"module\":").append("\"").append(description.classDesc()).append("\"");
+            }
+            buffer.append("}");
+            json = Units.objectToJson(0, "", buffer.toString());
+        } else {
+            json = Units.objectToJson(-1, "数据为空!", null);
+        }
+        return json;
+    }
+    
+    private String queryOperate(String target, String beanPackage, String type, String tableName,
+            String orderField, String keyWord, String rely, String whereCase, boolean isAll, Connection conn, int pageSize, int pageIndex,
+            String[] keys, String[] keysName, int[] keysWidth, String[] fieldsName) throws Exception {
+        String json;
+        CommonController commonController = new CommonController();
+        Class objClass = Class.forName(beanPackage + tableName);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
+        String whereSql = commonController.getWhereSQLStr(objClass, keyWord, rely, isAll);
+        if (Units.strIsEmpty(whereSql)) {
+            whereSql = whereCase;
+        } else {
+            whereSql = whereSql + (Units.strIsEmpty(whereCase) ? "" : " and " + whereCase);
+        }
+        List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", whereSql, pageSize, pageIndex, orderField, 0, conn);
         if (null != list && list.size() > 0) {
             StringBuffer buffer = new StringBuffer();
             buffer.append("{\"titles\":{");

@@ -32,7 +32,9 @@ public class CKListForFJHCK {
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
     private String fjHCKAmount;
+    @FieldDescription(description = "终端客户编号")
     private String fzDCustomerID;
+    @FieldDescription(description = "终端客户名称", operate = "display")
     private String fzDCustomerName;
     private String fjHCKProducerName;
     private String fjHOutWareHouseListRemark;

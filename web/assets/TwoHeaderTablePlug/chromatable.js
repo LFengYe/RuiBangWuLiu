@@ -18,10 +18,10 @@
             $(this).css('width', options.width).addClass("_scrolling");
 
             if (this.parentNode.className == "scrolling_inner") {
-                console.log("has parent");
+                //console.log("has parent");
                 return ;
             } else {
-                console.log("new");
+                //console.log("new");
                 $(this).wrap('<div class="scrolling_outer"><div class="scrolling_inner"></div></div>');
             }
             $(this).parents(".scrolling_outer").css({

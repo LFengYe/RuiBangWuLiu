@@ -111,7 +111,7 @@
 
             for (var i = 0; i < datas.length; i++) {
                 var itemData = datas[i];
-                console.log(itemData);
+                //console.log(itemData);
                 var htmlStr = this.getHtmlWithData(itemData);
                 var strBodyStyle = "<style>" + document.getElementById("print_code_style").innerHTML + "</style>";
                 htmlStr = strBodyStyle + "<body>" + htmlStr + "</body>";

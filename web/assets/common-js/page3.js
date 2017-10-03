@@ -8,6 +8,7 @@
     var $mainTable = $(".page3-container .page3-main-table");
     var $pageTurn = $(".page3-container .page3-pagination li a");
     var $search = $(".page3-container .page3-query");
+    var $hisSearch = $(".page3-container .page3-queryHistory");
     var $export = $(".page3-container .page3-export");
     var $keysword = $(".page3-container").find("input[name='keywords']");
     var $pageLeft = $(".page3-container .page3-left");
@@ -20,7 +21,7 @@
     };
 
     var pageSize = 15;
-    var dataType = "";
+    var dataType = "isCur";
     var pageIndex = 1;
 
     function initData(moudle) {
@@ -48,6 +49,7 @@
         var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
         var request = {};
         request.type = "create";
+        request.dataType = dataType;
         request.pageIndex = pageIndex;
         request.pageSize = pageSize;
         if (tmp.startTime && tmp.endTime) {
@@ -68,6 +70,7 @@
             $mainTableBox.insertTwoHeaderTable({
                 title0: arr.titles,
                 title1: null,
+                params: arr.params,
                 datas: arr.datas,
                 pageSize: pageSize,
                 dbclickRowCallBack: function (module, maps) {
@@ -82,6 +85,7 @@
                         $chidTableBox.insertTwoHeaderTable({
                             title0: data.titles,
                             title1: null,
+                            params: data.params,
                             datas: data.datas,
                             pageSize: pageSize,
                             dbclickRowCallBack: function (module, maps) {
@@ -96,6 +100,7 @@
                                     $thirdTableBox.insertTwoHeaderTable({
                                         title0: data.titles,
                                         title1: null,
+                                        params: data.params,
                                         datas: data.datas
                                     });
                                 }, function () {});
@@ -155,6 +160,7 @@
         $search.off("click");
         $search.click(function (e) {
             pageIndex = 1;
+            dataType = "isCur";
             getReportData();
             /*
              var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
@@ -174,20 +180,13 @@
              }, function () {});
              */
         });
-        /*
-         $keysword.change(function () {
-         });
-         $keysword.keypress(function (event) {
-         switch (event.keyCode) {
-         case 13:
-         if (moudle === "良品库存") {
-         var keyword = $(this).val();
-         $mainTableBox.filter(keyword);
-         }
-         break;
-         }
-         });
-         */
+        
+        $hisSearch.off("click");
+        $hisSearch.click(function(e){
+            pageIndex = 1;
+            dataType = "isHis";
+            getReportData();
+        });
 
         $pageLeft.off("click");
         $pageLeft.click(function (e) {

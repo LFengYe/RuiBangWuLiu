@@ -5,7 +5,6 @@ import com.cn.bean.AreaLedIPInfo;
 import com.cn.bean.PartStore;
 import com.cn.bean.app.JHOutWareHouseList;
 import com.cn.controller.CommonController;
-import com.cn.servlet.DataInterface;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.ExportExcel;
 import com.cn.util.RedisAPI;
@@ -22,18 +21,17 @@ import org.apache.log4j.Logger;
 
 public class LedControl {
 
-    private static final Logger logger = Logger.getLogger(DataInterface.class);
+    private static final Logger logger = Logger.getLogger(LedControl.class);
 
-    /*
+    
     public static void main(String[] args) {
         try {
-            //setLedAreaCode("2906130-CA01", "1121");
-            setC01PartStauts();
+            
         } catch (Exception ex) {
             
         }
     }
-    */
+    
 
     /**
      * 测试计划设置

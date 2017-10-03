@@ -58,7 +58,23 @@
                     }, function () {
                     });
                 },
-                selectpanel: sp  //选择框对象
+                selectpanel: sp, //选择框对象
+                lastInputCallBack: function () {
+                    $("#page1-add").trigger("click");
+                },
+                tableInputCallBack: function () {
+                    if ($inputBox.isFinishForm()) {
+                        var obj = $inputBox.getInputValObj(true);
+                        if (!$tableBox.isUnique(obj)) {
+                            return false;
+                        }
+                        if ($inputBox.checkValue() && $inputBox.calculateValue()) {
+                            $tableBox.add(0, obj);
+                            submitDatas.add.push(obj);
+                            selectedSet = [];
+                        }
+                    }
+                }
             });
 
             $tableBox.insertTable({
@@ -106,7 +122,7 @@
 
             $printArea.createPrintArea({
                 printArea: data.printArea
-                ,type: 1
+                , type: 1
             });
         }, function () {
             $inputBox.html("");
@@ -237,13 +253,17 @@
                     inboundCount += obj.operateAmount;
                 }
             }
-            var obj = {};obj.inboundCount = inboundCount;
+            var obj = {};
+            obj.inboundCount = inboundCount;
             $printArea.controlData(obj);
             $printArea.render(selectedSet);
-            $("#print_area").css({
-                "height": "auto"
-                , "overflow": "visible"
-            }).printArea();
+            $printArea.printHtml();
+            /*
+             $("#print_area").css({
+             "height": "auto"
+             , "overflow": "visible"
+             }).printArea();
+             */
         });
     }
 

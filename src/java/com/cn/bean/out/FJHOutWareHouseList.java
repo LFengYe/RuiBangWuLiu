@@ -50,6 +50,10 @@ public class FJHOutWareHouseList {
     private int fjhCKAmount;
     //@FieldDescription(description = "良品数量(最大出库数量)", operate = "import")
     private int lpAmount;
+    @FieldDescription(description = "缺少数量", operate = "display")
+    private int shortAmount;
+    @FieldDescription(description = "库存数量", operate = "display")
+    private int kcCount;
     @FieldDescription(description = "非计划出库完成时间")
     private String fjhCKTime;
     @FieldDescription(description = "备注", operate = "import")
@@ -185,5 +189,21 @@ public class FJHOutWareHouseList {
 
     public void setLpAmount(int lpAmount) {
         this.lpAmount = lpAmount;
+    }
+
+    public int getShortAmount() {
+        return shortAmount;
+    }
+
+    public void setShortAmount(int shortAmount) {
+        this.shortAmount = shortAmount;
+    }
+
+    public int getKcCount() {
+        return kcCount;
+    }
+
+    public void setKcCount(int kcCount) {
+        this.kcCount = kcCount;
     }
 }

@@ -1,0 +1,18 @@
+{
+    "titles": {
+        "zdCustomerName": "终端客户,1,1,10%,false",
+        "zdBackWareHouseID": "退库单号,1,1,10%,false",
+        "ycFLocation": "原存放地址,1,1,10%,false",
+        "zdTKType": "退库类型,1,1,10%,false",
+        "supplierID": "供应商编号,1,1,10%,false",
+        "supplierName": "供应商名称,1,1,10%,false",
+        "partCode": "部品件号,1,1,10%,false",
+        "partName": "部品名称,1,1,10%,false",
+        "inboundBatch": "入库批次,1,1,10%,false",
+        "zdTKAmount": "退库数量,1,1,10%,false",
+        "zdTKProducerName": "制单员,1,1,10%,false",
+        "zdTKAuditTime": "审核时间,1,1,10%,false",
+        "zdTKAuditStaffName": "审核人,1,1,10%,false",
+        "zdBackWareHouseRemark": "备注,1,1,10%,false"
+    }
+}

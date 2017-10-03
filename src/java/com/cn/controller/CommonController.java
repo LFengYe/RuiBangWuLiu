@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -798,13 +799,16 @@ public class CommonController {
         Set<String> keySet = object.keySet();
         for (Field field : fields) {
             if (Modifier.isStatic(field.getModifiers())) {
+                //System.out.println("isStatic");
                 continue;
             }
             if (!isInput(objClass, field.getName())) {
+                //System.out.println("is not input");
                 continue;
             }
             //如果特定字段中包含改字段, 则拼接相等条件
             if (keySet != null && keySet.contains(field.getName())) {
+                //System.out.println("contain field");
                 continue;
             }
 
@@ -1013,6 +1017,26 @@ public class CommonController {
                 Iterator<Element> iterator = element.elementIterator();
                 while (iterator.hasNext()) {
                     menuJson += hasRight(iterator.next(), roleRightList);
+                }
+                menuJson = menuJson.substring(0, menuJson.length() - 1);
+                menuJson += "},";
+            } else {
+                menuJson += "\"" + element.attributeValue("text") + "\":";
+                menuJson += "\"" + element.attributeValue("hypelnk") + "," + element.attributeValue("url") + "," + element.attributeValue("id") + "," + element.attributeValue("icon") + "\",";
+            }
+        }
+        return menuJson;
+    }
+    
+    public String hasAppRight(Element element, ArrayList<String> roleRightList) {
+        String menuJson = "";
+        String roleCode = element.attributeValue("id");
+        if (roleRightList.contains(roleCode) && roleCode.startsWith("80")) {
+            if (element.elementIterator().hasNext()) {
+                menuJson += "\"" + element.attributeValue("text") + "\":{";
+                Iterator<Element> iterator = element.elementIterator();
+                while (iterator.hasNext()) {
+                    menuJson += hasAppRight(iterator.next(), roleRightList);
                 }
                 menuJson = menuJson.substring(0, menuJson.length() - 1);
                 menuJson += "},";

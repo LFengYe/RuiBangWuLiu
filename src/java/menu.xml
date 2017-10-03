@@ -69,15 +69,16 @@
             <three  hypelnk="page3"  id="1050105" text="不良品入库报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050108" text="返修良品入库" url="report.do"></three>
             <three  hypelnk="page3"  id="1050109" text="返修不良品入库" url="report.do"></three>
-            
             <three  hypelnk="page3"  id="1050106" text="良品返修出库" url="report.do"></three>
             <three  hypelnk="page3"  id="1050107" text="不良品返修出库" url="report.do"></three>
-            <!--<three  hypelnk="page3"  id="1050110" text="计划出库报表" url="report.do"></three>-->
-            <three  hypelnk="page3"  id="1050111" text="配送上线报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050110" text="计划出库报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050112" text="非生产领料报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050119" text="临时调货报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050113" text="退货出库报表" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050114" text="终端良品退库" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050115" text="终端不良品退库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050114" text="良品终端退库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050115" text="不良品终端退库" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050119" text="线旁退集配区报表" url="report.do"></three>
+            <!--<three  hypelnk="page3"  id="1050111" text="配送上线报表" url="report.do"></three>-->
             <three  hypelnk="page3"  id="1050116" text="调货计划明细" url="report.do"></three>
             <three  hypelnk="page3"  id="1050117" text="供应商送货明细" url="report.do"></three>
             <three  hypelnk="page3"  id="1050118" text="发货出库明细" url="report.do"></three>
@@ -90,10 +91,10 @@
             <three  hypelnk="page3"  id="1050205" text="返修品库存报表" url="report.do"></three>
             <!--<three  hypelnk="page3"  id="1050206" text="待检品盈亏" url="report.do"></three>-->
             <!--<three  hypelnk="page3"  id="1050207" text="良品盈亏" url="report.do"></three>-->
-            <three  hypelnk="page3"  id="1050208" text="不良品盈亏" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050209" text="返修品盈亏" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050210" text="线旁盈亏" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050211" text="集配区盈亏" url="report.do"></three>
+            <!--<three  hypelnk="page3"  id="1050208" text="不良品盈亏" url="report.do"></three>-->
+            <!--<three  hypelnk="page3"  id="1050209" text="返修品盈亏" url="report.do"></three>-->
+            <!--<three  hypelnk="page3"  id="1050210" text="线旁盈亏" url="report.do"></three>-->
+            <!--<three  hypelnk="page3"  id="1050211" text="集配区盈亏" url="report.do"></three>-->
         </second>
         <second hypelnk="page3"  id="10503" text="部品收发存总表" url="report.do"></second>
         <second hypelnk="page3"  id="10504" text="部品计划完成情况" url="report.do"></second>
@@ -110,8 +111,14 @@
             <three  hypelnk="page3"  id="1050706" text="库房结存分录" url="report.do"></three>
             <three  hypelnk="page3"  id="1050707" text="现场期初分录" url="report.do"></three>
             <three  hypelnk="page3"  id="1050708" text="现场结存分录" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050709" text="库房盈亏分录" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050710" text="现场盈亏分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050709" text="库房调账分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050710" text="现场调账分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050711" text="集配区期初分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050712" text="线旁期初分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050713" text="集配区结存分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050714" text="线旁结存分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050715" text="集配区调账分录" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050716" text="线旁调账分录" url="report.do"></three>
         </second>
     </first>
     <first  hypelnk=""  id="106" text="基础信息管理" url="base.do">
@@ -132,7 +139,7 @@
         <second hypelnk="page1"  id="10614" text="显示屏档案" url="base.do"></second>
         <second hypelnk="page1"  id="10615" text="备货员档案" url="base.do"></second>
     </first>
-    <first hypelnk=""  id="107" text="系统设置" url="action.do">
+<!--    <first hypelnk=""  id="107" text="系统设置" url="action.do">
         <second hypelnk=""  id="10701" text="用户管理" url="action.do"></second>
         <second hypelnk=""  id="10702" text="结账管理" url="action.do"></second>
         <second hypelnk=""  id="10703" text="数据备份与还原" url="action.do"></second>
@@ -141,7 +148,7 @@
         <second hypelnk=""  id="10706" text="权限设置" url="action.do"></second>
         <second hypelnk=""  id="10707" text="结转管理" url="action.do"></second>
         <second hypelnk=""  id="10708" text="修改密码" url="action.do"></second>
-    </first>
+    </first>-->
     <first hypelnk="app"  id="801" text="备货管理" url="app.do">
         <second hypelnk="page1" icon="ic_stocking1"  id="8011" text="一工厂备货" url="app.do"></second>
         <second hypelnk="page1" icon="ic_stocking2"  id="8012" text="二工厂备货" url="app.do"></second>
@@ -166,9 +173,15 @@
         <second hypelnk="page2" icon="ic_return_storehouse"  id="8047" text="终端退库" url="in.do"></second>
         <second hypelnk="page2" icon="ic_inspection"  id="8048" text="报检信息" url="move.do"></second>
     </first>
+    <first hypelnk="app"  id="807" text="未完成计划" url="report.do">
+        <second hypelnk="page4" icon="ic_stocking1"  id="8071" text="备货未完成" url="out.do"></second>
+        <second hypelnk="page4" icon="ic_picking1"  id="8072" text="领货未完成" url="out.do"></second>
+        <second hypelnk="page4" icon="ic_distribution1"  id="8073" text="配送未完成" url="out.do"></second>
+    </first>
     <first hypelnk="app"  id="805" text="报表查询" url="report.do">
         <second hypelnk="page3" icon="ic_inspection"  id="8051" text="报检信息查询" url="report.do"></second>
         <second hypelnk="page3" icon="ic_out_finished"  id="8052" text="部品计划完成情况" url="report.do"></second>
+        <second hypelnk="page3" icon="ic_out_finished"  id="80516" text="部品收发存总表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_alarm"  id="8053" text="部品报警明细表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_send_check_in"  id="8054" text="良品入库报表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_return_storehouse"  id="8055" text="部品退库分录" url="report.do"></second>
@@ -180,9 +193,11 @@
         <second hypelnk="page3" icon="ic_rework_in"  id="80511" text="返修不良品入库" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="80512" text="不良品库存报表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="80513" text="良品库存" url="out.do"></second>
+        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80514" text="非生产领料报表" url="out.do"></second>
+        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80515" text="临时调货报表" url="out.do"></second>
     </first>
     <first hypelnk="app"  id="806" text="系统设置" url="app.do">
-        <second hypelnk="page1" icon="ic_system_setting"  id="8061" text="修改密码" url=""></second>
-        <second hypelnk="page1" icon="ic_user_manager"  id="8062" text="参数设置" url=""></second>
+        <second hypelnk="modify_pass" icon="ic_user_manager"  id="8061" text="修改密码" url="active.do"></second>
+        <second hypelnk="system_setting" icon="ic_system_setting"  id="8062" text="参数设置" url=""></second>
     </first>
 </menu>

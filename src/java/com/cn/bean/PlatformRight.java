@@ -20,8 +20,11 @@ public class PlatformRight {
         recordCount = aRecordCount;
     }
     
+    @FieldDescription(description = "权限代码", operate = "import")
     private String rightCode;
+    @FieldDescription(description = "权限名称", operate = "import")
     private String rightName;
+    @FieldDescription(description = "权限链接", operate = "import")
     private String righthyperlnk;
 
     public String getRightCode() {

@@ -4,10 +4,16 @@
         "supplierName": "供应商,1,1,20%,false",
         "partName": "部品名称,1,1,20%,false",
         "partCode": "部品件号,1,1,20%,false",
-        "djth": "待检退货,1,1,20%,true",
-        "lpth": "良品退货,1,1,20%,true",
-        "blpth": "不良品退货,1,1,20%,true",
-        "fxth": "返修退货,1,1,20%,true",
-        "thTotal": "退货总数,1,1,20%,true"
+        "djth": "待检退货,1,1,20%,true,退货出库报表",
+        "lpth": "良品退货,1,1,20%,true,退货出库报表",
+        "blpth": "不良品退货,1,1,20%,true,退货出库报表",
+        "fxth": "返修退货,1,1,20%,true,退货出库报表",
+        "thTotal": "退货总数,1,1,20%,false"
+    },
+    "params": {
+        "djth": {"partStatus": "待检品"},
+        "lpth": {"partStatus": "良品"},
+        "blpth": {"partStatus": "不良品"},
+        "fxth": {"partStatus": "返修品"}
     }
 }

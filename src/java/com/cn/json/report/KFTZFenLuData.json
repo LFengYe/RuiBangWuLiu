@@ -1,0 +1,14 @@
+{
+    "titles": {
+        "supplierID": "供应商代码,1,1,20%,false",
+        "supplierName": "供应商名称,1,1,20%,false",
+        "partName": "部品名称,1,1,20%,false",
+        "partCode": "部品件号,1,1,20%,false",
+        "djzscy": "待检品,1,1,20%,false",
+        "sjzscy": "送检品,1,1,20%,false",
+        "lpzscy": "良品,1,1,20%,false",
+        "blpzscy": "不良品,1,1,20%,false",
+        "fxzscy": "返修品,1,1,20%,false",
+        "zscyTotal": "总数,1,1,20%,false"
+    }
+}

@@ -83,7 +83,7 @@ public class AppInterface extends HttpServlet {
 
             /*验证是否登陆*/
             if (!"userLogin".equals(module)
-                    && (session.getAttribute("user") == null || session.getAttribute("employee") == null)) {
+                    && (session.getAttribute("user") == null || session.getAttribute("loginType") == null || session.getAttribute("employee") == null)) {
                 session.invalidate();
                 json = Units.objectToJson(-99, "未登陆", null);
                 PrintWriter out = response.getWriter();
@@ -99,8 +99,14 @@ public class AppInterface extends HttpServlet {
                 return;
             }
 
-            Employee employee = (Employee) session.getAttribute("employee");
-            //System.out.println("employee:" + JSONObject.toJSONString(employee));
+            Employee employee = null;
+            Customer curCustomer = null;
+            if (session.getAttribute("loginType").toString().compareTo("employeeLogin") == 0) {
+               employee  = (Employee) session.getAttribute("employee");
+            }
+            if (session.getAttribute("loginType").toString().compareTo("customerLogin") == 0) {
+               curCustomer  = (Customer) session.getAttribute("employee");
+            }
 
             switch (module) {
                 //<editor-fold desc="用户登陆模板">
@@ -157,6 +163,10 @@ public class AppInterface extends HttpServlet {
                 }
                 //</editor-fold>
 
+                //<editor-fold desc="未完成计划">
+                
+                //</editor-fold>
+                
                 /**
                  * ***************************************部品出库管理**************************************
                  */

@@ -9,6 +9,6 @@
         "kfjclp": "良品,1,1,10%,true,良品库存报表",
         "kfjCblp": "不良品,1,1,10%,true,不良品库存报表",
         "kfjcfxp": "返修品,1,1,10%,true,返修品库存报表",
-        "kfJCTotal": "总数,1,1,10%,true"
+        "kfJCTotal": "总数,1,1,10%,flase"
     }
 }

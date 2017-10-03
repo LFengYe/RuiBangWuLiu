@@ -90,6 +90,7 @@ public class ContainerServlet extends HttpServlet {
             String detail = paramsJson.getString("detail");
             String fileName = paramsJson.getString("fileName");
             String operateType = paramsJson.getString("type");
+            String dataType = (paramsJson.getString("dataType") == null) ? ("isCur") : paramsJson.getString("dataType");// isCur表示当期查询, isHis表示往期查询
             String start = paramsJson.getString("start");
             String end = paramsJson.getString("end");
             int isHistory = paramsJson.getIntValue("isHistory");
@@ -101,7 +102,8 @@ public class ContainerServlet extends HttpServlet {
             String importPath = getServletContext().getRealPath("/").replace("\\", "/") + "excelFile/";
 
             /*验证是否登陆*/
-            if (!"userLogin".equals(module) && session.getAttribute("user") == null) {
+            if (!"userLogin".equals(module)
+                    && (session.getAttribute("user") == null || session.getAttribute("loginType") == null || session.getAttribute("employee") == null)) {
                 session.invalidate();
                 json = Units.objectToJson(-99, "未登陆", null);
                 PrintWriter out = response.getWriter();

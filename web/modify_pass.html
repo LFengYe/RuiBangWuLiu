@@ -21,13 +21,31 @@ and open the template in the editor.
         <script type="text/javascript" src="javascript/script.js"></script>
         <script type="text/javascript">
             window.onload = function () {
-                $("#modifyPass").bind("click", function(){
+                $("#modifyPass").bind("click", function () {
                     if (inputCheck()) {
-                        
+                        var request = {
+                            module: "修改密码",
+                            oldPassword: $("#old_password").val(),
+                            newPassword: $("#new_password").val()
+                        };
+                        $.ajax({
+                            type: "post",
+                            url: "/RuiBangWuLiu/action.do",
+                            data: JSON.stringify(request),
+                            dataType: "json",
+                            success: function (data) {
+                                alert(data.message);
+                                if (data.status !== 0) {                                    
+                                } else {
+                                    var index = parent.layer.getFrameIndex(window.name);
+                                    parent.layer.close(index);
+                                }
+                            }
+                        });
                     }
                 });
             };
-            
+
             function inputCheck() {
                 if ($.trim($("#old_password").val()) === "") {
                     $("#old_password").focus();

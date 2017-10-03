@@ -31,7 +31,7 @@ $.fn.insertInputForm = function (options) {
                 var txt = controls[i].split(',')[0];
                 if (controls[i].indexOf('@') >= 0) {
                     //如果只有一个@符, 并且不是是@table(供选择值只有一个)
-                    if ((controls[i].indexOf('@') === controls[i].lastIndexOf("@")) && controls[i].indexOf("@table") < 0) {
+                    if ((controls[i].indexOf('@') === controls[i].lastIndexOf("@")) && (controls[i].indexOf("@table") < 0 && controls[i].indexOf("@mulOptionTable") < 0)) {
                         var value = controls[i].split("@")[1];
                         if (controls[i].split(',')[1] === 'hidden') {
                             inputResult += "<input class='input' type='hidden' name='" + i + "' value='" + value + "'/>";
@@ -416,7 +416,7 @@ $.fn.insertInputForm = function (options) {
                     }
                     //进行ajax请求
                     options.requesFun(data, function (data) {
-                        data.titles.checkbox = "选择,5%";
+                        data.titles.checkbox = "选择,0%";
                         options.selectpanel.reset(3, data, function (resarr) {
                             for (var i = 0; i < resarr.length; i++) {
                                 var obj = resarr[i];

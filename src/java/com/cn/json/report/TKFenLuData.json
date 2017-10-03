@@ -4,16 +4,28 @@
         "supplierName": "供应商,1,1,10%,false",
         "partName": "部品名称,1,1,10%,false",
         "partCode": "部品件号,1,1,10%,false",
-        "lpJP1": "一工厂良品退库,1,1,10%,true",
-        "lpJP2": "二工厂良品退库,1,1,10%,true",
-        "lpJP3": "三工厂良品退库,1,1,10%,true",
-        "blPJP1": "一工厂不良品退库,1,1,10%,true",
-        "blPJP2": "二工厂不良品退库,1,1,10%,true",
-        "blPJP3": "三工厂不良品退库,1,1,10%,true",
-        "tkTotal": "退货总数,1,1,10%,true",
-        "xp1": "一工厂线旁退库,1,1,10%,true",
-        "xp2": "二工厂线旁退库,1,1,10%,true",
-        "xp3": "三工厂线旁退库,1,1,10%,true",
-        "tjPQTotal": "退线旁总数,1,1,10%,false"
+        "lpJP1": "一工厂良品退库,1,1,10%,true,良品终端退库",
+        "lpJP2": "二工厂良品退库,1,1,10%,true,良品终端退库",
+        "lpJP3": "三工厂良品退库,1,1,10%,true,良品终端退库",
+        "blPJP1": "一工厂不良品退库,1,1,10%,true,不良品终端退库",
+        "blPJP2": "二工厂不良品退库,1,1,10%,true,不良品终端退库",
+        "blPJP3": "三工厂不良品退库,1,1,10%,true,不良品终端退库",
+        "tkTotal": "退库总数,1,1,10%,flase",
+        "xp1": "一工厂线旁,1,1,10%,true,线旁退集配区报表",
+        "xp2": "二工厂线旁,1,1,10%,true,线旁退集配区报表",
+        "xp3": "三工厂线旁,1,1,10%,true,线旁退集配区报表",
+        "tjPQTotal": "线旁退集配区总数,1,1,10%,false"
+    },
+    "params": {
+        "lpJP1": {"ZDCustomerID": "9997"},
+        "lpJP2": {"ZDCustomerID": "9998"},
+        "lpJP3": {"ZDCustomerID": "9999"},
+        "blPJP1": {"ZDCustomerID": "9997"},
+        "blPJP2": {"ZDCustomerID": "9998"},
+        "blPJP3": {"ZDCustomerID": "9999"},
+        "xp1": {"ZDCustomerID": "9997"},
+        "xp2": {"ZDCustomerID": "9998"},
+        "xp3": {"ZDCustomerID": "9999"}
     }
+    
 }

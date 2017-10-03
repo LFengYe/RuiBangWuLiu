@@ -15,6 +15,7 @@ import com.cn.bean.out.FJHOutWareHouseList;
 import com.cn.bean.out.LPKCListInfo;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.RedisAPI;
+import com.cn.util.Units;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -31,8 +32,44 @@ import org.apache.log4j.Logger;
  * @author LFeng
  */
 public class FJHOutWareHouseController {
+
     private static final Logger logger = Logger.getLogger(JHOutWareHouseController.class);
-    
+
+    /**
+     * 添加计划
+     * @param fjhInfo
+     * @param fjhType
+     * @return 0 计划添加成功, 否则添加失败
+     * @throws Exception
+     */
+    public int addFJHData(String fjhInfo, String fjhType) throws Exception {
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
+        String json;
+        JSONObject jhOutWareHouse = JSONObject.parseObject(fjhInfo);
+        jhOutWareHouse.put("fjhType", fjhType);
+        int addRes = commonController.dataBaseOperate("[" + jhOutWareHouse.toJSONString() + "]", "com.cn.bean.out.", "FJHOutWareHouse", "add", opt.getConnect()).get(0);
+        if (addRes == 0) {
+            String jhListInfo = RedisAPI.get(Units.getSubJsonValue(fjhInfo, "fjhOutWareHouseID"));
+            addRes = commonController.dataBaseOperate(jhListInfo, "com.cn.bean.out.", "FJHOutWareHouseList", "add", opt.getConnect()).get(0);
+            if (addRes == 0) {
+                JSONObject object1 = new JSONObject();
+                object1.put("datas", jhListInfo);
+                json = Units.objectToJson(0, "计划添加成功!", object1.toJSONString());
+            } else {
+                logger.info("计划明细添加失败!");
+                if (!Units.strIsEmpty(Units.getSubJsonStr(fjhInfo, "fjhOutWareHouseID"))) {
+                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(fjhInfo, "fjhOutWareHouseID") + "]", "com.cn.bean.out.", "FJHOutWareHouse", "delete", opt.getConnect());
+                }
+                json = Units.objectToJson(-1, "明细添加失败!", null);
+            }
+        } else {
+            logger.info("计划添加失败!");
+            json = Units.objectToJson(-1, "计划添加失败!", null);
+        }
+        return addRes;
+    }
+
     public ArrayList<FJHOutWareHouseList> importFJHData(List<Object> importData, String jhInfo) {
         try {
             FJHOutWareHouse fjhOutWareHouse = JSONObject.parseObject(jhInfo, FJHOutWareHouse.class);
@@ -52,7 +89,7 @@ public class FJHOutWareHouseController {
             if (importData != null && importData.size() > 0) {
                 importData = resolveZCData(importData);//分解总成计划
                 mergeDuplicateFJH(importData);// 合并重复
-                
+
                 /**
                  * 是否满足全部计划
                  */
@@ -70,6 +107,7 @@ public class FJHOutWareHouseController {
                     if (baseInfo == null) {
                         item.setListNumber(-2);//没有对应件号
                         item.setFailedReason("没有该件号");
+                        item.setShortAmount(item.getFjhCKAmount());
                         importResult.add(item);
                         isAllEnough = false;
                         continue;
@@ -78,6 +116,7 @@ public class FJHOutWareHouseController {
                     if (customer == null) {
                         item.setListNumber(-3);//没有供应商信息
                         item.setFailedReason("没有该供应商");
+                        item.setShortAmount(item.getFjhCKAmount());
                         importResult.add(item);
                         isAllEnough = false;
                         continue;
@@ -89,6 +128,7 @@ public class FJHOutWareHouseController {
                     if (containerInfo == null) {
                         item.setListNumber(-4);//没有出库盛具信息
                         item.setFailedReason("没有出库盛具信息");
+                        item.setShortAmount(item.getFjhCKAmount());
                         importResult.add(item);
                         isAllEnough = false;
                         continue;
@@ -127,7 +167,7 @@ public class FJHOutWareHouseController {
                                 logger.info("实时良品库存出现负值: 供应商代码-->" + lpkcl.getSupplierID() + ",件号-->" + lpkcl.getPartCode() + ",批次-->" + lpkcl.getInboundBatch() + ",数量-->" + lpkcl.getLpAmount());
                                 continue;
                             }
-                            
+
                             FJHOutWareHouseList detail = new FJHOutWareHouseList();
                             detail.setListNumber(completeResult.size() + 1);
                             detail.setSupplierID(item.getSupplierID());
@@ -156,6 +196,8 @@ public class FJHOutWareHouseController {
                     } else {
                         item.setListNumber(-1);//库存不能够满足计划
                         item.setFailedReason("库存不足");
+                        item.setKcCount(kcCount);
+                        item.setShortAmount(ckAmount - kcCount);
                         isAllEnough = false;
                     }
                     item.setSupplierName(customer.getCustomerAbbName());
@@ -179,7 +221,7 @@ public class FJHOutWareHouseController {
         }
         return null;
     }
-    
+
     /**
      * 如果导入计划数据中包含重复数据, 则合并重复数据
      *
@@ -191,7 +233,7 @@ public class FJHOutWareHouseController {
             FJHOutWareHouseList tmp = (FJHOutWareHouseList) iter.next();
             if (map.containsKey(tmp.getSupplierID() + "_" + tmp.getPartCode())) {
                 FJHOutWareHouseList jhList = (FJHOutWareHouseList) map.get(tmp.getSupplierID() + "_" + tmp.getPartCode());
-                jhList.setFjhCKAmount(jhList.getFjhCKAmount()+ tmp.getFjhCKAmount());
+                jhList.setFjhCKAmount(jhList.getFjhCKAmount() + tmp.getFjhCKAmount());
             } else {
                 map.put(tmp.getSupplierID() + "_" + tmp.getPartCode(), tmp);
             }
@@ -226,7 +268,7 @@ public class FJHOutWareHouseController {
                             PartBomInfo bomInfo = JSONObject.parseObject(str, PartBomInfo.class);
                             if (detailMap.containsKey(item.getSupplierID() + "_" + bomInfo.getDetailPartCode())) {
                                 FJHOutWareHouseList list = detailMap.get(item.getSupplierID() + "_" + bomInfo.getDetailPartCode());
-                                list.setFjhCKAmount(list.getFjhCKAmount()+ item.getFjhCKAmount() * bomInfo.getDcAmount());
+                                list.setFjhCKAmount(list.getFjhCKAmount() + item.getFjhCKAmount() * bomInfo.getDcAmount());
                             } else {
                                 FJHOutWareHouseList list = new FJHOutWareHouseList();
                                 list.setSupplierID(item.getSupplierID());
@@ -250,7 +292,7 @@ public class FJHOutWareHouseController {
         }
         return null;
     }
-    
+
     /**
      * 获取良品库存列表
      *
@@ -327,7 +369,7 @@ public class FJHOutWareHouseController {
         }
         return null;
     }
-    
+
     /**
      * 获取给定的厂家与产品的良品库存列表
      *

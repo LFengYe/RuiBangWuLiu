@@ -47,6 +47,22 @@
                     }
                 });
             }
+            function dataMoveToHistory() {
+                var index = layer.load(2);
+                var request = {
+                    module: "数据结转"
+                };
+                $.ajax({
+                    type: "post",
+                    url: "/RuiBangWuLiu/action.do",
+                    data: JSON.stringify(request),
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(index);
+                        alert(data.message);
+                    }
+                });
+            }
             function displayLayer(type, content, title, callback) {
                 layer.closeAll();
                 layer.open({
@@ -68,6 +84,20 @@
             .div_code_row{display: table-row;word-break: keep-all;white-space: nowrap;font-size: 11pt;}
             .div_code_cell{display:block;float: left;border: 0px solid;height: 20px;line-height: 20px;font-size: 11pt;}
             .div_code_cell_img{display:block;border: 0px solid;width: 200px;text-align: center;font-size: 11pt;}
+        </style>
+        <style type="text/css" id="print_table_style">
+            .div_table_2{display: table;width: 90%;text-align: center;border-top: 1px solid;border-right: 1px solid;margin: 0px;padding: 0px;}
+            .div_table_2 .col{display: inline-block;text-align: center;font-size: 14px;}
+            .div_table_2 .col ul{margin: 0px;padding: 0px;list-style-type: none;}
+            .div_table_2 .col ul li{text-align: center;height: 20px;line-height: 20px;border-top: 1px solid;white-space:nowrap;}
+            .div_table_2 .div_row{display: table-row;clear: both;}
+            .div_table_2 .div_cell{display: table-cell;float: left;line-height: 20px;border-bottom: 1px solid;white-space: nowrap;}
+            .div_table_2 .div_cell .cell_separate{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: right;}
+            .div_table_2 .div_cell .cell_start{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: left;}
+            .div_table_2 .div_cell[flag='title']{height: 40px;line-height: 40px;font-weight: bold;font-size: x-large;background-image: url(assets/img/rbwl_logo.png);background-repeat: no-repeat;background-size: 139px 40px}
+            .div_table_2 .div_cell[flag='title'] .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
+            .div_table_2 .div_cell[flag='title'] .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
+            .div_table_2 .div_cell_double{height: 40px;line-height: 40px;}
         </style>
     </head>
     <body>
@@ -91,7 +121,8 @@
                                 </li>
                             </ul>
                             <ul class="nav right-nav " role="tablist">
-                                <li role="presentation"><a href="javascript:modifyPassLayer();"><span class="glyphicon glyphicon-user"></span></a></li>
+                                <li role="presentation"><a href="javascript:dataMoveToHistory();" title="数据结转"><span class="glyphicon glyphicon-retweet"></span></a></li>
+                                <li role="presentation"><a href="javascript:modifyPassLayer();" title="修改密码"><span class="glyphicon glyphicon-user"></span></a></li>
                                 <li role="presentation"><a href=""><span class="glyphicon glyphicon-home"></span></a></li>
                                 <li role="presentation"><a href="login.html" title="切换用户"><span class="glyphicon glyphicon-refresh"></span></a></li>
                             </ul>
@@ -143,6 +174,7 @@
                                             <input type="text" name="endTime" class="wc-control end-time" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
                                         </div>
                                         <button class="page2-query">查询</button>
+                                        <button class="page2-queryHistory">往期查询</button>
                                         <div class="page2-history checkbox"><label><input type="checkbox"/>查询历史记录</label></div>
                                         <button class="page2-addItem" style="display: inline-block">添加</button>
                                         <button class="page2-deleteItem" style="display: inline-block">删除</button>
@@ -209,6 +241,7 @@
                                             <input type="text" name="endTime" class="wc-control end-time" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
                                         </div>
                                         <button class="page3-query">查询</button>
+                                        <button class="page3-queryHistory">往期查询</button>
                                         <button class="page3-export">导出</button>
                                     </div>
                                     <div class="page3-show-table"><!--动态添加--></div>
@@ -234,7 +267,7 @@
                                         <!--动态添加-->
                                     </div>
                                 </div>
-                                
+
                                 <div class="page3-third-list">
                                     <div class="page3-main-input-box">
                                         <!--动态添加-->
@@ -255,8 +288,7 @@
         </div>
 
         <!--打印区域-->
-        <div class="print_area content_hidden" id="print_area">
-        </div>
+        <div class="print_area content_hidden" id="print_area"></div>
 
         <div id="code_img_div" class="content_hidden"><img alt="条码" src="" class="div_code_cell_img content_hidden"/></div>
 

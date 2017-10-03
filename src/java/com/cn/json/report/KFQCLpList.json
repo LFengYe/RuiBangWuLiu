@@ -1,0 +1,11 @@
+{
+    "titles": {
+        "supplierID": "供应商代码,1,1,20%,false",
+        "supplierName": "供应商名称,1,1,20%,false",
+        "partName": "部品名称,1,1,20%,false",
+        "partCode": "部品件号,1,1,20%,false",
+        "inboundBatch": "入库批次,1,1,20%,false",
+        "kfQCAmount": "良品数量,1,1,20%,false",
+        "partState": "部品状态,1,1,20%,false"
+    }
+}

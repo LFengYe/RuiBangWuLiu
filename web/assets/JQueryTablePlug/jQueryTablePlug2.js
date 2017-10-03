@@ -57,6 +57,7 @@
         getPageInfo: function () {
             var that = this;
             this.pageCount = parseInt((this.dataCount % this.pageSize === 0) ? (this.dataCount / this.pageSize) : (this.dataCount / this.pageSize + 1));
+            //console.log(this.pageCount);
             laypage({
                 cont: this.find(".jtb-page .page"),
                 pages: this.pageCount,
@@ -236,7 +237,9 @@
         },
         emptyTable: function () {
             this.datas = [];
+            this.dataCount = 0;
             _funs_.getTableDataDOM.call(this, this.datas);
+            _funs_.getPageInfo.call(this);
         },
         getAllDatas: function () {
             return this.datas;

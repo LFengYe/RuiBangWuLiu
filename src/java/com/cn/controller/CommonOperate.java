@@ -9,16 +9,34 @@ import com.alibaba.fastjson.JSONArray;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.Units;
 import java.lang.reflect.Field;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author LFeng
  */
 public class CommonOperate {
+    
+    private static final Logger logger = Logger.getLogger(CommonOperate.class);
 
+    /**
+     * 批量删除操作
+     * @param delete
+     * @param packageName
+     * @param className
+     * @param orderField
+     * @param findField
+     * @return
+     * @throws Exception 
+     */
     public String batchDeleteOperate(String delete, String packageName, String className, String orderField, String findField) throws Exception {
         String json;
         
@@ -63,5 +81,46 @@ public class CommonOperate {
         return json;
     }
     
-    
+    /**
+     * 数据结转
+     * @param user
+     * @return 
+     */
+    public String dataMoveToHistory(String user) {
+        DatabaseOpt opt;
+        Connection conn = null;
+        CallableStatement statement = null;
+        String json = null;
+        try {
+            opt = new DatabaseOpt();
+            conn = opt.getConnect();
+            statement = conn.prepareCall("{? = call spMoveRBDataToHistoryWare(?, ?)}");
+            statement.registerOutParameter(1, Types.INTEGER);
+            statement.setString(2, user);
+            statement.registerOutParameter(3, Types.NVARCHAR);
+            
+            statement.execute();
+            int result = statement.getInt(1);
+            String message = statement.getString("RESULTMessage");
+            if (result == 100) {
+                json = Units.objectToJson(0, "结转成功", null);
+            } else {
+                json = Units.objectToJson(result, message, null);
+            }
+        } catch (SQLException ex) {
+            logger.error("数据库执行出错", ex);
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                logger.error("数据库关闭连接错误", ex);
+            }
+        }
+        return json;
+    }
 }

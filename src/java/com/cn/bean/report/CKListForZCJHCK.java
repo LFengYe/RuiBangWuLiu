@@ -13,8 +13,8 @@ import com.cn.bean.FieldDescription;
  */
 public class CKListForZCJHCK {
 
-    private String jhCKProduceTime;
     private String jhOutWareHouseID;
+    private String jhDemandTime;
     @FieldDescription(description = "出入类型")
     private String outInType;
     @FieldDescription(description = "出入方式")
@@ -29,12 +29,13 @@ public class CKListForZCJHCK {
     private String partID;
     @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
-    private String packingNumber;
     private String lhAmount;
+    @FieldDescription(description = "终端客户编号")
     private String zdCustomerID;
+    @FieldDescription(description = "终端客户名称", operate = "display")
     private String zdCustomerName;
+    private String jhCKProduceTime;
     private String jhCKProducerName;
-    private String lhProgressListRemark;
 
     public String getJhCKProduceTime() {
         return jhCKProduceTime;
@@ -84,14 +85,6 @@ public class CKListForZCJHCK {
         this.partCode = partCode;
     }
 
-    public String getPackingNumber() {
-        return packingNumber;
-    }
-
-    public void setPackingNumber(String packingNumber) {
-        this.packingNumber = packingNumber;
-    }
-
     public String getLhAmount() {
         return lhAmount;
     }
@@ -114,14 +107,6 @@ public class CKListForZCJHCK {
 
     public void setJhCKProducerName(String jhCKProducerName) {
         this.jhCKProducerName = jhCKProducerName;
-    }
-
-    public String getLhProgressListRemark() {
-        return lhProgressListRemark;
-    }
-
-    public void setLhProgressListRemark(String lhProgressListRemark) {
-        this.lhProgressListRemark = lhProgressListRemark;
     }
 
     public String getZdCustomerName() {
@@ -154,5 +139,13 @@ public class CKListForZCJHCK {
 
     public void setPartID(String partID) {
         this.partID = partID;
+    }
+
+    public String getJhDemandTime() {
+        return jhDemandTime;
+    }
+
+    public void setJhDemandTime(String jhDemandTime) {
+        this.jhDemandTime = jhDemandTime;
     }
 }

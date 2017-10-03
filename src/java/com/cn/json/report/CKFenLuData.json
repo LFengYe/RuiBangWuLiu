@@ -6,16 +6,24 @@
         "partCode": "部品件号,1,1,10%,false",
         "jhck1": "一工厂计划出库,1,1,10%,true,计划出库报表",
         "lsdh1": "一工厂临时调货,1,1,10%,true,临时调货报表",
-        "jpsx1": "一工厂集配上线,1,1,10%,true,配送上线报表",
         "jhck2": "二工厂计划出库,1,1,10%,true,计划出库报表",
         "lsdh2": "二工厂临时调货,1,1,10%,true,临时调货报表",
-        "jpsx2": "二工厂集配上线,1,1,10%,true,配送上线报表",
         "jhck3": "三工厂计划出库,1,1,10%,true,计划出库报表",
         "lsdh3": "三工厂临时调货,1,1,10%,true,临时调货报表",
-        "jpsx3": "三工厂集配上线,1,1,10%,true,配送上线报表",
         "fjhck": "非计划出库,1,1,10%,true,非生产领料报表",
         "lpfxck": "良品返修出库,1,1,10%,true,良品返修出库",
         "blpfxck": "不良品返修出库,1,1,10%,true,不良品返修出库",
         "ckTotal": "出库总数,1,1,10%,false"
+    },
+    "params": {
+        "jhck1": {"ZDCustomerID": "9997"},
+        "lsdh1": {"ZDCustomerID": "9997"},
+        "jpsx1": {"ZDCustomerID": "9997"},
+        "jhck2": {"ZDCustomerID": "9998"},
+        "lsdh2": {"ZDCustomerID": "9998"},
+        "jpsx2": {"ZDCustomerID": "9998"},
+        "jhck3": {"ZDCustomerID": "9999"},
+        "lsdh3": {"ZDCustomerID": "9999"},
+        "jpsx3": {"ZDCustomerID": "9999"}
     }
 }

@@ -30,7 +30,7 @@ public class UnFinishAmount {
     private int sx2;
     @FieldDescription(description = "三工厂上线未完整数量")
     private int sx3;
-    @FieldDescription(description = "保健信息未完整数量")
+    @FieldDescription(description = "报检信息未完整数量")
     private int bj;
     @FieldDescription(description = "非计划未完整数量")
     private int fjh;
@@ -44,6 +44,12 @@ public class UnFinishAmount {
     private int fxIn;
     @FieldDescription(description = "返修出库未完整数量")
     private int fxOut;
+    @FieldDescription(description = "备货未完成")
+    private int bhUnFinish;
+    @FieldDescription(description = "领货未完成")
+    private int lhUnFinish;
+    @FieldDescription(description = "配送未完成")
+    private int sxUnFinish;
 
     public int getBh1() {
         return bh1;
@@ -171,6 +177,30 @@ public class UnFinishAmount {
 
     public void setLsdh(int lsdh) {
         this.lsdh = lsdh;
+    }
+
+    public int getBhUnFinish() {
+        return bhUnFinish;
+    }
+
+    public void setBhUnFinish(int bhUnFinish) {
+        this.bhUnFinish = bhUnFinish;
+    }
+
+    public int getLhUnFinish() {
+        return lhUnFinish;
+    }
+
+    public void setLhUnFinish(int lhUnFinish) {
+        this.lhUnFinish = lhUnFinish;
+    }
+
+    public int getSxUnFinish() {
+        return sxUnFinish;
+    }
+
+    public void setSxUnFinish(int sxUnFinish) {
+        this.sxUnFinish = sxUnFinish;
     }
     
 }

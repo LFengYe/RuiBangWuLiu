@@ -22,7 +22,7 @@ public class KFTZFenLuData {
     private String partName;
     @FieldDescription(description = "部品件号")
     private String partCode;
-    @FieldDescription(description = "待检品账实差异")
+    @FieldDescription(description = "待检品")
     private int djzscy;
     @FieldDescription(description = "送检品")
     private int sjzscy;

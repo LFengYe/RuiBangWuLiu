@@ -83,6 +83,7 @@ public class ReportInterface extends HttpServlet {
             String datas = (paramsJson.getString("datas") == null) ? ("") : paramsJson.getString("datas");
             String operateType = paramsJson.getString("type");
             String clientType = paramsJson.getString("clientType");
+            String dataType = (paramsJson.getString("dataType") == null) ? ("isCur") : paramsJson.getString("dataType");// isCur表示当期查询, isHis表示往期查询
             String start = paramsJson.getString("start");
             String end = paramsJson.getString("end");
             int pageIndex = paramsJson.getIntValue("pageIndex");
@@ -94,7 +95,7 @@ public class ReportInterface extends HttpServlet {
 
             /*验证是否登陆*/
             if (!"userLogin".equals(module)
-                    && (session.getAttribute("user") == null || session.getAttribute("loginType") == null)) {
+                    && (session.getAttribute("user") == null || session.getAttribute("loginType") == null || session.getAttribute("employee") == null)) {
                 session.invalidate();
                 json = Units.objectToJson(-99, "未登陆", null);
                 PrintWriter out = response.getWriter();
@@ -122,7 +123,7 @@ public class ReportInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetSFCTotalDataWithFilter", "com.cn.bean.report.", "SFCTotalData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetSFCTotalDataWithFilter", "com.cn.bean.report.", "SFCTotalData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -140,7 +141,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetSFCTotalDataWithFilter", "com.cn.bean.report.", "SFCTotalData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetSFCTotalDataWithFilter", "com.cn.bean.report.", "SFCTotalData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -159,55 +160,7 @@ public class ReportInterface extends HttpServlet {
                                 });
                             }
                             break;
-                            /*
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetSFCTotalData", "SFCTotalData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    SFCTotalData data = (SFCTotalData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
-                                    data.setPartUnit(baseInfo.getPartUnit());
-                                    data.setAutoStylingName(baseInfo.getAutoStylingName());
-                                    data.setDcAmount(String.valueOf(baseInfo.getdCAmount()));
-
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                            break;
-                             */
                         }
-                        /*
-                        case "export": {
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            List<Object> list = commonController.proceduceQuery("spGetSFCTotalData", proParams, "com.cn.bean.report.SFCTotalData", opt.getConnect());
-                            if (list != null && list.size() > 0) {
-                                for (Object obj : list) {
-                                    SFCTotalData data = (SFCTotalData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
-                                    data.setPartUnit(baseInfo.getPartUnit());
-                                    data.setAutoStylingName(baseInfo.getAutoStylingName());
-                                    data.setDcAmount(String.valueOf(baseInfo.getdCAmount()));
-
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            }
-                            json = exportData("com.cn.bean.report.", "SFCTotalData", (ArrayList<Object>) list);
-                            break;
-                        }
-                         */
                     }
                     break;
                 }
@@ -218,7 +171,7 @@ public class ReportInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGETJHCKCompletionAllInfoWithFilter", "com.cn.bean.report.", "JHCKCompletionAllInfo",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGETJHCKCompletionAllInfoWithFilter", "com.cn.bean.report.", "JHCKCompletionAllInfo",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -226,7 +179,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGETJHCKCompletionAllInfoWithFilter", "com.cn.bean.report.", "JHCKCompletionAllInfo",
+                                json = reportOperateWithPage(dataType, operateType, "spGETJHCKCompletionAllInfoWithFilter", "com.cn.bean.report.", "JHCKCompletionAllInfo",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -250,7 +203,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(operateType, "spGetKCAlertListData", "KCAlertListData", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetKCAlertListData", "KCAlertListData", proParams, new ReportInterface.ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KCAlertListData data = (KCAlertListData) obj;
@@ -276,26 +229,8 @@ public class ReportInterface extends HttpServlet {
                 case "待检入库报表": {
                     switch (operation) {
                         case "create": {
-                            /*JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetRKListForDjpRK", "RKListForDjpRK", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    RKListForDjpRK data = (RKListForDjpRK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
-
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -310,7 +245,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
+                                json = reportOperateWithPage(dataType, operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -328,7 +263,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -342,26 +277,6 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetRKListForDjpRK", "RKListForDjpRK", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    RKListForDjpRK data = (RKListForDjpRK) obj;
-                                    if (data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
-
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -378,7 +293,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(operateType, "spGetRKListForSJCK", "RKListForSJCK", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForSJCK", "RKListForSJCK", proParams, new ReportInterface.ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForSJCK data = (RKListForSJCK) obj;
@@ -399,7 +314,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("Endtime", "string," + end);
                             }
                             JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetRKListForSJCK", "RKListForSJCK", proParams, new ReportInterface.FilterListItemOperate() {
+                            json = reportOperateWithFilter(dataType, operateType, "spGetRKListForSJCK", "RKListForSJCK", proParams, new ReportInterface.FilterListItemOperate() {
                                 @Override
                                 public void itemFilter(List<Object> filterList, Object obj) {
                                     RKListForSJCK data = (RKListForSJCK) obj;
@@ -431,7 +346,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(operateType, "spGetRKListForSJTK", "RKListForSJTK", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForSJTK", "RKListForSJTK", proParams, new ReportInterface.ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForSJTK data = (RKListForSJTK) obj;
@@ -449,7 +364,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("Endtime", "string," + end);
                             }
                             JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetRKListForSJTK", "RKListForSJTK", proParams, new ReportInterface.FilterListItemOperate() {
+                            json = reportOperateWithFilter(dataType, operateType, "spGetRKListForSJTK", "RKListForSJTK", proParams, new ReportInterface.FilterListItemOperate() {
                                 @Override
                                 public void itemFilter(List<Object> filterList, Object obj) {
                                     RKListForSJTK data = (RKListForSJTK) obj;
@@ -476,25 +391,8 @@ public class ReportInterface extends HttpServlet {
                 case "良品入库报表": {
                     switch (operation) {
                         case "create": {
-                            /*JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetRKListForLpRK", "RKListForLpRK", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    RKListForLpRK data = (RKListForLpRK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
-
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });*/
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -509,7 +407,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
+                                json = reportOperateWithPage(dataType, operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -527,7 +425,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -541,29 +439,6 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetRKListForLpRK", "RKListForLpRK", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    RKListForLpRK data = (RKListForLpRK) obj;
-                                    if (data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
-
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -575,26 +450,8 @@ public class ReportInterface extends HttpServlet {
                 case "不良品入库报表": {
                     switch (operation) {
                         case "create": {
-                            /*JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetRKListForBLpRK", "RKListForBLpRK", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    RKListForBLpRK data = (RKListForBLpRK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
-
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -609,7 +466,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
+                                json = reportOperateWithPage(dataType, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -627,7 +484,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -671,7 +528,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
@@ -705,7 +562,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
@@ -717,31 +574,6 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,良品");
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetRKListForFxpRK", "RKListForFxpRK", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    RKListForFxpRK data = (RKListForFxpRK) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
-
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -772,7 +604,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
@@ -806,7 +638,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
@@ -818,31 +650,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,不良品");
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetRKListForFxpRK", "RKListForFxpRK", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    RKListForFxpRK data = (RKListForFxpRK) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -873,7 +681,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
@@ -907,7 +715,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
@@ -919,31 +727,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,良品");
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetCKListForFxpCK", "CKListForFxpCK", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    CKListForFxpCK data = (CKListForFxpCK) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -974,7 +758,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
@@ -1008,7 +792,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
@@ -1020,20 +804,185 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="良品终端退库_spGetRKListForZDTK_JPQ(良品)">
+                case "良品终端退库": {
+                    switch (operation) {
+                        case "create": {
                             JSONObject proParams = new JSONObject();
-                            proParams.put("PartState", "string,不良品");
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
+                            Class classPath = Class.forName("com.cn.bean.report.RKListForZDTK");
+                            proParams.put("fields", "string,*");
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                proParams.put("wherecase", "string,(" + commonController.getWhereSQLStrAllField(classPath, datas) + ") and SupplierID = '" + userName + "'");
+                            } else {
+                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrAllField(classPath, datas));
+                            }
+                            proParams.put("pageSize", "int," + pageSize);
+                            proParams.put("pageIndex", "int," + pageIndex);
+                            proParams.put("orderField", "string,SupplierID");
+                            proParams.put("orderFlag", "int,0");
+                            proParams.put("PartState", "string,良品");
+                            if (!Units.strIsEmpty(end)) {
                                 proParams.put("Endtime", "string," + end);
                             }
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetCKListForFxpCK", "CKListForFxpCK", proParams, new ReportInterface.FilterListItemOperate() {
+                            if (!Units.strIsEmpty(start)) {
+                                proParams.put("BeginTime", "string," + start);
+                            }
+                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperate() {
                                 @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    CKListForFxpCK data = (CKListForFxpCK) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
+                                public void itemObjOperate(Object obj) {
+                                    RKListForZDTK data = (RKListForZDTK) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                        case "request_detail": {
+                            JSONObject proParams = new JSONObject();
+                            Class classPath = Class.forName("com.cn.bean.report.RKListForZDTK");
+                            proParams.put("fields", "string,*");
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                proParams.put("wherecase", "string,(" + commonController.getWhereSQLStrWithObject(classPath, JSONObject.parseObject(datas)) + ") and SupplierID = '" + userName + "'");
+                            } else {
+                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrWithObject(classPath, JSONObject.parseObject(datas)));
+                            }
+                            proParams.put("pageSize", "int," + pageSize);
+                            proParams.put("pageIndex", "int," + pageIndex);
+                            proParams.put("orderField", "string,SupplierID");
+                            proParams.put("orderFlag", "int,0");
+                            proParams.put("PartState", "string,良品");
+                            if (!Units.strIsEmpty(end)) {
+                                proParams.put("Endtime", "string," + end);
+                            }
+                            if (!Units.strIsEmpty(start)) {
+                                proParams.put("BeginTime", "string," + start);
+                            }
+                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    RKListForZDTK data = (RKListForZDTK) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="不良品终端退库_spGetRKListForZDTK_JPQ(不良品)">
+                case "不良品终端退库": {
+                    switch (operation) {
+                        case "create": {
+                            JSONObject proParams = new JSONObject();
+                            Class classPath = Class.forName("com.cn.bean.report.RKListForZDTK");
+                            proParams.put("fields", "string,*");
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                proParams.put("wherecase", "string,(" + commonController.getWhereSQLStrAllField(classPath, datas) + ") and SupplierID = '" + userName + "'");
+                            } else {
+                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrAllField(classPath, datas));
+                            }
+                            proParams.put("pageSize", "int," + pageSize);
+                            proParams.put("pageIndex", "int," + pageIndex);
+                            proParams.put("orderField", "string,SupplierID");
+                            proParams.put("orderFlag", "int,0");
+                            proParams.put("PartState", "string,不良品");
+                            if (!Units.strIsEmpty(end)) {
+                                proParams.put("Endtime", "string," + end);
+                            }
+                            if (!Units.strIsEmpty(start)) {
+                                proParams.put("BeginTime", "string," + start);
+                            }
+                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    RKListForZDTK data = (RKListForZDTK) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+
+                                    customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
+                                    data.setZdCustomerName(customer.getCustomerAbbName());
+                                }
+                            });
+                            break;
+                        }
+                        case "request_detail": {
+                            JSONObject proParams = new JSONObject();
+                            Class classPath = Class.forName("com.cn.bean.report.RKListForZDTK");
+                            proParams.put("fields", "string,*");
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                proParams.put("wherecase", "string,(" + commonController.getWhereSQLStrWithObject(classPath, JSONObject.parseObject(datas)) + ") and SupplierID = '" + userName + "'");
+                            } else {
+                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrWithObject(classPath, JSONObject.parseObject(datas)));
+                            }
+                            proParams.put("pageSize", "int," + pageSize);
+                            proParams.put("pageIndex", "int," + pageIndex);
+                            proParams.put("orderField", "string,SupplierID");
+                            proParams.put("orderFlag", "int,0");
+                            proParams.put("PartState", "string,不良品");
+                            if (!Units.strIsEmpty(end)) {
+                                proParams.put("Endtime", "string," + end);
+                            }
+                            if (!Units.strIsEmpty(start)) {
+                                proParams.put("BeginTime", "string," + start);
+                            }
+                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    RKListForZDTK data = (RKListForZDTK) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+
+                                    customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
+                                    data.setZdCustomerName(customer.getCustomerAbbName());
+                                }
+                            });
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="线旁退集配区报表_spGetRKListForZDTK_XP">
+                case "线旁退集配区报表": {
+                    switch (operation) {
+                        case "create": {
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForZDTK_XPWithFilter", "com.cn.bean.report.", "RKListForZDTK",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        RKListForZDTK data = (RKListForZDTK) obj;
                                         PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
@@ -1041,11 +990,49 @@ public class ReportInterface extends HttpServlet {
                                         Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                         data.setSupplierName(customer.getCustomerAbbName());
 
-                                        filterList.add(data);
+                                        customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
+                                        data.setZdCustomerName(customer.getCustomerAbbName());
                                     }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetRKListForZDTK_XPWithFilter", "com.cn.bean.report.", "RKListForZDTK",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        RKListForZDTK data = (RKListForZDTK) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+
+                                        customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
+                                        data.setZdCustomerName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForZDTK_XPWithFilter", "com.cn.bean.report.", "RKListForZDTK",
+                                    "SupplierID", datas, pageSize, pageIndex, start, end,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    RKListForZDTK data = (RKListForZDTK) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+
+                                    customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
+                                    data.setZdCustomerName(customer.getCustomerAbbName());
                                 }
                             });
-                             */
                             break;
                         }
                     }
@@ -1058,15 +1045,28 @@ public class ReportInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
+                            Class classPath = Class.forName("com.cn.bean.report.CKListForZCJHCK");
+                            proParams.put("fields", "string,*");
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                proParams.put("wherecase", "string,(" + commonController.getWhereSQLStrAllField(classPath, datas) + ") and SupplierID = '" + userName + "'");
+                            } else {
+                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrAllField(classPath, datas));
+                            }
+                            proParams.put("pageSize", "int," + pageSize);
+                            proParams.put("pageIndex", "int," + pageIndex);
+                            proParams.put("orderField", "string,SupplierID");
+                            proParams.put("orderFlag", "int,0");
+                            proParams.put("ZDCustomerID", "string,9998");
+                            if (!Units.strIsEmpty(end)) {
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(operateType, "spGetCKListForZCJHCK", "CKListForZCJHCK", proParams, new ReportInterface.ReportItemOperate() {
+                            if (!Units.strIsEmpty(start)) {
+                                proParams.put("BeginTime", "string," + start);
+                            }
+                            json = reportOperate(dataType, operateType, "spGetCKListForZCJHCKWithFilter", "CKListForZCJHCK", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForZCJHCK data = (CKListForZCJHCK) obj;
-//                                    System.out.println(data.getPartCode() + ":" + RedisAPI.get("partBaseInfo_" + data.getPartCode()));
                                     PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                     data.setPartName(baseInfo.getPartName());
                                     data.setPartID(baseInfo.getPartID());
@@ -1082,26 +1082,40 @@ public class ReportInterface extends HttpServlet {
                         }
                         case "request_detail": {
                             JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetCKListForZCJHCK", "CKListForZCJHCK", proParams, new ReportInterface.FilterListItemOperate() {
+                            Class classPath = Class.forName("com.cn.bean.report.CKListForZCJHCK");
+                            proParams.put("fields", "string,*");
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                proParams.put("wherecase", "string,(" + commonController.getWhereSQLStrWithObject(classPath, JSONObject.parseObject(datas)) + ") and SupplierID = '" + userName + "'");
+                            } else {
+                                proParams.put("wherecase", "string," + commonController.getWhereSQLStrWithObject(classPath, JSONObject.parseObject(datas)));
+                            }
+                            proParams.put("pageSize", "int," + pageSize);
+                            proParams.put("pageIndex", "int," + pageIndex);
+                            proParams.put("orderField", "string,SupplierID");
+                            proParams.put("orderFlag", "int,0");
+                            proParams.put("ZDCustomerID", "string,9998");
+                            if (!Units.strIsEmpty(end)) {
+                                proParams.put("Endtime", "string," + end);
+                            }
+                            if (!Units.strIsEmpty(start)) {
+                                proParams.put("BeginTime", "string," + start);
+                            }
+                            json = reportOperate(dataType, operateType, "spGetCKListForZCJHCKWithFilter", "CKListForZCJHCK", proParams, new ReportItemOperate() {
                                 @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
+                                public void itemObjOperate(Object obj) {
                                     CKListForZCJHCK data = (CKListForZCJHCK) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
 
-                                        customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
-                                        data.setZdCustomerName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
+                                    customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
+                                    data.setZdCustomerName(customer.getCustomerAbbName());
                                 }
                             });
+
                             break;
                         }
                     }
@@ -1113,48 +1127,52 @@ public class ReportInterface extends HttpServlet {
                 case "临时调货报表": {
                     switch (operation) {
                         case "create": {
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetCKListForLSDHCK", "CKListForZCJHCK", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    CKListForZCJHCK data = (CKListForZCJHCK) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
-
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-
-                                    customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
-                                    data.setZdCustomerName(customer.getCustomerAbbName());
-                                }
-                            });
-                            break;
-                        }
-                        case "request_detail": {
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetCKListForLSDHCK", "CKListForZCJHCK", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    CKListForZCJHCK data = (CKListForZCJHCK) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        RKListForBLpRK data = (RKListForBLpRK) obj;
                                         PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
                                         Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                         data.setSupplierName(customer.getCustomerAbbName());
-
-                                        customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getZdCustomerID()), Customer.class);
-                                        data.setZdCustomerName(customer.getCustomerAbbName());
-                                        filterList.add(data);
                                     }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        RKListForBLpRK data = (RKListForBLpRK) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
+                                    "SupplierID", datas, pageSize, pageIndex, start, end,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    RKListForBLpRK data = (RKListForBLpRK) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
                             break;
@@ -1168,12 +1186,43 @@ public class ReportInterface extends HttpServlet {
                 case "非生产领料报表": {
                     switch (operation) {
                         case "create": {
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetCKListForFJHCKWithFilter", "com.cn.bean.report.", "CKListForFJHCK",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        CKListForFJHCK data = (CKListForFJHCK) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetCKListForFJHCKWithFilter", "com.cn.bean.report.", "CKListForFJHCK",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        CKListForFJHCK data = (CKListForFJHCK) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
                             }
-                            json = reportOperate(operateType, "spGetCKListForFJHCK", "CKListForFJHCK", proParams, new ReportInterface.ReportItemOperate() {
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetCKListForFJHCKWithFilter", "com.cn.bean.report.", "CKListForFJHCK",
+                                    "SupplierID", datas, pageSize, pageIndex, start, end,
+                                    new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFJHCK data = (CKListForFJHCK) obj;
@@ -1183,33 +1232,6 @@ public class ReportInterface extends HttpServlet {
 
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                     data.setSupplierName(customer.getCustomerAbbName());
-
-                                    customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getFzDCustomerName()), Customer.class);
-                                    data.setFzDCustomerName(customer.getCustomerAbbName());
-                                }
-                            });
-                            break;
-                        }
-                        case "request_detail": {
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetCKListForFJHCK", "CKListForFJHCK", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    CKListForFJHCK data = (CKListForFJHCK) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
-
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-
-                                        customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getFzDCustomerID()), Customer.class);
-                                        data.setFzDCustomerName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
                                 }
                             });
                             break;
@@ -1228,7 +1250,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(operateType, "spGetCKListForJPSX", "CKListForJPSX", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForJPSX", "CKListForJPSX", proParams, new ReportInterface.ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForJPSX data = (CKListForJPSX) obj;
@@ -1252,7 +1274,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("Endtime", "string," + end);
                             }
                             JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetCKListForJPSX", "CKListForJPSX", proParams, new ReportInterface.FilterListItemOperate() {
+                            json = reportOperateWithFilter(dataType, operateType, "spGetCKListForJPSX", "CKListForJPSX", proParams, new ReportInterface.FilterListItemOperate() {
                                 @Override
                                 public void itemFilter(List<Object> filterList, Object obj) {
                                     CKListForJPSX data = (CKListForJPSX) obj;
@@ -1303,7 +1325,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
@@ -1337,7 +1359,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
@@ -1349,31 +1371,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetTHListForBPTH", "THListForBPTH", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    THListForBPTH data = (THListForBPTH) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -1387,27 +1385,8 @@ public class ReportInterface extends HttpServlet {
                 case "良品库存报表": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                //proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetKFJCListForLp", "KFJCListForLp", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    KFJCListForLp data = (KFJCListForLp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
-
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end, new ReportInterface.ReportItemOperate() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
@@ -1421,7 +1400,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end, new ReportInterface.ReportItemOperate() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
@@ -1438,7 +1417,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
                                     "SupplierID", datas, pageSize, pageIndex, null, end, new ReportInterface.ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
@@ -1451,26 +1430,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetKFJCListForLp", "KFJCListForLp", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    KFJCListForLp data = (KFJCListForLp) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -1482,27 +1442,9 @@ public class ReportInterface extends HttpServlet {
                 case "不良品库存报表": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetKFJCListForBLp", "KFJCListForBLp", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    KFJCListForBLp data = (KFJCListForBLp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -1517,7 +1459,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -1535,7 +1477,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
                                     "SupplierID", datas, pageSize, pageIndex, null, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -1549,26 +1491,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetKFJCListForBLp", "KFJCListForBLp", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    KFJCListForBLp data = (KFJCListForBLp) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -1580,27 +1503,9 @@ public class ReportInterface extends HttpServlet {
                 case "待检库存报表": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetKFJCListForDjp", "KFJCListForDjp", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    KFJCListForDjp data = (KFJCListForDjp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -1615,7 +1520,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -1633,7 +1538,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
                                     "SupplierID", datas, pageSize, pageIndex, null, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -1647,26 +1552,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetKFJCListForDjp", "KFJCListForDjp", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    KFJCListForDjp data = (KFJCListForDjp) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -1678,27 +1564,9 @@ public class ReportInterface extends HttpServlet {
                 case "送检品库存报表": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetKFJCListForSjp", "KFJCListForSjp", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    KFJCListForSjp data = (KFJCListForSjp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -1713,7 +1581,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -1731,7 +1599,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
                                     "SupplierID", datas, pageSize, pageIndex, null, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -1745,26 +1613,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetKFJCListForSjp", "KFJCListForSjp", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    KFJCListForSjp data = (KFJCListForSjp) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -1776,27 +1625,9 @@ public class ReportInterface extends HttpServlet {
                 case "返修品库存报表": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetKFJCListForFxp", "KFJCListForFxp", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    KFJCListForFxp data = (KFJCListForFxp) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -1811,7 +1642,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -1829,7 +1660,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
                                     "SupplierID", datas, pageSize, pageIndex, null, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -1843,26 +1674,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetKFJCListForFxp", "KFJCListForFxp", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    KFJCListForFxp data = (KFJCListForFxp) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -1876,23 +1688,9 @@ public class ReportInterface extends HttpServlet {
                 case "库存期初分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            json = reportOperate(operateType, "spGetKFQCFenLuData", "KFQCFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    KFQCFenLuData data = (KFQCFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null,
                                         new ReportItemOperate() {
                                     @Override
@@ -1907,7 +1705,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null,
                                         new ReportItemOperate() {
                                     @Override
@@ -1925,7 +1723,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, null, null,
                                     new ReportItemOperate() {
                                 @Override
@@ -1939,26 +1737,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetKFQCFenLuData", "KFQCFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    KFQCFenLuData data = (KFQCFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -1970,23 +1749,9 @@ public class ReportInterface extends HttpServlet {
                 case "部品退库分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            json = reportOperate(operateType, "spGetTKFenLuData", "TKFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    TKFenLuData data = (TKFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2001,7 +1766,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2019,7 +1784,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -2033,26 +1798,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetTKFenLuData", "TKFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    TKFenLuData data = (TKFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -2064,23 +1810,9 @@ public class ReportInterface extends HttpServlet {
                 case "部品退货分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            json = reportOperate(operateType, "spGetTHFenLuData", "THFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    THFenLuData data = (THFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2095,7 +1827,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2113,7 +1845,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateWithPage(operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -2127,33 +1859,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetTHFenLuData", "THFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    THFenLuData data = (THFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                            json = reportOperateWithPage(operateType, "spGETJHCKCompletionAllInfoWithFilter", "com.cn.bean.report.", "JHCKCompletionAllInfo",
-                                    "SupplierID", datas, pageSize, pageIndex, start, end,
-                                    new ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -2165,27 +1871,9 @@ public class ReportInterface extends HttpServlet {
                 case "部品出库分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetCKFenLuData", "CKFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    CKFenLuData data = (CKFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2200,7 +1888,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2218,7 +1906,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateDetailWithPage(operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -2232,26 +1920,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetCKFenLuData", "CKFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    CKFenLuData data = (CKFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -2263,27 +1932,9 @@ public class ReportInterface extends HttpServlet {
                 case "部品入库分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetRKFenLuData", "RKFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    RKFenLuData data = (RKFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2298,7 +1949,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2316,7 +1967,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateWithPage(operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -2330,26 +1981,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetRKFenLuData", "RKFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    RKFenLuData data = (RKFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -2361,27 +1993,9 @@ public class ReportInterface extends HttpServlet {
                 case "库房结存分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetKFJCFenLuData", "KFJCFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    KFJCFenLuData data = (KFJCFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2396,7 +2010,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2414,7 +2028,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateWithPage(operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, null, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -2428,26 +2042,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetKFJCFenLuData", "KFJCFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    KFJCFenLuData data = (KFJCFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -2459,28 +2054,10 @@ public class ReportInterface extends HttpServlet {
                 case "现场期初分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetXCQCFenLuData", "XCQCFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    XCQCFenLuData data = (XCQCFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
-                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
                                         new ReportItemOperate() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
@@ -2494,8 +2071,8 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
-                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                json = reportOperateWithPage(dataType, operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
                                         new ReportItemOperate() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
@@ -2512,8 +2089,8 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateWithPage(operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
-                                    "SupplierID", datas, pageSize, pageIndex, start, end,
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
+                                    "SupplierID", datas, pageSize, pageIndex, null, null,
                                     new ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
@@ -2526,26 +2103,126 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetXCQCFenLuData", "XCQCFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    XCQCFenLuData data = (XCQCFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="集配区期初分录_spGetXC_JPQQCFenLuData">
+                case "集配区期初分录": {
+                    switch (operation) {
+                        case "create": {
+
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_JPQQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQQCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_JPQQCFenLuData data = (XC_JPQQCFenLuData) obj;
                                         PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
                                         Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                         data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
                                     }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetXC_JPQQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQQCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_JPQQCFenLuData data = (XC_JPQQCFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_JPQQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQQCFenLuData",
+                                    "SupplierID", datas, pageSize, pageIndex, null, null,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    XC_JPQQCFenLuData data = (XC_JPQQCFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                             */
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="线旁期初分录_spGetXC_XPQCFenLuData">
+                case "线旁期初分录": {
+                    switch (operation) {
+                        case "create": {
+
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_XPQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPQCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_XPQCFenLuData data = (XC_XPQCFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetXC_XPQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPQCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_XPQCFenLuData data = (XC_XPQCFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_XPQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPQCFenLuData",
+                                    "SupplierID", datas, pageSize, pageIndex, null, null,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    XC_XPQCFenLuData data = (XC_XPQCFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
                             break;
                         }
                     }
@@ -2557,27 +2234,9 @@ public class ReportInterface extends HttpServlet {
                 case "现场结存分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetXCJCFenLuData", "XCJCFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    XCJCFenLuData data = (XCJCFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2592,7 +2251,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2610,7 +2269,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateWithPage(operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -2624,26 +2283,129 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetXCJCFenLuData", "XCJCFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    XCJCFenLuData data = (XCJCFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="集配区结存分录_spGetXC_JPQJCFenLuData">
+                case "集配区结存分录": {
+                    switch (operation) {
+                        case "create": {
+
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_JPQJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQJCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_JPQJCFenLuData data = (XC_JPQJCFenLuData) obj;
                                         PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
                                         Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                         data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
                                     }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetXC_JPQJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQJCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_JPQJCFenLuData data = (XC_JPQJCFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_JPQJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQJCFenLuData",
+                                    "SupplierID", datas, pageSize, pageIndex, start, end,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    XC_JPQJCFenLuData data = (XC_JPQJCFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                             */
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="线旁结存分录_spGetXC_XPJCFenLuData">
+                case "线旁结存分录": {
+                    switch (operation) {
+                        case "create": {
+
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_XPJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPJCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_XPJCFenLuData data = (XC_XPJCFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetXC_XPJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPJCFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_XPJCFenLuData data = (XC_XPJCFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_XPJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPJCFenLuData",
+                                    "SupplierID", datas, pageSize, pageIndex, start, end,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    XC_XPJCFenLuData data = (XC_XPJCFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+
                             break;
                         }
                     }
@@ -2652,30 +2414,12 @@ public class ReportInterface extends HttpServlet {
                 //</editor-fold>
 
                 //<editor-fold desc="库房调账分录_spGetKFTZFenLuData">
-                case "库房盈亏分录": {
+                case "库房调账分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetKFTZFenLuData", "KFTZFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    KFTZFenLuData data = (KFTZFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2690,7 +2434,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2708,7 +2452,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateWithPage(operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -2722,26 +2466,7 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetKFTZFenLuData", "KFTZFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    KFTZFenLuData data = (KFTZFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
-                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                        data.setPartName(baseInfo.getPartName());
-                                        data.setPartID(baseInfo.getPartID());
 
-                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                        data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
-                                    }
-                                }
-                            });
-                             */
                             break;
                         }
                     }
@@ -2750,30 +2475,12 @@ public class ReportInterface extends HttpServlet {
                 //</editor-fold>
 
                 //<editor-fold desc="现场调账分录_spGetXCTZFenLuData">
-                case "现场盈亏分录": {
+                case "现场调账分录": {
                     switch (operation) {
                         case "create": {
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            if (!Units.strIsEmpty(start) && !Units.strIsEmpty(end)) {
-                                proParams.put("BeginTime", "string," + start);
-                                proParams.put("Endtime", "string," + end);
-                            }
-                            json = reportOperate(operateType, "spGetXCTZFenLuData", "XCTZFenLuData", proParams, new ReportInterface.ReportItemOperate() {
-                                @Override
-                                public void itemObjOperate(Object obj) {
-                                    XCTZFenLuData data = (XCTZFenLuData) obj;
-                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
-                                    data.setPartName(baseInfo.getPartName());
-                                    data.setPartID(baseInfo.getPartID());
 
-                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
-                                    data.setSupplierName(customer.getCustomerAbbName());
-                                }
-                            });
-                             */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2788,7 +2495,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
+                                json = reportOperateWithPage(dataType, operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2806,7 +2513,7 @@ public class ReportInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = reportOperateWithPage(operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -2820,26 +2527,129 @@ public class ReportInterface extends HttpServlet {
                                     data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                            /*
-                            JSONObject proParams = new JSONObject();
-                            JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "spGetXCTZFenLuData", "XCTZFenLuData", proParams, new ReportInterface.FilterListItemOperate() {
-                                @Override
-                                public void itemFilter(List<Object> filterList, Object obj) {
-                                    XCTZFenLuData data = (XCTZFenLuData) obj;
-                                    if (data.getSupplierID().compareToIgnoreCase(dataJson.getString("supplierID")) == 0
-                                            && data.getPartCode().compareToIgnoreCase(dataJson.getString("partCode")) == 0) {
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="集配区调账分录_spGetXC_JPQTZFenLuData">
+                case "集配区调账分录": {
+                    switch (operation) {
+                        case "create": {
+
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_JPQTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQTZFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_JPQTZFenLuData data = (XC_JPQTZFenLuData) obj;
                                         PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
                                         data.setPartName(baseInfo.getPartName());
                                         data.setPartID(baseInfo.getPartID());
 
                                         Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                         data.setSupplierName(customer.getCustomerAbbName());
-                                        filterList.add(data);
                                     }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetXC_JPQTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQTZFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_JPQTZFenLuData data = (XC_JPQTZFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_JPQTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQTZFenLuData",
+                                    "SupplierID", datas, pageSize, pageIndex, start, end,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    XC_JPQTZFenLuData data = (XC_JPQTZFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
                                 }
                             });
-                             */
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="线旁调账分录_spGetXC_XPTZFenLuData">
+                case "线旁调账分录": {
+                    switch (operation) {
+                        case "create": {
+
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_XPTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPTZFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_XPTZFenLuData data = (XC_XPTZFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetXC_XPTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPTZFenLuData",
+                                        "SupplierID", datas, pageSize, pageIndex, start, end,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        XC_XPTZFenLuData data = (XC_XPTZFenLuData) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_XPTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPTZFenLuData",
+                                    "SupplierID", datas, pageSize, pageIndex, start, end,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    XC_XPTZFenLuData data = (XC_XPTZFenLuData) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+
                             break;
                         }
                     }
@@ -2848,6 +2658,309 @@ public class ReportInterface extends HttpServlet {
                 //</editor-fold>
                 //</editor-fold>
 
+                //<editor-fold desc="期初明细报表">
+                //<editor-fold desc="待检品期初报表">
+                case "待检品期初报表": {
+                    switch (operation) {
+                        case "create": {
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCDjpListWithFilter", "com.cn.bean.report.", "KFQCDjpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCDjpList data = (KFQCDjpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFQCDjpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCDjpList data = (KFQCDjpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCDjpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
+                                    "SupplierID", datas, pageSize, pageIndex, null, null,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFQCDjpList data = (KFQCDjpList) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="送检品期初报表">
+                case "送检品期初报表": {
+                    switch (operation) {
+                        case "create": {
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCSjpListWithFilter", "com.cn.bean.report.", "KFQCSjpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCSjpList data = (KFQCSjpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFQCSjpListWithFilter", "com.cn.bean.report.", "KFQCSjpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCSjpList data = (KFQCSjpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCSjpListWithFilter", "com.cn.bean.report.", "KFQCSjpList",
+                                    "SupplierID", datas, pageSize, pageIndex, null, null,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFQCSjpList data = (KFQCSjpList) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="良品期初报表">
+                case "良品期初报表": {
+                    switch (operation) {
+                        case "create": {
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCLpListWithFilter", "com.cn.bean.report.", "KFQCLpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCLpList data = (KFQCLpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFQCLpListWithFilter", "com.cn.bean.report.", "KFQCLpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCLpList data = (KFQCLpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCLpListWithFilter", "com.cn.bean.report.", "KFQCLpList",
+                                    "SupplierID", datas, pageSize, pageIndex, null, null,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFQCLpList data = (KFQCLpList) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="不良品期初报表">
+                case "不良品期初报表": {
+                    switch (operation) {
+                        case "create": {
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCBLpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCBLpList data = (KFQCBLpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFQCBLpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCBLpList data = (KFQCBLpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCBLpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
+                                    "SupplierID", datas, pageSize, pageIndex, null, null,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFQCBLpList data = (KFQCBLpList) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //<editor-fold desc="返修品期初报表">
+                case "返修品期初报表": {
+                    switch (operation) {
+                        case "create": {
+                            if (loginType.compareTo("customerLogin") == 0) {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCFXpListWithFilter", "com.cn.bean.report.", "KFQCFXpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCFXpList data = (KFQCFXpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            } else {
+                                json = reportOperateWithPage(dataType, operateType, "spGetKFQCFXpListWithFilter", "com.cn.bean.report.", "KFQCFXpList",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null,
+                                        new ReportItemOperate() {
+                                    @Override
+                                    public void itemObjOperate(Object obj) {
+                                        KFQCFXpList data = (KFQCFXpList) obj;
+                                        PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                        data.setPartName(baseInfo.getPartName());
+                                        data.setPartID(baseInfo.getPartID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                        data.setSupplierName(customer.getCustomerAbbName());
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                        case "request_detail": {
+                            json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCFXpListWithFilter", "com.cn.bean.report.", "KFQCFXpList",
+                                    "SupplierID", datas, pageSize, pageIndex, null, null,
+                                    new ReportItemOperate() {
+                                @Override
+                                public void itemObjOperate(Object obj) {
+                                    KFQCFXpList data = (KFQCFXpList) obj;
+                                    PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                    data.setPartName(baseInfo.getPartName());
+                                    data.setPartID(baseInfo.getPartID());
+
+                                    Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                    data.setSupplierName(customer.getCustomerAbbName());
+                                }
+                            });
+
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //</editor-fold>
+
+                //</editor-fold>
+                
                 //<editor-fold desc="盛具报表">
                 case "盛具报表": {
                     switch (operation) {
@@ -2858,7 +2971,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(operateType, "tbGetContainerAmount", "ContainerAmount", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "tbGetContainerAmount", "ContainerAmount", proParams, new ReportInterface.ReportItemOperate() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     ContainerAmount data = (ContainerAmount) obj;
@@ -2868,7 +2981,7 @@ public class ReportInterface extends HttpServlet {
                             });
                              */
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(userName, operateType, "tbGetContainerAmountWithFilter", "com.cn.bean.report.", "ContainerAmount",
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "tbGetContainerAmountWithFilter", "com.cn.bean.report.", "ContainerAmount",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2879,7 +2992,7 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(operateType, "tbGetContainerAmountWithFilter", "com.cn.bean.report.", "ContainerAmount",
+                                json = reportOperateWithPage(dataType, operateType, "tbGetContainerAmountWithFilter", "com.cn.bean.report.", "ContainerAmount",
                                         "SupplierID", datas, pageSize, pageIndex, start, end,
                                         new ReportItemOperate() {
                                     @Override
@@ -2895,7 +3008,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             JSONObject proParams = new JSONObject();
                             JSONObject dataJson = JSONObject.parseObject(datas);
-                            json = reportOperateWithFilter(operateType, "tbGetContainerAmount", "ContainerAmount", proParams, new ReportInterface.FilterListItemOperate() {
+                            json = reportOperateWithFilter(dataType, operateType, "tbGetContainerAmount", "ContainerAmount", proParams, new ReportInterface.FilterListItemOperate() {
                                 @Override
                                 public void itemFilter(List<Object> filterList, Object obj) {
                                     ContainerAmount data = (ContainerAmount) obj;
@@ -2917,7 +3030,7 @@ public class ReportInterface extends HttpServlet {
                 case "盛具需求": {
                     switch (operation) {
                         case "create": {
-                            json = reportOperateWithPage(operateType, "tbGetContainerDemandAndKCWithFilter", "com.cn.bean.report.", "ContainerDemand",
+                            json = reportOperateWithPage(dataType, operateType, "tbGetContainerDemandAndKCWithFilter", "com.cn.bean.report.", "ContainerDemand",
                                     "OutboundContainerName", datas, pageSize, pageIndex, start, end,
                                     new ReportItemOperate() {
                                 @Override
@@ -3008,7 +3121,7 @@ public class ReportInterface extends HttpServlet {
         return json;
     }
 
-    private String reportOperateWithPage(String operateType, String proceduceName, String packageName, String className, String orderField,
+    private String reportOperateWithPage(String dataType, String operateType, String proceduceName, String packageName, String className, String orderField,
             String datas, int pageSize, int pageIndex, String start, String end, ReportItemOperate itemOperate) throws Exception {
         String json = null;
         JSONObject proParams = new JSONObject();
@@ -3026,11 +3139,11 @@ public class ReportInterface extends HttpServlet {
         if (!Units.strIsEmpty(start)) {
             proParams.put("BeginTime", "string," + start);
         }
-        json = reportOperate(operateType, proceduceName, className, proParams, itemOperate);
+        json = reportOperate(dataType, operateType, proceduceName, className, proParams, itemOperate);
         return json;
     }
 
-    private String reportOperateDetailWithPage(String operateType, String proceduceName, String packageName, String className, String orderField,
+    private String reportOperateDetailWithPage(String dataType, String operateType, String proceduceName, String packageName, String className, String orderField,
             String datas, int pageSize, int pageIndex, String start, String end, ReportItemOperate itemOperate) throws Exception {
         String json = null;
         JSONObject proParams = new JSONObject();
@@ -3048,11 +3161,11 @@ public class ReportInterface extends HttpServlet {
         if (!Units.strIsEmpty(start)) {
             proParams.put("BeginTime", "string," + start);
         }
-        json = reportOperate(operateType, proceduceName, className, proParams, itemOperate);
+        json = reportOperate(dataType, operateType, proceduceName, className, proParams, itemOperate);
         return json;
     }
 
-    private String reportOperateWithPageForSupplier(String supplierID, String operateType, String proceduceName, String packageName, String className, String orderField,
+    private String reportOperateWithPageForSupplier(String dataType, String supplierID, String operateType, String proceduceName, String packageName, String className, String orderField,
             String datas, int pageSize, int pageIndex, String start, String end, ReportItemOperate itemOperate) throws Exception {
         String json = null;
         JSONObject proParams = new JSONObject();
@@ -3070,7 +3183,7 @@ public class ReportInterface extends HttpServlet {
         if (!Units.strIsEmpty(start)) {
             proParams.put("BeginTime", "string," + start);
         }
-        json = reportOperate(operateType, proceduceName, className, proParams, itemOperate);
+        json = reportOperate(dataType, operateType, proceduceName, className, proParams, itemOperate);
         return json;
     }
 
@@ -3086,11 +3199,14 @@ public class ReportInterface extends HttpServlet {
      * @return
      * @throws Exception
      */
-    private String reportOperate(String operateType, String proceduceName, String className, JSONObject proParams, ReportItemOperate itemOperate) throws Exception {
+    private String reportOperate(String dataType, String operateType, String proceduceName, String className, JSONObject proParams, ReportItemOperate itemOperate) throws Exception {
         String result = null;
         String json = null;
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
+        Connection conn = opt.getConnect();
+        if (dataType.compareToIgnoreCase("isHis") == 0)
+            conn = opt.getConnectHis();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         Class objClass = Class.forName("com.cn.bean.report." + className);
         //Method method = objClass.getMethod("getRecordCount", null);
@@ -3102,7 +3218,7 @@ public class ReportInterface extends HttpServlet {
             result = "{}";
         }
 
-        List<Object> list = commonController.proceduceQuery(proceduceName, proParams, "com.cn.bean.report." + className, opt.getConnect());
+        List<Object> list = commonController.proceduceQuery(proceduceName, proParams, "com.cn.bean.report." + className, conn);
         if (list != null && list.size() > 0) {
             for (Object obj : list) {
                 itemOperate.itemObjOperate(obj);
@@ -3123,7 +3239,7 @@ public class ReportInterface extends HttpServlet {
                 json = Units.objectToJson(0, "", result);
             }
         } else {
-            json = Units.objectToJson(-1, "数据为空!", result);
+            json = Units.objectToJson(0, "数据为空!", result);
         }
         return json;
     }
@@ -3139,11 +3255,14 @@ public class ReportInterface extends HttpServlet {
      * @return
      * @throws Exception
      */
-    private String reportOperateWithFilter(String operateType, String proceduceName, String className, JSONObject proParams, FilterListItemOperate itemOperate) throws Exception {
+    private String reportOperateWithFilter(String dataType, String operateType, String proceduceName, String className, JSONObject proParams, FilterListItemOperate itemOperate) throws Exception {
         String result = null;
         String json = null;
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
+        Connection conn = opt.getConnect();
+        if (dataType.compareToIgnoreCase("isHis") == 0)
+            conn = opt.getConnectHis();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         if (operateType.compareTo("create") == 0) {
             result = Units.returnFileContext(path + "com/cn/json/report/", className + ".json");
@@ -3152,7 +3271,7 @@ public class ReportInterface extends HttpServlet {
             result = "{}";
         }
 
-        List<Object> list = commonController.proceduceQuery(proceduceName, proParams, "com.cn.bean.report." + className, opt.getConnect());
+        List<Object> list = commonController.proceduceQuery(proceduceName, proParams, "com.cn.bean.report." + className, conn);
         List<Object> filterList = new ArrayList<>();
         if (list != null && list.size() > 0) {
             for (Object obj : list) {
@@ -3172,7 +3291,7 @@ public class ReportInterface extends HttpServlet {
                 json = Units.objectToJson(0, "", result);
             }
         } else {
-            json = Units.objectToJson(-1, "数据为空!", result);
+            json = Units.objectToJson(0, "数据为空!", result);
         }
         return json;
     }

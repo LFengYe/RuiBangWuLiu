@@ -1,0 +1,12 @@
+{
+    "titles": {
+        "supplierID": "供应商代码,1,1,10%,false",
+        "supplierName": "供应商,1,1,10%,false",
+        "partName": "部品名称,1,1,10%,false",
+        "partCode": "部品件号,1,1,10%,false",
+        "xp1": "一工厂线旁期初,1,1,10%,false",
+        "xp2": "二工厂线旁期初,1,1,10%,false",
+        "xp3": "三工厂线旁期初,1,1,10%,false",
+        "xc_XPQCTotal": "线旁期初,1,1,10%,flase"
+    }
+}

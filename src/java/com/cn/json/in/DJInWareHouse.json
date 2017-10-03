@@ -76,13 +76,13 @@
             "pageInfo":"35%,第 1 页共 1 页"
             },
         "datasTitle": {
-            "partName":"20%,部品名称",
-            "partCode":"20%,部品件号",
+            "partName":"28%,部品名称",
+            "partCode":"27%,部品件号",
             "partUnit":"5%,单位",
             "inboundAmount":"10%,入库数量",
-            "originalBatch":"15%,原厂批次",
-            "result":"15%,检验结论",
-            "djInWareHouseListRemark":"15%,备注"
+            "originalBatch":"10%,原厂批次",
+            "result":"10%,检验结论",
+            "djInWareHouseListRemark":"10%,备注"
         },
         "rows3": {
             "inboundCountName":"10%,总计",

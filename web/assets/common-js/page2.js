@@ -18,6 +18,7 @@
 
     var $inspection = $("#page2-inspection");
     var $search = $(".page2-container .page2-query");
+    var $searchHistory = $(".page2-container .page2-queryHistory");
     var $add = $("#page2-add");
     var $modify = $("#page2-modify");
     var $cancel = $("#page2-cancel");
@@ -63,6 +64,7 @@
     var operate = "add";
     var importOperate = false;
     var isHistory = 0;
+    var dataType = "isCur";
 
     function initData() {
         $(".start-time").val(getNowDateShort() + ' 00:00:00');
@@ -85,6 +87,7 @@
         };
         operate = "add";
         importOperate = false;
+        dataType = "isCur";
         if ($history.find(":checkbox").is(":checked")) {
             isHistory = 1;
         } else {
@@ -107,6 +110,7 @@
         //$(".page2-container .wc-page2-form input").val("");
         $search.off("click");
         $search.click(function (e) {
+            dataType = "isCur";
             /*
              var $dateInputs = $(".page2-container .wc-page2-form input");
              var key = $dateInputs.eq(0).val();
@@ -120,13 +124,36 @@
             } else {
                 timeInterval = {};
             }
-
-            var request = {datas: tmp.keywords, rely: timeInterval, pageSize: pageSize, pageIndex: minPageIndex, isHistory: isHistory};
+            var request = {datas: tmp.keywords, rely: timeInterval, pageSize: pageSize, pageIndex: minPageIndex, isHistory: isHistory, dataType: dataType};
             ajaxData(OPERATION.REQUEST_ON_DATE, request, function (data) {
                 //console.log(data);
+                $mainTableBox.emptyTable();
                 $mainTableBox.render(data.datas);
                 $mainTableBox.page(data.counts, minPageIndex, pageSize);
             }, function () {
+                $mainTableBox.emptyTable();
+            });
+
+        });
+        
+        $searchHistory.off("click");
+        $searchHistory.click(function (e) {
+            dataType = "isHis";
+            var tmp = JSON.parse(serializeJqueryElement($(".page2-container .wc-page2-form")));
+            var timeInterval;
+            if (tmp.startTime && tmp.endTime) {
+                timeInterval = {start: tmp.startTime, end: tmp.endTime};
+            } else {
+                timeInterval = {};
+            }
+
+            var request = {datas: tmp.keywords, rely: timeInterval, pageSize: pageSize, pageIndex: minPageIndex, isHistory: isHistory, dataType: dataType};
+            ajaxData(OPERATION.REQUEST_ON_DATE, request, function (data) {
+                $mainTableBox.emptyTable();
+                $mainTableBox.render(data.datas);
+                $mainTableBox.page(data.counts, minPageIndex, pageSize);
+            }, function () {
+                $mainTableBox.emptyTable();
             });
 
         });
@@ -535,10 +562,13 @@
                     alert("未选中数据!");
                 }
             } else {
-                $("#print_area").css({
-                    "height": "auto"
-                    , "overflow": "visible"
-                }).printArea();
+                $printArea.printHtml();
+                
+//                $("#print_area").css({
+//                    "height": "auto"
+//                    , "overflow": "visible"
+//                }).printArea();
+//                
             }
         });
 
@@ -657,7 +687,7 @@
                         var proName = primary[proIndex];
                         whereObj[proName] = maps[proName];
                     }
-                    ajaxData(OPERATION.REQUEST_DETAIL, {rely: whereObj, pageSize: detailPageSize, pageIndex: minPageIndex, isHistory: isHistory}, function (data) {
+                    ajaxData(OPERATION.REQUEST_DETAIL, {rely: whereObj, pageSize: detailPageSize, pageIndex: minPageIndex, isHistory: isHistory, dataType: dataType}, function (data) {
                         operate = "modify";
                         $mainInputBox.objInInputs(maps);
                         if (moudle === "报检信息") {
@@ -688,7 +718,7 @@
                     } else {
                         timeInterval = {};
                     }
-                    var obj = {"pageIndex": pageIndex, "pageSize": pageSize, "datas": tmp.keywords, "rely": timeInterval, isHistory: isHistory};
+                    var obj = {"pageIndex": pageIndex, "pageSize": pageSize, "datas": tmp.keywords, "rely": timeInterval, isHistory: isHistory, dataType: dataType};
                     ajaxData(OPERATION.REQUEST_PAGE, obj, function (data) {
                         $mainTableBox.render(data.datas);
                         $mainTableBox.page(data.counts, pageIndex, pageSize);
@@ -748,7 +778,7 @@
                 },
                 searchCallBack: function (keyword) {
                     var tmp = JSON.parse(keyword);
-                    var obj = {"pageIndex": minPageIndex, "pageSize": detailPageSize, "datas": tmp.keywords, "rely": whereObj, isHistory: isHistory};
+                    var obj = {"pageIndex": minPageIndex, "pageSize": detailPageSize, "datas": tmp.keywords, "rely": whereObj, isHistory: isHistory, dataType: dataType};
                     ajaxData(OPERATION.REQUEST_DETAIL, obj, function (data) {
                         $chidTableBox.render(data.datas);
                     }, function () {
@@ -1100,7 +1130,7 @@
             },
             searchCallBack: function (keyword) {
                 var tmp = JSON.parse(keyword);
-                var obj = {"pageIndex": minPageIndex, "pageSize": detailPageSize, "datas": tmp.keywords, "rely": whereObj, isHistory: isHistory};
+                var obj = {"pageIndex": minPageIndex, "pageSize": detailPageSize, "datas": tmp.keywords, "rely": whereObj, isHistory: isHistory, dataType: dataType};
                 ajaxData(OPERATION.REQUEST_DETAIL, obj, function (data) {
                     $chidTableBox.render(data.datas);
                 }, function () {

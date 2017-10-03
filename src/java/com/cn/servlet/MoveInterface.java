@@ -8,6 +8,7 @@ package com.cn.servlet;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.ClassDescription;
+import com.cn.bean.Customer;
 import com.cn.bean.Employee;
 import com.cn.bean.PartBaseInfo;
 import com.cn.bean.move.FXInWareHouse;
@@ -96,6 +97,7 @@ public class MoveInterface extends HttpServlet {
             String detail = paramsJson.getString("detail");
             String fileName = paramsJson.getString("fileName");
             String operateType = (paramsJson.getString("type") == null) ? ("") : paramsJson.getString("type");
+            String dataType = (paramsJson.getString("dataType") == null) ? ("isCur") : paramsJson.getString("dataType");// isCur表示当期查询, isHis表示往期查询
             String start = paramsJson.getString("start");
             String end = paramsJson.getString("end");
             int isHistory = paramsJson.getIntValue("isHistory");
@@ -108,7 +110,7 @@ public class MoveInterface extends HttpServlet {
 
             /*验证是否登陆*/
             if (!"userLogin".equals(module)
-                    && (session.getAttribute("user") == null || session.getAttribute("employee") == null)) {
+                    && (session.getAttribute("user") == null || session.getAttribute("loginType") == null || session.getAttribute("employee") == null)) {
                 session.invalidate();
                 json = Units.objectToJson(-99, "未登陆", null);
                 PrintWriter out = response.getWriter();
@@ -123,7 +125,15 @@ public class MoveInterface extends HttpServlet {
                 }
                 return;
             }
-            Employee employee = (Employee) session.getAttribute("employee");
+
+            Employee employee = null;
+            Customer curCustomer = null;
+            if (session.getAttribute("loginType").toString().compareTo("employeeLogin") == 0) {
+                employee = (Employee) session.getAttribute("employee");
+            }
+            if (session.getAttribute("loginType").toString().compareTo("customerLogin") == 0) {
+                curCustomer = (Customer) session.getAttribute("employee");
+            }
 
             switch (module) {
                 /**
@@ -138,36 +148,43 @@ public class MoveInterface extends HttpServlet {
                         case "create": {
                             if (isHistory == 0) {
                                 //json = createOperateWithFilter(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "DJInWareHouseList", whereCase, "DJInWareHouseID", opt.getConnect());
-                                json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "DJInWareHouseList", datas, rely, whereCase, "DJInWareHouseID", opt.getConnect());
+                                json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "DJInWareHouseList", datas, rely, whereCase, "DJInWareHouseID", dataType);
                             } else {
                                 //json = createOperateWithFilter(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "DJInWareHouseList", whereCase1, "DJInWareHouseID", opt.getConnect());
-                                json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "DJInWareHouseList", datas, rely, whereCase1, "DJInWareHouseID", opt.getConnect());
+                                json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "DJInWareHouseList", datas, rely, whereCase1, "DJInWareHouseID", dataType);
                             }
                             break;
                         }
                         case "request_page": {
                             if (isHistory == 0) {
                                 //json = queryOperateWithFilter("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
-                                json = queryOnDateOperate("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                                json = queryOnDateOperate("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase, true, dataType, pageSize, pageIndex);
                             } else {
                                 //json = queryOperateWithFilter("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase1, true, opt.getConnect(), pageSize, pageIndex);
-                                json = queryOnDateOperate("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase1, true, opt.getConnect(), pageSize, pageIndex);
+                                json = queryOnDateOperate("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase1, true, dataType, pageSize, pageIndex);
                             }
                             break;
                         }
                         case "request_on_date": {
                             if (isHistory == 0) {
-                                json = queryOnDateOperate("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                                json = queryOnDateOperate("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase, true, dataType, pageSize, pageIndex);
                             } else {
-                                json = queryOnDateOperate("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase1, true, opt.getConnect(), pageSize, pageIndex);
+                                json = queryOnDateOperate("com.cn.bean.move.", "view", "DJInWareHouseList", "DJInWareHouseID", datas, rely, whereCase1, true, dataType, pageSize, pageIndex);
                             }
                             break;
                         }
                         case "request_detail": {
+                            /*Connection conn;
+                            if (dataType.compareToIgnoreCase("isHis") == 0) {
+                                conn = opt.getConnectHis();
+                            } else {
+                                conn = opt.getConnect();
+                            }*/
+                            
                             Class objClass = Class.forName("com.cn.bean.move." + "DJInWareHouseList");
                             Method method = objClass.getMethod("getRecordCount", new Class[0]);
                             String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
-                            List<Object> list = commonController.dataBaseQuery("view", "com.cn.bean.move.", "DJInWareHouseList", "*", whereSql, pageSize, pageIndex, "DJInWareHouseID", 0, opt.getConnect());
+                            List<Object> list = commonController.dataBaseQuery("view", "com.cn.bean.move.", "DJInWareHouseList", "*", whereSql, pageSize, pageIndex, "DJInWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                             if (list != null && list.size() > 0) {
                                 com.cn.bean.move.DJInWareHouseList djInWareHouse = (com.cn.bean.move.DJInWareHouseList) list.get(0);
                                 if (Units.strIsEmpty(djInWareHouse.getInspectionTime())) {
@@ -235,7 +252,7 @@ public class MoveInterface extends HttpServlet {
                                 }
                             }
 
-                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXOutWareHouse", datas, rely, whereCase, "FXOutWareHouseID", opt.getConnect());
+                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXOutWareHouse", datas, rely, whereCase, "FXOutWareHouseID", dataType);
                             json = Units.insertStr(json, "\\\"返修出库单号\\", ",@FXCK-" + Units.getNowTimeNoSeparator());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
@@ -302,18 +319,24 @@ public class MoveInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            //json = queryOperate("com.cn.bean.move.", "view", "FXOutWareHouseList", "FXOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            /*Connection conn;
+                            if (dataType.compareToIgnoreCase("isHis") == 0) {
+                                conn = opt.getConnectHis();
+                            } else {
+                                conn = opt.getConnect();
+                            }*/
+                            
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("fxCKAuditStaffName", session.getAttribute("user"));
                                 obj.put("fxCKAuditTime", Units.getNowTime());
                                 String auditInfo = "[" + obj.toJSONString() + "," + rely + "]";
-                                ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.move.", "FXOutWareHouse", "update", opt.getConnect());
+                                ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.move.", "FXOutWareHouse", "update", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                             }
                             String fxOutWareHouseID = JSONObject.parseObject(rely).getString("fxOutWareHouseID");
                             String mainTabWhereSql = "FXOutWareHouseID = '" + fxOutWareHouseID + "'";
                             //System.out.println("mainTabWhereSql:" + mainTabWhereSql);
-                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXOutWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "FXOutWareHouseID", 0, opt.getConnect());
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXOutWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "FXOutWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                             if (list != null && list.size() > 0) {
                                 FXOutWareHouse fXOutWareHouse = (FXOutWareHouse) list.get(0);
 
@@ -321,7 +344,7 @@ public class MoveInterface extends HttpServlet {
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
                                 HashMap<String, String> limitMap = new HashMap<String, String>();
                                 if (JSONObject.parseObject(paramsJson.getString("rely")).getString("partState").compareTo("良品") == 0) {
-                                    List<Object> lpfxc = commonController.proceduceQuery("spGetKFJCLPListForFXCK", proParams, "com.cn.bean.pro.KFJCLPForFXCK", opt.getConnect());
+                                    List<Object> lpfxc = commonController.proceduceQuery("spGetKFJCLPListForFXCK", proParams, "com.cn.bean.pro.KFJCLPForFXCK", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                                     if (lpfxc != null && lpfxc.size() > 0) {
                                         for (Object obj : lpfxc) {
                                             KFJCLPForFXCK fxck = (KFJCLPForFXCK) obj;
@@ -330,7 +353,7 @@ public class MoveInterface extends HttpServlet {
                                     }
                                 }
                                 if (JSONObject.parseObject(paramsJson.getString("rely")).getString("partState").compareTo("不良品") == 0) {
-                                    List<Object> blpfxc = commonController.proceduceQuery("spGetKFJCBLPListForFXCK", proParams, "com.cn.bean.pro.KFJCBLPForFXCK", opt.getConnect());
+                                    List<Object> blpfxc = commonController.proceduceQuery("spGetKFJCBLPListForFXCK", proParams, "com.cn.bean.pro.KFJCBLPForFXCK", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                                     if (blpfxc != null && blpfxc.size() > 0) {
                                         for (Object obj : blpfxc) {
                                             KFJCBLPForFXCK fxck = (KFJCBLPForFXCK) obj;
@@ -348,14 +371,14 @@ public class MoveInterface extends HttpServlet {
                                         + " and gys.PartCode = viewFXOutWareHouseList.PartCode"
                                         + " and viewFXOutWareHouseList.WareHouseManagername is null"
                                         + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
-                                */
+                                 */
                                 String detailWhereCase = "WareHouseManagername is null";
                                 if (!Units.strIsEmpty(whereSql)) {
                                     detailWhereCase = whereSql + " and " + detailWhereCase;
                                 }
                                 whereSql = (operateType.compareTo("app") == 0) ? (detailWhereCase) : (whereSql);
 
-                                List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.move.", "FXOutWareHouseList", "*", whereSql, pageSize, pageIndex, "FXOutWareHouseID", 0, opt.getConnect());
+                                List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.move.", "FXOutWareHouseList", "*", whereSql, pageSize, pageIndex, "FXOutWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
 
                                 String result = "{}";
                                 if (detailList != null && detailList.size() > 0) {
@@ -386,11 +409,11 @@ public class MoveInterface extends HttpServlet {
                         }
                         case "request_page": {
                             //json = queryOperate("com.cn.bean.move.", "view", "FXOutWareHouse", "FXOutWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
-                            json = queryOnDateOperate("com.cn.bean.move.", "view", "FXOutWareHouse", "FXOutWareHouseID", datas, rely, "", true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.move.", "view", "FXOutWareHouse", "FXOutWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
                         case "request_on_date": {
-                            json = queryOnDateOperate("com.cn.bean.move.", "view", "FXOutWareHouse", "FXOutWareHouseID", datas, rely, "", true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.move.", "view", "FXOutWareHouse", "FXOutWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
                         case "request_table": {
@@ -467,8 +490,9 @@ public class MoveInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fxOutWareHouseID")))
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fxOutWareHouseID"))) {
                                             commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fxOutWareHouseID") + "]", "com.cn.bean.move.", "FXOutWareHouse", "delete", opt.getConnect());
+                                        }
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {
@@ -507,7 +531,7 @@ public class MoveInterface extends HttpServlet {
                                 }
                             }
 
-                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXInWareHouse", datas, rely, whereCase, "FXInWareHouseID", opt.getConnect());
+                            json = createOperateOnDate(20, "view", "com/cn/json/move/", "com.cn.bean.move.", "FXInWareHouse", datas, rely, whereCase, "FXInWareHouseID", dataType);
                             json = Units.insertStr(json, "\\\"返修入库单号\\", ",@FXRK-" + Units.getNowTimeNoSeparator());
                             json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
@@ -552,24 +576,31 @@ public class MoveInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
+                            /*Connection conn;
+                            if (dataType.compareToIgnoreCase("isHis") == 0) {
+                                conn = opt.getConnectHis();
+                            } else {
+                                conn = opt.getConnect();
+                            }*/
+                            
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("fxRKAuditStaffName", session.getAttribute("user"));
                                 obj.put("fxRKAuditTime", Units.getNowTime());
                                 String auditInfo = "[" + obj.toJSONString() + "," + rely + "]";
-                                ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.move.", "FXInWareHouse", "update", opt.getConnect());
+                                ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.move.", "FXInWareHouse", "update", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                             }
                             //json = queryOperate("com.cn.bean.move.", "view", "FXInWareHouseList", "FXInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             String djInWareHouseID = JSONObject.parseObject(rely).getString("fxInWareHouseID");
                             String mainTabWhereSql = "FXInWareHouseID = '" + djInWareHouseID + "'";
-                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXInWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "FXInWareHouseID", 0, opt.getConnect());
+                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.move.", "FXInWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "FXInWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                             if (list != null && list.size() > 0) {
                                 FXInWareHouse fXInWareHouse = (FXInWareHouse) list.get(0);
 
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
                                 HashMap<String, String> limitMap = new HashMap<String, String>();
-                                List<Object> fxrkList = commonController.proceduceQuery("spGetKFJCFxpListForFXRK", proParams, "com.cn.bean.pro.KFJCFXPForFXRK", opt.getConnect());
+                                List<Object> fxrkList = commonController.proceduceQuery("spGetKFJCFxpListForFXRK", proParams, "com.cn.bean.pro.KFJCFXPForFXRK", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                                 if (fxrkList != null && fxrkList.size() > 0) {
                                     for (Object obj : fxrkList) {
                                         KFJCFXPForFXRK fxrk = (KFJCFXPForFXRK) obj;
@@ -586,14 +617,14 @@ public class MoveInterface extends HttpServlet {
                                         + " and gys.PartCode = viewFXInWareHouseList.PartCode"
                                         + " and viewFXInWareHouseList.WareHouseManagername is null"
                                         + " and gys.WareHouseManagerName = '" + employee.getEmployeeName() + "')";
-                                */
+                                 */
                                 String detailWhereCase = "WareHouseManagername is null";
                                 if (!Units.strIsEmpty(whereSql)) {
                                     detailWhereCase = whereSql + " and " + detailWhereCase;
                                 }
                                 whereSql = (operateType.compareTo("app") == 0) ? (detailWhereCase) : (whereSql);
 
-                                List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.move.", "FXInWareHouseList", "*", whereSql, pageSize, pageIndex, "FXInWareHouseID", 0, opt.getConnect());
+                                List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.move.", "FXInWareHouseList", "*", whereSql, pageSize, pageIndex, "FXInWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
 
                                 String result = "{}";
                                 if (detailList != null && detailList.size() > 0) {
@@ -624,11 +655,11 @@ public class MoveInterface extends HttpServlet {
                         }
                         case "request_page": {
                             //json = queryOperate("com.cn.bean.move.", "view", "FXInWareHouse", "FXInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
-                            json = queryOnDateOperate("com.cn.bean.move.", "view", "FXInWareHouse", "FXInWareHouseID", datas, rely, "", true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.move.", "view", "FXInWareHouse", "FXInWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
                         case "request_on_date": {
-                            json = queryOnDateOperate("com.cn.bean.move.", "view", "FXInWareHouse", "FXInWareHouseID", datas, rely, "", true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.move.", "view", "FXInWareHouse", "FXInWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
                         case "audit": {
@@ -662,8 +693,9 @@ public class MoveInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fxInWareHouseID")))
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fxInWareHouseID"))) {
                                             commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fxInWareHouseID") + "]", "com.cn.bean.move.", "FXInWareHouse", "delete", opt.getConnect());
+                                        }
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {
@@ -726,7 +758,7 @@ public class MoveInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             //json = createOperateWithFilter(20, "table", "com/cn/json/move/", "com.cn.bean.move.", "AdjustAccount", "TZYMonth in (select TZYMonth from tblXCAdjustAccountList)", "TZYMonth", opt.getConnect());
-                            json = createOperateOnDate(20, "table", "com/cn/json/move/", "com.cn.bean.move.", "AdjustAccount", datas, rely, whereCase, "TZYMonth", opt.getConnect());
+                            json = createOperateOnDate(20, "table", "com/cn/json/move/", "com.cn.bean.move.", "AdjustAccount", datas, rely, whereCase, "TZYMonth", dataType);
                             json = Units.insertStr(json, "\\\"调帐编号\\", ",@" + Units.getNowTimeNoSeparator());
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
                             break;
@@ -738,16 +770,23 @@ public class MoveInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            json = queryOperate("com.cn.bean.move.", "view", "KFAdjustAccountList", "TZYMonth", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            /*Connection conn;
+                            if (dataType.compareToIgnoreCase("isHis") == 0) {
+                                conn = opt.getConnectHis();
+                            } else {
+                                conn = opt.getConnect();
+                            }*/
+                            
+                            json = queryOperate("com.cn.bean.move.", "view", "KFAdjustAccountList", "TZYMonth", datas, rely, true, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()), pageSize, pageIndex);
                             break;
                         }
                         case "request_page": {
                             //json = queryOperate("com.cn.bean.move.", "table", "AdjustAccount", "TZYMonth", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
-                            json = queryOnDateOperate("com.cn.bean.move.", "table", "AdjustAccount", "TZYMonth", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.move.", "table", "AdjustAccount", "TZYMonth", datas, rely, whereCase, true, dataType, pageSize, pageIndex);
                             break;
                         }
                         case "request_on_date": {
-                            json = queryOnDateOperate("com.cn.bean.move.", "table", "AdjustAccount", "TZYMonth", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.move.", "table", "AdjustAccount", "TZYMonth", datas, rely, whereCase, true, dataType, pageSize, pageIndex);
                             break;
                         }
                         case "request_table": {
@@ -776,8 +815,9 @@ public class MoveInterface extends HttpServlet {
                                     if (result == 0) {
                                         json = Units.objectToJson(0, "数据添加成功!", null);
                                     } else {
-                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "tzYMonth")))
+                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "tzYMonth"))) {
                                             commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "tzYMonth") + "]", "com.cn.bean.move.", "AdjustAccount", "delete", opt.getConnect());
+                                        }
                                         json = Units.objectToJson(-1, "明细添加失败!", null);
                                     }
                                 } else {
@@ -820,9 +860,17 @@ public class MoveInterface extends HttpServlet {
     }
 
     private String createOperateOnDate(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String datas,
-            String rely, String whereCase, String orderField, Connection conn) throws Exception {
+            String rely, String whereCase, String orderField, String dataType) throws Exception {
         String json;
         CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
+        Connection conn;
+        if (dataType.compareToIgnoreCase("isHis") == 0) {
+            conn = opt.getConnectHis();
+        } else {
+            conn = opt.getConnect();
+        }
+        
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
@@ -912,10 +960,18 @@ public class MoveInterface extends HttpServlet {
      * @throws Exception
      */
     private String queryOnDateOperate(String beanPackage, String type, String tableName, String orderField, String keyWord, String rely, String whereCase,
-            boolean isAll, Connection conn, int pageSize, int pageIndex) throws Exception {
+            boolean isAll, String dataType, int pageSize, int pageIndex) throws Exception {
         String json;
         String result = "{}";
         CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
+        Connection conn;
+        if (dataType.compareToIgnoreCase("isHis") == 0) {
+            conn = opt.getConnectHis();
+        } else {
+            conn = opt.getConnect();
+        }
+        
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", new Class[0]);
 

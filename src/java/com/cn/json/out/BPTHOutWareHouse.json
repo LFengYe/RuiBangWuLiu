@@ -68,12 +68,12 @@
             "pageInfo":"35%,第 1 页共 1 页"
             },
         "datasTitle": {
-            "partName":"20%,部品名称",
-            "partCode":"20%,部品件号",
+            "partName":"28%,部品名称",
+            "partCode":"27%,部品件号",
             "partUnit":"5%,单位",
-            "inboundBatch":"20%,入库批次",
+            "inboundBatch":"15%,入库批次",
             "thCKAmount":"10%,退货数量",
-            "bpTHOutWareHouseListRemark":"25%,备注"
+            "bpTHOutWareHouseListRemark":"15%,备注"
         },
         "rows3": {
             "thCKCountName":"10%,总计",

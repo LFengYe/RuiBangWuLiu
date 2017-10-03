@@ -1,7 +1,7 @@
 {
     "control": {
         "roleCode": "角色代码,@table",
-        "rightCode": "权限代码,@table"
+        "rightCode": "权限代码,@mulOptionTable,@roleCode"
     },
     "mustwrite": ["roleCode", "rightCode"],
     "unique": [],
