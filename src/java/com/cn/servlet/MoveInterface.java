@@ -180,7 +180,7 @@ public class MoveInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             Class objClass = Class.forName("com.cn.bean.move." + "DJInWareHouseList");
                             Method method = objClass.getMethod("getRecordCount", new Class[0]);
                             String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
@@ -234,6 +234,10 @@ public class MoveInterface extends HttpServlet {
                 case "返修出库": {
                     switch (operation) {
                         case "create": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             String whereCase = "";
                             if (operateType.compareTo("app") == 0) {
                                 if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
@@ -325,7 +329,7 @@ public class MoveInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("fxCKAuditStaffName", session.getAttribute("user"));
@@ -513,6 +517,10 @@ public class MoveInterface extends HttpServlet {
                 case "返修入库": {
                     switch (operation) {
                         case "create": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             String whereCase = "";
                             if (operateType.compareTo("app") == 0) {
                                 if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
@@ -582,7 +590,7 @@ public class MoveInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("fxRKAuditStaffName", session.getAttribute("user"));
@@ -776,7 +784,7 @@ public class MoveInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             json = queryOperate("com.cn.bean.move.", "view", "KFAdjustAccountList", "TZYMonth", datas, rely, true, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()), pageSize, pageIndex);
                             break;
                         }
@@ -870,7 +878,7 @@ public class MoveInterface extends HttpServlet {
         } else {
             conn = opt.getConnect();
         }
-        
+
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
         Class objClass = Class.forName(beanPackage + tableName);
@@ -971,7 +979,7 @@ public class MoveInterface extends HttpServlet {
         } else {
             conn = opt.getConnect();
         }
-        
+
         Class objClass = Class.forName(beanPackage + tableName);
         Method method = objClass.getMethod("getRecordCount", new Class[0]);
 

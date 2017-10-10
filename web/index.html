@@ -31,6 +31,10 @@
         <script type="text/javascript">
             window.onload = function () {
                 findDimensions();
+                var loginType = localStorage.getItem("loginType");
+                console.log(loginType);
+                if (loginType !== "login")
+                    getHistoryList();
             };
             window.onresize = function () {
                 findDimensions();
@@ -74,6 +78,38 @@
                     end: function () {
                         if (callback) {
                             callback();
+                        }
+                    }
+                });
+            }
+            function getHistoryList() {
+                var request = {
+                    module: "往期列表"
+                };
+                $.ajax({
+                    type: "post",
+                    url: "/RuiBangWuLiu/action.do",
+                    data: JSON.stringify(request),
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status !== 0) {
+                            alert(data.message);
+                        } else if (data.status === -99) {
+                            alert('由于您长时间没有操作,登陆已失效!请你重新登录!');
+                            window.parent.location.href = "login.html";
+                        } else {
+                            var item = data.data;
+                            if (item.length < 1) {
+                                $(".start-time").val('2014-01-01 00:00:00');
+                                $(".jzyMonth").val('20140101010101');
+                                localStorage.setItem("jzDateTime", '2014-01-01 00:00:00');
+                                localStorage.setItem("jzyMonth", '20140101010101');
+                            } else {
+                                $(".start-time").val(item[0].jzDateTime);
+                                $(".jzyMonth").val(item[0].jzyMonth);
+                                localStorage.setItem("jzDateTime", item[0].jzDateTime);
+                                localStorage.setItem("jzyMonth", item[0].jzyMonth);
+                            }
                         }
                     }
                 });
@@ -240,6 +276,7 @@
                                             <label>终止日期</label>
                                             <input type="text" name="endTime" class="wc-control end-time" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
                                         </div>
+                                        <input type="hidden" name="jzyMonth" class="wc-control jzyMonth" value="">
                                         <button class="page3-query">查询</button>
                                         <button class="page3-queryHistory">往期查询</button>
                                         <button class="page3-export">导出</button>
@@ -292,10 +329,13 @@
 
         <div id="code_img_div" class="content_hidden"><img alt="条码" src="" class="div_code_cell_img content_hidden"/></div>
 
-        <!--导入回写数据-->
+        <!--弹出框回写数据-->
         <div class="no_print content_hidden">
             <input type="hidden" id="import_result" />
             <input type="hidden" id="import_return_data" />
+            <input type="hidden" id="jzyMonth" />
+            <input type="hidden" id="startTime" />
+            <input type="hidden" id="endTime" />
         </div>
 
         <script type="text/javascript" src="assets/JQueryMenuPlug/JQueryMenuPlug-js.js" ></script>

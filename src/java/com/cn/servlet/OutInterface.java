@@ -191,7 +191,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             json = queryOperate("com.cn.bean.out.", "view", "JHOutWareHouseList", "JHOutWareHouseID", datas, rely, true, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()), pageSize, pageIndex);
                             break;
                         }
@@ -407,6 +407,10 @@ public class OutInterface extends HttpServlet {
                             break;
                         }
                         case "finish": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             if (!Units.strIsEmpty(delete) && employee.getEmployeeName().compareTo("管理员") == 0) {
                                 JSONArray paramsArray = JSONArray.parseArray(delete);
                                 for (int i = 0; i < paramsArray.size(); i++) {
@@ -467,7 +471,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             json = queryOperate("com.cn.bean.out.", "view", "JHOutWareHouseList", "JHOutWareHouseID", datas, rely, true, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()), pageSize, pageIndex);
                             break;
                         }
@@ -712,6 +716,10 @@ public class OutInterface extends HttpServlet {
                             break;
                         }
                         case "finish": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             if (!Units.strIsEmpty(delete) && employee.getEmployeeName().compareTo("管理员") == 0) {
                                 JSONArray paramsArray = JSONArray.parseArray(delete);
                                 for (int i = 0; i < paramsArray.size(); i++) {
@@ -772,7 +780,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             json = queryOperate("com.cn.bean.out.", "view", "JHOutWareHouseList", "JHOutWareHouseID", datas, rely, true, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()), pageSize, pageIndex);
                             break;
                         }
@@ -981,6 +989,10 @@ public class OutInterface extends HttpServlet {
                             break;
                         }
                         case "finish": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             if (!Units.strIsEmpty(delete) && employee.getEmployeeName().compareTo("管理员") == 0) {
                                 JSONArray paramsArray = JSONArray.parseArray(delete);
                                 for (int i = 0; i < paramsArray.size(); i++) {
@@ -1015,6 +1027,10 @@ public class OutInterface extends HttpServlet {
                     String jhType = "FJHType = '临时调货'";
                     switch (operation) {
                         case "create": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             String whereCase = "exists (select * from tblFJHOutWareHouseList list left join viewGYSPartContainerInfo gys"
                                     + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
                                     + " where list.FJHOutWareHouseID = viewFJHOutWareHouse.FJHOutWareHouseID"
@@ -1043,13 +1059,11 @@ public class OutInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            /*Connection conn;
-                            if (dataType.compareToIgnoreCase("isHis") == 0) {
-                                conn = opt.getConnectHis();
-                            } else {
-                                conn = opt.getConnect();
-                            }*/
-                            
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
+
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("fhStaffName", session.getAttribute("user"));
@@ -1357,7 +1371,7 @@ public class OutInterface extends HttpServlet {
                                     object.put("datas", JSONObject.toJSONString(result));
                                     json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
                                 }
-                                */
+                                 */
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", JSONObject.toJSONString(result));
                             }
@@ -1382,6 +1396,10 @@ public class OutInterface extends HttpServlet {
                     String jhType = "FJHType = '非生产领料'";
                     switch (operation) {
                         case "create": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             String whereCase = "exists (select * from tblFJHOutWareHouseList list left join viewGYSPartContainerInfo gys"
                                     + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
                                     + " where list.FJHOutWareHouseID = viewFJHOutWareHouse.FJHOutWareHouseID"
@@ -1410,13 +1428,11 @@ public class OutInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            /*Connection conn;
-                            if (dataType.compareToIgnoreCase("isHis") == 0) {
-                                conn = opt.getConnectHis();
-                            } else {
-                                conn = opt.getConnect();
-                            }*/
-                            
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
+
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("fhStaffName", session.getAttribute("user"));
@@ -1692,7 +1708,7 @@ public class OutInterface extends HttpServlet {
                                     //当前库存不满足该计划
                                     json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
                                 }
-                                */
+                                 */
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", null);
                             }
@@ -1777,7 +1793,7 @@ public class OutInterface extends HttpServlet {
                                     //当前库存不满足该计划
                                     json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
                                 }
-                                */
+                                 */
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", null);
                             }
@@ -1822,7 +1838,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             //json = queryOperate("com.cn.bean.out.", "view", "XCJSList", "XCJSID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             String xcjsId = JSONObject.parseObject(rely).getString("xcJSID");
                             String mainTabWhereSql = "XCJSID = '" + xcjsId + "'";
@@ -1995,7 +2011,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             //json = queryOperate("com.cn.bean.out.", "view", "XCJSList", "XCJSID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
                             String xcjsId = JSONObject.parseObject(rely).getString("llJSID");
                             String mainTabWhereSql = "LLJSID = '" + xcjsId + "'";
@@ -2147,6 +2163,10 @@ public class OutInterface extends HttpServlet {
                 case "部品退货": {
                     switch (operation) {
                         case "create": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             String whereCase = "";
                             if (operateType.compareTo("app") == 0) {
                                 if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
@@ -2230,7 +2250,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("bpTHAuditStaffName", session.getAttribute("user"));
@@ -2538,7 +2558,10 @@ public class OutInterface extends HttpServlet {
 
                 //<editor-fold desc="备货管理">
                 case "备货管理": {
-                    String whereCase = "JHStatus <= 0 and JHConfirm = 1";
+                    String whereCase = "exists(select * from (select * from tblBHProgressList where BHTime is not null) bhList"
+                                + " where viewJHOutWareHouseList.JHOutWareHouseID = bhList.JHOutWareHouseID"
+                                + " and viewJHOutWareHouseList.SupplierID = bhList.SupplierID and viewJHOutWareHouseList.PartCode = bhList.PartCode"
+                                + " and viewJHOutWareHouseList.InboundBatch = bhList.InboundBatch)";
                     switch (operation) {
                         case "create": {
                             //json = createOperate(20, "view", "com/cn/json/out/", "com.cn.bean.out.", "JHOutWareHouseList", "JHOutWareHouseID", opt.getConnect());
@@ -2558,7 +2581,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             String detailCase = "FinishTime is null";
                             if (isHistory == 0) {
                                 json = queryOperateWithFilter("com.cn.bean.out.", "view", "BHProgressList", "JHOutWareHouseID", datas, rely, detailCase, false, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()), pageSize, pageIndex);
@@ -2619,20 +2642,41 @@ public class OutInterface extends HttpServlet {
 
                 //<editor-fold desc="领货管理">
                 case "领货管理": {
-                    int tmpPageSize = 20;
+                    if (employee == null) {
+                        json = Units.objectToJson(-99, "未登陆", null);
+                        break;
+                    }
+                    int tmpPageSize;
                     String whereCase;
                     if (operateType.compareTo("app") == 0) {
                         isHistory = 0;
                         tmpPageSize = Integer.MAX_VALUE;
+                        /*
                         whereCase = "exists(select * from tblBHProgressList bhList left join tblPartBHStaff part on bhList.PartCode = part.PartCode"
                                 + " where viewJHOutWareHouseList.JHOutWareHouseID = bhList.JHOutWareHouseID"
                                 + " and viewJHOutWareHouseList.SupplierID = bhList.SupplierID and viewJHOutWareHouseList.PartCode = bhList.PartCode"
                                 + " and viewJHOutWareHouseList.InboundBatch = bhList.InboundBatch and bhList.BHTime is not null"
                                 + " and (JHStatus = 1 or JHStatus = -2) and part.LHEmployeeName = '" + employee.getEmployeeName() + "')";
-                    } else {
-                        whereCase = "exists(select * from tblBHProgressList bhList where viewJHOutWareHouseList.JHOutWareHouseID = bhList.JHOutWareHouseID"
+                        */
+                        whereCase = "exists(select * from (select * from tblBHProgressList where BHTime is not null) bhList"
+                                + " inner join (select * from tblLHProgressList where LHTime is null) lhList"
+                                + " on bhList.JHOutWareHouseID = lhList.JHOutWareHouseID and bhList.SupplierID = lhList.SupplierID"
+                                + " and bhList.PartCode = lhList.PartCode and bhList.InboundBatch = lhList.InboundBatch"
+                                + " and bhList.PackingNumber = lhList.PackingNumber"
+                                + " inner join (select * from tblPartBHStaff where LHEmployeeName = '" + employee.getEmployeeName() + "') part"
+                                + " on bhList.PartCode = part.PartCode"
+                                + " where viewJHOutWareHouseList.JHOutWareHouseID = bhList.JHOutWareHouseID"
                                 + " and viewJHOutWareHouseList.SupplierID = bhList.SupplierID and viewJHOutWareHouseList.PartCode = bhList.PartCode"
-                                + " and viewJHOutWareHouseList.InboundBatch = bhList.InboundBatch and bhList.BHTime is not null and (JHStatus = 1 or JHStatus = -2))";
+                                + " and viewJHOutWareHouseList.InboundBatch = bhList.InboundBatch)";
+                    } else {
+                        whereCase = "exists(select * from (select * from tblBHProgressList where BHTime is not null) bhList"
+                                + " inner join (select * from tblLHProgressList where LHTime is null) lhList"
+                                + " on bhList.JHOutWareHouseID = lhList.JHOutWareHouseID and bhList.SupplierID = lhList.SupplierID"
+                                + " and bhList.PartCode = lhList.PartCode and bhList.InboundBatch = lhList.InboundBatch"
+                                + " and bhList.PackingNumber = lhList.PackingNumber"
+                                + " where viewJHOutWareHouseList.JHOutWareHouseID = bhList.JHOutWareHouseID"
+                                + " and viewJHOutWareHouseList.SupplierID = bhList.SupplierID and viewJHOutWareHouseList.PartCode = bhList.PartCode"
+                                + " and viewJHOutWareHouseList.InboundBatch = bhList.InboundBatch)";
                         tmpPageSize = 20;
                     }
                     String whereCase1 = whereCase + " and (JHStatus < 2)";
@@ -2656,7 +2700,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             String detailCase = "exists(select * from tblBHProgressList bhList where viewLHProgressList.JHOutWareHouseID = bhList.JHOutWareHouseID"
                                     + " and viewLHProgressList.SupplierID = bhList.SupplierID and viewLHProgressList.PartCode = bhList.PartCode"
                                     + " and viewLHProgressList.PackingNumber = bhList.PackingNumber and bhList.BHTime is not null)";
@@ -2756,7 +2800,11 @@ public class OutInterface extends HttpServlet {
 
                 //<editor-fold desc="配送管理">
                 case "配送管理": {
-                    int tmpPageSize = 20;
+                    if (employee == null) {
+                        json = Units.objectToJson(-99, "未登陆", null);
+                        break;
+                    }
+                    int tmpPageSize;
                     String whereCase;
                     if (operateType.compareTo("app") == 0) {
                         isHistory = 0;
@@ -2790,7 +2838,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             String detailCase = "exists(select * from tblLHProgressList lhList where viewSXProgressList.JHOutWareHouseID = lhList.JHOutWareHouseID"
                                     + " and viewSXProgressList.SupplierID = lhList.SupplierID and viewSXProgressList.PartCode = lhList.PartCode"
                                     + " and viewSXProgressList.PackingNumber = lhList.PackingNumber and lhList.LHTime is not null)";
@@ -3013,7 +3061,7 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             json = queryOperate("com.cn.bean.out.", "view", "JHOutWareHouseZCList", "JHOutWareHouseID", datas, rely, true, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()), pageSize, pageIndex);
                             break;
                         }

@@ -8,6 +8,7 @@ package com.cn.servlet;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.AreaLedIPInfo;
 import com.cn.bean.ClassDescription;
+import com.cn.bean.Container;
 import com.cn.bean.Customer;
 import com.cn.bean.FieldDescription;
 import com.cn.bean.GYSPartContainerInfo;
@@ -777,6 +778,21 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "import": {
                             json = importData("com.cn.bean.", "Container", importPath + fileName, opt.getConnect());
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入盛具信息到Redis中*/
+                                        List<Object> containerList = commonController.dataBaseQuery("table", "com.cn.bean.", "Container", "*", "", Integer.MAX_VALUE, 1, "ContainerName", 0, opt.getConnect());
+                                        Iterator<Object> iterator3 = containerList.iterator();
+                                        while (iterator3.hasNext()) {
+                                            Container containerInfo = (Container) iterator3.next();
+                                            RedisAPI.set("container_" + containerInfo.getContainerName(), JSONObject.toJSONString(containerInfo));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                         case "exportTemplate": {
@@ -789,6 +805,21 @@ public class BaseInterface extends HttpServlet {
                         }
                         case "submit": {
                             json = submitOperate("com.cn.bean.", "Container", update, add, delete, "data");
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        /*导入盛具信息到Redis中*/
+                                        List<Object> containerList = commonController.dataBaseQuery("table", "com.cn.bean.", "Container", "*", "", Integer.MAX_VALUE, 1, "ContainerName", 0, opt.getConnect());
+                                        Iterator<Object> iterator3 = containerList.iterator();
+                                        while (iterator3.hasNext()) {
+                                            Container containerInfo = (Container) iterator3.next();
+                                            RedisAPI.set("container_" + containerInfo.getContainerName(), JSONObject.toJSONString(containerInfo));
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+                            }.start();
                             break;
                         }
                     }

@@ -1,0 +1,81 @@
+{
+    "control": {
+        "conInWareHouseID": "盛具入库单号",
+        "supplierName": "供应商名称,hidden",
+        "conRKProducerName": "制单人员姓名",
+        "conRKProduceTime": "制单时间",
+        "customerTypeName": "客户类型,hidden,@供应商",
+        "supplierID": "供应商代码,@table,@customerTypeName:@supplierName",
+        "conInWareHousRemark": "备注,string,500"
+    },
+    "mustwrite": ["conInWareHouseID", "supplierID", "conRKProducerName", "conRKProduceTime"],
+    "unique": [],
+    "primary": "conInWareHouseID",
+    "titles": {
+        "conInWareHouseID": "盛具入库单号,20%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,10%",
+        "conRKProducerName": "制单人员姓名,10%",
+        "conRKProduceTime": "制单时间,15%",
+        "conRKAuditStaffName": "审核人员姓名,10%",
+        "conRKAuditTime": "审核时间,15%",
+        "conInWareHousRemark": "备注,10%"
+    },
+    "detailControl": {
+        "conInWareHouseID": "盛具入库单,parent",
+        "supplierID": "供应商代码,parent",
+        "supplierName": "供应商名称,parent",
+        "containerName": "盛具名称,@table",
+        "rkAmount": "入库数量,number",
+        "conInWareHouseListRemark": "备注,string,500"
+    },
+    "detailMustwrite": ["conInWareHouseID", "supplierID", "containerName", "rkAmount"],
+    "detailUnique": [],
+    "detailPrimary": "conInWareHouseID,supplierID,containerName",
+    "detailTitles": {
+        "checkbox": "选择,5%",
+        "failedReason": "失败原因,0%",
+        "conInWareHouseID": "盛具入库单,25%",
+        "supplierID": "供应商代码,15%",
+        "supplierName": "供应商名称,15%",
+        "containerName": "盛具名称,15%",
+        "rkAmount": "入库数量,5%",
+        "wareHouseManagerName": "管理员,10%",
+        "conInWareHouseListRemark": "备注,15%"
+    },
+    "printArea": {
+        "title": {
+            "conInWareHouse": "100%,盛具入库单,title"
+        },
+        "rows1": {
+            "conInWareHouseIDName": "15%,单据编号",
+            "conInWareHouseID": "20%",
+            "supplierNameName": "10%,供应商",
+            "supplierName": "20%",
+            "supplierID": "5%",
+            "conRKProducerNameName": "10%,制单人",
+            "conRKProducerName": "20%"
+        },
+        "datasTitle": {
+            "containerName": "38%,盛具名称",
+            "containerStatus": "37%,盛具状态",
+            "rkAmount": "15%,数量",
+            "conInWareHouseListRemark": "10%,备注"
+        },
+        "rows2": {
+            "inboundCountName": "10%,总计",
+            "inboundCount": "90%"
+        },
+        "rows3": {
+            "supplierSignName": "15%,供应商",
+            "supplierSign": "20%",
+            "wareHouseManagerSignName": "15%,审核人",
+            "wareHouseManagerSign": "20%",
+            "auditSignName": "15%,检验人",
+            "auditSign": "15%"
+        },
+        "rows4": {
+            "remark": "100%,备注: 白 --> 存根; 红色 --> 客户; 蓝 --> 库房; 绿色 --> 检验; 黄 --> 返回"
+        }
+    }
+}

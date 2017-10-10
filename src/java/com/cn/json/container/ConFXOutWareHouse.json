@@ -1,0 +1,87 @@
+{
+    "control": {
+        "conFXOutWareHouseID": "返修出库单号",
+        "supplierName": "供应商名称,hidden",
+        "conFXCKProducerName": "制单人员姓名",
+        "conFXCKProduceTime": "制单时间",
+        "customerTypeName": "客户类型,hidden,@供应商",
+        "containerStatus": "盛具状态,select,良品,不良品",
+        "supplierID": "供应商代码,@table,@customerTypeName:@supplierName",
+        "conFXOutWareHousRemark": "备注,string,500"
+    },
+    "mustwrite": ["conFXOutWareHouseID", "supplierID", "conFXCKProducerName", "conFXCKProduceTime"],
+    "unique": [],
+    "primary": "conFXOutWareHouseID,supplierID,containerStatus",
+    "titles": {
+        "conFXOutWareHouseID": "返修出库单号,15%",
+        "supplierID": "供应商代码,10%",
+        "supplierName": "供应商名称,15%",
+        "containerStatus": "盛具状态,10%",
+        "conFXCKProducerName": "制单人员姓名,10%",
+        "conFXCKProduceTime": "制单时间,10%",
+        "conFXCKAuditStaffName": "审核人员姓名,10%",
+        "conFXCKAuditTime": "审核时间,10%",
+        "conFXOutWareHousRemark": "备注,10%"
+    },
+    "detailControl": {
+        "conFXOutWareHouseID": "返修出库单号,parent",
+        "supplierID": "供应商代码,parent",
+        "supplierName": "供应商名称,parent",
+        "containerStatus": "盛具状态,parent,@良品",
+        "operateMaxAmount": "最大可操作数量,hidden",
+        "fxOutBatch": "返修出批次",
+        "containerName": "盛具名称,@table,@supplierID,@containerStatus:@operateMaxAmount",
+        "fxCKAmount": "返修出数量,check,小于,operateMaxAmount",
+        "conFXOutWareHouseListRemark": "备注,string,500"
+    },
+    "detailMustwrite": ["conFXOutWareHouseID", "supplierID", "containerName", "fxCKAmount"],
+    "detailUnique": [],
+    "detailPrimary": "conFXOutWareHouseID,supplierID,containerName",
+    "detailTitles": {
+        "checkbox": "选择,5%",
+        "failedReason": "失败原因,0%",
+        "conFXOutWareHouseID": "返修出库单号,25%",
+        "supplierID": "供应商代码,15%",
+        "supplierName": "供应商名称,15%",
+        "containerName": "盛具名称,15%",
+        "fxOutBatch": "返修出批次,10%",
+        "fxCKAmount": "返修出数量,10%",
+        "wareHouseManagerName": "管理员,10%",
+        "conFXOutWareHouseListRemark": "备注,10%"
+    },
+    "printArea": {
+        "title": {
+            "conFXOutWareHouse": "100%,盛具返修出库单,title"
+        },
+        "rows1": {
+            "conFXOutWareHouseIDName": "15%,单据编号",
+            "conFXOutWareHouseID": "20%",
+            "supplierNameName": "10%,供应商",
+            "supplierName": "20%",
+            "supplierID": "5%",
+            "conFXCKProducerNameName": "10%,制单人",
+            "conFXCKProducerName": "20%"
+        },
+        "datasTitle": {
+            "containerName": "38%,盛具名称",
+            "containerStatus": "37%,盛具状态",
+            "fxCKAmount": "15%,数量",
+            "conInWareHouseListRemark": "10%,备注"
+        },
+        "rows2": {
+            "inboundCountName": "10%,总计",
+            "inboundCount": "90%"
+        },
+        "rows3": {
+            "supplierSignName": "15%,供应商",
+            "supplierSign": "20%",
+            "wareHouseManagerSignName": "15%,审核人",
+            "wareHouseManagerSign": "20%",
+            "auditSignName": "15%,检验人",
+            "auditSign": "15%"
+        },
+        "rows4": {
+            "remark": "100%,备注: 白 --> 存根; 红色 --> 客户; 蓝 --> 库房; 绿色 --> 检验; 黄 --> 返回"
+        }
+    }
+}

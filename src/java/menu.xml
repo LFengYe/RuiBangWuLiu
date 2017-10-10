@@ -46,12 +46,13 @@
         <!--<second hypelnk="page1"  id="10411" text="下线信息" url="out.do"></second>-->
     </first>
     <first   hypelnk=""  id="109" text="盛具管理" url="move.do">
-        <second  hypelnk="page1"  id="10901" text="盛具入库" url="container.do"></second>
-        <second  hypelnk="page1"  id="10902" text="返修出库" url="container.do"></second>
-        <second  hypelnk="page1"  id="10903" text="返修入库" url="container.do"></second>
-        <second  hypelnk="page1"  id="10904" text="盛具出库" url="container.do"></second>
+        <second  hypelnk="page2"  id="10901" text="盛具入库" url="container.do"></second>
+        <second  hypelnk="page2"  id="10902" text="返修出库" url="container.do"></second>
+        <second  hypelnk="page2"  id="10903" text="返修入库" url="container.do"></second>
+        <second  hypelnk="page2"  id="10904" text="盛具出库" url="container.do"></second>
         <second  hypelnk="page3"  id="10905" text="盛具报表" url="report.do"></second>
         <second  hypelnk="page3"  id="10906" text="盛具需求" url="report.do"></second>
+        <second  hypelnk="page3"  id="10907" text="盛具维修" url="report.do"></second>
     </first>
     <first  hypelnk=""  id="105" text="数据报表管理" url="report.do">
         <second text="部品期初明细" url="report.do">
@@ -185,7 +186,8 @@
         <second hypelnk="page3" icon="ic_stock_alarm"  id="8053" text="部品报警明细表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_send_check_in"  id="8054" text="良品入库报表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_return_storehouse"  id="8055" text="部品退库分录" url="report.do"></second>
-        <second hypelnk="page3" icon="ic_return_goods"  id="8056" text="退货出库报表" url="report.do"></second>
+        <second hypelnk="page3" icon="ic_return_goods"  id="8056" text="良品退货出库" url="report.do"></second>
+        <second hypelnk="page3" icon="ic_return_goods"  id="80517" text="不良品退货出库" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="8057" text="良品库存报表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_rework_out"  id="8058" text="良品返修出库" url="report.do"></second>
         <second hypelnk="page3" icon="ic_rework_out"  id="8059" text="不良品返修出库" url="report.do"></second>
@@ -193,8 +195,8 @@
         <second hypelnk="page3" icon="ic_rework_in"  id="80511" text="返修不良品入库" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="80512" text="不良品库存报表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="80513" text="良品库存" url="out.do"></second>
-        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80514" text="非生产领料报表" url="out.do"></second>
-        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80515" text="临时调货报表" url="out.do"></second>
+        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80514" text="非生产领料报表" url="report.do"></second>
+        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80515" text="临时调货报表" url="report.do"></second>
     </first>
     <first hypelnk="app"  id="806" text="系统设置" url="app.do">
         <second hypelnk="modify_pass" icon="ic_user_manager"  id="8061" text="修改密码" url="active.do"></second>

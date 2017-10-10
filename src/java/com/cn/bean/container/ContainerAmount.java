@@ -23,21 +23,16 @@ public class ContainerAmount {
     }
     @FieldDescription(description = "供应商编号")
     private String supplierID;
-    @FieldDescription(description = "盛具名称")
+    @FieldDescription(description = "供应商名称", operate = "display")
+    private String supplierName;
     private String containerName;
-    @FieldDescription(description = "盛具状态")
-    private String containerStatus;
-    @FieldDescription(description = "操作类型")
-    private String operateType;
-    private int containerFXOutLP;
-    private int containerFXOutBLP;
-    private int containerFXInLP;
-    private int containerFXInBLP;
-    private int containerLPTotal;
-    private int containerBLPTotal;
-    private int containerFXLP;
-    private int containerFXBLP;
+    private String fxOutBatch;
+    private int containerIn;
+    private int containerFXOut;
+    private int containerFXIn;
     private int containerFX;
+    private int containerOut;
+    private int containerTotal;
 
     public String getSupplierID() {
         return supplierID;
@@ -47,12 +42,12 @@ public class ContainerAmount {
         this.supplierID = supplierID;
     }
 
-    public String getContainerStatus() {
-        return containerStatus;
+    public String getSupplierName() {
+        return supplierName;
     }
 
-    public void setContainerStatus(String containerStatus) {
-        this.containerStatus = containerStatus;
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
 
     public String getContainerName() {
@@ -63,76 +58,28 @@ public class ContainerAmount {
         this.containerName = containerName;
     }
 
-    public String getOperateType() {
-        return operateType;
+    public int getContainerIn() {
+        return containerIn;
     }
 
-    public void setOperateType(String operateType) {
-        this.operateType = operateType;
+    public void setContainerIn(int containerIn) {
+        this.containerIn = containerIn;
     }
 
-    public int getContainerFXOutLP() {
-        return containerFXOutLP;
+    public int getContainerFXOut() {
+        return containerFXOut;
     }
 
-    public void setContainerFXOutLP(int containerFXOutLP) {
-        this.containerFXOutLP = containerFXOutLP;
+    public void setContainerFXOut(int containerFXOut) {
+        this.containerFXOut = containerFXOut;
     }
 
-    public int getContainerFXOutBLP() {
-        return containerFXOutBLP;
+    public int getContainerFXIn() {
+        return containerFXIn;
     }
 
-    public void setContainerFXOutBLP(int containerFXOutBLP) {
-        this.containerFXOutBLP = containerFXOutBLP;
-    }
-
-    public int getContainerFXInLP() {
-        return containerFXInLP;
-    }
-
-    public void setContainerFXInLP(int containerFXInLP) {
-        this.containerFXInLP = containerFXInLP;
-    }
-
-    public int getContainerFXInBLP() {
-        return containerFXInBLP;
-    }
-
-    public void setContainerFXInBLP(int containerFXInBLP) {
-        this.containerFXInBLP = containerFXInBLP;
-    }
-
-    public int getContainerLPTotal() {
-        return containerLPTotal;
-    }
-
-    public void setContainerLPTotal(int containerLPTotal) {
-        this.containerLPTotal = containerLPTotal;
-    }
-
-    public int getContainerBLPTotal() {
-        return containerBLPTotal;
-    }
-
-    public void setContainerBLPTotal(int containerBLPTotal) {
-        this.containerBLPTotal = containerBLPTotal;
-    }
-
-    public int getContainerFXLP() {
-        return containerFXLP;
-    }
-
-    public void setContainerFXLP(int containerFXLP) {
-        this.containerFXLP = containerFXLP;
-    }
-
-    public int getContainerFXBLP() {
-        return containerFXBLP;
-    }
-
-    public void setContainerFXBLP(int containerFXBLP) {
-        this.containerFXBLP = containerFXBLP;
+    public void setContainerFXIn(int containerFXIn) {
+        this.containerFXIn = containerFXIn;
     }
 
     public int getContainerFX() {
@@ -142,4 +89,30 @@ public class ContainerAmount {
     public void setContainerFX(int containerFX) {
         this.containerFX = containerFX;
     }
+
+    public int getContainerOut() {
+        return containerOut;
+    }
+
+    public void setContainerOut(int containerOut) {
+        this.containerOut = containerOut;
+    }
+
+    public int getContainerTotal() {
+        return containerTotal;
+    }
+
+    public void setContainerTotal(int containerTotal) {
+        this.containerTotal = containerTotal;
+    }
+
+    public String getFxOutBatch() {
+        return fxOutBatch;
+    }
+
+    public void setFxOutBatch(String fxOutBatch) {
+        this.fxOutBatch = fxOutBatch;
+    }
+    
+    
 }

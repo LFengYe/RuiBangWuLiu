@@ -5,8 +5,11 @@
  */
 package com.cn.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,6 +39,14 @@ import org.apache.poi.ss.usermodel.Row;
  */
 public class Units {
 
+    private static SerializeConfig mapping = new SerializeConfig();
+    private static String dateFormat;
+
+    static {
+        dateFormat = "yyyy-MM-dd HH:mm:ss";
+        mapping.put(Date.class, new SimpleDateFormatSerializer(dateFormat));
+    }
+
     /**
      * 验证码序列
      */
@@ -46,7 +57,8 @@ public class Units {
     public static final double EARTH_RADIUS = 6378137;//赤道半径(单位m)
     public static final String BAIDU_CONVERT_KEY = "UGTSrlHZTd3O95SiMiQkhLO2";
     public static final SerializerFeature[] features = {SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullNumberAsZero,
-        SerializerFeature.WriteNullBooleanAsFalse, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullListAsEmpty};
+        SerializerFeature.WriteNullBooleanAsFalse, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullListAsEmpty,
+        SerializerFeature.WriteDateUseDateFormat};
 
     /**
      * 将指定类型坐标转换成为百度坐标
@@ -315,7 +327,8 @@ public class Units {
         json.append("\"").append("message").append("\"").append(":");
         json.append("\"").append(message).append("\"").append(",");
         json.append("\"").append("data").append("\"").append(":");
-        json.append(JSONObject.toJSONString(object, features));
+        //json.append(JSONObject.toJSONString(object, features));
+        json.append(JSON.toJSONStringWithDateFormat(object, "YYYY-MM-dd HH:mm:ss", features));
         json.append("}");
         return json.toString();
     }
@@ -517,7 +530,7 @@ public class Units {
         obj.put(keyName, JSONObject.parseObject(jsonStr).getString(keyName));
         return obj.toJSONString();
     }
-    
+
     public static String getSubJsonValue(String jsonStr, String keyName) {
         return JSONObject.parseObject(jsonStr).getString(keyName);
     }
@@ -752,6 +765,7 @@ public class Units {
         }
         return false;
     }
+
     /**
      * ************************************容联云通讯短信发送平台*****************************************
      */
@@ -839,6 +853,47 @@ public class Units {
         }
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
+
+    /**
+     * 获取请求主机IP地址,如果通过代理进来，则透过防火墙获取真实IP地址;
+     *
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    public final static String getRealIpAddress(HttpServletRequest request) throws IOException {
+        // 获取请求主机IP地址,如果通过代理进来，则透过防火墙获取真实IP地址  
+
+        String ip = request.getHeader("X-Forwarded-For");
+
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("HTTP_CLIENT_IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+            }
+        } else if (ip.length() > 15) {
+            String[] ips = ip.split(",");
+            for (int index = 0; index < ips.length; index++) {
+                String strIp = (String) ips[index];
+                if (!("unknown".equalsIgnoreCase(strIp))) {
+                    ip = strIp;
+                    break;
+                }
+            }
         }
         return ip;
     }

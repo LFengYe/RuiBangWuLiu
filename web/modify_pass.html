@@ -34,9 +34,13 @@ and open the template in the editor.
                             data: JSON.stringify(request),
                             dataType: "json",
                             success: function (data) {
-                                alert(data.message);
-                                if (data.status !== 0) {                                    
+                                if (data.status !== 0) {
+                                    alert(data.message);
+                                } else if (data.status === -99) {
+                                    alert('由于您长时间没有操作,登陆已失效!请你重新登录!');
+                                    window.parent.location.href = "login.html";
                                 } else {
+                                    alert(data.message);
                                     var index = parent.layer.getFrameIndex(window.name);
                                     parent.layer.close(index);
                                 }

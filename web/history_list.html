@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>往期列表</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" type="text/css"/>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script type="text/javascript" src="javascript/respond.min.js"></script>
+          <script type="text/javascript" src="javascript/html5shiv.min.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="assets/jQuery/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/common-js/common.js"></script>
+        <script type="text/javascript" src="javascript/script.js"></script>
+        <script type="text/javascript">
+            var hisData;
+            window.onload = function () {
+                getHistoryList();
+                $("#confirm").bind("click", function () {
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                });
+
+                $(".dropdown-menu li").bind("click", function () {
+                    console.log(this.attr("title"));
+                });
+            };
+            function setParams(index) {
+                $("#dropdownMenu").html(hisData[index].jzDateTime.substring(0, 16));
+                parent.$("#endTime").val(hisData[index].jzDateTime);
+                if (index < hisData.length - 1) {
+                    parent.$("#startTime").val(hisData[index + 1].jzDateTime);
+                    parent.$("#jzyMonth").val(hisData[index + 1].jzyMonth);
+                } else {
+                    parent.$("#startTime").val(hisData[index].jzDateTime);
+                    parent.$("#jzyMonth").val(hisData[index].jzyMonth);
+                }
+            }
+            function getHistoryList() {
+                var request = {
+                    module: "往期列表"
+                };
+                $.ajax({
+                    type: "post",
+                    url: "/RuiBangWuLiu/action.do",
+                    data: JSON.stringify(request),
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status !== 0) {
+                            alert(data.message);
+                        } else {
+                            hisData = data.data;
+                            var ul = $(".dropdown-menu");
+                            ul.html("");
+                            for (var i = 0; i < hisData.length; i++) {
+                                var item = hisData[i];
+                                var liHtml = "<li><a href='javascript:setParams(" + i + ")'>" + item.jzDateTime.substring(0, 16) + "</a></li>";
+                                ul.append(liHtml);
+                            }
+                        }
+                    }
+                });
+            }
+        </script>
+        <style>
+            .button{margin-right:20px;background-color: #403939;border: none;margin-top: 10px;}
+            .layer-content{height: 300px;padding: 20px;}
+        </style>
+    </head>
+    <body>
+        <div class="layer-content">
+            <form class="form-horizontal" id="data_form">
+                <div class="form-group-sm form-group">
+                    <div class="col-sm-offset-2 col-sm-9 function">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                往期查询列表
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                                <li><a href="#">2017-10-10 18:90</a></li>
+                                <li><a href="#">2017-10-10 18:90</a></li>
+                                <li><a href="#">2017-10-10 18:90</a></li>
+                                <li><a href="#">2017-10-10 18:90</a></li>
+                                <li><a href="#">2017-10-10 18:90</a></li>
+                                <li><a href="#">2017-10-10 18:90</a></li>
+                                <li><a href="#">2017-10-10 18:90</a></li>
+                                <li><a href="#">2017-10-10 18:90</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group-sm form-group">
+                    <div class="col-sm-offset-2 col-sm-9 function">
+                        <a class="btn btn-default" id="confirm">确定</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </body>
+</html>

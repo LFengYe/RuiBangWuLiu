@@ -198,7 +198,7 @@ public class InInterface extends HttpServlet {
                                 Class objClass = Class.forName("com.cn.bean.in." + "DJInWareHouseList");
                                 Method method = objClass.getMethod("getRecordCount", new Class[0]);
                                 String whereSql = commonController.getWhereSQLStr(objClass, datas, rely, true);
-                                List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.in.", "DJInWareHouseList", "*", whereSql, pageSize, pageIndex, "DJInWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
+                                List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.in.", "DJInWareHouseList", "*", whereSql, pageSize, pageIndex, "ListNumber", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                                 String result = "{}";
                                 if (detailList != null && detailList.size() > 0) {
                                     for (Object obj : detailList) {
@@ -302,8 +302,11 @@ public class InInterface extends HttpServlet {
                             if (importData != null) {
                                 boolean importSuccess = true;
                                 Iterator iterator = importData.iterator();
+                                int listNumber = 0;
                                 while (iterator.hasNext()) {
+                                    listNumber++;
                                     DJInWareHouseList houseList = (DJInWareHouseList) iterator.next();
+                                    houseList.setListNumber(listNumber);
                                     houseList.setSupplierID(dJInWareHouse.getSupplierID());
                                     houseList.setDjInWareHouseID(dJInWareHouse.getDjInWareHouseID());
                                     houseList.setInboundBatch(dJInWareHouse.getInboundBatch());
@@ -350,7 +353,7 @@ public class InInterface extends HttpServlet {
                                 if (importSuccess) {
                                     int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "DJInWareHouse", "add", opt.getConnect()).get(0);
                                     if (result == 0) {
-                                        System.out.println("import:" + JSONObject.toJSONString(importData));
+                                        //System.out.println("import:" + JSONObject.toJSONString(importData));
                                         result = commonController.dataBaseOperate(JSONObject.toJSONString(importData, Units.features), "com.cn.bean.in.", "DJInWareHouseList", "add", opt.getConnect()).get(0);
                                         if (result == 0) {
                                             JSONObject object = new JSONObject();
@@ -375,7 +378,6 @@ public class InInterface extends HttpServlet {
                                     //json = Units.objectToJson(-1, "数据添加失败!", JSONObject.toJSONString(importData));
                                     json = Units.objectToJson(-1, "数据添加失败!", object.toJSONString());
                                 }
-
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或格式不正确!", null);
                             }
@@ -407,7 +409,7 @@ public class InInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             String djInWareHouseID = JSONObject.parseObject(rely).getString("djInWareHouseID");
                             String mainTabWhereSql = "DJInWareHouseID = '" + djInWareHouseID + "'";
                             Class objClass = Class.forName("com.cn.bean.in." + "DJInWareHouseList");
@@ -416,7 +418,7 @@ public class InInterface extends HttpServlet {
                             List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "DJInWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "DJInWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                             if (list != null && list.size() > 0) {
                                 DJInWareHouse djInWareHouse = (DJInWareHouse) list.get(0);
-                                List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.in.", "DJInWareHouseList", "*", whereSql, pageSize, pageIndex, "DJInWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
+                                List<Object> detailList = commonController.dataBaseQuery("view", "com.cn.bean.in.", "DJInWareHouseList", "*", whereSql, pageSize, pageIndex, "ListNumber", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                                 String result = "{}";
                                 if (detailList != null && detailList.size() > 0) {
                                     for (Object obj : detailList) {
@@ -493,6 +495,10 @@ public class InInterface extends HttpServlet {
                 case "送检出库": {
                     switch (operation) {
                         case "create": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             String whereCase = "exists (select * from tblSJOutWareHouseList list left join viewGYSPartContainerInfo gys"
                                     + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
                                     + " where list.SJOutWareHouseID = viewSJOutWareHouse.SJOutWareHouseID"
@@ -514,13 +520,11 @@ public class InInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            /*Connection conn;
-                            if (dataType.compareToIgnoreCase("isHis") == 0) {
-                                conn = opt.getConnectHis();
-                            } else {
-                                conn = opt.getConnect();
-                            }*/
-                            
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
+
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("sjCKAuditStaffName", session.getAttribute("user"));
@@ -743,6 +747,10 @@ public class InInterface extends HttpServlet {
                 case "送检返回": {
                     switch (operation) {
                         case "create": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             String whereCase = "exists (select * from tblSJBackWareHouseList list left join viewGYSPartContainerInfo gys"
                                     + " on list.SupplierID = gys.SupplierID and list.PartCode = gys.PartCode"
                                     + " where list.SJBackWareHouseID = viewSJBackWareHouse.SJBackWareHouseID"
@@ -818,13 +826,11 @@ public class InInterface extends HttpServlet {
                             break;
                         }
                         case "request_detail": {
-                            /*Connection conn;
-                            if (dataType.compareToIgnoreCase("isHis") == 0) {
-                                conn = opt.getConnectHis();
-                            } else {
-                                conn = opt.getConnect();
-                            }*/
-                            
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
+
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("sjTKAuditStaffName", session.getAttribute("user"));
@@ -994,6 +1000,10 @@ public class InInterface extends HttpServlet {
                 case "终端退库": {
                     switch (operation) {
                         case "create": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
                             String whereCase = "";
                             if (operateType.compareTo("app") == 0) {
                                 if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
@@ -1063,7 +1073,7 @@ public class InInterface extends HttpServlet {
                             } else {
                                 conn = opt.getConnect();
                             }*/
-                            
+
                             if (operateType.compareToIgnoreCase("app") == 0) {
                                 JSONObject obj = new JSONObject();
                                 obj.put("zdTKAuditStaffName", session.getAttribute("user"));
@@ -1077,9 +1087,6 @@ public class InInterface extends HttpServlet {
                             List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.in.", "ZDBackWareHouse", "*", mainTabWhereSql, pageSize, pageIndex, "ZDBackWareHouseID", 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                             if (list != null && list.size() > 0) {
                                 ZDBackWareHouse zDBackWareHouse = (ZDBackWareHouse) list.get(0);
-
-                                JSONObject proParams = new JSONObject();
-                                proParams.put("ZDCustomerID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("zdCustomerID"));
 
                                 Class objClass = Class.forName("com.cn.bean.in." + "ZDBackWareHouseList");
                                 Method method = objClass.getMethod("getRecordCount", new Class[0]);
@@ -1105,11 +1112,14 @@ public class InInterface extends HttpServlet {
                                         supplierList.add(sj.getSupplierID());
                                     }
                                 }
+
+                                JSONObject proParams = new JSONObject();
+                                proParams.put("ZDCustomerID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("zdCustomerID"));
                                 String supplierStr = Arrays.toString(supplierList.toArray());
                                 proParams.put("SupplierIDStr", "string," + supplierStr.substring(1, supplierStr.length() - 1).replace(" ", ""));
                                 //proParams.put("SupplierID", "string," + supplierStr.substring(1, supplierStr.length() - 1).replace(" ", ""));
+
                                 HashMap<String, String> limitMap = new HashMap<>();
-                                //System.out.println(proParams.toJSONString());
                                 if (JSONObject.parseObject(paramsJson.getString("rely")).getString("ycFLocation").compareTo("集配区") == 0) {
                                     List<Object> jpqjc = commonController.proceduceQuery("tbGetJPQJCPartListForZDTK_MulSupplier", proParams, "com.cn.bean.pro.JPQJCForZDTK", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
                                     for (Object obj : jpqjc) {
@@ -1185,15 +1195,17 @@ public class InInterface extends HttpServlet {
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
                                 proParams.put("ZDCustomerID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("zdCustomerID"));
 
-                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("ycFLocation").compareTo("集配区") == 0) {
+                                if (JSONObject.parseObject(rely).getString("ycFLocation").compareTo("集配区") == 0) {
                                     List<Object> list = commonController.proceduceQuery("spGetJPQJCPartListForZDTK", proParams, "com.cn.bean.pro.JPQJCForZDTK", opt.getConnect());
                                     if (list != null && list.size() > 0) {
                                         InWareHouseController controller = new InWareHouseController();
                                         //HashMap minInboundBatchMap = controller.getSupplierInboundBatch(JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
-                                        String minInboundBatch = controller.getSupplierInboundBatch(JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
+                                        String minInboundBatch = controller.getSupplierInboundBatch(Units.getSubJsonValue(rely, "supplierID"));
+                                        /*
                                         if (Units.strIsEmpty(minInboundBatch)) {
                                             minInboundBatch = Units.getNowTimeNoSeparator();
                                         }
+                                         */
                                         List<Object> filterList = new ArrayList<>();
                                         for (Object obj : list) {
                                             if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
@@ -1218,10 +1230,13 @@ public class InInterface extends HttpServlet {
                                     List<Object> list = commonController.proceduceQuery("spGetXPJCPartListForXPTK", proParams, "com.cn.bean.pro.XPJCForZDTK", opt.getConnect());
                                     if (list != null && list.size() > 0) {
                                         InWareHouseController controller = new InWareHouseController();
-                                        String minInboundBatch = controller.getSupplierInboundBatch(JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
+                                        //String minInboundBatch = controller.getSupplierInboundBatch(JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
+                                        String minInboundBatch = controller.getSupplierInboundBatch(Units.getSubJsonValue(rely, "supplierID"));
+                                        /*
                                         if (Units.strIsEmpty(minInboundBatch)) {
                                             minInboundBatch = Units.getNowTimeNoSeparator();
                                         }
+                                         */
                                         List<Object> filterList = new ArrayList<>();
                                         for (Object obj : list) {
                                             if (!Units.strIsEmpty(datas) && !JSONObject.toJSONString(obj).toLowerCase().contains(datas.toLowerCase())) {
@@ -1272,19 +1287,67 @@ public class InInterface extends HttpServlet {
                         case "submit": {
                             String operate = paramsJson.getString("operate");
                             if (operate.compareToIgnoreCase("add") == 0) {
-                                int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "ZDBackWareHouse", "add", opt.getConnect()).get(0);
-                                if (result == 0) {
-                                    result = commonController.dataBaseOperate(details, "com.cn.bean.in.", "ZDBackWareHouseList", "add", opt.getConnect()).get(0);
+                                JSONObject object = JSONObject.parseObject(item);
+                                if (object.getString("ycFLocation").compareTo("线旁") == 0 && object.getString("cfLocation").compareTo("库房") == 0) {
+                                    // 添加线旁退集配区
+                                    /**
+                                     * ******************************************线旁退集配区开始********************************************
+                                     */
+                                    int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "ZDBackWareHouse", "add", opt.getConnect()).get(0);
                                     if (result == 0) {
-                                        json = Units.objectToJson(0, "数据添加成功!", null);
-                                    } else {
-                                        if (!Units.strIsEmpty(Units.getSubJsonStr(item, "zdBackWareHouseID"))) {
-                                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "zdBackWareHouseID") + "]", "com.cn.bean.in.", "ZDBackWareHouse", "delete", opt.getConnect());
+                                        result = commonController.dataBaseOperate(details, "com.cn.bean.in.", "ZDBackWareHouseList", "add", opt.getConnect()).get(0);
+                                        if (result == 0) {
+                                            //如果添加成功, 添加集配区退库房
+                                            /**
+                                             * ******************************************集配区退库房开始********************************************
+                                             */
+                                            object.put("ycFLocation", "集配区");
+                                            object.put("zdBackWareHouseID", object.getString("zdBackWareHouseID").replace("ZDTK", "JPQT"));
+                                            result = commonController.dataBaseOperate("[" + object.toJSONString() + "]", "com.cn.bean.in.", "ZDBackWareHouse", "add", opt.getConnect()).get(0);
+                                            if (result == 0) {
+                                                result = commonController.dataBaseOperate(details.replaceAll("ZDTK", "JPQT"), "com.cn.bean.in.", "ZDBackWareHouseList", "add", opt.getConnect()).get(0);
+                                                if (result == 0) {
+                                                    json = Units.objectToJson(0, "数据添加成功!", null);
+                                                } else {
+                                                    if (!Units.strIsEmpty(Units.getSubJsonStr(item, "zdBackWareHouseID"))) {
+                                                        commonController.dataBaseOperate("[" + object.getString("zdBackWareHouseID") + "]", "com.cn.bean.in.", "ZDBackWareHouse", "delete", opt.getConnect());
+                                                        commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "zdBackWareHouseID") + "]", "com.cn.bean.in.", "ZDBackWareHouse", "delete", opt.getConnect());
+                                                    }
+                                                    json = Units.objectToJson(-1, "明细添加失败!", null);
+                                                }
+                                            } else {
+                                                json = Units.objectToJson(-1, "数据添加失败!", null);
+                                            }
+                                            /**
+                                             * ******************************************集配区退库房结束********************************************
+                                             */
+                                        } else {
+                                            if (!Units.strIsEmpty(Units.getSubJsonStr(item, "zdBackWareHouseID"))) {
+                                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "zdBackWareHouseID") + "]", "com.cn.bean.in.", "ZDBackWareHouse", "delete", opt.getConnect());
+                                            }
+                                            json = Units.objectToJson(-1, "明细添加失败!", null);
                                         }
-                                        json = Units.objectToJson(-1, "明细添加失败!", null);
+                                    } else {
+                                        json = Units.objectToJson(-1, "数据添加失败!", null);
                                     }
+                                    /**
+                                     * ******************************************线旁退集配区结束********************************************
+                                     */
                                 } else {
-                                    json = Units.objectToJson(-1, "数据添加失败!", null);
+                                    int result = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.in.", "ZDBackWareHouse", "add", opt.getConnect()).get(0);
+                                    if (result == 0) {
+                                        result = commonController.dataBaseOperate(details, "com.cn.bean.in.", "ZDBackWareHouseList", "add", opt.getConnect()).get(0);
+                                        if (result == 0) {
+                                            json = Units.objectToJson(0, "数据添加成功!", null);
+                                        } else {
+                                            if (!Units.strIsEmpty(Units.getSubJsonStr(item, "zdBackWareHouseID"))) {
+                                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "zdBackWareHouseID") + "]", "com.cn.bean.in.", "ZDBackWareHouse", "delete", opt.getConnect());
+                                            }
+                                            json = Units.objectToJson(-1, "明细添加失败!", null);
+                                        }
+                                    } else {
+                                        json = Units.objectToJson(-1, "数据添加失败!", null);
+                                    }
                                 }
                             }
                             if (operate.compareToIgnoreCase("modify") == 0) {

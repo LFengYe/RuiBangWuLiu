@@ -672,7 +672,7 @@ public class CommonController {
             while (keysIterator.hasNext()) {
                 String key = keysIterator.next();
                 String[] keyValue = params.getString(key).split(",", 2);
-                //System.out.println(key + ":" + keyValue[1] + "," + keyValue[1].length());
+//                System.out.println(key + ":" + keyValue[1] + "," + keyValue[1].length());
                 if (keyValue[0].compareToIgnoreCase("int") == 0) {
                     statement.setInt(key, Integer.valueOf(keyValue[1]));
                 }

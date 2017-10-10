@@ -416,6 +416,17 @@ public class DataInterface extends HttpServlet {
                 }
                 //</editor-fold>
 
+                //<editor-fold desc="往期列表">
+                case "往期列表": {
+                    List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.", "DataJZ", "*", "", Integer.MAX_VALUE, 1, "JZYMonth", 1, opt.getConnect());
+                    if (res != null && res.size() > 0) {
+                        json = Units.objectToJson(0, "", res);
+                    } else {
+                        json = Units.objectToJson(-1, "数据为空!", null);
+                    }
+                    break;
+                }
+                //</editor-fold>
                 /**
                  * ***************************************调货计划管理**************************************
                  */

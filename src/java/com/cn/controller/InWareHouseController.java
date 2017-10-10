@@ -6,11 +6,10 @@
 package com.cn.controller;
 
 import com.cn.util.DatabaseOpt;
+import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
+import java.sql.Types;
 import org.apache.log4j.Logger;
 
 /**
@@ -27,19 +26,17 @@ public class InWareHouseController {
      */
     public String getSupplierInboundBatch(String supplierID) {
         DatabaseOpt opt = new DatabaseOpt();
-        Statement statement = null;
+        CallableStatement statement = null;
         Connection conn = null;
-        HashMap<String, String> minInboundBatchMap = null;
         try {
-            String sql = "select MIN(InboundBatch) AS InboundBatch from tblDJInWareHouseList where SupplierID = '" + supplierID + "'";
+            //String sql = "select MIN(InboundBatch) AS InboundBatch from tblDJInWareHouseList where SupplierID = '" + supplierID + "'";
             conn = opt.getConnect();
-            statement = conn.createStatement();
-            //statement = conn.prepareCall("select PartCode,(select MIN(InboundBatch) from tblDJInWareHouseList where PartCode = con.PartCode) as InboundBatch from tblGYSPartContainerInfo con where SupplierID = ' + " + supplierID + "'");
-            ResultSet set = statement.executeQuery(sql);
-            minInboundBatchMap = new HashMap<>();
-            while (set.next()) {
-                return set.getString("InboundBatch");
-            }
+            statement = conn.prepareCall("{call tbGetMinInboundBatch(?, ?)}");
+            statement.setString("SupplierID", supplierID);
+            //statement.setString("PartState", partState);
+            statement.registerOutParameter("MinInBoundBatch", Types.CHAR);
+            statement.execute();
+            return statement.getString("MinInBoundBatch");
         } catch (SQLException e) {
             logger.error("数据库执行出错", e);
         } finally {

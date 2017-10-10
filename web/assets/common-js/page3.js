@@ -36,8 +36,10 @@
             $("#partStatusSelect").parent(".wc-group").css("display", "none");
         }
         $(".keywords").val("");
-        $(".start-time").val(getPreCarryOverDate() + ' 00:00:00');
+        $(".start-time").val(localStorage.getItem("jzDateTime"));
+        $(".start-time").attr("disabled", true);
         $(".end-time").val(getNowDateShort() + ' 23:59:59');
+        $(".jzyMonth").val(localStorage.getItem("jzyMonth"));
     }
 
     function initDOM(moudle) {
@@ -52,6 +54,9 @@
         request.dataType = dataType;
         request.pageIndex = pageIndex;
         request.pageSize = pageSize;
+        if (tmp.jzyMonth) {
+            request.jzyMonth = tmp.jzyMonth;
+        }
         if (tmp.startTime && tmp.endTime) {
             request.start = tmp.startTime;
             request.end = tmp.endTime;
@@ -76,7 +81,7 @@
                 dbclickRowCallBack: function (module, maps) {
                     request.pageIndex = 1;
                     request.pageSize = pageSize;
-                    request.start = null;
+                    //request.start = null;
                     request.datas = maps;
                     ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
                         $detailList.show();
@@ -91,7 +96,7 @@
                             dbclickRowCallBack: function (module, maps) {
                                 request.pageIndex = 1;
                                 request.pageSize = pageSize;
-                                request.start = null;
+                                //request.start = null;
                                 request.datas = maps;
                                 ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
                                     $thirdList.show();
@@ -139,11 +144,15 @@
             var tmp = JSON.parse(serializeJqueryElement($(".page3-container .wc-page3-form")));
             var request = {};
             request.type = "export";
+            request.dataType = dataType;
             request.pageIndex = 1;
             request.pageSize = 99999999;
             if (tmp.startTime && tmp.endTime) {
                 request.start = tmp.startTime;
                 request.end = tmp.endTime;
+            }
+            if (tmp.jzyMonth) {
+                request.jzyMonth = tmp.jzyMonth;
             }
             if (tmp.keywords) {
                 request.datas = tmp.keywords;
@@ -159,6 +168,12 @@
 
         $search.off("click");
         $search.click(function (e) {
+            if (dataType === "isHis") {
+                $(".start-time").val(localStorage.getItem("jzDateTime"));
+                $(".start-time").attr("disabled", true);
+                $(".end-time").val(getNowDateShort() + ' 23:59:59');
+                $(".jzyMonth").val(localStorage.getItem("jzyMonth"));
+            }
             pageIndex = 1;
             dataType = "isCur";
             getReportData();
@@ -180,12 +195,18 @@
              }, function () {});
              */
         });
-        
+
         $hisSearch.off("click");
-        $hisSearch.click(function(e){
-            pageIndex = 1;
-            dataType = "isHis";
-            getReportData();
+        $hisSearch.click(function (e) {
+            displayLayer(2, "history_list.html", "往期列表", function () {
+                $(".page3-container .wc-page3-form input[name=startTime]").val($("#startTime").val());
+                $(".page3-container .wc-page3-form input[name=endTime]").val($("#endTime").val());
+                $(".page3-container .wc-page3-form input[name=jzyMonth]").val($("#jzyMonth").val());
+
+                pageIndex = 1;
+                dataType = "isHis";
+                getReportData();
+            });
         });
 
         $pageLeft.off("click");

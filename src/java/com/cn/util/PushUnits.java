@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class PushUnits {
 
-    private static final Logger LOG = Logger.getLogger(RedisAPI.class);
+    private static final Logger LOG = Logger.getLogger(PushUnits.class);
 
     private static final String APP_KEY = "b9f7e1235da530cd18d72a22";
     private static final String MASTER_SECRET = "fabd6fb93a8784783328e24e";

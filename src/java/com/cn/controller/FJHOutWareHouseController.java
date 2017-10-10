@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 public class FJHOutWareHouseController {
 
-    private static final Logger logger = Logger.getLogger(JHOutWareHouseController.class);
+    private static final Logger logger = Logger.getLogger(FJHOutWareHouseController.class);
 
     /**
      * 添加计划
@@ -51,6 +51,7 @@ public class FJHOutWareHouseController {
         int addRes = commonController.dataBaseOperate("[" + jhOutWareHouse.toJSONString() + "]", "com.cn.bean.out.", "FJHOutWareHouse", "add", opt.getConnect()).get(0);
         if (addRes == 0) {
             String jhListInfo = RedisAPI.get(Units.getSubJsonValue(fjhInfo, "fjhOutWareHouseID"));
+            logger.info(jhListInfo);
             addRes = commonController.dataBaseOperate(jhListInfo, "com.cn.bean.out.", "FJHOutWareHouseList", "add", opt.getConnect()).get(0);
             if (addRes == 0) {
                 JSONObject object1 = new JSONObject();
@@ -209,8 +210,8 @@ public class FJHOutWareHouseController {
                     importResult.add(item);
                 }
 
+                RedisAPI.set(fjhOutWareHouse.getFjhOutWareHouseID(), JSONObject.toJSONString(completeResult));
                 if (isAllEnough) {
-                    RedisAPI.set(fjhOutWareHouse.getFjhOutWareHouseID(), JSONObject.toJSONString(completeResult));
                     return completeResult;
                 } else {
                     return importResult;

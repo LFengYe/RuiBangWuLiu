@@ -729,6 +729,7 @@ public class JHOutWareHouseController {
             while (iterator.hasNext()) {
                 JHOutWareHouseZCList list = iterator.next();
                 GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(list.getSupplierID() + "_" + list.getPartCode().toLowerCase()), GYSPartContainerInfo.class);
+                
                 //计算当前批次计划是否能完全分包
                 int containerAmount = 0;
                 boolean isFull = true;

@@ -7,6 +7,7 @@ package com.cn.listener;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.AreaLedIPInfo;
+import com.cn.bean.Container;
 import com.cn.bean.Customer;
 import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
@@ -118,14 +119,14 @@ public class StartInit implements ServletContextListener {
             logger.error("初始化出错!", e);
         }
     }
-    
+
     private void initDataOptimize() {
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
         Jedis jedis = RedisAPI.getJedis();
         try {
             Connection conn = opt.getConnect();
-            
+
             Transaction transaction = jedis.multi();
             //RedisAPI.flushDB();
 
@@ -155,6 +156,7 @@ public class StartInit implements ServletContextListener {
                 transaction.set(containerInfo.getSupplierID() + "_" + containerInfo.getPartCode().toLowerCase(), JSONObject.toJSONString(containerInfo));
             }
 
+            list.clear();
             /*导入LED显示屏信息到Redis中*/
             list = commonController.dataBaseQueryWithNotCloseConn("table", "com.cn.bean.", "AreaLedIPInfo", "*", "", Integer.MAX_VALUE, 1, "addressCode", 0, conn);
             iterator = list.iterator();
@@ -163,6 +165,7 @@ public class StartInit implements ServletContextListener {
                 transaction.set("ledIpInfo_" + ledIpInfo.getAddressCode().toLowerCase(), JSONObject.toJSONString(ledIpInfo));
             }
 
+            list.clear();
             /*导入部品存放地址信息到Redis中*/
             list = commonController.dataBaseQueryWithNotCloseConn("table", "com.cn.bean.", "PartStore", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, conn);
             iterator = list.iterator();
@@ -171,6 +174,7 @@ public class StartInit implements ServletContextListener {
                 transaction.set("partStore_" + partStore.getSupplierID() + "_" + partStore.getPartCode().toLowerCase(), JSONObject.toJSONString(partStore));
             }
 
+            list.clear();
             /*导入部品类别信息到Redis中*/
             list = commonController.dataBaseQueryWithNotCloseConn("table", "com.cn.bean.", "PartCategory", "*", "", Integer.MAX_VALUE, 1, "PartCategoryName", 0, conn);
             iterator = list.iterator();
@@ -179,6 +183,16 @@ public class StartInit implements ServletContextListener {
                 transaction.set("partCategory_" + category.getPartCategoryName(), JSONObject.toJSONString(category));
             }
 
+            list.clear();
+            /*导入盛具信息到Redis中*/
+            List<Object> containerList = commonController.dataBaseQuery("table", "com.cn.bean.", "Container", "*", "", Integer.MAX_VALUE, 1, "ContainerName", 0, opt.getConnect());
+            Iterator<Object> iterator3 = containerList.iterator();
+            while (iterator3.hasNext()) {
+                Container containerInfo = (Container) iterator3.next();
+                RedisAPI.set("container_" + containerInfo.getContainerName(), JSONObject.toJSONString(containerInfo));
+            }
+
+            list.clear();
             /*导入总成BOM信息到Redis中*/
             RedisAPI.delKeys("bomInfo_*");
             list = commonController.dataBaseQueryWithNotCloseConn("table", "com.cn.bean.", "PartBomInfo", "*", "", Integer.MAX_VALUE, 1, "ZCPartCode", 0, conn);
@@ -187,12 +201,12 @@ public class StartInit implements ServletContextListener {
                 PartBomInfo bomInfo = (PartBomInfo) iterator.next();
                 transaction.rpush("bomInfo_" + bomInfo.getZcPartCode().toLowerCase(), JSONObject.toJSONString(bomInfo));
             }
-            
+
             transaction.exec();
-            if (conn != null)
+            if (conn != null) {
                 conn.close();
-            
-            
+            }
+
         } catch (Exception e) {
             logger.error("初始化出错!", e);
         }

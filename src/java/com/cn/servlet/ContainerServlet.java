@@ -7,10 +7,22 @@ package com.cn.servlet;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.ClassDescription;
+import com.cn.bean.Container;
+import com.cn.bean.Customer;
 import com.cn.bean.FieldDescription;
+import com.cn.bean.container.ConFXInWareHouseList;
+import com.cn.bean.container.ConFXOutWareHouseList;
+import com.cn.bean.container.ConInWareHouse;
+import com.cn.bean.container.ConInWareHouseList;
+import com.cn.bean.container.ConOutWareHouseList;
+import com.cn.bean.container.ContainerAmount;
 import com.cn.controller.CommonController;
+import com.cn.controller.CommonOperate;
+import com.cn.controller.DetailOperateInterface;
+import com.cn.controller.ImportOperateInterface;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.ExportExcel;
+import com.cn.util.RedisAPI;
 import com.cn.util.Units;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -24,6 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -89,7 +102,7 @@ public class ContainerServlet extends HttpServlet {
             String details = paramsJson.getString("details");
             String detail = paramsJson.getString("detail");
             String fileName = paramsJson.getString("fileName");
-            String operateType = paramsJson.getString("type");
+            String operateType = paramsJson.getString("type") == null ? ("") : paramsJson.getString("type");
             String dataType = (paramsJson.getString("dataType") == null) ? ("isCur") : paramsJson.getString("dataType");// isCur表示当期查询, isHis表示往期查询
             String start = paramsJson.getString("start");
             String end = paramsJson.getString("end");
@@ -126,30 +139,72 @@ public class ContainerServlet extends HttpServlet {
                 //<editor-fold desc="盛具信息管理">
                 //<editor-fold desc="盛具入库">
                 case "盛具入库": {
-                    String whereCase = "OperateType = '盛具入库'";
                     switch (operation) {
                         case "create": {
-                            json = createOperateWithFilter(15, "view", "com/cn/json/container/", "com.cn.bean.container.", "ContainerManager", whereCase, "SupplierID", opt.getConnect());
-                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
+                            json = createOperateOnDate(20, "view", "com/cn/json/container/", "com.cn.bean.container.", "ConInWareHouse", datas, rely, "", "CONInWareHouseID", dataType);
+                            json = Units.insertStr(json, "\\\"盛具入库单号\\", ",@CONRK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
-                            json = Units.insertStr(json, "\\\"盛具状态\\", ",@良品");
-                            json = Units.insertStr(json, "\\\"操作类型\\", ",@盛具入库");
+                            break;
+                        }
+                        case "add": {
+                            json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/container/", "ConInWareHouse.json"));
+                            json = Units.insertStr(json, "\\\"盛具入库单号\\", ",@CONRK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"失败原因,0%\\", ",10%");
                             break;
                         }
                         case "request_page": {
-                            json = queryOperateWithFilter("com.cn.bean.container.", "view", "ContainerManager", "SupplierID", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                            //json = queryOperate("com.cn.bean.in.", "view", "DJInWareHouse", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.container.", "view", "ConInWareHouse", "CONInWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
-                        case "import": {
-                            json = importData("com.cn.bean.container.", "ContainerManager", importPath + fileName, opt.getConnect());
+                        case "request_on_date": {
+                            json = queryOnDateOperate("com.cn.bean.container.", "view", "ConInWareHouse", "CONInWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
-                        case "exportTemplate": {
-                            json = exportTemplate("com.cn.bean.container.", "ContainerManager", null);
+                        case "request_detail": {
+                            if (operateType.compareToIgnoreCase("app") == 0) {
+                                JSONObject obj = new JSONObject();
+                                obj.put("conRKAuditStaffName", session.getAttribute("user"));
+                                obj.put("conRKAuditTime", Units.getNowTime());
+                                String auditInfo = "[" + obj.toJSONString() + "," + rely + "]";
+                                commonController.dataBaseOperate(auditInfo, "com.cn.bean.container.", "ConInWareHouse", "update", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
+                            }
+                            CommonOperate operate = new CommonOperate();
+                            json = operate.getDetailOperate("com.cn.bean.container.", "ConInWareHouse", datas, rely,
+                                    "conInWareHouseID", "conRKAuditTime", "wareHouseManagerName", (operateType.compareTo("app") == 0),
+                                    dataType, pageSize, pageIndex,
+                                    new DetailOperateInterface() {
+                                @Override
+                                public HashMap<String, String> getLimitMap() {
+                                    return null;
+                                }
+
+                                @Override
+                                public void setLimit(HashMap<String, String> limitMap, Object obj) {
+                                }
+                            });
                             break;
                         }
-                        case "export": {
-                            json = exportData("com.cn.bean.container.", "ContainerManager", (ArrayList<Object>) queryData("com.cn.bean.container.", "view", "ContainerManager", "SupplierID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                        case "audit": {
+                            JSONObject obj = new JSONObject();
+                            obj.put("conRKAuditStaffName", session.getAttribute("user"));
+                            obj.put("conRKAuditTime", Units.getNowTime());
+                            String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
+                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.container.", "ConInWareHouse", "update", opt.getConnect());
+                            if (updateResult.get(0) == 0) {
+                                json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                            } else {
+                                json = Units.objectToJson(-1, "审核失败!", null);
+                            }
+                            break;
+                        }
+                        case "auditItem": {
+                            CommonOperate operate = new CommonOperate();
+                            json = operate.auditItemOperate("com.cn.bean.container.", "ConInWareHouse", datas,
+                                    "conInWareHouseID", "conRKAuditTime", "wareHouseManagerName", (String) session.getAttribute("user"));
                             break;
                         }
                         case "request_table": {
@@ -169,8 +224,68 @@ public class ContainerServlet extends HttpServlet {
                             }
                             break;
                         }
+                        case "import": {
+                            ArrayList<Object> importData = commonController.importData("com.cn.bean.container.", "ConInWareHouseList", importPath + fileName);
+                            ConInWareHouse conInWareHouse = JSONObject.parseObject(item, ConInWareHouse.class);
+                            if (importData != null && importData.size() > 0) {
+                                CommonOperate operate = new CommonOperate();
+                                operate.importOperate("com.cn.bean.container.", "ConInWareHouse", item, "conInWareHouseID",
+                                        importData, new ImportOperateInterface() {
+                                    @Override
+                                    public boolean checkData(Object obj) {
+                                        ConInWareHouseList list = (ConInWareHouseList) obj;
+                                        list.setSupplierID(conInWareHouse.getSupplierID());
+                                        list.setConInWareHouseID(conInWareHouse.getConInWareHouseID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + list.getSupplierID()), Customer.class);
+                                        if (customer != null) {
+                                            list.setSupplierName(customer.getCustomerAbbName());
+                                        } else {
+                                            list.setFailedReason("缺失供应商信息!");
+                                            return false;
+                                        }
+                                        Container container = JSONObject.parseObject(RedisAPI.get("container_" + list.getContainerName()), Container.class);
+                                        if (container != null) {
+
+                                        } else {
+                                            list.setFailedReason("缺失盛具信息!");
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+
+                                    @Override
+                                    public void test() {
+
+                                    }
+                                });
+                            } else {
+                                json = Units.objectToJson(-1, "上传数据为空或格式不正确!", null);
+                            }
+                            break;
+                        }
+                        case "exportTemplate": {
+                            json = exportTemplate("com.cn.bean.container.", "ConInWareHouseList", null);
+                            break;
+                        }
                         case "submit": {
-                            json = submitOperate("com.cn.bean.container.", "ContainerManager", update, add, delete, "data");
+                            String operate = paramsJson.getString("operate");
+                            CommonOperate commonOperate = new CommonOperate();
+                            if (operate.compareToIgnoreCase("add") == 0) {
+                                json = commonOperate.submitOperate("com.cn.bean.container.", "ConInWareHouse", item, "conInWareHouseID", details);
+                            }
+                            if (operate.compareToIgnoreCase("modify") == 0) {
+                                json = commonOperate.submitOperate("com.cn.bean.container.", "ConInWareHouseList", update, add, delete, "data");
+                            }
+                            break;
+                        }
+                        case "delete": {
+                            if (!Units.strIsEmpty(delete)) {
+                                CommonOperate operate = new CommonOperate();
+                                json = operate.batchDeleteOperate(delete, "com.cn.bean.container.", "ConInWareHouse", "ConInWareHouseID", "conRKAuditTime");
+                            } else {
+                                json = Units.objectToJson(-1, "未选中数据!", null);
+                            }
                             break;
                         }
                     }
@@ -180,30 +295,92 @@ public class ContainerServlet extends HttpServlet {
 
                 //<editor-fold desc="返修出库">
                 case "返修出库": {
-                    String whereCase = "OperateType = '返修出库'";
                     switch (operation) {
                         case "create": {
-                            json = createOperateWithFilter(15, "view", "com/cn/json/container/", "com.cn.bean.container.", "ContainerManager", whereCase, "SupplierID", opt.getConnect());
-                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
+                            json = createOperateOnDate(20, "view", "com/cn/json/container/", "com.cn.bean.container.", "ConFXOutWareHouse", datas, rely, "", "conFXOutWareHouseID", dataType);
+                            json = Units.insertStr(json, "\\\"返修出库单号\\", ",@CONFX-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
-                            json = Units.insertStr(json, "\\\"盛具状态\\", ",select,良品,不良品");
-                            json = Units.insertStr(json, "\\\"操作类型\\", ",@返修出库");
+                            json = Units.insertStr(json, "\\\"返修出批次\\", ",@" + Units.getNowTimeNoSeparator());
+                            break;
+                        }
+                        case "add": {
+                            json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/container/", "ConFXOutWareHouse.json"));
+                            json = Units.insertStr(json, "\\\"返修出库单号\\", ",@CONFX-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            json = Units.insertStr(json, "\\\"返修出批次\\", ",@" + Units.getNowTimeNoSeparator());
+                            //json = Units.insertStr(json, "\\\"失败原因,0%\\", ",10%");
                             break;
                         }
                         case "request_page": {
-                            json = queryOperateWithFilter("com.cn.bean.container.", "view", "ContainerManager", "SupplierID", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                            //json = queryOperate("com.cn.bean.in.", "view", "DJInWareHouse", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.container.", "view", "ConFXOutWareHouse", "conFXOutWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
-                        case "import": {
-                            json = importData("com.cn.bean.container.", "ContainerManager", importPath + fileName, opt.getConnect());
+                        case "request_on_date": {
+                            json = queryOnDateOperate("com.cn.bean.container.", "view", "ConFXOutWareHouse", "conFXOutWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
-                        case "exportTemplate": {
-                            json = exportTemplate("com.cn.bean.container.", "ContainerManager", null);
+                        case "request_detail": {
+                            if (operateType.compareToIgnoreCase("app") == 0) {
+                                JSONObject obj = new JSONObject();
+                                obj.put("conFXCKAuditStaffName", session.getAttribute("user"));
+                                obj.put("conFXCKAuditTime", Units.getNowTime());
+                                String auditInfo = "[" + obj.toJSONString() + "," + rely + "]";
+                                commonController.dataBaseOperate(auditInfo, "com.cn.bean.container.", "ConFXOutWareHouse", "update", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
+                            }
+                            CommonOperate operate = new CommonOperate();
+                            json = operate.getDetailOperate("com.cn.bean.container.", "ConFXOutWareHouse", datas, rely,
+                                    "conFXOutWareHouseID", "conFXCKAuditTime", "wareHouseManagerName", (operateType.compareTo("app") == 0),
+                                    dataType, pageSize, pageIndex,
+                                    new DetailOperateInterface() {
+                                @Override
+                                public HashMap<String, String> getLimitMap() {
+                                    try {
+                                        JSONObject proParams = new JSONObject();
+                                        proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
+                                        proParams.put("ContainerStatus", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus"));
+                                        HashMap<String, String> limitMap = new HashMap<>();
+                                        List<Object> list = commonController.proceduceQuery("tbGetContainerKCAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
+                                        if (list != null && list.size() > 0) {
+                                            for (Object obj : list) {
+                                                ContainerAmount amount = (ContainerAmount) obj;
+                                                limitMap.put(amount.getContainerName(), String.valueOf(amount.getContainerTotal()));
+                                            }
+                                        }
+                                        return limitMap;
+                                    } catch (Exception e) {
+                                    }
+                                    return null;
+                                }
+
+                                @Override
+                                public void setLimit(HashMap<String, String> limitMap, Object obj) {
+                                    ConFXOutWareHouseList list = (ConFXOutWareHouseList) obj;
+                                    int amount = Integer.valueOf((null == limitMap.get(list.getContainerName())) ? "0" : limitMap.get(list.getContainerName())) + list.getFxCKAmount();
+                                    list.setOperateMaxAmount(amount);
+                                }
+                            });
                             break;
                         }
-                        case "export": {
-                            json = exportData("com.cn.bean.container.", "ContainerManager", (ArrayList<Object>) queryData("com.cn.bean.container.", "view", "ContainerManager", "SupplierID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                        case "audit": {
+                            JSONObject obj = new JSONObject();
+                            obj.put("conFXCKAuditStaffName", session.getAttribute("user"));
+                            obj.put("conFXCKAuditTime", Units.getNowTime());
+                            String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
+                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.container.", "ConFXOutWareHouse", "update", opt.getConnect());
+                            if (updateResult.get(0) == 0) {
+                                json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                            } else {
+                                json = Units.objectToJson(-1, "审核失败!", null);
+                            }
+                            break;
+                        }
+                        case "auditItem": {
+                            CommonOperate operate = new CommonOperate();
+                            json = operate.auditItemOperate("com.cn.bean.container.", "ConFXOutWareHouse", datas,
+                                    "conFXOutWareHouseID", "conFXCKAuditTime", "wareHouseManagerName", (String) session.getAttribute("user"));
                             break;
                         }
                         case "request_table": {
@@ -218,20 +395,12 @@ public class ContainerServlet extends HttpServlet {
                                 String[] keys = {"containerName", "operateMaxAmount"};
                                 String[] keysName = {"盛具名称", "入库数量"};
                                 int[] keysWidth = {50, 50};
-                                String[] fieldsName = new String[2];
-                                
-                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("良品") == 0) {
-                                    fieldsName[0] = "containerName";
-                                    fieldsName[1] = "containerLPTotal";
-                                }
-                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("不良品") == 0) {
-                                    fieldsName[0] = "containerName";
-                                    fieldsName[1] = "containerBLPTotal";
-                                }
-                                
+                                String[] fieldsName = {"containerName", "containerTotal"};
+
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
-                                List<Object> list = commonController.proceduceQuery("tbGetContainerAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
+                                proParams.put("ContainerStatus", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus"));
+                                List<Object> list = commonController.proceduceQuery("tbGetContainerKCAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
@@ -247,8 +416,68 @@ public class ContainerServlet extends HttpServlet {
                             }
                             break;
                         }
+                        case "import": {
+                            ArrayList<Object> importData = commonController.importData("com.cn.bean.container.", "ConFXOutWareHouseList", importPath + fileName);
+                            ConInWareHouse conInWareHouse = JSONObject.parseObject(item, ConInWareHouse.class);
+                            if (importData != null && importData.size() > 0) {
+                                CommonOperate operate = new CommonOperate();
+                                operate.importOperate("com.cn.bean.container.", "ConFXOutWareHouse", item, "conFXOutWareHouseID",
+                                        importData, new ImportOperateInterface() {
+                                    @Override
+                                    public boolean checkData(Object obj) {
+                                        ConInWareHouseList list = (ConInWareHouseList) obj;
+                                        list.setSupplierID(conInWareHouse.getSupplierID());
+                                        list.setConInWareHouseID(conInWareHouse.getConInWareHouseID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + list.getSupplierID()), Customer.class);
+                                        if (customer != null) {
+                                            list.setSupplierName(customer.getCustomerAbbName());
+                                        } else {
+                                            list.setFailedReason("缺失供应商信息!");
+                                            return false;
+                                        }
+                                        Container container = JSONObject.parseObject(RedisAPI.get("container_" + list.getContainerName()), Container.class);
+                                        if (container != null) {
+
+                                        } else {
+                                            list.setFailedReason("缺失盛具信息!");
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+
+                                    @Override
+                                    public void test() {
+
+                                    }
+                                });
+                            } else {
+                                json = Units.objectToJson(-1, "上传数据为空或格式不正确!", null);
+                            }
+                            break;
+                        }
+                        case "exportTemplate": {
+                            json = exportTemplate("com.cn.bean.container.", "ConFXOutWareHouseList", null);
+                            break;
+                        }
                         case "submit": {
-                            json = submitOperate("com.cn.bean.container.", "ContainerManager", update, add, delete, "data");
+                            String operate = paramsJson.getString("operate");
+                            CommonOperate commonOperate = new CommonOperate();
+                            if (operate.compareToIgnoreCase("add") == 0) {
+                                json = commonOperate.submitOperate("com.cn.bean.container.", "ConFXOutWareHouse", item, "conFXOutWareHouseID", details);
+                            }
+                            if (operate.compareToIgnoreCase("modify") == 0) {
+                                json = commonOperate.submitOperate("com.cn.bean.container.", "ConFXOutWareHouseList", update, add, delete, "data");
+                            }
+                            break;
+                        }
+                        case "delete": {
+                            if (!Units.strIsEmpty(delete)) {
+                                CommonOperate operate = new CommonOperate();
+                                json = operate.batchDeleteOperate(delete, "com.cn.bean.container.", "ConFXOutWareHouse", "conFXOutWareHouseID", "conFXCKAuditTime");
+                            } else {
+                                json = Units.objectToJson(-1, "未选中数据!", null);
+                            }
                             break;
                         }
                     }
@@ -258,30 +487,90 @@ public class ContainerServlet extends HttpServlet {
 
                 //<editor-fold desc="返修入库">
                 case "返修入库": {
-                    String whereCase = "OperateType = '返修入库'";
                     switch (operation) {
                         case "create": {
-                            json = createOperateWithFilter(15, "view", "com/cn/json/container/", "com.cn.bean.container.", "ContainerManager", whereCase, "SupplierID", opt.getConnect());
-                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
+                            json = createOperateOnDate(20, "view", "com/cn/json/container/", "com.cn.bean.container.", "ConFXInWareHouse", datas, rely, "", "conFXInWareHouseID", dataType);
+                            json = Units.insertStr(json, "\\\"返修入库单号\\", ",@CONFX-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
-                            json = Units.insertStr(json, "\\\"盛具状态\\", ",select,良品,不良品");
-                            json = Units.insertStr(json, "\\\"操作类型\\", ",@返修入库");
+                            break;
+                        }
+                        case "add": {
+                            json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/container/", "ConFXInWareHouse.json"));
+                            json = Units.insertStr(json, "\\\"返修入库单号\\", ",@CONFX-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            //json = Units.insertStr(json, "\\\"失败原因,0%\\", ",10%");
                             break;
                         }
                         case "request_page": {
-                            json = queryOperateWithFilter("com.cn.bean.container.", "view", "ContainerManager", "SupplierID", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                            //json = queryOperate("com.cn.bean.in.", "view", "DJInWareHouse", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.container.", "view", "ConFXInWareHouse", "conFXInWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
-                        case "import": {
-                            json = importData("com.cn.bean.container.", "ContainerManager", importPath + fileName, opt.getConnect());
+                        case "request_on_date": {
+                            json = queryOnDateOperate("com.cn.bean.container.", "view", "ConFXInWareHouse", "conFXInWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
-                        case "exportTemplate": {
-                            json = exportTemplate("com.cn.bean.container.", "ContainerManager", null);
+                        case "request_detail": {
+                            if (operateType.compareToIgnoreCase("app") == 0) {
+                                JSONObject obj = new JSONObject();
+                                obj.put("conFXRKAuditStaffName", session.getAttribute("user"));
+                                obj.put("conFXRKAuditTime", Units.getNowTime());
+                                String auditInfo = "[" + obj.toJSONString() + "," + rely + "]";
+                                commonController.dataBaseOperate(auditInfo, "com.cn.bean.container.", "ConFXInWareHouse", "update", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
+                            }
+                            CommonOperate operate = new CommonOperate();
+                            json = operate.getDetailOperate("com.cn.bean.container.", "ConFXInWareHouse", datas, rely,
+                                    "conFXInWareHouseID", "conFXRKAuditTime", "wareHouseManagerName", (operateType.compareTo("app") == 0),
+                                    dataType, pageSize, pageIndex,
+                                    new DetailOperateInterface() {
+                                @Override
+                                public HashMap<String, String> getLimitMap() {
+                                    try {
+                                        JSONObject proParams = new JSONObject();
+                                        proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
+                                        proParams.put("ContainerStatus", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus"));
+                                        HashMap<String, String> limitMap = new HashMap<String, String>();
+                                        List<Object> list = commonController.proceduceQuery("tbGetContainerFXAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
+                                        if (list != null && list.size() > 0) {
+                                            for (Object obj : list) {
+                                                ContainerAmount amount = (ContainerAmount) obj;
+                                                limitMap.put(amount.getContainerName(), String.valueOf(amount.getContainerFX()));
+                                            }
+                                        }
+                                        return limitMap;
+                                    } catch (Exception e) {
+                                    }
+                                    return null;
+                                }
+
+                                @Override
+                                public void setLimit(HashMap<String, String> limitMap, Object obj) {
+                                    ConFXInWareHouseList list = (ConFXInWareHouseList) obj;
+                                    int amount = Integer.valueOf((null == limitMap.get(list.getContainerName())) ? "0" : limitMap.get(list.getContainerName())) + list.getFxRKAmount();
+                                    list.setOperateMaxAmount(amount);
+                                }
+                            });
                             break;
                         }
-                        case "export": {
-                            json = exportData("com.cn.bean.container.", "ContainerManager", (ArrayList<Object>) queryData("com.cn.bean.container.", "view", "ContainerManager", "SupplierID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                        case "audit": {
+                            JSONObject obj = new JSONObject();
+                            obj.put("conFXRKAuditStaffName", session.getAttribute("user"));
+                            obj.put("conFXRKAuditTime", Units.getNowTime());
+                            String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
+                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.container.", "ConFXInWareHouse", "update", opt.getConnect());
+                            if (updateResult.get(0) == 0) {
+                                json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                            } else {
+                                json = Units.objectToJson(-1, "审核失败!", null);
+                            }
+                            break;
+                        }
+                        case "auditItem": {
+                            CommonOperate operate = new CommonOperate();
+                            json = operate.auditItemOperate("com.cn.bean.container.", "ConFXInWareHouse", datas,
+                                    "conFXInWareHouseID", "conFXRKAuditTime", "wareHouseManagerName", (String) session.getAttribute("user"));
                             break;
                         }
                         case "request_table": {
@@ -293,22 +582,14 @@ public class ContainerServlet extends HttpServlet {
                                 json = queryOperate(target, "com.cn.bean.", "table", "Customer", "CustomerID", datas, rely, true, opt.getConnect(), pageSize, pageIndex, keys, keysName, keysWidth, fieldsName);
                             }
                             if (target.compareToIgnoreCase("containerName") == 0) {
-                                String[] keys = {"containerName", "operateMaxAmount"};
-                                String[] keysName = {"盛具名称", "入库数量"};
-                                int[] keysWidth = {50, 50};
-                                String[] fieldsName = {"containerName", "containerFX"};
-                                /*
-                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("良品") == 0) {
-                                    fieldsName[0] = "containerName";
-                                    fieldsName[1] = "containerFXLP";
-                                }
-                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("不良品") == 0) {
-                                    fieldsName[0] = "containerName";
-                                    fieldsName[1] = "containerFXBLP";
-                                }
-                                */
+                                String[] keys = {"containerName", "operateMaxAmount", "fxOutBatch"};
+                                String[] keysName = {"盛具名称", "入库数量", "返修出批次"};
+                                int[] keysWidth = {30, 30, 40};
+                                String[] fieldsName = {"containerName", "containerFX", "fxOutBatch"};
+
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
+                                proParams.put("ContainerStatus", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus"));
                                 List<Object> list = commonController.proceduceQuery("tbGetContainerFXAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
@@ -325,8 +606,68 @@ public class ContainerServlet extends HttpServlet {
                             }
                             break;
                         }
+                        case "import": {
+                            ArrayList<Object> importData = commonController.importData("com.cn.bean.container.", "ConFXInWareHouseList", importPath + fileName);
+                            ConInWareHouse conInWareHouse = JSONObject.parseObject(item, ConInWareHouse.class);
+                            if (importData != null && importData.size() > 0) {
+                                CommonOperate operate = new CommonOperate();
+                                operate.importOperate("com.cn.bean.container.", "ConFXInWareHouse", item, "conFXInWareHouseID",
+                                        importData, new ImportOperateInterface() {
+                                    @Override
+                                    public boolean checkData(Object obj) {
+                                        ConInWareHouseList list = (ConInWareHouseList) obj;
+                                        list.setSupplierID(conInWareHouse.getSupplierID());
+                                        list.setConInWareHouseID(conInWareHouse.getConInWareHouseID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + list.getSupplierID()), Customer.class);
+                                        if (customer != null) {
+                                            list.setSupplierName(customer.getCustomerAbbName());
+                                        } else {
+                                            list.setFailedReason("缺失供应商信息!");
+                                            return false;
+                                        }
+                                        Container container = JSONObject.parseObject(RedisAPI.get("container_" + list.getContainerName()), Container.class);
+                                        if (container != null) {
+
+                                        } else {
+                                            list.setFailedReason("缺失盛具信息!");
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+
+                                    @Override
+                                    public void test() {
+
+                                    }
+                                });
+                            } else {
+                                json = Units.objectToJson(-1, "上传数据为空或格式不正确!", null);
+                            }
+                            break;
+                        }
+                        case "exportTemplate": {
+                            json = exportTemplate("com.cn.bean.container.", "ConFXInWareHouseList", null);
+                            break;
+                        }
                         case "submit": {
-                            json = submitOperate("com.cn.bean.container.", "ContainerManager", update, add, delete, "data");
+                            String operate = paramsJson.getString("operate");
+                            CommonOperate commonOperate = new CommonOperate();
+                            if (operate.compareToIgnoreCase("add") == 0) {
+                                json = commonOperate.submitOperate("com.cn.bean.container.", "ConFXInWareHouse", item, "conFXInWareHouseID", details);
+                            }
+                            if (operate.compareToIgnoreCase("modify") == 0) {
+                                json = commonOperate.submitOperate("com.cn.bean.container.", "ConFXInWareHouseList", update, add, delete, "data");
+                            }
+                            break;
+                        }
+                        case "delete": {
+                            if (!Units.strIsEmpty(delete)) {
+                                CommonOperate operate = new CommonOperate();
+                                json = operate.batchDeleteOperate(delete, "com.cn.bean.container.", "ConFXInWareHouse", "conFXInWareHouseID", "conFXRKAuditTime");
+                            } else {
+                                json = Units.objectToJson(-1, "未选中数据!", null);
+                            }
                             break;
                         }
                     }
@@ -336,30 +677,90 @@ public class ContainerServlet extends HttpServlet {
 
                 //<editor-fold desc="盛具出库">
                 case "盛具出库": {
-                    String whereCase = "OperateType = '盛具出库'";
                     switch (operation) {
                         case "create": {
-                            json = createOperateWithFilter(15, "view", "com/cn/json/container/", "com.cn.bean.container.", "ContainerManager", whereCase, "SupplierID", opt.getConnect());
-                            json = Units.insertStr(json, "\\\"制单人\\", ",@" + session.getAttribute("user"));
+                            json = createOperateOnDate(20, "view", "com/cn/json/container/", "com.cn.bean.container.", "ConOutWareHouse", datas, rely, "", "conOutWareHouseID", dataType);
+                            json = Units.insertStr(json, "\\\"出库单号\\", ",@CONCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
                             json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
-                            json = Units.insertStr(json, "\\\"盛具状态\\", ",select,良品,不良品");
-                            json = Units.insertStr(json, "\\\"操作类型\\", ",@盛具出库");
+                            break;
+                        }
+                        case "add": {
+                            json = Units.objectToJson(0, "", Units.returnFileContext(path + "com/cn/json/container/", "ConOutWareHouse.json"));
+                            json = Units.insertStr(json, "\\\"出库单号\\", ",@CONCK-" + Units.getNowTimeNoSeparator());
+                            json = Units.insertStr(json, "\\\"制单人员姓名\\", ",@" + session.getAttribute("user"));
+                            json = Units.insertStr(json, "\\\"制单时间\\", ",@" + Units.getNowTime());
+                            //json = Units.insertStr(json, "\\\"失败原因,0%\\", ",10%");
                             break;
                         }
                         case "request_page": {
-                            json = queryOperateWithFilter("com.cn.bean.container.", "view", "ContainerManager", "SupplierID", datas, rely, whereCase, true, opt.getConnect(), pageSize, pageIndex);
+                            //json = queryOperate("com.cn.bean.in.", "view", "DJInWareHouse", "DJInWareHouseID", datas, rely, true, opt.getConnect(), pageSize, pageIndex);
+                            json = queryOnDateOperate("com.cn.bean.container.", "view", "ConOutWareHouse", "conOutWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
-                        case "import": {
-                            json = importData("com.cn.bean.container.", "ContainerManager", importPath + fileName, opt.getConnect());
+                        case "request_on_date": {
+                            json = queryOnDateOperate("com.cn.bean.container.", "view", "ConOutWareHouse", "conOutWareHouseID", datas, rely, "", true, dataType, pageSize, pageIndex);
                             break;
                         }
-                        case "exportTemplate": {
-                            json = exportTemplate("com.cn.bean.container.", "ContainerManager", null);
+                        case "request_detail": {
+                            if (operateType.compareToIgnoreCase("app") == 0) {
+                                JSONObject obj = new JSONObject();
+                                obj.put("conCKAuditStaffName", session.getAttribute("user"));
+                                obj.put("conCKAuditTime", Units.getNowTime());
+                                String auditInfo = "[" + obj.toJSONString() + "," + rely + "]";
+                                commonController.dataBaseOperate(auditInfo, "com.cn.bean.container.", "ConOutWareHouse", "update", (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
+                            }
+                            CommonOperate operate = new CommonOperate();
+                            json = operate.getDetailOperate("com.cn.bean.container.", "ConOutWareHouse", datas, rely,
+                                    "conOutWareHouseID", "conCKAuditTime", "wareHouseManagerName", (operateType.compareTo("app") == 0),
+                                    dataType, pageSize, pageIndex,
+                                    new DetailOperateInterface() {
+                                @Override
+                                public HashMap<String, String> getLimitMap() {
+                                    try {
+                                        JSONObject proParams = new JSONObject();
+                                        proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
+                                        proParams.put("ContainerStatus", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus"));
+                                        HashMap<String, String> limitMap = new HashMap<String, String>();
+                                        List<Object> list = commonController.proceduceQuery("tbGetContainerKCAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
+                                        if (list != null && list.size() > 0) {
+                                            for (Object obj : list) {
+                                                ContainerAmount amount = (ContainerAmount) obj;
+                                                limitMap.put(amount.getContainerName(), String.valueOf(amount.getContainerTotal()));
+                                            }
+                                        }
+                                        return limitMap;
+                                    } catch (Exception e) {
+                                    }
+                                    return null;
+                                }
+
+                                @Override
+                                public void setLimit(HashMap<String, String> limitMap, Object obj) {
+                                    ConOutWareHouseList list = (ConOutWareHouseList) obj;
+                                    int amount = Integer.valueOf((null == limitMap.get(list.getContainerName())) ? "0" : limitMap.get(list.getContainerName())) + list.getCkAmount();
+                                    list.setOperateMaxAmount(amount);
+                                }
+                            });
                             break;
                         }
-                        case "export": {
-                            json = exportData("com.cn.bean.container.", "ContainerManager", (ArrayList<Object>) queryData("com.cn.bean.container.", "view", "ContainerManager", "SupplierID", datas, opt.getConnect(), Integer.MAX_VALUE, 1));
+                        case "audit": {
+                            JSONObject obj = new JSONObject();
+                            obj.put("conCKAuditStaffName", session.getAttribute("user"));
+                            obj.put("conCKAuditTime", Units.getNowTime());
+                            String auditInfo = "[" + obj.toJSONString() + "," + datas + "]";
+                            ArrayList<Integer> updateResult = commonController.dataBaseOperate(auditInfo, "com.cn.bean.container.", "ConOutWareHouse", "update", opt.getConnect());
+                            if (updateResult.get(0) == 0) {
+                                json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
+                            } else {
+                                json = Units.objectToJson(-1, "审核失败!", null);
+                            }
+                            break;
+                        }
+                        case "auditItem": {
+                            CommonOperate operate = new CommonOperate();
+                            json = operate.auditItemOperate("com.cn.bean.container.", "ConOutWareHouse", datas,
+                                    "conOutWareHouseID", "conCKAuditTime", "wareHouseManagerName", (String) session.getAttribute("user"));
                             break;
                         }
                         case "request_table": {
@@ -374,20 +775,12 @@ public class ContainerServlet extends HttpServlet {
                                 String[] keys = {"containerName", "operateMaxAmount"};
                                 String[] keysName = {"盛具名称", "入库数量"};
                                 int[] keysWidth = {50, 50};
-                                String[] fieldsName = new String[2];
-                                
-                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("良品") == 0) {
-                                    fieldsName[0] = "containerName";
-                                    fieldsName[1] = "containerLPTotal";
-                                }
-                                if (JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus").compareTo("不良品") == 0) {
-                                    fieldsName[0] = "containerName";
-                                    fieldsName[1] = "containerBLPTotal";
-                                }
-                                
+                                String[] fieldsName = {"containerName", "containerTotal"};
+
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("SupplierID", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("supplierID"));
-                                List<Object> list = commonController.proceduceQuery("tbGetContainerAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
+                                proParams.put("ContainerStatus", "string," + JSONObject.parseObject(paramsJson.getString("rely")).getString("containerStatus"));
+                                List<Object> list = commonController.proceduceQuery("tbGetContainerKCAmountListForSupplier", proParams, "com.cn.bean.container.ContainerAmount", opt.getConnect());
                                 if (list != null && list.size() > 0) {
                                     List<Object> filterList = new ArrayList<>();
                                     for (Object obj : list) {
@@ -403,15 +796,74 @@ public class ContainerServlet extends HttpServlet {
                             }
                             break;
                         }
+                        case "import": {
+                            ArrayList<Object> importData = commonController.importData("com.cn.bean.container.", "ConOutWareHouseList", importPath + fileName);
+                            ConInWareHouse conInWareHouse = JSONObject.parseObject(item, ConInWareHouse.class);
+                            if (importData != null && importData.size() > 0) {
+                                CommonOperate operate = new CommonOperate();
+                                operate.importOperate("com.cn.bean.container.", "ConOutWareHouse", item, "conOutWareHouseID",
+                                        importData, new ImportOperateInterface() {
+                                    @Override
+                                    public boolean checkData(Object obj) {
+                                        ConInWareHouseList list = (ConInWareHouseList) obj;
+                                        list.setSupplierID(conInWareHouse.getSupplierID());
+                                        list.setConInWareHouseID(conInWareHouse.getConInWareHouseID());
+
+                                        Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + list.getSupplierID()), Customer.class);
+                                        if (customer != null) {
+                                            list.setSupplierName(customer.getCustomerAbbName());
+                                        } else {
+                                            list.setFailedReason("缺失供应商信息!");
+                                            return false;
+                                        }
+                                        Container container = JSONObject.parseObject(RedisAPI.get("container_" + list.getContainerName()), Container.class);
+                                        if (container != null) {
+
+                                        } else {
+                                            list.setFailedReason("缺失盛具信息!");
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+
+                                    @Override
+                                    public void test() {
+
+                                    }
+                                });
+                            } else {
+                                json = Units.objectToJson(-1, "上传数据为空或格式不正确!", null);
+                            }
+                            break;
+                        }
+                        case "exportTemplate": {
+                            json = exportTemplate("com.cn.bean.container.", "ConOutWareHouseList", null);
+                            break;
+                        }
                         case "submit": {
-                            json = submitOperate("com.cn.bean.container.", "ContainerManager", update, add, delete, "data");
+                            String operate = paramsJson.getString("operate");
+                            CommonOperate commonOperate = new CommonOperate();
+                            if (operate.compareToIgnoreCase("add") == 0) {
+                                json = commonOperate.submitOperate("com.cn.bean.container.", "ConOutWareHouse", item, "conOutWareHouseID", details);
+                            }
+                            if (operate.compareToIgnoreCase("modify") == 0) {
+                                json = commonOperate.submitOperate("com.cn.bean.container.", "ConOutWareHouseList", update, add, delete, "data");
+                            }
+                            break;
+                        }
+                        case "delete": {
+                            if (!Units.strIsEmpty(delete)) {
+                                CommonOperate operate = new CommonOperate();
+                                json = operate.batchDeleteOperate(delete, "com.cn.bean.container.", "ConOutWareHouse", "conOutWareHouseID", "conCKAuditTime");
+                            } else {
+                                json = Units.objectToJson(-1, "未选中数据!", null);
+                            }
                             break;
                         }
                     }
                     break;
                 }
                 //</editor-fold>
-
                 //</editor-fold>
             }
         } catch (Exception e) {
@@ -433,10 +885,6 @@ public class ContainerServlet extends HttpServlet {
                 out.close();
             }
         }
-    }
-
-    private String createOperate(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String orderField, Connection conn) throws Exception {
-        return createOperateWithFilter(pageSize, type, jsonPackagePath, beanPackage, tableName, "", orderField, conn);
     }
 
     /**
@@ -471,9 +919,43 @@ public class ContainerServlet extends HttpServlet {
         return json;
     }
 
-    private String queryOperate(String beanPackage, String type, String tableName, String orderField, String keyWord, String rely, boolean isAll,
-            Connection conn, int pageSize, int pageIndex) throws Exception {
-        return queryOperateWithFilter(beanPackage, type, tableName, orderField, keyWord, rely, null, isAll, conn, pageSize, pageIndex);
+    private String createOperateOnDate(int pageSize, String type, String jsonPackagePath, String beanPackage, String tableName, String datas,
+            String rely, String whereCase, String orderField, String dataType) throws Exception {
+        String json;
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
+        Connection conn;
+        if (dataType.compareToIgnoreCase("isHis") == 0) {
+            conn = opt.getConnectHis();
+        } else {
+            conn = opt.getConnect();
+        }
+
+        String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
+        String result = Units.returnFileContext(path + jsonPackagePath, tableName + ".json");
+        Class objClass = Class.forName(beanPackage + tableName);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
+
+        String whereSql = commonController.getWhereSQLStrWithDate(objClass, datas, rely, true);
+        if (Units.strIsEmpty(whereSql)) {
+            whereSql = whereCase;
+        } else {
+            whereSql = whereSql + (Units.strIsEmpty(whereCase) ? "" : " and " + whereCase);
+        }
+
+        if (result != null) {
+            List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", whereSql, pageSize, 1, orderField, 0, conn);
+            if (list != null && list.size() > 0) {
+                StringBuffer buffer = new StringBuffer(result);
+                buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
+                buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, new Object[]{}));
+                result = buffer.toString();
+            }
+            json = Units.objectToJson(0, "", result);
+        } else {
+            json = Units.objectToJson(-1, "服务器出错!", null);
+        }
+        return json;
     }
 
     /**
@@ -500,6 +982,46 @@ public class ContainerServlet extends HttpServlet {
             whereSql = whereSql + (Units.strIsEmpty(whereCase) ? "" : " and " + whereCase);
         }
         //System.out.println("whereSql:" + whereSql);
+        List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", whereSql, pageSize, pageIndex, orderField, 0, conn);
+        if (list != null && list.size() > 0) {
+            StringBuffer buffer = new StringBuffer(result);
+            buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
+            buffer.insert(buffer.lastIndexOf("}"), ",\"counts\":" + method.invoke(null, new Object[]{}));
+            //buffer.insert(buffer.lastIndexOf("}"), ",\"rely\":" + rely);
+            result = buffer.toString();
+
+            json = Units.objectToJson(0, "", result);
+        } else {
+            json = Units.objectToJson(-1, "数据为空!", null);
+        }
+
+        return json;
+    }
+
+    private String queryOnDateOperate(String beanPackage, String type, String tableName, String orderField, String keyWord, String rely, String whereCase,
+            boolean isAll, String dataType, int pageSize, int pageIndex) throws Exception {
+        String json;
+        String result = "{}";
+        CommonController commonController = new CommonController();
+        DatabaseOpt opt = new DatabaseOpt();
+        Connection conn;
+        if (dataType.compareToIgnoreCase("isHis") == 0) {
+            conn = opt.getConnectHis();
+        } else {
+            conn = opt.getConnect();
+        }
+
+        Class objClass = Class.forName(beanPackage + tableName);
+        Method method = objClass.getMethod("getRecordCount", new Class[0]);
+
+        String whereSql = commonController.getWhereSQLStrWithDate(objClass, keyWord, rely, isAll);
+        if (Units.strIsEmpty(whereSql)) {
+            whereSql = whereCase;
+        } else {
+            whereSql = whereSql + (Units.strIsEmpty(whereCase) ? "" : " and " + whereCase);
+        }
+
+//        System.out.println("where SQL:" + whereSql);
         List<Object> list = commonController.dataBaseQuery(type, beanPackage, tableName, "*", whereSql, pageSize, pageIndex, orderField, 0, conn);
         if (list != null && list.size() > 0) {
             StringBuffer buffer = new StringBuffer(result);

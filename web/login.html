@@ -111,6 +111,7 @@
                                     alert(data.message);
                                 } else {
                                     localStorage.setItem("isLogin", "true");
+                                    localStorage.setItem("loginType", operatetion[loginType]);
                                     localStorage.setItem('menuDatas', data.data);
                                     location = "index.html";
                                 }

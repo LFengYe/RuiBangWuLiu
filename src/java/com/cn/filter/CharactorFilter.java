@@ -98,7 +98,7 @@ public class CharactorFilter implements Filter {
             //System.out.println(servletRequest.getServletPath());
             // 这里判断目录，后缀名，当然也可以写在web.xml中，用url-pattern进行拦截映射
             if ((!servletRequest.getServletPath().endsWith("login.html"))
-                    && (!servletRequest.getServletPath().endsWith("test.html"))
+                    && (!servletRequest.getServletPath().endsWith("history_list.html"))
                     && (!servletRequest.getServletPath().endsWith(".js"))
                     && (!servletRequest.getServletPath().endsWith(".css"))
                     && (!servletRequest.getServletPath().endsWith(".map"))

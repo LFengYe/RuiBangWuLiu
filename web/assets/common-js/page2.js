@@ -66,7 +66,8 @@
     var isHistory = 0;
     var dataType = "isCur";
 
-    function initData() {
+    function initData(moudle) {
+        $(".start-time").attr("disabled", false);
         $(".start-time").val(getNowDateShort() + ' 00:00:00');
         $(".end-time").val(getNowDateShort() + ' 23:59:59');
         primary = [];
@@ -135,7 +136,7 @@
             });
 
         });
-        
+
         $searchHistory.off("click");
         $searchHistory.click(function (e) {
             dataType = "isHis";
@@ -166,19 +167,50 @@
                 updateInputBox(data);
                 moudleDiaplay(moudle, 0);
                 moudleOperate(moudle, 0);
-                /*
-                 $modify.removeAttr("disabled");
-                 $cancel.removeAttr("disabled");
-                 $add.removeAttr("disabled");
-                 $import.removeAttr("disabled");
-                 $print.attr("disabled", "disabled");
-                 
-                 $chidTableBox.show();
-                 $childINputBox.show();
-                 $childINputBox.next().show();
-                 $detailList.show();
-                 $mainTable.hide();
-                 */
+
+                if (moudle === "终端退库") {
+                    var ycFLocation = $("select[name=ycFLocation]").val();
+                    if (ycFLocation === "线旁") {
+                        $("select[name=cfLocation]").attr("disabled", false);
+                    }
+                    if (ycFLocation === "集配区") {
+                        $("select[name=cfLocation]").attr("disabled", true);
+                        $("select[name=cfLocation]").val("库房");
+                        $("select[name=zdTKType]").attr("disabled", false);
+                    }
+                    $("select[name=ycFLocation]").change(function () {
+                        console.log($(this).val());
+                        var value = $(this).val();
+                        if (value === "线旁") {
+                            $("select[name=cfLocation]").attr("disabled", false);
+                        }
+                        if (value === "集配区") {
+                            $("select[name=cfLocation]").attr("disabled", true);
+                            $("select[name=cfLocation]").val("库房");
+                            $("select[name=zdTKType]").attr("disabled", false);
+                        }
+                    });
+
+                    var cfLocation = $("select[name=cfLocation]").val();
+                    if (cfLocation === "集配区") {
+                        $("select[name=zdTKType]").val("良品");
+                        $("select[name=zdTKType]").attr("disabled", true);
+                    }
+                    if (cfLocation === "库房") {
+                        $("select[name=zdTKType]").attr("disabled", false);
+                    }
+                    $("select[name=cfLocation]").change(function () {
+                        console.log($(this).val());
+                        var value = $(this).val();
+                        if (value === "集配区") {
+                            $("select[name=zdTKType]").val("良品");
+                            $("select[name=zdTKType]").attr("disabled", true);
+                        }
+                        if (value === "库房") {
+                            $("select[name=zdTKType]").attr("disabled", false);
+                        }
+                    });
+                }
             }, function () {
             });
         });
@@ -344,10 +376,11 @@
         $("#page2-submit").off("click");
         $("#page2-submit").click(function () {
             if (operate === "add") {
-                if (importOperate) {
+                /*if (importOperate) {
                     alert("当前数据不能提交！");
                     return;
                 }
+                */
                 var arr = $chidTableBox.getAllDatas();
                 if (arr.length == 0) {
                     //console.log("请将表格添加数据后再提交");
@@ -434,6 +467,8 @@
             if (!modifyRow) {
                 if ($childINputBox.isFinishForm()) {
                     if ($childINputBox.checkValue() && $childINputBox.calculateValue()) {
+                        var data = $chidTableBox.getAllDatas();
+                        $childINputBox.autoField(data.length);
                         var obj = $childINputBox.getInputValObj(true);
                         if (!$chidTableBox.isUnique(obj)) {
                             $add.attr("disabled", false);
@@ -563,7 +598,7 @@
                 }
             } else {
                 $printArea.printHtml();
-                
+
 //                $("#print_area").css({
 //                    "height": "auto"
 //                    , "overflow": "visible"
@@ -644,7 +679,7 @@
     }
 
     function initDOM(moudle) {
-        initData();
+        initData(moudle);
         $("#page2-return").trigger("click");
         var tmp = JSON.parse(serializeJqueryElement($(".page2-container .wc-page2-form")));
         var timeInterval;

@@ -30,7 +30,7 @@
     },
     "detailMustwrite": ["fjhOutWareHouseID", "supplierID", "partCode", "fjhCKAmount"],
     "detailUnique": [],
-    "detailPrimary": "fjhOutWareHouseID,SupplierID,partCode",
+    "detailPrimary": "fjhOutWareHouseID,supplierID,partCode",
     "detailTitles": {
         "checkbox": "选择,5%",
         "failedReason": "失败原因,0%",

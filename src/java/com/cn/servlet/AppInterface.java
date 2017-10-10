@@ -15,7 +15,6 @@ import com.cn.bean.PartCategory;
 import com.cn.bean.PartStore;
 import com.cn.bean.PlatformRoleRight;
 import com.cn.bean.app.JHOutWareHouseList;
-import com.cn.bean.app.JHOutWareHouseListUnFinished;
 import com.cn.bean.app.ProcessList;
 import com.cn.bean.app.UnFinishAmount;
 import com.cn.controller.CommonController;
@@ -67,13 +66,13 @@ public class AppInterface extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response, String params)
             throws ServletException, IOException {
         String uri = request.getRequestURI();
-        String subUri = uri.substring(uri.lastIndexOf("/") + 1,
-                uri.lastIndexOf("."));
+        String subUri = uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("."));
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
         String json = null;
         try {
-            logger.info(subUri + ",params:" + params);
+            String ipAddress = Units.getRealIpAddress(request);
+            logger.info(ipAddress + subUri + ",params:" + params);
             JSONObject paramsJson = JSONObject.parseObject(params);
             String module = paramsJson.getString("module");
             String operation = paramsJson.getString("operation");
@@ -214,12 +213,86 @@ public class AppInterface extends HttpServlet {
 
                 //<editor-fold desc="领货未完成">
                 case "领货未完成": {
+                    switch (operation) {
+                        case "getList": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
+                            JSONObject object = new JSONObject();
+                            object.put("EmployeeName", "string," + employee.getEmployeeName());
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishListForLH", object, "com.cn.bean.app.FunctionItem", opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                json = Units.objectToJson(0, "", list);
+                            } else {
+                                json = Units.objectToJson(-1, "数据为空!", null);
+                            }
+                            break;
+                        }
+                        case "getDetail": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
+                            JSONObject object = new JSONObject();
+                            object.put("EmployeeName", "string," + employee.getEmployeeName());
+                            object.put("JHShift", "string," + paramsJson.getString("JHShift"));
+                            object.put("JHDemandDate", "string," + paramsJson.getString("JHDemandDate"));
+                            StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "JHOutWareHouseListUnFinished.json"));
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishDetailForLH", object, "com.cn.bean.app.JHOutWareHouseListUnFinished", opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
+                                json = Units.objectToJson(0, "", buffer.toString());
+                                //json = Units.objectToJson(0, "", list);
+                            } else {
+                                json = Units.objectToJson(-1, "数据为空!", null);
+                            }
+                            break;
+                        }
+                    }
                     break;
                 }
                 //</editor-fold>
 
-                //<editor-fold desc="上线未完成">
-                case "上线未完成": {
+                //<editor-fold desc="配送未完成">
+                case "配送未完成": {
+                    switch (operation) {
+                        case "getList": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
+                            JSONObject object = new JSONObject();
+                            object.put("EmployeeName", "string," + employee.getEmployeeName());
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishListForSX", object, "com.cn.bean.app.FunctionItem", opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                json = Units.objectToJson(0, "", list);
+                            } else {
+                                json = Units.objectToJson(-1, "数据为空!", null);
+                            }
+                            break;
+                        }
+                        case "getDetail": {
+                            if (employee == null) {
+                                json = Units.objectToJson(-99, "未登陆", null);
+                                break;
+                            }
+                            JSONObject object = new JSONObject();
+                            object.put("EmployeeName", "string," + employee.getEmployeeName());
+                            object.put("JHShift", "string," + paramsJson.getString("JHShift"));
+                            object.put("JHDemandDate", "string," + paramsJson.getString("JHDemandDate"));
+                            StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "JHOutWareHouseListUnFinished.json"));
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishDetailForSX", object, "com.cn.bean.app.JHOutWareHouseListUnFinished", opt.getConnect());
+                            if (list != null && list.size() > 0) {
+                                buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
+                                json = Units.objectToJson(0, "", buffer.toString());
+                                //json = Units.objectToJson(0, "", list);
+                            } else {
+                                json = Units.objectToJson(-1, "数据为空!", null);
+                            }
+                            break;
+                        }
+                    }
                     break;
                 }
                 //</editor-fold>
@@ -298,6 +371,7 @@ public class AppInterface extends HttpServlet {
                             if (employeeType.compareTo("仓管员") == 0) {
                                 ProcessListController controller = new ProcessListController();
                                 int result;
+                                logger.info(ipAddress + "库管员备货确认开始执行...");
                                 synchronized (this) {
                                     result = controller.bhConfirmForKGY(
                                             paramsJson.getString("jhOutWareHouseID"),
@@ -307,6 +381,7 @@ public class AppInterface extends HttpServlet {
                                             paramsJson.getIntValue("jhStatus"),
                                             paramsJson.getString("jhOutWareHouseListRemark"));
                                 }
+                                logger.info(ipAddress + "库管员备货确认执行结束...");
                                 if (result == 0) {
                                     PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), PartStore.class);
                                     if (partStore == null) {
@@ -354,9 +429,11 @@ public class AppInterface extends HttpServlet {
                                 } else {
                                     json = Units.objectToJson(-1, "确认失败!", null);
                                 }
+                                logger.info(ipAddress + "库管员备货确认返回:" + json);
                             } else if (employeeType.compareTo("备货员") == 0) {
                                 ProcessListController controller = new ProcessListController();
                                 int result;
+                                logger.info(ipAddress + "备货员备货确认执行开始...");
                                 synchronized (this) {
                                     result = controller.bhConfirmForBHY(
                                             paramsJson.getString("jhOutWareHouseID"),
@@ -365,6 +442,7 @@ public class AppInterface extends HttpServlet {
                                             paramsJson.getIntValue("packingNumber"),
                                             paramsJson.getString("inboundBatch"));
                                 }
+                                logger.info(ipAddress + "备货员备货确认执行结束...");
                                 if (result == 0) {
                                     json = Units.objectToJson(0, "确认成功!", null);
                                 } else if (result == 1) {
@@ -388,6 +466,7 @@ public class AppInterface extends HttpServlet {
                                 } else {
                                     json = Units.objectToJson(-1, "确认失败!", null);
                                 }
+                                logger.info(ipAddress + "备货员备货确认返回:" + json);
                             } else {
                                 json = Units.objectToJson(-1, "确认失败!", null);
                             }

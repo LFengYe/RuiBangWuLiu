@@ -5,6 +5,7 @@
         "zdTKProduceTime": "制单时间",
         "zdCustomerName": "终端客户名称,hidden",
         "ycFLocation": "原存放区域,select,集配区,线旁",
+        "cfLocation": "存放区域,select,库房,集配区",
         "zdTKType": "退库类型,select,良品,不良品",
         "customerTypeName": "客户类型,hidden,@终端客户",
         "zdCustomerID": "终端客户代码,@table,@customerTypeName:@zdCustomerName",
@@ -40,7 +41,7 @@
     },
     "detailMustwrite": ["zdBackWareHouseID", "supplierID", "partCode", "inboundBatch", "zdTKAmount"],
     "detailUnique": [],
-    "detailPrimary": "zdBackWareHouseID,partCode,supplierID,inboundBatch,ycFLocation",
+    "detailPrimary": "zdBackWareHouseID,supplierID,partCode,inboundBatch,ycFLocation",
     "detailTitles": {
         "checkbox": "选择,5%",
         "supplierID": "供应商ID,10%",

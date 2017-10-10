@@ -26,6 +26,7 @@
         "djINWareHousRemark": "备注,10%"
     },
     "detailControl": {
+        "listNumber":"序号,auto",
         "djInWareHouseID": "待检入库单号,parent",
         "inboundBatch": "入库批次,parent",
         "supplierID": "供应商代码,parent",
@@ -42,6 +43,7 @@
     "detailUnique": [],
     "detailPrimary": "djInWareHouseID,partCode",
     "detailTitles": {
+        "listNumber": "序号,5%",
         "failedReason": "失败原因,0%",
         "djInWareHouseID": "待检入库单号,15%",
         "supplierID": "供应商代码,10%",
@@ -58,35 +60,41 @@
         "djInWareHouseListRemark": "备注,10%"
     },
     "printArea": {
-        "title": {"djInWareHouse":"100%,待检入库单,title"},
+        "title": {
+            "djInWareHouse": "100%,待检入库单,title"
+        },
         "rows1": {
-            "djInWareHouseIDName":"15%,单据编号",
-            "djInWareHouseID":"20%",
-            "supplierNameName":"10%,供应商",
-            "supplierName":"20%",
-            "supplierID":"5%",
-            "djRKProducerNameName":"10%,制单人",
-            "djRKProducerName":"20%"
-            },
+            "djInWareHouseIDName": "15%,单据编号",
+            "djInWareHouseID": "20%",
+            "supplierNameName": "10%,供应商",
+            "supplierName": "20%",
+            "supplierID": "5%",
+            "djRKProducerNameName": "10%,制单人",
+            "djRKProducerName": "20%"
+        },
         "rows2": {
-            "inboundBatchName":"15%,入库批次",
-            "inboundBatch":"20%",
-            "djRKProduceTimeName":"10%,制单时间",
-            "djRKProduceTime":"20%",
-            "pageInfo":"35%,第 1 页共 1 页"
-            },
+            "inboundBatchName": "15%,入库批次",
+            "inboundBatch": "20%",
+            "djRKProduceTimeName": "10%,制单时间",
+            "djRKProduceTime": "20%",
+            "pageInfo": "35%,第 1 页共 1 页"
+        },
+        "rows6": {
+            "djINWareHousRemarkName": "15%,备注",
+            "djINWareHousRemark": "85%"
+        },
         "datasTitle": {
-            "partName":"28%,部品名称",
-            "partCode":"27%,部品件号",
-            "partUnit":"5%,单位",
-            "inboundAmount":"10%,入库数量",
-            "originalBatch":"10%,原厂批次",
-            "result":"10%,检验结论",
-            "djInWareHouseListRemark":"10%,备注"
+            "partName": "28%,部品名称",
+            "partCode": "27%,部品件号",
+            "partUnit": "5%,单位",
+            "inboundAmount": "10%,入库数量",
+            "originalBatch": "10%,原厂批次",
+            "result": "10%,检验结论",
+            "djInWareHouseListRemark": "10%,备注"
         },
         "rows3": {
-            "inboundCountName":"10%,总计",
-            "inboundCount":"90%"
+            "inboundCountName": "10%,总计",
+            "inboundCount": "90%"
         },
         "rows4": {
             "supplierSignName": "10%,供应商",

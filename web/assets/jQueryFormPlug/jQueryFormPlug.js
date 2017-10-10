@@ -57,8 +57,7 @@ $.fn.insertInputForm = function (options) {
                     var selects = controls[i].split(",").slice(2);
 
                     inputResult += "<div><span>" + txt + "</span>:<input class='input' type='hidden' name='" + i + "' value='" + selects[0] + "'/>";
-                    inputResult += "<select class='select'>";
-
+                    inputResult += "<select class='select' name='" + i + "'>";
                     for (var str in selects) {
                         inputResult += "<option value='" + selects[str] + "'>" + selects[str] + "</option>";
                     }
@@ -68,6 +67,8 @@ $.fn.insertInputForm = function (options) {
                     inputResult += "<input class='input calculate' type='hidden' name='" + i + "'/>";
                 } else if (controls[i].split(',')[1] === 'parent') {
                     inputResult += "<input class='input parent' type='hidden' name='" + i + "'/>";
+                } else if (controls[i].split(',')[1] === 'auto') {
+                    inputResult += "<input type='hidden' class='input auto' name='" + i + "'/>";
                 } else if (controls[i].split(',')[1] === 'check') {
                     inputResult += "<div><span>" + txt + "</span>:<input class='input check' name='" + i + "'/></div>";
                 } else {
@@ -82,8 +83,12 @@ $.fn.insertInputForm = function (options) {
             this.$select = this.find(".input-area select");
             this.$calculate = this.find(".input-area input.calculate");
             this.$check = this.find(".input-area .check");
+            this.$auto = this.find(".input-area .auto");
             this.parent = this.find(".input-area input.parent");
             //将只有一个选项的输入框默认输入这个选项
+        },
+        autoField: function(count) {
+            this.$auto.val(count + 1);
         },
         checkValue: function () {
             for (var i = 0; i < this.$check.length; i++) {
