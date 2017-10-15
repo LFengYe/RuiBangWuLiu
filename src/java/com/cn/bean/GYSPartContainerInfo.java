@@ -45,6 +45,8 @@ public class GYSPartContainerInfo {
     private String partCategoryName;
     @FieldDescription(description = "备注", operate = "import")
     private String gysPartContainerInfoRemark;
+    @FieldDescription(description = "库管员", operate = "display")
+    private String wareHouseManagerName;
     
     
     public String getInboundContainerName() {
@@ -149,5 +151,13 @@ public class GYSPartContainerInfo {
 
     public void setPartCategoryName(String partCategoryName) {
         this.partCategoryName = partCategoryName;
+    }
+
+    public String getWareHouseManagerName() {
+        return wareHouseManagerName;
+    }
+
+    public void setWareHouseManagerName(String wareHouseManagerName) {
+        this.wareHouseManagerName = wareHouseManagerName;
     }
 }

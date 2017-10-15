@@ -19,7 +19,7 @@ import com.cn.bean.app.ProcessList;
 import com.cn.bean.app.UnFinishAmount;
 import com.cn.controller.CommonController;
 import com.cn.controller.ProcessListController;
-import com.cn.test.LedControl;
+import com.cn.led.LedControl;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.PushUnits;
 import com.cn.util.RedisAPI;
@@ -79,7 +79,7 @@ public class AppInterface extends HttpServlet {
 
             HttpSession session = request.getSession();
             String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
-            String importPath = getServletContext().getRealPath("/").replace("\\", "/") + "excelFile/";
+            String exportPath = getServletContext().getContextPath() + "/exportFile/";
 
             /*验证是否登陆*/
             if (!"userLogin".equals(module)
@@ -115,7 +115,7 @@ public class AppInterface extends HttpServlet {
                         //<editor-fold desc="员工登陆">
                         case "employeeLogin": {
                             String whereSql = "EmployeeName = '" + paramsJson.getString("username") + "'";
-                            List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.", "Employee", "*", whereSql, 1, 1, "EmployeeName", 1, opt.getConnect());
+                            List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.", "Employee", "*", whereSql, 1, 1, "EmployeeName", 1, DatabaseOpt.DATA);
                             String type = paramsJson.getString("type");
                             if (res != null && res.size() > 0) {
                                 Employee loginEmp = (Employee) res.get(0);
@@ -123,7 +123,7 @@ public class AppInterface extends HttpServlet {
                                     session.setAttribute("user", paramsJson.getString("username"));
                                     session.setAttribute("employee", loginEmp);
                                     String whereCase = "RoleCode in ('" + employee.getEmployeeTypeCode() + "')";
-                                    List<Object> roleRight = commonController.dataBaseQuery("table", "com.cn.bean.", "PlatformRoleRight", "*", whereCase, Integer.MAX_VALUE, 1, "RoleCode", 0, opt.getConnectBase());
+                                    List<Object> roleRight = commonController.dataBaseQuery("table", "com.cn.bean.", "PlatformRoleRight", "*", whereCase, Integer.MAX_VALUE, 1, "RoleCode", 0, DatabaseOpt.BASE);
                                     if (roleRight != null && roleRight.size() > 0) {
                                         ArrayList<String> roleRightList = new ArrayList<>();
                                         roleRight.stream().map((obj) -> (PlatformRoleRight) obj).forEach((right) -> {
@@ -161,7 +161,7 @@ public class AppInterface extends HttpServlet {
                     JSONObject object = new JSONObject();
                     object.put("EmployeeName", "string," + employee.getEmployeeName());
                     object.put("EmployeeTypeCode", "int," + employee.getEmployeeTypeCode());
-                    UnFinishAmount amount = (UnFinishAmount) commonController.proceduceQuery("tbGetUnFinishAmount", object, "com.cn.bean.app.UnFinishAmount", opt.getConnect()).get(0);
+                    UnFinishAmount amount = (UnFinishAmount) commonController.proceduceQuery("tbGetUnFinishAmount", object, "com.cn.bean.app.UnFinishAmount", DatabaseOpt.DATA).get(0);
                     json = Units.objectToJson(0, "", amount);
                     break;
                 }
@@ -178,7 +178,7 @@ public class AppInterface extends HttpServlet {
                             }
                             JSONObject object = new JSONObject();
                             object.put("EmployeeName", "string," + employee.getEmployeeName());
-                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishListForBH", object, "com.cn.bean.app.FunctionItem", opt.getConnect());
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishListForBH", object, "com.cn.bean.app.FunctionItem", DatabaseOpt.DATA);
                             if (list != null && list.size() > 0) {
                                 json = Units.objectToJson(0, "", list);
                             } else {
@@ -196,7 +196,7 @@ public class AppInterface extends HttpServlet {
                             object.put("JHShift", "string," + paramsJson.getString("JHShift"));
                             object.put("JHDemandDate", "string," + paramsJson.getString("JHDemandDate"));
                             StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "JHOutWareHouseListUnFinished.json"));
-                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishDetailForBH", object, "com.cn.bean.app.JHOutWareHouseListUnFinished", opt.getConnect());
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishDetailForBH", object, "com.cn.bean.app.JHOutWareHouseListUnFinished", DatabaseOpt.DATA);
                             if (list != null && list.size() > 0) {
                                 buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
                                 json = Units.objectToJson(0, "", buffer.toString());
@@ -221,7 +221,7 @@ public class AppInterface extends HttpServlet {
                             }
                             JSONObject object = new JSONObject();
                             object.put("EmployeeName", "string," + employee.getEmployeeName());
-                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishListForLH", object, "com.cn.bean.app.FunctionItem", opt.getConnect());
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishListForLH", object, "com.cn.bean.app.FunctionItem", DatabaseOpt.DATA);
                             if (list != null && list.size() > 0) {
                                 json = Units.objectToJson(0, "", list);
                             } else {
@@ -239,7 +239,7 @@ public class AppInterface extends HttpServlet {
                             object.put("JHShift", "string," + paramsJson.getString("JHShift"));
                             object.put("JHDemandDate", "string," + paramsJson.getString("JHDemandDate"));
                             StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "JHOutWareHouseListUnFinished.json"));
-                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishDetailForLH", object, "com.cn.bean.app.JHOutWareHouseListUnFinished", opt.getConnect());
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishDetailForLH", object, "com.cn.bean.app.JHOutWareHouseListUnFinished", DatabaseOpt.DATA);
                             if (list != null && list.size() > 0) {
                                 buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
                                 json = Units.objectToJson(0, "", buffer.toString());
@@ -264,7 +264,7 @@ public class AppInterface extends HttpServlet {
                             }
                             JSONObject object = new JSONObject();
                             object.put("EmployeeName", "string," + employee.getEmployeeName());
-                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishListForSX", object, "com.cn.bean.app.FunctionItem", opt.getConnect());
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishListForSX", object, "com.cn.bean.app.FunctionItem", DatabaseOpt.DATA);
                             if (list != null && list.size() > 0) {
                                 json = Units.objectToJson(0, "", list);
                             } else {
@@ -282,7 +282,7 @@ public class AppInterface extends HttpServlet {
                             object.put("JHShift", "string," + paramsJson.getString("JHShift"));
                             object.put("JHDemandDate", "string," + paramsJson.getString("JHDemandDate"));
                             StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "JHOutWareHouseListUnFinished.json"));
-                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishDetailForSX", object, "com.cn.bean.app.JHOutWareHouseListUnFinished", opt.getConnect());
+                            List<Object> list = commonController.proceduceQuery("tbGetUnFinishDetailForSX", object, "com.cn.bean.app.JHOutWareHouseListUnFinished", DatabaseOpt.DATA);
                             if (list != null && list.size() > 0) {
                                 buffer.insert(buffer.lastIndexOf("}"), ", \"datas\":" + JSONObject.toJSONString(list, Units.features));
                                 json = Units.objectToJson(0, "", buffer.toString());
@@ -319,7 +319,7 @@ public class AppInterface extends HttpServlet {
                                 proParams.put("ZDCustomerID", "string," + paramsJson.getString("ZDCustomerID"));
                                 proParams.put("IsFinished", "int," + paramsJson.getString("isFinished"));
                                 StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "JHOutWareHouseList.json"));
-                                List<Object> list = commonController.proceduceQuery("tbGetJHCKBHListForKGY", proParams, "com.cn.bean.app.JHOutWareHouseList", opt.getConnect());
+                                List<Object> list = commonController.proceduceQuery("tbGetJHCKBHListForKGY", proParams, "com.cn.bean.app.JHOutWareHouseList", DatabaseOpt.DATA);
                                 if (list != null && list.size() > 0) {
                                     for (Object obj : list) {
                                         JHOutWareHouseList wareHouseList = (JHOutWareHouseList) obj;
@@ -340,7 +340,7 @@ public class AppInterface extends HttpServlet {
                                 JSONObject proParams = new JSONObject();
                                 proParams.put("BHStaff", "string," + employee.getEmployeeName());
                                 StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "ProcessList.json"));
-                                List<Object> list = commonController.proceduceQuery("tbGetJHCKBHListForBHY", proParams, "com.cn.bean.app.ProcessList", opt.getConnect());
+                                List<Object> list = commonController.proceduceQuery("tbGetJHCKBHListForBHY", proParams, "com.cn.bean.app.ProcessList", DatabaseOpt.DATA);
                                 if (list != null && list.size() > 0) {
                                     list.stream().map((obj) -> (ProcessList) obj).map((processList) -> {
                                         Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + processList.getSupplierID()), Customer.class);
@@ -371,7 +371,7 @@ public class AppInterface extends HttpServlet {
                             if (employeeType.compareTo("仓管员") == 0) {
                                 ProcessListController controller = new ProcessListController();
                                 int result;
-                                logger.info(ipAddress + "库管员备货确认开始执行...");
+//                                logger.info(ipAddress + "库管员备货确认开始执行...");
                                 synchronized (this) {
                                     result = controller.bhConfirmForKGY(
                                             paramsJson.getString("jhOutWareHouseID"),
@@ -381,7 +381,7 @@ public class AppInterface extends HttpServlet {
                                             paramsJson.getIntValue("jhStatus"),
                                             paramsJson.getString("jhOutWareHouseListRemark"));
                                 }
-                                logger.info(ipAddress + "库管员备货确认执行结束...");
+//                                logger.info(ipAddress + "库管员备货确认执行结束...");
                                 if (result == 0) {
                                     PartStore partStore = JSONObject.parseObject(RedisAPI.get("partStore_" + paramsJson.getString("supplierID") + "_" + paramsJson.getString("partCode").toLowerCase()), PartStore.class);
                                     if (partStore == null) {
@@ -429,11 +429,11 @@ public class AppInterface extends HttpServlet {
                                 } else {
                                     json = Units.objectToJson(-1, "确认失败!", null);
                                 }
-                                logger.info(ipAddress + "库管员备货确认返回:" + json);
+//                                logger.info(ipAddress + "库管员备货确认返回:" + json);
                             } else if (employeeType.compareTo("备货员") == 0) {
                                 ProcessListController controller = new ProcessListController();
                                 int result;
-                                logger.info(ipAddress + "备货员备货确认执行开始...");
+//                                logger.info(ipAddress + "备货员备货确认执行开始...");
                                 synchronized (this) {
                                     result = controller.bhConfirmForBHY(
                                             paramsJson.getString("jhOutWareHouseID"),
@@ -442,7 +442,7 @@ public class AppInterface extends HttpServlet {
                                             paramsJson.getIntValue("packingNumber"),
                                             paramsJson.getString("inboundBatch"));
                                 }
-                                logger.info(ipAddress + "备货员备货确认执行结束...");
+//                                logger.info(ipAddress + "备货员备货确认执行结束...");
                                 if (result == 0) {
                                     json = Units.objectToJson(0, "确认成功!", null);
                                 } else if (result == 1) {
@@ -466,7 +466,7 @@ public class AppInterface extends HttpServlet {
                                 } else {
                                     json = Units.objectToJson(-1, "确认失败!", null);
                                 }
-                                logger.info(ipAddress + "备货员备货确认返回:" + json);
+//                                logger.info(ipAddress + "备货员备货确认返回:" + json);
                             } else {
                                 json = Units.objectToJson(-1, "确认失败!", null);
                             }
@@ -488,7 +488,7 @@ public class AppInterface extends HttpServlet {
                             JSONObject proParams = new JSONObject();
                             proParams.put("LHStaff", "string," + employee.getEmployeeName());
                             StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "ProcessList.json"));
-                            List<Object> list = commonController.proceduceQuery("tbGetJHCKLHList", proParams, "com.cn.bean.app.ProcessList", opt.getConnect());
+                            List<Object> list = commonController.proceduceQuery("tbGetJHCKLHList", proParams, "com.cn.bean.app.ProcessList", DatabaseOpt.DATA);
                             if (list != null && list.size() > 0) {
                                 list.stream().map((obj) -> (ProcessList) obj).map((processList) -> {
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + processList.getSupplierID()), Customer.class);
@@ -515,7 +515,7 @@ public class AppInterface extends HttpServlet {
                             whereObj.put("supplierID", paramsJson.getString("supplierID"));
                             whereObj.put("packingNumber", paramsJson.getIntValue("packingNumber"));
                             int result = commonController.dataBaseOperate("[" + updateObj.toJSONString() + "," + whereObj.toJSONString() + "]",
-                                    "com.cn.bean.out.", "LHProgressList", "update", opt.getConnect()).get(0);
+                                    "com.cn.bean.out.", "LHProgressList", "update", DatabaseOpt.DATA).get(0);
                             if (result == 0) {
                                 json = Units.objectToJson(0, "确认成功!", null);
                             } else {
@@ -529,7 +529,7 @@ public class AppInterface extends HttpServlet {
                             checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
 
                             System.out.println("json:" + checkObj.toJSONString());
-                            commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, opt.getConnect());
+                            commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, DatabaseOpt.DATA);
                             break;
                         }
                         case "finished": {
@@ -540,7 +540,7 @@ public class AppInterface extends HttpServlet {
                             checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
 
                             System.out.println("json:" + checkObj.toJSONString());
-                            commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, opt.getConnect());
+                            commonController.proceduceForUpdate("tbLHJHFinishedCheck", checkObj, DatabaseOpt.DATA);
                             break;
                         }
                     }
@@ -559,7 +559,7 @@ public class AppInterface extends HttpServlet {
                             JSONObject proParams = new JSONObject();
                             proParams.put("SXStaff", "string," + employee.getEmployeeName());
                             StringBuffer buffer = new StringBuffer(Units.returnFileContext(path + "com/cn/json/app/", "ProcessList.json"));
-                            List<Object> list = commonController.proceduceQuery("tbGetJHCKSXList", proParams, "com.cn.bean.app.ProcessList", opt.getConnect());
+                            List<Object> list = commonController.proceduceQuery("tbGetJHCKSXList", proParams, "com.cn.bean.app.ProcessList", DatabaseOpt.DATA);
                             if (list != null && list.size() > 0) {
                                 list.stream().map((obj) -> (ProcessList) obj).map((processList) -> {
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + processList.getSupplierID()), Customer.class);
@@ -595,7 +595,7 @@ public class AppInterface extends HttpServlet {
                             whereObj.put("supplierID", paramsJson.getString("supplierID"));
                             whereObj.put("packingNumber", paramsJson.getIntValue("packingNumber"));
                             int result = commonController.dataBaseOperate("[" + updateObj.toJSONString() + "," + whereObj.toJSONString() + "]",
-                                    "com.cn.bean.out.", "SXProgressList", "update", opt.getConnect()).get(0);
+                                    "com.cn.bean.out.", "SXProgressList", "update", DatabaseOpt.DATA).get(0);
                             if (result == 0) {
                                 json = Units.objectToJson(0, "确认成功!", null);
                             } else {
@@ -607,7 +607,7 @@ public class AppInterface extends HttpServlet {
                             checkObj.put("SupplierID", "string," + paramsJson.getString("supplierID"));
                             checkObj.put("PartCode", "string," + paramsJson.getString("partCode"));
                             checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
-                            commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, opt.getConnect()).get(0);
+                            commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, DatabaseOpt.DATA).get(0);
                             break;
                         }
                         case "finished": {
@@ -618,7 +618,7 @@ public class AppInterface extends HttpServlet {
                             checkObj.put("InboundBatch", "string," + paramsJson.getString("inboundBatch"));
 
                             System.out.println("json:" + checkObj.toJSONString());
-                            commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, opt.getConnect()).get(0);
+                            commonController.proceduceForUpdate("tbPSJHFinishedCheck", checkObj, DatabaseOpt.DATA).get(0);
                             break;
                         }
                     }
@@ -642,7 +642,6 @@ public class AppInterface extends HttpServlet {
             response.setHeader("Pragma", "no-cache");
             response.setDateHeader("Expires", 0);
             out.print(json);
-            //logger.info("json:" + json);
         } finally {
             if (out != null) {
                 out.close();

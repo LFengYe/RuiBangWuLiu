@@ -12,7 +12,7 @@
               url="jdbc:sqlserver://192.168.1.181:1433;DatabaseName=RBLogistics_New" 
     />-->
     
-    <Resource name="jdbc/TestDB"
+<!--    <Resource name="jdbc/TestDB"
               auth="Container"
               type="javax.sql.DataSource"
               factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
@@ -24,7 +24,7 @@
               maxActive="100"
               minIdle="10"
               maxWait="60000"
-              initialSize="1"
+              initialSize="10"
               removeAbandonedTimeout="60"
               removeAbandoned="true"
               logAbandoned="true"
@@ -36,5 +36,5 @@
               password="RBLogistics_new"
               driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
               url="jdbc:sqlserver://localhost:1433;DatabaseName=RBLogistics_New"
-    />
+    />-->
 </Context>

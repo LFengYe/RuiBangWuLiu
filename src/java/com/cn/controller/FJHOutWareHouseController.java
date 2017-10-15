@@ -48,11 +48,11 @@ public class FJHOutWareHouseController {
         String json;
         JSONObject jhOutWareHouse = JSONObject.parseObject(fjhInfo);
         jhOutWareHouse.put("fjhType", fjhType);
-        int addRes = commonController.dataBaseOperate("[" + jhOutWareHouse.toJSONString() + "]", "com.cn.bean.out.", "FJHOutWareHouse", "add", opt.getConnect()).get(0);
+        int addRes = commonController.dataBaseOperate("[" + jhOutWareHouse.toJSONString() + "]", "com.cn.bean.out.", "FJHOutWareHouse", "add", DatabaseOpt.DATA).get(0);
         if (addRes == 0) {
             String jhListInfo = RedisAPI.get(Units.getSubJsonValue(fjhInfo, "fjhOutWareHouseID"));
             logger.info(jhListInfo);
-            addRes = commonController.dataBaseOperate(jhListInfo, "com.cn.bean.out.", "FJHOutWareHouseList", "add", opt.getConnect()).get(0);
+            addRes = commonController.dataBaseOperate(jhListInfo, "com.cn.bean.out.", "FJHOutWareHouseList", "add", DatabaseOpt.DATA).get(0);
             if (addRes == 0) {
                 JSONObject object1 = new JSONObject();
                 object1.put("datas", jhListInfo);
@@ -60,7 +60,7 @@ public class FJHOutWareHouseController {
             } else {
                 logger.info("计划明细添加失败!");
                 if (!Units.strIsEmpty(Units.getSubJsonStr(fjhInfo, "fjhOutWareHouseID"))) {
-                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(fjhInfo, "fjhOutWareHouseID") + "]", "com.cn.bean.out.", "FJHOutWareHouse", "delete", opt.getConnect());
+                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(fjhInfo, "fjhOutWareHouseID") + "]", "com.cn.bean.out.", "FJHOutWareHouse", "delete", DatabaseOpt.DATA);
                 }
                 json = Units.objectToJson(-1, "明细添加失败!", null);
             }
@@ -309,7 +309,7 @@ public class FJHOutWareHouseController {
         DatabaseOpt opt = new DatabaseOpt();
 //        Class objClass = Class.forName("com.cn.bean.base.LPKCList");
         try {
-            conn = opt.getConnect();
+            conn = opt.getConnection(DatabaseOpt.DATA);
             statement = conn.prepareCall("{call spGetKFJCLpListForJHCK(?, ?, ?)}");
             statement.setString("BeginTime", beginDate);
             statement.setString("EndTime", endDate);

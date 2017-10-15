@@ -37,7 +37,7 @@ public class ProcessListController {
         try {
             opt = new DatabaseOpt();
             conn = opt.getConnect();//获取数据库连接
-            statement = conn.prepareCall("{call tbConfirmBHListForKGY(?, ?, ?, ?, ?, ?, ?)}");
+            statement = conn.prepareCall("{call tbConfirmBHListForKGYWithItem(?, ?, ?, ?, ?, ?, ?)}");
             statement.setString("JHOutWareHouseID", jhOutWareHouseID);
             statement.setString("PartCode", PartCode);
             statement.setString("SupplierID", supplierID);

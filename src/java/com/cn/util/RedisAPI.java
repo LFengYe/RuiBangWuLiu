@@ -8,7 +8,6 @@ package com.cn.util;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.out.JHOutWareHouseList;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -300,11 +299,5 @@ public class RedisAPI {
         }
         return null;
     }
-    
-    public static void main(String[] args) {
-        List<JHOutWareHouseList> list = JSONObject.parseArray(get("JHCK-20170823171634"), JHOutWareHouseList.class);
-        ExportExcel<JHOutWareHouseList> exportExcel = new ExportExcel<>();
-    }
-    
     
 }

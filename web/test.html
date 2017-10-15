@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>title</title>
+        <title>Test</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript" src="assets/jQuery/jquery-1.11.1.min.js" ></script>
@@ -20,148 +20,82 @@ and open the template in the editor.
         </style>
         <script type="text/javascript">
             window.onload = function () {
-                console.log(serializeJqueryElement($(".page2-query").parent()));
+                $("#login").bind('click', function () {
+                    var obj = new Object();
+                    obj.module = "userLogin";
+                    obj.operation = "employeeLogin";
+                    obj.username = "底盘库";
+                    obj.password = "1";
+                    obj.type = "app";
+                    //登录
+                    $.ajax({
+                        type: "post",
+                        url: "/RuiBangWuLiu/action.do",
+                        data: JSON.stringify(obj),
+                        dataType: "json",
+                        success: function (data) {
+                            console.log(data);
+                        }
+                    });
+                });
+                $("#test").bind('click', function () {
+                    var request = {
+                        module: "备货管理",
+                        operation: "create",
+                        startTime: "2014-01-01",
+                        endTime: "2017-10-10",
+                        ZDCustomerID: "9998",
+                        isFinished: 1
+                    };
+
+                    setInterval(function () {
+                        $.ajax({
+                            type: "post",
+                            url: "/RuiBangWuLiu/app.do",
+                            data: JSON.stringify(request),
+                            dataType: "json",
+                            success: function (data) {
+                                console.log(data);
+                            }
+                        });
+                    }, 100);
+                });
+                $("#confirm").bind('click', function () {
+                    var request = {
+                        module: "备货管理",
+                        operation: "confirm",
+                        jhOutWareHouseID: "JHCK-20171008145955",
+                        partCode: "1101600-03",
+                        supplierID: "1096",
+                        inboundBatch: "20170920114407",
+                        jhStatus: 0,
+                        jhOutWareHouseListRemark: ""
+                    };
+
+                    setInterval(function () {
+                        $.ajax({
+                            type: "post",
+                            url: "/RuiBangWuLiu/app.do",
+                            data: JSON.stringify(request),
+                            dataType: "json",
+                            success: function (data) {
+                                console.log(data);
+                            }
+                        });
+                    }, 100);
+                });
             };
+
+            function sleep(d) {
+                for (var t = Date.now(); Date.now() - t <= d; )
+                    ;
+            }
         </script>
     </head>
     <body>
-        <div class="wc-page2-form wc-form ">
-            <div class="wc-group">
-                <label>关键字</label>
-                <input type="text" name="keywords" class="wc-control" value="12" placeholder="请输入关键词">
-            </div>
-            <div class="wc-group">
-                <label>起始日期</label>
-                <input type="text" name="start_time" class="wc-control start-time" value="12" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})"/>
-            </div>
-            <div class="wc-group">
-                <label>终止日期</label>
-                <input type="text" name="end_time" class="wc-control end-time" value="12" onfocus="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss'})">
-            </div>
-            <button class="page2-query">查询</button>
-            <div class="page2-history checkbox"><label><input type="checkbox"/>查询历史记录</label></div>
-            <button class="page2-addItem">添加</button>
-            <button class="page2-deleteItem">删除</button>
-        </div>
-        <div class="div_table">
-            <div class="div_row">
-                <div class="div_cell title" style="width: 100%;">待检入库单</div>
-            </div>
-            <div class="div_row">
-                <div class="div_cell" style="width: 15%;">单据编号</div>
-                <div class="div_cell" style="width: 20%;">DJRK-20170227092511</div>
-                <div class="div_cell" style="width: 10%;">供应商</div>
-                <div class="div_cell" style="width: 20%;">成都格林兰特环保科技有限公司</div>
-                <div class="div_cell" style="width: 5%;">1001</div>
-                <div class="div_cell" style="width: 10%;">制单人</div>
-                <div class="div_cell" style="width: 20%;">test</div>
-            </div>
-            <div class="div_row">
-                <div class="div_cell" style="width: 15%;">入库批次</div>
-                <div class="div_cell" style="width: 20%;">20170227092511</div>
-                <div class="div_cell" style="width: 10%;">制单时间</div>
-                <div class="div_cell" style="width: 20%;">17/2/27 9:25</div>
-                <div class="div_cell" style="width: 35%;">第   1   页共 1    页</div>
-            </div>
-            <div class="div_row">
-                <div class="div_cell" style="width: 10%;">序号</div>
-                <div class="div_cell" style="width: 15%;">部品名称</div>
-                <div class="div_cell" style="width: 15%;">部品件号</div>
-                <div class="div_cell" style="width: 5%;">单位</div>
-                <div class="div_cell" style="width: 10%;">入库数量</div>
-                <div class="div_cell" style="width: 15%;">原厂批次</div>
-                <div class="div_cell" style="width: 15%;">检验结论</div>
-                <div class="div_cell" style="width: 15%;">备注</div>
-            </div>
-            <div class="div_row">
-                <div class="div_cell" style="width: 10%;">总计</div>
-                <div class="div_cell" style="width: 90%;">3306</div>
-            </div>
-            <div class="div_row">
-                <div class="div_cell" style="width: 10%;">供应商</div>
-                <div class="div_cell" style="width: 15%;"></div>
-                <div class="div_cell" style="width: 10%;">库管员</div>
-                <div class="div_cell" style="width: 15%;"></div>
-                <div class="div_cell" style="width: 10%;">审核人</div>
-                <div class="div_cell" style="width: 15%;"></div>
-                <div class="div_cell" style="width: 10%;">检验人</div>
-                <div class="div_cell" style="width: 15%;"></div>
-            </div>
-            <div class="div_row">
-                <div class="div_cell" style="width: 100%;">备注：白-->存根；红色-->客户；蓝-->库房；绿色-->检验；黄-->返回；</div>
-            </div>
-            <div class="div_row">
-                <div class="div_cell" style="width: 25%;">test</div>
-                <div class="div_cell" style="width: 9.375%;">test</div>
-                <div class="div_cell" style="width: 9.375%;">test</div>
-                <div class="div_cell" style="width: 9.375%;">test</div>
-                <div class="div_cell" style="width: 9.375%;">test</div>
-                <div class="div_cell" style="width: 9.375%;">test</div>
-                <div class="div_cell" style="width: 9.375%;">test</div>
-                <div class="div_cell" style="width: 9.375%;">test</div>
-                <div class="div_cell" style="width: 9.375%;">test</div>
-            </div>
-            <div class="div_row">
-                <div class="div_cell div_cell_double" style="width: 25%;">test</div>
-                <div class="div_cell" style="width: 12.5%;">test</div>
-                <div class="div_cell" style="width: 25%;">test</div>
-                <div class="div_cell" style="width: 12.5%;">test</div>
-                <div class="div_cell" style="width: 25%;">test</div>
-                <div class="div_cell" style="width: 12.5%;">test</div>
-                <div class="div_cell" style="width: 25%;">test</div>
-                <div class="div_cell" style="width: 12.5%;">test</div>
-                <div class="div_cell" style="width: 25%;">test</div>
-            </div>
-        </div>
-        <div class="print_area content_hidden" id="print_area" style="height: auto; overflow: visible;">
-            <div class="div_table_2">
-                <div class="div_row" name="title">
-                    <div class="div_cell col" style="width: 100%;" name="djInWareHouse" flag="title">
-                        <div class="cell_start"></div>待检入库单<div><ul></ul></div>
-                    </div>
-                </div>
-                <div class="div_row" name="rows1">
-                    <div class="div_cell col" style="width: 15%;" name="djInWareHouseIDName" flag="undefined">
-                        <div class="cell_start"></div>单据编号<div><ul></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 20%;" name="djInWareHouseID" flag="undefined">
-                        <div class="cell_start"></div>DJRK-20170911211148</div>
-                    <div class="div_cell col" style="width: 10%;" name="supplierNameName" flag="undefined">
-                        <div class="cell_start"></div>供应商<div><ul></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 20%;" name="supplierName" flag="undefined">
-                        <div class="cell_start"></div>上海豫新
-                    </div>
-                    <div class="div_cell col" style="width: 5%;" name="supplierID" flag="undefined">
-                        <div class="cell_start"></div>2043
-                    </div>
-                    <div class="div_cell col" style="width: 10%;" name="djRKProducerNameName" flag="undefined">
-                        <div class="cell_start"></div>制单人
-                        <div><ul></ul></div>
-                    </div>
-                    <div class="div_cell col" style="width: 20%;" name="djRKProducerName" flag="undefined"><div class="cell_start"></div>test</div>                        
-                </div>
-                <div class="div_row" name="rows2"><div class="div_cell col" style="width: 15%;" name="inboundBatchName" flag="undefined"><div class="cell_start"></div>入库批次<div><ul></ul></div></div><div class="div_cell col" style="width: 20%;" name="inboundBatch" flag="undefined"><div class="cell_start"></div>20170911211148</div><div class="div_cell col" style="width: 10%;" name="djRKProduceTimeName" flag="undefined"><div class="cell_start"></div>制单时间<div><ul></ul></div></div><div class="div_cell col" style="width: 20%;" name="djRKProduceTime" flag="undefined"><div class="cell_start"></div>2017-09-11 21:11:48.0</div><div class="div_cell col" style="width: 35%;" name="pageInfo" flag="undefined"><div class="cell_start"></div>第 1 页共 1 页<div><ul></ul></div></div></div>
-                <div class="div_row" name="datasTitle">
-                    <div class="div_cell col" style="width: 20%;" name="partName" flag="undefined">
-                        <div class="cell_start"></div>部品名称
-                        <div>
-                            <ul>
-                                <li><div class="cell_start"></div>压缩机吸入管总成</li>
-                                <li><div class="cell_start"></div>压缩机排出管总成</li>
-                                <li><div class="cell_start"></div>冷凝器流出管总成</li>
-                                <li><div class="cell_start"></div>前蒸流入管总成</li>
-                                <li><div class="cell_start"></div>前蒸流出管总成</li>
-                                <li><div class="cell_start"></div>顶蒸流入管总成</li>
-                                <li><div class="cell_start"></div>顶蒸流出管总成</li>
-                                <li><div class="cell_start"></div>顶蒸流入连接管总成</li>
-                                <li><div class="cell_start"></div>顶蒸流出连接管总成</li>
-                                <li><div class="cell_start"></div>顶蒸管孔密封盖</li>
-                            </ul>  
-                        </div>
-                    </div>
-                    <div class="div_cell col" style="width: 20%;" name="partCode" flag="undefined"><div class="cell_start"></div>部品件号<div><ul><li><div class="cell_start"></div>8108110-FH01</li><li><div class="cell_start"></div>8108120-FB01</li><li><div class="cell_start"></div>8108220-FB01</li><li><div class="cell_start"></div>8108310-FB02</li><li><div class="cell_start"></div>8108320-FH02</li><li><div class="cell_start"></div>8108410-FA02</li><li><div class="cell_start"></div>8108420-FA02</li><li><div class="cell_start"></div>8108610-FB01</li><li><div class="cell_start"></div>8108620-FB01</li><li><div class="cell_start"></div>8111242-FA02</li></ul></div></div><div class="div_cell col" style="width: 5%;" name="partUnit" flag="undefined"><div class="cell_start"></div>单位<div><ul><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li><li><div class="cell_start"></div>件</li></ul></div></div><div class="div_cell col" style="width: 10%;" name="inboundAmount" flag="undefined"><div class="cell_start"></div>入库数量<div><ul><li><div class="cell_start"></div>182</li><li><div class="cell_start"></div>400</li><li><div class="cell_start"></div>400</li><li><div class="cell_start"></div>61</li><li><div class="cell_start"></div>123</li><li><div class="cell_start"></div>425</li><li><div class="cell_start"></div>425</li><li><div class="cell_start"></div>373</li><li><div class="cell_start"></div>400</li><li><div class="cell_start"></div>425</li></ul></div></div><div class="div_cell col" style="width: 15%;" name="originalBatch" flag="undefined"><div class="cell_start"></div>原厂批次<div><ul><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li></ul></div></div><div class="div_cell col" style="width: 15%;" name="result" flag="undefined"><div class="cell_start"></div>检验结论<div><ul><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li></ul></div></div><div class="div_cell col" style="width: 15%;" name="djInWareHouseListRemark" flag="undefined"><div class="cell_start"></div>备注<div><ul><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li><li><div class="cell_start"></div> </li></ul></div></div></div>
-                <div class="div_row" name="rows3"><div class="div_cell col" style="width: 10%;" name="inboundCountName" flag="undefined"><div class="cell_start"></div>总计<div><ul></ul></div></div><div class="div_cell col" style="width: 90%;" name="inboundCount" flag="undefined"><div class="cell_start"></div>3214</div></div>
-                <div class="div_row" name="rows4"><div class="div_cell col" style="width: 10%;" name="supplierSignName" flag="undefined"><div class="cell_start"></div>供应商<div><ul></ul></div></div><div class="div_cell col" style="width: 15%;" name="supplierSign" flag="undefined"><div class="cell_start"></div><div><ul></ul></div></div><div class="div_cell col" style="width: 10%;" name="wareHouseManagerSignName" flag="undefined"><div class="cell_start"></div>库管员<div><ul></ul></div></div><div class="div_cell col" style="width: 15%;" name="wareHouseManagerSign" flag="undefined"><div class="cell_start"></div><div><ul></ul></div></div><div class="div_cell col" style="width: 10%;" name="auditSignName" flag="undefined"><div class="cell_start"></div>审核人<div><ul></ul></div></div><div class="div_cell col" style="width: 15%;" name="auditSign" flag="undefined"><div class="cell_start"></div><div><ul></ul></div></div><div class="div_cell col" style="width: 10%;" name="inspectSignName" flag="undefined"><div class="cell_start"></div>检验人<div><ul></ul></div></div><div class="div_cell col" style="width: 15%;" name="inspectSign" flag="undefined"><div class="cell_start"></div><div><ul></ul></div></div></div><div class="div_row" name="rows5"><div class="div_cell col" style="width: 100%;" name="remark" flag="undefined"><div class="cell_start"></div>备注: 白 --&gt; 存根; 红色 --&gt; 客户; 蓝 --&gt; 库房; 绿色 --&gt; 检验; 黄 --&gt; 返回<div><ul></ul></div></div></div></div></div>
+        <input type="button" value="登录" id="login" />
+        <input type="button" value="测试" id="test" />
+        <input type="button" value="确认" id="confirm" />
+        <input type="button" value="备货" id="bh" />
     </body>
 </html>

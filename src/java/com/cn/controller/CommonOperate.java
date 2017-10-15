@@ -7,7 +7,6 @@ package com.cn.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cn.bean.in.SJBackWareHouse;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.Units;
 import java.lang.reflect.Field;
@@ -51,7 +50,7 @@ public class CommonOperate {
         field.setAccessible(true);
 
         String whereCase = commonController.getWhereSQLStrWithArray(JSONArray.parseArray(delete));
-        List<Object> list = commonController.dataBaseQuery("table", packageName, className, "*", whereCase, Integer.MAX_VALUE, 1, orderField, 1, opt.getConnect());
+        List<Object> list = commonController.dataBaseQuery("table", packageName, className, "*", whereCase, Integer.MAX_VALUE, 1, orderField, 1, DatabaseOpt.DATA);
         if (list != null && list.size() > 0) {
             int count = 0;
             Iterator iterator = list.iterator();
@@ -62,7 +61,7 @@ public class CommonOperate {
                 }
             }
             if (count == 0) {
-                ArrayList<Integer> delResult = commonController.dataBaseOperate(delete, packageName, className, "delete", opt.getConnect());
+                ArrayList<Integer> delResult = commonController.dataBaseOperate(delete, packageName, className, "delete", DatabaseOpt.DATA);
                 if (delResult.get(0) == 0) {
                     json = Units.objectToJson(0, "删除操作成功!", null);
                 } else if (delResult.get(0) == 547) {
@@ -98,7 +97,7 @@ public class CommonOperate {
         String json = null;
         try {
             opt = new DatabaseOpt();
-            conn = opt.getConnect();
+            conn = opt.getConnection(DatabaseOpt.DATA);
             statement = conn.prepareCall("{? = call spMoveRBDataToHistoryWare(?, ?)}");
             statement.registerOutParameter(1, Types.INTEGER);
             statement.setString(2, user);
@@ -146,7 +145,7 @@ public class CommonOperate {
         Method method = detailClass.getMethod("getRecordCount", new Class[0]);
         //构建主表where条件
         String mainTabWhereSql = primaryField + " = '" + JSONObject.parseObject(rely).getString(primaryField) + "'";
-        List<Object> list = commonController.dataBaseQuery("table", packageName, className, "*", mainTabWhereSql, pageSize, pageIndex, primaryField, 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
+        List<Object> list = commonController.dataBaseQuery("table", packageName, className, "*", mainTabWhereSql, pageSize, pageIndex, primaryField, 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (DatabaseOpt.HIS) : (DatabaseOpt.DATA));
         if (list != null && list.size() > 0) {
             Object obj = list.get(0);
 
@@ -154,7 +153,7 @@ public class CommonOperate {
             //构建明细表where条件
             String whereSql = getDetailWhereCase(detailClass, datas, rely, detailAuditField, isAllDetail);
             //明细表查询
-            List<Object> detailList = commonController.dataBaseQuery("view", packageName, className + "List", "*", whereSql, pageSize, pageIndex, primaryField, 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (opt.getConnectHis()) : (opt.getConnect()));
+            List<Object> detailList = commonController.dataBaseQuery("view", packageName, className + "List", "*", whereSql, pageSize, pageIndex, primaryField, 0, (dataType.compareToIgnoreCase("isHis") == 0) ? (DatabaseOpt.HIS) : (DatabaseOpt.DATA));
             if (detailList != null && detailList.size() > 0) {
                 for (Object detailObj : detailList) {
                     callback.setLimit(limitMap, detailObj);
@@ -215,7 +214,7 @@ public class CommonOperate {
         JSONArray arrayParam = JSONArray.parseArray(datas);
         String primaryValue = arrayParam.getJSONObject(0).getString(primaryField);
         String mainTabWhereSql = primaryField + " = '" + primaryValue + "'";
-        List<Object> list = commonController.dataBaseQuery("table", packageName, className, "*", mainTabWhereSql, 11, 1, primaryField, 0, opt.getConnect());
+        List<Object> list = commonController.dataBaseQuery("table", packageName, className, "*", mainTabWhereSql, 11, 1, primaryField, 0, DatabaseOpt.DATA);
         if (list != null && list.size() > 0) {
             Object obj = list.get(0);
             
@@ -227,7 +226,7 @@ public class CommonOperate {
                     updateArray.add(params);
                     updateArray.add(arrayParam.getJSONObject(i));
                 }
-                int result = commonController.dataBaseOperate(updateArray.toJSONString(), packageName, className + "List", "update", opt.getConnect()).get(0);
+                int result = commonController.dataBaseOperate(updateArray.toJSONString(), packageName, className + "List", "update", DatabaseOpt.DATA).get(0);
                 if (result == 0) {
                     JSONObject params = new JSONObject();
                     params.put(detailAuditField, detailAuditValue);
@@ -260,10 +259,10 @@ public class CommonOperate {
             }
 
             if (importSuccess) {
-                int result = commonController.dataBaseOperate("[" + item + "]", packageName, className, "add", opt.getConnect()).get(0);
+                int result = commonController.dataBaseOperate("[" + item + "]", packageName, className, "add", DatabaseOpt.DATA).get(0);
                 if (result == 0) {
                     //System.out.println("import:" + JSONObject.toJSONString(importData));
-                    result = commonController.dataBaseOperate(JSONObject.toJSONString(importData, Units.features), packageName, className + "List", "add", opt.getConnect()).get(0);
+                    result = commonController.dataBaseOperate(JSONObject.toJSONString(importData, Units.features), packageName, className + "List", "add", DatabaseOpt.DATA).get(0);
                     if (result == 0) {
                         JSONObject object = new JSONObject();
                         object.put("datas", importData);
@@ -272,7 +271,7 @@ public class CommonOperate {
                         json = Units.objectToJson(-1, "明细中存在重复数据!", null);
                     } else {
                         if (!Units.strIsEmpty(Units.getSubJsonStr(item, primaryField))) {
-                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, primaryField) + "]", packageName, className, "delete", opt.getConnect());
+                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, primaryField) + "]", packageName, className, "delete", DatabaseOpt.DATA);
                         }
                         json = Units.objectToJson(-1, "明细添加失败!", null);
                     }
@@ -297,19 +296,19 @@ public class CommonOperate {
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
 
-        int result = commonController.dataBaseOperate("[" + item + "]", packageName, className, "add", opt.getConnect()).get(0);
+        int result = commonController.dataBaseOperate("[" + item + "]", packageName, className, "add", DatabaseOpt.DATA).get(0);
         if (result == 0) {
-            result = commonController.dataBaseOperate(details, packageName, className + "List", "add", opt.getConnect()).get(0);
+            result = commonController.dataBaseOperate(details, packageName, className + "List", "add", DatabaseOpt.DATA).get(0);
             if (result == 0) {
                 json = Units.objectToJson(0, "数据添加成功!", null);
             } else if (result == 2627) {
                 if (!Units.strIsEmpty(Units.getSubJsonStr(item, primaryField))) {
-                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, primaryField) + "]", packageName, className, "delete", opt.getConnect()).get(0);
+                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, primaryField) + "]", packageName, className, "delete", DatabaseOpt.DATA).get(0);
                 }
                 json = Units.objectToJson(-1, "明细中存在重复数据!", null);
             } else {
                 if (!Units.strIsEmpty(Units.getSubJsonStr(item, primaryField))) {
-                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, primaryField) + "]", packageName, className, "delete", opt.getConnect()).get(0);
+                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, primaryField) + "]", packageName, className, "delete", DatabaseOpt.DATA).get(0);
                 }
                 json = Units.objectToJson(-1, "明细添加失败!", null);
             }
@@ -324,21 +323,21 @@ public class CommonOperate {
     public String submitOperate(String beanPackage, String tableName, String update, String add, String delete, String connType) throws Exception {
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
-        Connection conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
+        String conn = (connType.compareTo("base") == 0) ? DatabaseOpt.BASE : DatabaseOpt.DATA;
         if (!Units.strIsEmpty(update) && !(update.compareTo("[]") == 0)) {
             ArrayList<Integer> updateResult = commonController.dataBaseOperate(update, beanPackage, tableName, "update", conn);
             if (updateResult.get(0) != 0) {
                 return Units.objectToJson(-1, "修改操作失败!", null);
             }
         }
-        conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
+        conn = (connType.compareTo("base") == 0) ? DatabaseOpt.BASE : DatabaseOpt.DATA;
         if (!Units.strIsEmpty(add) && !(add.compareTo("[]") == 0)) {
             ArrayList<Integer> addResult = commonController.dataBaseOperate(add, beanPackage, tableName, "add", conn);
             if (addResult.get(0) != 0) {
                 return Units.objectToJson(-1, "添加操作失败!", null);
             }
         }
-        conn = (connType.compareTo("base") == 0) ? opt.getConnectBase() : opt.getConnect();
+        conn = (connType.compareTo("base") == 0) ? DatabaseOpt.BASE : DatabaseOpt.DATA;
         if (!Units.strIsEmpty(delete) && !(delete.compareTo("[]") == 0)) {
             ArrayList<Integer> delResult = commonController.dataBaseOperate(delete, beanPackage, tableName, "delete", conn);
             if (delResult.get(0) != 0) {

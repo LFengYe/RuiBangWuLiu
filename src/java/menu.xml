@@ -40,7 +40,7 @@
         <second hypelnk="page2"  id="10405" text="备货管理" url="out.do"></second>
         <second hypelnk="page2"  id="10406" text="领货管理" url="out.do"></second>
         <second hypelnk="page2"  id="10407" text="配送管理" url="out.do"></second>
-        <second hypelnk="page3"  id="10408" text="良品库存" url="out.do"></second>
+        <second hypelnk="page3"  id="10408" text="虚拟良品库存" url="out.do"></second>
         <second hypelnk="page2"  id="10409" text="条码打印" url="out.do"></second>
         <!--<second hypelnk="page3"  id="10410" text="送货清单" url="out.do"></second>-->
         <!--<second hypelnk="page1"  id="10411" text="下线信息" url="out.do"></second>-->
@@ -194,7 +194,7 @@
         <second hypelnk="page3" icon="ic_rework_in"  id="80510" text="返修良品入库" url="report.do"></second>
         <second hypelnk="page3" icon="ic_rework_in"  id="80511" text="返修不良品入库" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="80512" text="不良品库存报表" url="report.do"></second>
-        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80513" text="良品库存" url="out.do"></second>
+        <second hypelnk="page3" icon="ic_stock_inquiry"  id="80513" text="虚拟良品库存" url="out.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="80514" text="非生产领料报表" url="report.do"></second>
         <second hypelnk="page3" icon="ic_stock_inquiry"  id="80515" text="临时调货报表" url="report.do"></second>
     </first>

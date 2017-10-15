@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.cn.test;
+package com.cn.led;
 
 import com.cn.bean.FieldDescription;
 
@@ -11,9 +11,7 @@ import com.cn.bean.FieldDescription;
  *
  * @author LFeng
  */
-public class LedPartStatus {
-    @FieldDescription(description = "状态")
-    private String partStatus;
+public class LedPlan {
     @FieldDescription(description = "供应商ID")
     private String supplierID;
     @FieldDescription(description = "供应商姓名")
@@ -24,16 +22,16 @@ public class LedPartStatus {
     private String partCode;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
-    @FieldDescription(description = "禁用原因")
-    private String rejectReason;
-
-    public String getPartStatus() {
-        return partStatus;
-    }
-
-    public void setPartStatus(String partStatus) {
-        this.partStatus = partStatus;
-    }
+    @FieldDescription(description = "计划数量")
+    private String planNum;
+    @FieldDescription(description = "换装盛具")
+    private String container;
+    @FieldDescription(description = "换装数量")
+    private String containerAmount;
+    @FieldDescription(description = "换装箱数")
+    private String containerBoxAmount;
+    @FieldDescription(description = "仓位号")
+    private String areaCode;
 
     public String getSupplierID() {
         return supplierID;
@@ -67,6 +65,38 @@ public class LedPartStatus {
         this.partCode = partCode;
     }
 
+    public String getPlanNum() {
+        return planNum;
+    }
+
+    public void setPlanNum(String planNum) {
+        this.planNum = planNum;
+    }
+
+    public String getContainer() {
+        return container;
+    }
+
+    public void setContainer(String container) {
+        this.container = container;
+    }
+
+    public String getContainerAmount() {
+        return containerAmount;
+    }
+
+    public void setContainerAmount(String containerAmount) {
+        this.containerAmount = containerAmount;
+    }
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
+
     public String getInboundBatch() {
         return inboundBatch;
     }
@@ -75,11 +105,11 @@ public class LedPartStatus {
         this.inboundBatch = inboundBatch;
     }
 
-    public String getRejectReason() {
-        return rejectReason;
+    public String getContainerBoxAmount() {
+        return containerBoxAmount;
     }
 
-    public void setRejectReason(String rejectReason) {
-        this.rejectReason = rejectReason;
+    public void setContainerBoxAmount(String containerBoxAmount) {
+        this.containerBoxAmount = containerBoxAmount;
     }
 }

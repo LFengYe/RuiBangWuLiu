@@ -25,6 +25,7 @@ public class ContainerRepair {
     private String fxCKAmount;
     private String fxRKAmount;
     private String expiredTime;
+    private String expiredStatus;
     private String conFXOutWareHouseListRemark;
 
     public String getSupplierID() {
@@ -105,6 +106,14 @@ public class ContainerRepair {
 
     public void setContainerName(String containerName) {
         this.containerName = containerName;
+    }
+
+    public String getExpiredStatus() {
+        return expiredStatus;
+    }
+
+    public void setExpiredStatus(String expiredStatus) {
+        this.expiredStatus = expiredStatus;
     }
     
 }

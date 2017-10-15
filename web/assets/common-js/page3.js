@@ -228,6 +228,11 @@
     }
 
     ajaxPage3 = function (moudle) {
+        if (localStorage.getItem("loginType") === "customerLogin") {
+            $hisSearch.css("display", "none");
+        } else {
+            $hisSearch.css("display", "inline-block");
+        }
         initDOM(moudle);
         bindEvt(moudle);
     };

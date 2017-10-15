@@ -23,6 +23,9 @@ import org.apache.tomcat.jdbc.pool.DataSource;
  */
 public class DatabaseOpt {
 
+    public static final String BASE = "base";
+    public static final String DATA = "data";
+    public static final String HIS = "isHis";
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(DatabaseOpt.class);
 
     public Connection getConnectBase() {
@@ -60,20 +63,20 @@ public class DatabaseOpt {
         }
         return null;
     }
-    
+
     /**
      * 连接数据库
      *
      * @return
      */
     public Connection getConnect() {
-        /*
+
         try {
             Properties prop = new Properties();
             prop.load(DatabaseOpt.class.getClassLoader().getResourceAsStream("./config.properties"));
             Class.forName(prop.getProperty("driverName"));
             Connection connect = DriverManager.getConnection(prop.getProperty("url"), prop.getProperty("username"), prop.getProperty("password"));
-            logger.info("获取数据库连接成功");
+            //logger.info("获取数据库连接成功");
             return connect;
         } catch (ClassNotFoundException ex) {
             logger.error("找不类名错误", ex);
@@ -83,7 +86,7 @@ public class DatabaseOpt {
             logger.error("SQL错误", ex);
         } finally {
         }
-         */
+
         /*
         //普通连接池
         Context ctx;
@@ -101,8 +104,8 @@ public class DatabaseOpt {
             
         }
          */
-
         //Tomcat jdbc pool连接池
+        /*
         Context ctx;
         try {
             ctx = new InitialContext();
@@ -110,7 +113,7 @@ public class DatabaseOpt {
             DataSource ds = (DataSource) envctx.lookup("jdbc/TestDB");
             Future<Connection> futrue = ds.getConnectionAsync();
             while (!futrue.isDone()) {
-                System.out.println("Connection is not yet available. Do some background work");
+                logger.error("Connection is not yet available. Do some background work");
                 try {
                     Thread.sleep(100); //simulate work       
                 } catch (InterruptedException x) {
@@ -130,6 +133,26 @@ public class DatabaseOpt {
         } finally {
 
         }
+         */
         return null;
+    }
+
+    public Connection getConnection(String connType) {
+        Connection conn;
+        switch (connType) {
+            case BASE:
+                conn = getConnectBase();
+                break;
+            case DATA:
+                conn = getConnect();
+                break;
+            case HIS:
+                conn = getConnectHis();
+                break;
+            default:
+                conn = getConnect();
+                break;
+        }
+        return conn;
     }
 }

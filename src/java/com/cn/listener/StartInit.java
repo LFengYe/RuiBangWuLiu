@@ -53,73 +53,6 @@ public class StartInit implements ServletContextListener {
         logger.info("系统停止...");
     }
 
-    private void initData() {
-        CommonController commonController = new CommonController();
-        DatabaseOpt opt = new DatabaseOpt();
-        try {
-            //RedisAPI.flushDB();
-
-            /*导入部品基础信息到Redis中*/
-            List<Object> partBaseInfo = commonController.dataBaseQueryWithNotCloseConn("table", "com.cn.bean.", "PartBaseInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
-            Iterator<Object> iterator = partBaseInfo.iterator();
-            while (iterator.hasNext()) {
-                PartBaseInfo baseInfo = (PartBaseInfo) iterator.next();
-                RedisAPI.set("partBaseInfo_" + baseInfo.getPartCode().toLowerCase(), JSONObject.toJSONString(baseInfo));
-            }
-
-            /*导入客户基础信息到Redis中*/
-            List<Object> customerList = commonController.dataBaseQueryWithNotCloseConn("table", "com.cn.bean.", "Customer", "*", "", Integer.MAX_VALUE, 1, "CustomerID", 0, opt.getConnect());
-            Iterator<Object> iterator1 = customerList.iterator();
-            while (iterator1.hasNext()) {
-                Customer customer = (Customer) iterator1.next();
-                RedisAPI.set("customer_" + customer.getCustomerID(), JSONObject.toJSONString(customer));
-            }
-
-            /*导入出入库盛具信息到Redis中*/
-            List<Object> containerInfoList = commonController.dataBaseQuery("table", "com.cn.bean.", "GYSPartContainerInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
-            Iterator<Object> iterator2 = containerInfoList.iterator();
-            while (iterator2.hasNext()) {
-                GYSPartContainerInfo containerInfo = (GYSPartContainerInfo) iterator2.next();
-                RedisAPI.set(containerInfo.getSupplierID() + "_" + containerInfo.getPartCode().toLowerCase(), JSONObject.toJSONString(containerInfo));
-            }
-
-            /*导入LED显示屏信息到Redis中*/
-            List<Object> ledIpInfoList = commonController.dataBaseQuery("table", "com.cn.bean.", "AreaLedIPInfo", "*", "", Integer.MAX_VALUE, 1, "addressCode", 0, opt.getConnect());
-            Iterator<Object> iterator3 = ledIpInfoList.iterator();
-            while (iterator3.hasNext()) {
-                AreaLedIPInfo ledIpInfo = (AreaLedIPInfo) iterator3.next();
-                RedisAPI.set("ledIpInfo_" + ledIpInfo.getAddressCode().toLowerCase(), JSONObject.toJSONString(ledIpInfo));
-            }
-
-            /*导入部品存放地址信息到Redis中*/
-            List<Object> partStoreList = commonController.dataBaseQuery("table", "com.cn.bean.", "PartStore", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, opt.getConnect());
-            Iterator<Object> iterator4 = partStoreList.iterator();
-            while (iterator4.hasNext()) {
-                PartStore partStore = (PartStore) iterator4.next();
-                RedisAPI.set("partStore_" + partStore.getSupplierID() + "_" + partStore.getPartCode().toLowerCase(), JSONObject.toJSONString(partStore));
-            }
-
-            /*导入部品类别信息到Redis中*/
-            List<Object> partCategory = commonController.dataBaseQuery("table", "com.cn.bean.", "PartCategory", "*", "", Integer.MAX_VALUE, 1, "PartCategoryName", 0, opt.getConnect());
-            Iterator<Object> iterator5 = partCategory.iterator();
-            while (iterator5.hasNext()) {
-                PartCategory category = (PartCategory) iterator5.next();
-                RedisAPI.set("partCategory_" + category.getPartCategoryName(), JSONObject.toJSONString(category));
-            }
-
-            /*导入总成BOM信息到Redis中*/
-            RedisAPI.delKeys("bomInfo_*");
-            List<Object> partBomInfo = commonController.dataBaseQuery("table", "com.cn.bean.", "PartBomInfo", "*", "", Integer.MAX_VALUE, 1, "ZCPartCode", 0, opt.getConnect());
-            Iterator<Object> iterator6 = partBomInfo.iterator();
-            while (iterator6.hasNext()) {
-                PartBomInfo bomInfo = (PartBomInfo) iterator6.next();
-                RedisAPI.push("bomInfo_" + bomInfo.getZcPartCode().toLowerCase(), JSONObject.toJSONString(bomInfo));
-            }
-        } catch (Exception e) {
-            logger.error("初始化出错!", e);
-        }
-    }
-
     private void initDataOptimize() {
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
@@ -149,7 +82,7 @@ public class StartInit implements ServletContextListener {
 
             list.clear();
             /*导入出入库盛具信息到Redis中*/
-            list = commonController.dataBaseQueryWithNotCloseConn("table", "com.cn.bean.", "GYSPartContainerInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, conn);
+            list = commonController.dataBaseQueryWithNotCloseConn("view", "com.cn.bean.", "GYSPartContainerInfo", "*", "", Integer.MAX_VALUE, 1, "PartCode", 0, conn);
             iterator = list.iterator();
             while (iterator.hasNext()) {
                 GYSPartContainerInfo containerInfo = (GYSPartContainerInfo) iterator.next();
@@ -185,7 +118,7 @@ public class StartInit implements ServletContextListener {
 
             list.clear();
             /*导入盛具信息到Redis中*/
-            List<Object> containerList = commonController.dataBaseQuery("table", "com.cn.bean.", "Container", "*", "", Integer.MAX_VALUE, 1, "ContainerName", 0, opt.getConnect());
+            List<Object> containerList = commonController.dataBaseQueryWithNotCloseConn("table", "com.cn.bean.", "Container", "*", "", Integer.MAX_VALUE, 1, "ContainerName", 0, conn);
             Iterator<Object> iterator3 = containerList.iterator();
             while (iterator3.hasNext()) {
                 Container containerInfo = (Container) iterator3.next();

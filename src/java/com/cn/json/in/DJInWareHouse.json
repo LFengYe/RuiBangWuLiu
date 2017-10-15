@@ -77,11 +77,8 @@
             "inboundBatch": "20%",
             "djRKProduceTimeName": "10%,制单时间",
             "djRKProduceTime": "20%",
-            "pageInfo": "35%,第 1 页共 1 页"
-        },
-        "rows6": {
             "djINWareHousRemarkName": "15%,备注",
-            "djINWareHousRemark": "85%"
+            "djINWareHousRemark": "20%"
         },
         "datasTitle": {
             "partName": "28%,部品名称",

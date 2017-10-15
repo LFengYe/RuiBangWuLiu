@@ -54,6 +54,10 @@
         <servlet-name>ContainerServlet</servlet-name>
         <servlet-class>com.cn.servlet.ContainerServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>com.cn.test.TestServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AppInterface</servlet-name>
         <url-pattern>/app.do</url-pattern>
@@ -89,6 +93,10 @@
     <servlet-mapping>
         <servlet-name>ContainerServlet</servlet-name>
         <url-pattern>/container.do</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/TestServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

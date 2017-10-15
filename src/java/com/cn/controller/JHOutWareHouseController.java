@@ -50,17 +50,17 @@ public class JHOutWareHouseController {
         String json;
         JSONObject jhOutWareHouse = JSONObject.parseObject(jhInfo);
         jhOutWareHouse.put("jhMethod", "明细计划");
-        int addRes = commonController.dataBaseOperate("[" + jhOutWareHouse.toJSONString() + "]", "com.cn.bean.out.", "JHOutWareHouse", "add", opt.getConnect()).get(0);
+        int addRes = commonController.dataBaseOperate("[" + jhOutWareHouse.toJSONString() + "]", "com.cn.bean.out.", "JHOutWareHouse", "add", DatabaseOpt.DATA).get(0);
         if (addRes == 0) {
             String jhListInfo = RedisAPI.get(Units.getSubJsonValue(jhInfo, "jhOutWareHouseID"));
             //logger.info("list info:" + jhListInfo);
-            addRes = commonController.dataBaseOperate(jhListInfo, "com.cn.bean.out.", "JHOutWareHouseList", "add", opt.getConnect()).get(0);
+            addRes = commonController.dataBaseOperate(jhListInfo, "com.cn.bean.out.", "JHOutWareHouseList", "add", DatabaseOpt.DATA).get(0);
             if (addRes == 0) {
                 //json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
                 //System.out.println("zcList_" + Units.getSubJsonValue(jhInfo, "jhOutWareHouseID"));
                 String zcListInfo = RedisAPI.get("zcList_" + Units.getSubJsonValue(jhInfo, "jhOutWareHouseID"));
                 if (!Units.strIsEmpty(zcListInfo) && JSONObject.parseArray(zcListInfo).size() > 0) {
-                    addRes = commonController.dataBaseOperate(zcListInfo, "com.cn.bean.out.", "JHOutWareHouseZCList", "add", opt.getConnect()).get(0);
+                    addRes = commonController.dataBaseOperate(zcListInfo, "com.cn.bean.out.", "JHOutWareHouseZCList", "add", DatabaseOpt.DATA).get(0);
                     if (addRes == 0) {
                         addRes = zcPartitionPackage(Units.getSubJsonValue(jhInfo, "jhOutWareHouseID")).get(0);
                         if (addRes == 0) {
@@ -70,17 +70,17 @@ public class JHOutWareHouseController {
                         } else {
                             logger.info("计划总成明细分包添加失败!");
                             if (!Units.strIsEmpty(Units.getSubJsonStr(jhInfo, "jhOutWareHouseID"))) {
-                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", opt.getConnect());
-                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouseList", "delete", opt.getConnect());
-                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouseZCList", "delete", opt.getConnect());
+                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", DatabaseOpt.DATA);
+                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouseList", "delete", DatabaseOpt.DATA);
+                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouseZCList", "delete", DatabaseOpt.DATA);
                             }
                             json = Units.objectToJson(-1, "明细添加失败!", null);
                         }
                     } else {
                         logger.info("计划总成明细添加失败!");
                         if (!Units.strIsEmpty(Units.getSubJsonStr(jhInfo, "jhOutWareHouseID"))) {
-                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", opt.getConnect());
-                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouseList", "delete", opt.getConnect());
+                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", DatabaseOpt.DATA);
+                            commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouseList", "delete", DatabaseOpt.DATA);
                         }
                         json = Units.objectToJson(-1, "明细添加失败!", null);
                     }
@@ -92,7 +92,7 @@ public class JHOutWareHouseController {
             } else {
                 logger.info("计划明细添加失败!");
                 if (!Units.strIsEmpty(Units.getSubJsonStr(jhInfo, "jhOutWareHouseID"))) {
-                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", opt.getConnect());
+                    commonController.dataBaseOperate("[" + Units.getSubJsonStr(jhInfo, "jhOutWareHouseID") + "]", "com.cn.bean.out.", "JHOutWareHouse", "delete", DatabaseOpt.DATA);
                 }
                 json = Units.objectToJson(-1, "明细添加失败!", null);
             }
@@ -544,7 +544,7 @@ public class JHOutWareHouseController {
         DatabaseOpt opt = new DatabaseOpt();
 //        Class objClass = Class.forName("com.cn.bean.base.LPKCList");
         try {
-            conn = opt.getConnect();
+            conn = opt.getConnection(DatabaseOpt.DATA);
             statement = conn.prepareCall("{call spGetKFJCLpListForJHCK(?, ?, ?)}");
             statement.setString("BeginTime", beginDate);
             statement.setString("EndTime", endDate);
@@ -624,7 +624,7 @@ public class JHOutWareHouseController {
         if (res == null || res.isEmpty()) {
             JSONObject params1 = new JSONObject();
             params1.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
-            res = commonController.proceduceQuery("tbGetJHOutWareListSum", params1, "com.cn.bean.out.JHOutWareHouseList", opt.getConnect());
+            res = commonController.proceduceQuery("tbGetJHOutWareListSum", params1, "com.cn.bean.out.JHOutWareHouseList", DatabaseOpt.DATA);
         }
          */
         if (res != null && !res.isEmpty()) {
@@ -699,8 +699,8 @@ public class JHOutWareHouseController {
             }
             //System.out.println("part parasm:" + params.toJSONString());
 
-            commonController.proceduceForUpdate("tbAddJHListVirtualAmount", virtualParams, opt.getConnect());
-            return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, opt.getConnect());
+            commonController.proceduceForUpdate("tbAddJHListVirtualAmount", virtualParams, DatabaseOpt.DATA);
+            return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, DatabaseOpt.DATA);
         }
         return null;
     }
@@ -752,7 +752,7 @@ public class JHOutWareHouseController {
                 }
             }
 
-            return commonController.proceduceForUpdate("tbAddZCPartitionPackageInfo", params, opt.getConnect());
+            return commonController.proceduceForUpdate("tbAddZCPartitionPackageInfo", params, DatabaseOpt.DATA);
         }
         return null;
     }
@@ -783,7 +783,7 @@ public class JHOutWareHouseController {
         CommonController commonController = new CommonController();
         JSONObject params1 = new JSONObject();
         params1.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
-        List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.out.", "JHOutWareHouseList", "*", "", 0, Integer.MAX_VALUE, "JHOutWareHouseID", 0, opt.getConnect());
+        List<Object> res = commonController.dataBaseQuery("table", "com.cn.bean.out.", "JHOutWareHouseList", "*", "", 0, Integer.MAX_VALUE, "JHOutWareHouseID", 0, DatabaseOpt.DATA);
         if (res != null && !res.isEmpty()) {
             Iterator iterator = res.iterator();
             while (iterator.hasNext()) {
@@ -816,7 +816,7 @@ public class JHOutWareHouseController {
 //                    System.out.println("json params:" + object.toJSONString());
                 }
             }
-            return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, opt.getConnect());
+            return commonController.proceduceForUpdate("tbAddJHPartitionPackageInfo", params, DatabaseOpt.DATA);
         }
         return null;
     }
@@ -827,7 +827,7 @@ public class JHOutWareHouseController {
         DatabaseOpt opt = new DatabaseOpt();
 //        Class objClass = Class.forName("com.cn.bean.base.LPKCList");
         try {
-            conn = opt.getConnect();
+            conn = opt.getConnection(DatabaseOpt.DATA);
             statement = conn.prepareCall("{call tbFZOutMaxAmount(?, ?)}");
             statement.setString("PartCode", partCode);
             statement.registerOutParameter("OutAmount", Types.INTEGER);

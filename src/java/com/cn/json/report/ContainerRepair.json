@@ -9,6 +9,7 @@
         "fxCKAmount": "返修出数量,1,1,20%,false",
         "fxRKAmount": "返修入数量,1,1,20%,false",
         "expiredTime": "过期时间,1,1,20%,false",
+        "expiredStatus": "过期状态,1,1,20%,false",
         "conFXOutWareHouseListRemark": "备注,1,1,20%,false"
     }
 }

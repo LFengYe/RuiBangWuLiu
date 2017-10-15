@@ -1,4 +1,4 @@
-package com.cn.test;
+package com.cn.led;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.AreaLedIPInfo;
@@ -22,15 +22,6 @@ import org.apache.log4j.Logger;
 public class LedControl {
 
     private static final Logger logger = Logger.getLogger(LedControl.class);
-
-    
-    public static void main(String[] args) {
-        try {
-            
-        } catch (Exception ex) {
-            
-        }
-    }
     
 
     /**
@@ -330,7 +321,7 @@ public class LedControl {
     public static void powerOnOffAllLed(int onOff) throws Exception {
         CommonController controller = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
-        List<Object> list = controller.dataBaseQuery("table", "com.cn.bean.", "AreaLedIPInfo", "*", "", 999, 1, "AddressCode", 0, opt.getConnect());
+        List<Object> list = controller.dataBaseQuery("table", "com.cn.bean.", "AreaLedIPInfo", "*", "", 999, 1, "AddressCode", 0, DatabaseOpt.DATA);
         Iterator iterator = list.iterator();
         while (iterator.hasNext()) {
             AreaLedIPInfo ledIPInfo = (AreaLedIPInfo) iterator.next();

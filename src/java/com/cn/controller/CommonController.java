@@ -8,6 +8,7 @@ package com.cn.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.FieldDescription;
+import com.cn.util.DatabaseOpt;
 import com.cn.util.Units;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +41,7 @@ import org.dom4j.Element;
  * @author LFeng
  */
 public class CommonController {
-
+    
     private static final Logger logger = Logger.getLogger(CommonController.class);
 
     /**
@@ -50,15 +51,17 @@ public class CommonController {
      * @param beanPackage
      * @param tableName
      * @param operate
-     * @param conn
+     * @param connType
      * @return 0 -- 操作成功 | -1 -- 操作失败 | 1 -- 传入参数错误 | 2 -- 传入数据为空
      * @throws java.lang.Exception
      */
-    public ArrayList<Integer> dataBaseOperate(String datas, String beanPackage, String tableName, String operate, Connection conn) throws Exception {
+    public ArrayList<Integer> dataBaseOperate(String datas, String beanPackage, String tableName, String operate, String connType) throws Exception {
         ArrayList<Integer> results = new ArrayList<>();
         int[] exeResult = null;
         Class objClass = Class.forName(beanPackage + tableName);
         CallableStatement statement = null;
+        DatabaseOpt opt = new DatabaseOpt();
+        Connection conn = null;
 
         try {
             JSONArray arrayData = JSONArray.parseArray(datas);
@@ -66,6 +69,7 @@ public class CommonController {
                 results.add(0, 2);
                 return results;
             }
+            conn = opt.getConnection(connType);
             switch (operate) {
                 //<editor-fold desc="数据添加操作">
                 case "add": {
@@ -372,17 +376,20 @@ public class CommonController {
      * @param pageIndex
      * @param orderField
      * @param orderFlag
-     * @param conn
+     * @param connType
      * @return
      * @throws Exception
      */
     public List<Object> dataBaseQuery(String type, String beanPackage, String tableName, String fields, String wherecase, int pageSize, int pageIndex, String orderField, int orderFlag,
-            Connection conn) throws Exception {
+            String connType) throws Exception {
         //System.out.println("wherecase:" + wherecase);
         CallableStatement statement = null;
+        DatabaseOpt opt = new DatabaseOpt();
+        Connection conn = null;
         ArrayList<Object> result;
         Class objClass = Class.forName(beanPackage + tableName);
         try {
+            conn = opt.getConnection(connType);
             statement = conn.prepareCall("{call tbGetRecordPageList(?, ?, ?, ?, ?, ?, ?, ?)}");
             if (type.compareTo("table") == 0) {
                 statement.setString("tableName", "tbl" + tableName);
@@ -448,7 +455,6 @@ public class CommonController {
 
     public List<Object> dataBaseQueryWithNotCloseConn(String type, String beanPackage, String tableName, String fields, String wherecase, int pageSize, int pageIndex, String orderField, int orderFlag,
             Connection conn) throws Exception {
-        //System.out.println("wherecase:" + wherecase);
         CallableStatement statement = null;
         ArrayList<Object> result;
         Class objClass = Class.forName(beanPackage + tableName);
@@ -514,31 +520,34 @@ public class CommonController {
     }
 
     /**
-     *
+     * 执行更新数据库操作的存储过程
      * @param proceduceName
      * @param params
-     * @param conn
+     * @param connType
      * @return
-     * @throws Exception
+     * @throws Exception 
      */
-    public ArrayList<Integer> proceduceForUpdate(String proceduceName, JSONObject params, Connection conn) throws Exception {
+    public ArrayList<Integer> proceduceForUpdate(String proceduceName, JSONObject params, String connType) throws Exception {
         JSONArray array = new JSONArray();
         array.add(params);
-        return proceduceForUpdate(proceduceName, array, conn);
+        return proceduceForUpdate(proceduceName, array, connType);
     }
 
     /**
-     *
+     * 执行更新数据库操作的存储过程(批量处理)
      * @param proceduceName
      * @param params
-     * @param conn
+     * @param connType
      * @return
-     * @throws Exception
+     * @throws Exception 
      */
-    public ArrayList<Integer> proceduceForUpdate(String proceduceName, JSONArray params, Connection conn) throws Exception {
+    public ArrayList<Integer> proceduceForUpdate(String proceduceName, JSONArray params, String connType) throws Exception {
         CallableStatement statement = null;
+        DatabaseOpt opt = new DatabaseOpt();
+        Connection conn = null;
         ArrayList<Integer> results = new ArrayList<>();
         try {
+            conn = opt.getConnection(connType);
             int[] exeResult = null;
             //生产存储过程执行SQL语句
             StringBuilder builder;
@@ -636,16 +645,18 @@ public class CommonController {
      *
      * @param proceduceName
      * @param params 该参数与存储过程的输入参数对应, 如: 存储过程的输入参数为(params1 int, params2
-     * varchar(20)),则改参数为: {"params1": "int,params1Val", "params2":
-     * "string,params2Val"}
+     * varchar(20)),则参数为: {"params1": "int,params1Val", "params2": "string,params2Val"}
      * @param className
-     * @param conn
+     * @param connType
      * @return
      * @throws java.lang.Exception
      */
-    public List<Object> proceduceQuery(String proceduceName, JSONObject params, String className, Connection conn) throws Exception {
+    public List<Object> proceduceQuery(String proceduceName, JSONObject params, String className, String connType) throws Exception {
         CallableStatement statement = null;
+        DatabaseOpt opt = new DatabaseOpt();
+        Connection conn = null;
         try {
+            conn = opt.getConnection(connType);
             //生产存储过程执行SQL语句
             StringBuilder builder;
             builder = new StringBuilder("{call " + proceduceName + "()}");

@@ -59,7 +59,7 @@
             "bpTHOutWareHoseID": "20%",
             "supplierNameName": "10%,供应商",
             "supplierName": "20%",
-            "thPartStateName": "15%,调出部品状态",
+            "thPartStateName": "15%,部品状态",
             "thPartState": "20%"
         },
         "rows2": {
@@ -67,11 +67,8 @@
             "bpTHProducerName": "20%",
             "bpTHProduceTimeName": "10%,制单时间",
             "bpTHProduceTime": "20%",
-            "pageInfo": "35%,第 1 页共 1 页"
-        },
-        "rows6": {
             "bpTHOutWareHouseRemarkName": "15%,备注",
-            "bpTHOutWareHouseRemark": "85%"
+            "bpTHOutWareHouseRemark": "15%"
         },
         "datasTitle": {
             "partName": "28%,部品名称",

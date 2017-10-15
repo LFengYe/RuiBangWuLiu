@@ -377,10 +377,10 @@
         $("#page2-submit").click(function () {
             if (operate === "add") {
                 /*if (importOperate) {
-                    alert("当前数据不能提交！");
-                    return;
-                }
-                */
+                 alert("当前数据不能提交！");
+                 return;
+                 }
+                 */
                 var arr = $chidTableBox.getAllDatas();
                 if (arr.length == 0) {
                     //console.log("请将表格添加数据后再提交");
@@ -1175,6 +1175,11 @@
     }
 
     ajaxPage2 = function (moudle) {
+        if (localStorage.getItem("loginType") === "customerLogin") {
+            $searchHistory.css("display", "none");
+        } else {
+            $searchHistory.css("display", "inline-block");
+        }
         initDOM(moudle);
         bindEvt(moudle);
     };

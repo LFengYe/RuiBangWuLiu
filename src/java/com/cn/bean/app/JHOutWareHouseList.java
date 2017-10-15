@@ -188,7 +188,7 @@ public class JHOutWareHouseList implements Comparable{
     }
 
     public int getBhFinishedAmount() {
-        return bhFinishedAmount;
+        return (bhFinishedAmount % outboundPackageAmount == 0) ? (bhFinishedAmount / outboundPackageAmount) : (bhFinishedAmount / outboundPackageAmount + 1);
     }
 
     public void setBhFinishedAmount(int bhFinishedAmount) {

@@ -7,10 +7,13 @@ package com.cn.servlet;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cn.bean.Customer;
+import com.cn.bean.Employee;
 import com.cn.bean.FieldDescription;
+import com.cn.bean.GYSPartContainerInfo;
 import com.cn.bean.PartBaseInfo;
 import com.cn.bean.report.*;
 import com.cn.controller.CommonController;
+import com.cn.controller.InterfaceController;
 import com.cn.util.DatabaseOpt;
 import com.cn.util.ExportExcel;
 import com.cn.util.RedisAPI;
@@ -22,8 +25,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -113,8 +114,10 @@ public class ReportInterface extends HttpServlet {
             }
 
             String loginType = session.getAttribute("loginType").toString();
-            //System.out.println("loginType:" + loginType);
             String userName = session.getAttribute("user").toString();
+            final Employee employee = (loginType.compareTo("employeeLogin") == 0 && session.getAttribute("employee") != null) ? ((Employee) session.getAttribute("employee")) : (null);
+            final Customer curCustomer = (loginType.compareTo("customerLogin") == 0 && session.getAttribute("employee") != null) ? ((Customer) session.getAttribute("employee")) : (null);
+
             switch (module) {
                 /**
                  * ***************************************数据报表管理**************************************
@@ -126,7 +129,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetSFCTotalDataWithFilter", "com.cn.bean.report.", "SFCTotalData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         SFCTotalData data = (SFCTotalData) obj;
@@ -144,7 +147,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetSFCTotalDataWithFilter", "com.cn.bean.report.", "SFCTotalData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         SFCTotalData data = (SFCTotalData) obj;
@@ -159,6 +162,56 @@ public class ReportInterface extends HttpServlet {
                                         data.setSupplierName(customer.getCustomerAbbName());
                                     }
                                 });
+                                /*
+                                if (employee.getEmployeeTypeCode().compareTo("5") == 0) {
+                                    json = reportOperateWithPage(dataType, operateType, "spGetSFCTotalDataWithFilter", "com.cn.bean.report.", "SFCTotalData",
+                                            "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
+                                            new ReportItemOperateAdapter() {
+                                        @Override
+                                        public void itemObjOperate(Object obj) {
+                                            SFCTotalData data = (SFCTotalData) obj;
+                                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                            data.setPartName(baseInfo.getPartName());
+                                            data.setPartID(baseInfo.getPartID());
+                                            data.setPartUnit(baseInfo.getPartUnit());
+                                            data.setAutoStylingName(baseInfo.getAutoStylingName());
+                                            data.setDcAmount(String.valueOf(baseInfo.getdCAmount()));
+
+                                            Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                            data.setSupplierName(customer.getCustomerAbbName());
+                                        }
+
+                                        @Override
+                                        public void itemFilter(List<Object> filterList, Object obj) {
+                                            SFCTotalData data = (SFCTotalData) obj;
+                                            System.out.println("gys:" + RedisAPI.get(data.getSupplierID() + "_" + data.getPartCode().toLowerCase()));
+                                            GYSPartContainerInfo containerInfo = JSONObject.parseObject(RedisAPI.get(data.getSupplierID() + "_" + data.getPartCode().toLowerCase()), GYSPartContainerInfo.class);
+                                            if (containerInfo.getWareHouseManagerName().compareTo(employee.getEmployeeName()) != 0) {
+                                                return;
+                                            }
+                                            super.itemFilter(filterList, obj);
+                                        }
+                                    });
+                                } else {
+                                    json = reportOperateWithPage(dataType, operateType, "spGetSFCTotalDataWithFilter", "com.cn.bean.report.", "SFCTotalData",
+                                            "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
+                                            new ReportItemOperateAdapter() {
+                                        @Override
+                                        public void itemObjOperate(Object obj) {
+                                            SFCTotalData data = (SFCTotalData) obj;
+                                            PartBaseInfo baseInfo = JSONObject.parseObject(RedisAPI.get("partBaseInfo_" + data.getPartCode().toLowerCase()), PartBaseInfo.class);
+                                            data.setPartName(baseInfo.getPartName());
+                                            data.setPartID(baseInfo.getPartID());
+                                            data.setPartUnit(baseInfo.getPartUnit());
+                                            data.setAutoStylingName(baseInfo.getAutoStylingName());
+                                            data.setDcAmount(String.valueOf(baseInfo.getdCAmount()));
+
+                                            Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
+                                            data.setSupplierName(customer.getCustomerAbbName());
+                                        }
+                                    });
+                                }
+                                 */
                             }
                             break;
                         }
@@ -174,7 +227,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGETJHCKCompletionAllInfoWithFilter", "com.cn.bean.report.", "JHCKCompletionAllInfo",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                     }
@@ -182,7 +235,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGETJHCKCompletionAllInfoWithFilter", "com.cn.bean.report.", "JHCKCompletionAllInfo",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                     }
@@ -204,7 +257,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(dataType, operateType, "spGetKCAlertListData", "KCAlertListData", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetKCAlertListData", "KCAlertListData", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KCAlertListData data = (KCAlertListData) obj;
@@ -233,7 +286,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKListForDjpRK data = (RKListForDjpRK) obj;
@@ -248,7 +301,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKListForDjpRK data = (RKListForDjpRK) obj;
@@ -266,7 +319,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForDjpRKWithFilter", "com.cn.bean.report.", "RKListForDjpRK",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForDjpRK data = (RKListForDjpRK) obj;
@@ -294,7 +347,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForSJCK", "RKListForSJCK", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForSJCK", "RKListForSJCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForSJCK data = (RKListForSJCK) obj;
@@ -347,7 +400,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForSJTK", "RKListForSJTK", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForSJTK", "RKListForSJTK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForSJTK data = (RKListForSJTK) obj;
@@ -395,7 +448,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKListForLpRK data = (RKListForLpRK) obj;
@@ -410,7 +463,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKListForLpRK data = (RKListForLpRK) obj;
@@ -428,7 +481,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForLpRKWithFilter", "com.cn.bean.report.", "RKListForLpRK",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForLpRK data = (RKListForLpRK) obj;
@@ -454,7 +507,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKListForBLpRK data = (RKListForBLpRK) obj;
@@ -469,7 +522,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKListForBLpRK data = (RKListForBLpRK) obj;
@@ -487,7 +540,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForBLpRKWithFilter", "com.cn.bean.report.", "RKListForBLpRK",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForBLpRK data = (RKListForBLpRK) obj;
@@ -529,7 +582,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
@@ -563,7 +616,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
@@ -605,7 +658,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
@@ -639,7 +692,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForFxpRKWithFilter", "RKListForFxpRK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForFxpRK data = (RKListForFxpRK) obj;
@@ -682,7 +735,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
@@ -716,7 +769,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
@@ -759,7 +812,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
@@ -793,7 +846,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForFxpCKWithFilter", "CKListForFxpCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFxpCK data = (CKListForFxpCK) obj;
@@ -836,7 +889,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForZDTK data = (RKListForZDTK) obj;
@@ -870,7 +923,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForZDTK data = (RKListForZDTK) obj;
@@ -913,7 +966,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForZDTK data = (RKListForZDTK) obj;
@@ -950,7 +1003,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetRKListForZDTK_JPQWithFilter", "RKListForZDTK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForZDTK data = (RKListForZDTK) obj;
@@ -980,7 +1033,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKListForZDTK_XPWithFilter", "com.cn.bean.report.", "RKListForZDTK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKListForZDTK data = (RKListForZDTK) obj;
@@ -998,7 +1051,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetRKListForZDTK_XPWithFilter", "com.cn.bean.report.", "RKListForZDTK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKListForZDTK data = (RKListForZDTK) obj;
@@ -1019,7 +1072,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetRKListForZDTK_XPWithFilter", "com.cn.bean.report.", "RKListForZDTK",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKListForZDTK data = (RKListForZDTK) obj;
@@ -1065,7 +1118,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + "2017-01-01");
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForZCJHCKWithFilter", "CKListForZCJHCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForZCJHCKWithFilter", "CKListForZCJHCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForZCJHCK data = (CKListForZCJHCK) obj;
@@ -1102,7 +1155,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + "2017-01-01");
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForZCJHCKWithFilter", "CKListForZCJHCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForZCJHCKWithFilter", "CKListForZCJHCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForZCJHCK data = (CKListForZCJHCK) obj;
@@ -1148,7 +1201,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForLSDHCKWithFilter", "CKListForFJHCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForLSDHCKWithFilter", "CKListForFJHCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFJHCK data = (CKListForFJHCK) obj;
@@ -1185,7 +1238,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForLSDHCKWithFilter", "CKListForFJHCK", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForLSDHCKWithFilter", "CKListForFJHCK", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFJHCK data = (CKListForFJHCK) obj;
@@ -1195,7 +1248,7 @@ public class ReportInterface extends HttpServlet {
 
                                     Customer customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getSupplierID()), Customer.class);
                                     data.setSupplierName(customer.getCustomerAbbName());
-                                    
+
                                     customer = JSONObject.parseObject(RedisAPI.get("customer_" + data.getFzDCustomerID()), Customer.class);
                                     data.setFzDCustomerName(customer.getCustomerAbbName());
                                 }
@@ -1215,7 +1268,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetCKListForFJHCKWithFilter", "com.cn.bean.report.", "CKListForFJHCK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         CKListForFJHCK data = (CKListForFJHCK) obj;
@@ -1233,7 +1286,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetCKListForFJHCKWithFilter", "com.cn.bean.report.", "CKListForFJHCK",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         CKListForFJHCK data = (CKListForFJHCK) obj;
@@ -1254,7 +1307,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetCKListForFJHCKWithFilter", "com.cn.bean.report.", "CKListForFJHCK",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForFJHCK data = (CKListForFJHCK) obj;
@@ -1285,7 +1338,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(dataType, operateType, "spGetCKListForJPSX", "CKListForJPSX", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetCKListForJPSX", "CKListForJPSX", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKListForJPSX data = (CKListForJPSX) obj;
@@ -1360,7 +1413,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
@@ -1394,7 +1447,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
@@ -1413,7 +1466,7 @@ public class ReportInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="退货出库报表_spGetTHListForBPTH">
                 case "良品退货出库": {
                     switch (operation) {
@@ -1437,7 +1490,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
@@ -1471,7 +1524,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
@@ -1490,7 +1543,7 @@ public class ReportInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
+
                 //<editor-fold desc="退货出库报表_spGetTHListForBPTH">
                 case "不良品退货出库": {
                     switch (operation) {
@@ -1514,7 +1567,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
@@ -1548,7 +1601,7 @@ public class ReportInterface extends HttpServlet {
                             if (!Units.strIsEmpty(start)) {
                                 proParams.put("BeginTime", "string," + start);
                             }
-                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "spGetTHListForBPTHWithFilter", "THListForBPTH", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THListForBPTH data = (THListForBPTH) obj;
@@ -1567,9 +1620,9 @@ public class ReportInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-                
-                //</editor-fold>
 
+                //</editor-fold>
+                
                 //<editor-fold desc="部品库存明细">
                 //<editor-fold desc="良品库存报表_spGetKFJCListForLp">
                 case "良品库存报表": {
@@ -1577,7 +1630,7 @@ public class ReportInterface extends HttpServlet {
                         case "create": {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
-                                        "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth, new ReportInterface.ReportItemOperate() {
+                                        "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth, new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForLp data = (KFJCListForLp) obj;
@@ -1591,7 +1644,7 @@ public class ReportInterface extends HttpServlet {
                                 });
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
-                                        "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth, new ReportInterface.ReportItemOperate() {
+                                        "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth, new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForLp data = (KFJCListForLp) obj;
@@ -1608,7 +1661,7 @@ public class ReportInterface extends HttpServlet {
                         }
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForLpWithFilter", "com.cn.bean.report.", "KFJCListForLp",
-                                    "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth, new ReportInterface.ReportItemOperate() {
+                                    "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForLp data = (KFJCListForLp) obj;
@@ -1636,7 +1689,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForBLp data = (KFJCListForBLp) obj;
@@ -1651,7 +1704,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForBLp data = (KFJCListForBLp) obj;
@@ -1669,7 +1722,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForBLpWithFilter", "com.cn.bean.report.", "KFJCListForBLp",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForBLp data = (KFJCListForBLp) obj;
@@ -1697,7 +1750,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForDjp data = (KFJCListForDjp) obj;
@@ -1712,7 +1765,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForDjp data = (KFJCListForDjp) obj;
@@ -1730,7 +1783,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForDjpWithFilter", "com.cn.bean.report.", "KFJCListForDjp",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForDjp data = (KFJCListForDjp) obj;
@@ -1758,7 +1811,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForSjp data = (KFJCListForSjp) obj;
@@ -1773,7 +1826,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForSjp data = (KFJCListForSjp) obj;
@@ -1791,7 +1844,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForSjpWithFilter", "com.cn.bean.report.", "KFJCListForSjp",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForSjp data = (KFJCListForSjp) obj;
@@ -1819,7 +1872,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForFxp data = (KFJCListForFxp) obj;
@@ -1834,7 +1887,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCListForFxp data = (KFJCListForFxp) obj;
@@ -1852,7 +1905,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCListForFxpWithFilter", "com.cn.bean.report.", "KFJCListForFxp",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCListForFxp data = (KFJCListForFxp) obj;
@@ -1882,7 +1935,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCFenLuData data = (KFQCFenLuData) obj;
@@ -1897,7 +1950,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCFenLuData data = (KFQCFenLuData) obj;
@@ -1915,7 +1968,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCFenLuDataWithFilter", "com.cn.bean.report.", "KFQCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFQCFenLuData data = (KFQCFenLuData) obj;
@@ -1942,7 +1995,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         TKFenLuData data = (TKFenLuData) obj;
@@ -1957,7 +2010,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         TKFenLuData data = (TKFenLuData) obj;
@@ -1975,7 +2028,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetTKFenLuDataWithFilter", "com.cn.bean.report.", "TKFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     TKFenLuData data = (TKFenLuData) obj;
@@ -2003,7 +2056,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         THFenLuData data = (THFenLuData) obj;
@@ -2018,7 +2071,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         THFenLuData data = (THFenLuData) obj;
@@ -2036,7 +2089,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetTHFenLuDataWithFilter", "com.cn.bean.report.", "THFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     THFenLuData data = (THFenLuData) obj;
@@ -2064,7 +2117,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         CKFenLuData data = (CKFenLuData) obj;
@@ -2079,7 +2132,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         CKFenLuData data = (CKFenLuData) obj;
@@ -2097,7 +2150,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetCKFenLuDataWithFilter", "com.cn.bean.report.", "CKFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     CKFenLuData data = (CKFenLuData) obj;
@@ -2125,7 +2178,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKFenLuData data = (RKFenLuData) obj;
@@ -2140,7 +2193,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         RKFenLuData data = (RKFenLuData) obj;
@@ -2158,7 +2211,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetRKFenLuDataWithFilter", "com.cn.bean.report.", "RKFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     RKFenLuData data = (RKFenLuData) obj;
@@ -2185,7 +2238,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCFenLuData data = (KFJCFenLuData) obj;
@@ -2200,7 +2253,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFJCFenLuData data = (KFJCFenLuData) obj;
@@ -2218,7 +2271,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFJCFenLuDataWithFilter", "com.cn.bean.report.", "KFJCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFJCFenLuData data = (KFJCFenLuData) obj;
@@ -2246,7 +2299,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XCQCFenLuData data = (XCQCFenLuData) obj;
@@ -2261,7 +2314,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XCQCFenLuData data = (XCQCFenLuData) obj;
@@ -2279,7 +2332,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXCQCFenLuDataWithFilter", "com.cn.bean.report.", "XCQCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XCQCFenLuData data = (XCQCFenLuData) obj;
@@ -2306,7 +2359,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_JPQQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_JPQQCFenLuData data = (XC_JPQQCFenLuData) obj;
@@ -2321,7 +2374,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXC_JPQQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_JPQQCFenLuData data = (XC_JPQQCFenLuData) obj;
@@ -2339,7 +2392,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_JPQQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQQCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XC_JPQQCFenLuData data = (XC_JPQQCFenLuData) obj;
@@ -2366,7 +2419,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_XPQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_XPQCFenLuData data = (XC_XPQCFenLuData) obj;
@@ -2381,7 +2434,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXC_XPQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPQCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_XPQCFenLuData data = (XC_XPQCFenLuData) obj;
@@ -2399,7 +2452,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_XPQCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPQCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XC_XPQCFenLuData data = (XC_XPQCFenLuData) obj;
@@ -2426,7 +2479,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XCJCFenLuData data = (XCJCFenLuData) obj;
@@ -2441,7 +2494,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XCJCFenLuData data = (XCJCFenLuData) obj;
@@ -2459,7 +2512,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXCJCFenLuDataWithFilter", "com.cn.bean.report.", "XCJCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XCJCFenLuData data = (XCJCFenLuData) obj;
@@ -2487,7 +2540,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_JPQJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_JPQJCFenLuData data = (XC_JPQJCFenLuData) obj;
@@ -2502,7 +2555,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXC_JPQJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_JPQJCFenLuData data = (XC_JPQJCFenLuData) obj;
@@ -2520,7 +2573,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_JPQJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQJCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XC_JPQJCFenLuData data = (XC_JPQJCFenLuData) obj;
@@ -2548,7 +2601,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_XPJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_XPJCFenLuData data = (XC_XPJCFenLuData) obj;
@@ -2563,7 +2616,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXC_XPJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPJCFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_XPJCFenLuData data = (XC_XPJCFenLuData) obj;
@@ -2581,7 +2634,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_XPJCFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPJCFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XC_XPJCFenLuData data = (XC_XPJCFenLuData) obj;
@@ -2609,7 +2662,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFTZFenLuData data = (KFTZFenLuData) obj;
@@ -2624,7 +2677,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFTZFenLuData data = (KFTZFenLuData) obj;
@@ -2642,7 +2695,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFTZFenLuDataWithFilter", "com.cn.bean.report.", "KFTZFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFTZFenLuData data = (KFTZFenLuData) obj;
@@ -2670,7 +2723,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XCTZFenLuData data = (XCTZFenLuData) obj;
@@ -2685,7 +2738,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XCTZFenLuData data = (XCTZFenLuData) obj;
@@ -2703,7 +2756,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXCTZFenLuDataWithFilter", "com.cn.bean.report.", "XCTZFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XCTZFenLuData data = (XCTZFenLuData) obj;
@@ -2731,7 +2784,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_JPQTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_JPQTZFenLuData data = (XC_JPQTZFenLuData) obj;
@@ -2746,7 +2799,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXC_JPQTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_JPQTZFenLuData data = (XC_JPQTZFenLuData) obj;
@@ -2764,7 +2817,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_JPQTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_JPQTZFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XC_JPQTZFenLuData data = (XC_JPQTZFenLuData) obj;
@@ -2792,7 +2845,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetXC_XPTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_XPTZFenLuData data = (XC_XPTZFenLuData) obj;
@@ -2807,7 +2860,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetXC_XPTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPTZFenLuData",
                                         "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         XC_XPTZFenLuData data = (XC_XPTZFenLuData) obj;
@@ -2825,7 +2878,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetXC_XPTZFenLuDataWithFilter", "com.cn.bean.report.", "XC_XPTZFenLuData",
                                     "SupplierID", datas, pageSize, pageIndex, start, end, null,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     XC_XPTZFenLuData data = (XC_XPTZFenLuData) obj;
@@ -2854,7 +2907,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCDjpListWithFilter", "com.cn.bean.report.", "KFQCDjpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCDjpList data = (KFQCDjpList) obj;
@@ -2869,7 +2922,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFQCDjpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCDjpList data = (KFQCDjpList) obj;
@@ -2887,7 +2940,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCDjpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFQCDjpList data = (KFQCDjpList) obj;
@@ -2914,7 +2967,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCSjpListWithFilter", "com.cn.bean.report.", "KFQCSjpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCSjpList data = (KFQCSjpList) obj;
@@ -2929,7 +2982,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFQCSjpListWithFilter", "com.cn.bean.report.", "KFQCSjpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCSjpList data = (KFQCSjpList) obj;
@@ -2947,7 +3000,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCSjpListWithFilter", "com.cn.bean.report.", "KFQCSjpList",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFQCSjpList data = (KFQCSjpList) obj;
@@ -2974,7 +3027,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCLpListWithFilter", "com.cn.bean.report.", "KFQCLpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCLpList data = (KFQCLpList) obj;
@@ -2989,7 +3042,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFQCLpListWithFilter", "com.cn.bean.report.", "KFQCLpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCLpList data = (KFQCLpList) obj;
@@ -3007,7 +3060,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCLpListWithFilter", "com.cn.bean.report.", "KFQCLpList",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFQCLpList data = (KFQCLpList) obj;
@@ -3034,7 +3087,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCBLpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCBLpList data = (KFQCBLpList) obj;
@@ -3049,7 +3102,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFQCBLpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCBLpList data = (KFQCBLpList) obj;
@@ -3067,7 +3120,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCBLpListWithFilter", "com.cn.bean.report.", "KFQCBLpList",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFQCBLpList data = (KFQCBLpList) obj;
@@ -3094,7 +3147,7 @@ public class ReportInterface extends HttpServlet {
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetKFQCFXpListWithFilter", "com.cn.bean.report.", "KFQCFXpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCFXpList data = (KFQCFXpList) obj;
@@ -3109,7 +3162,7 @@ public class ReportInterface extends HttpServlet {
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "spGetKFQCFXpListWithFilter", "com.cn.bean.report.", "KFQCFXpList",
                                         "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         KFQCFXpList data = (KFQCFXpList) obj;
@@ -3127,7 +3180,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetKFQCFXpListWithFilter", "com.cn.bean.report.", "KFQCFXpList",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     KFQCFXpList data = (KFQCFXpList) obj;
@@ -3146,8 +3199,8 @@ public class ReportInterface extends HttpServlet {
                     break;
                 }
                 //</editor-fold>
-
                 //</editor-fold>
+                
                 //<editor-fold desc="盛具报表">
                 case "盛具报表": {
                     switch (operation) {
@@ -3158,7 +3211,7 @@ public class ReportInterface extends HttpServlet {
                                 proParams.put("BeginTime", "string," + start);
                                 proParams.put("Endtime", "string," + end);
                             }
-                            json = reportOperate(dataType, operateType, "tbGetContainerAmount", "ContainerAmount", proParams, new ReportInterface.ReportItemOperate() {
+                            json = reportOperate(dataType, operateType, "tbGetContainerAmount", "ContainerAmount", proParams, new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     ContainerAmount data = (ContainerAmount) obj;
@@ -3169,8 +3222,8 @@ public class ReportInterface extends HttpServlet {
                              */
                             if (loginType.compareTo("customerLogin") == 0) {
                                 json = reportOperateWithPageForSupplier(dataType, userName, operateType, "tbGetContainerAmountWithFilter", "com.cn.bean.report.", "ContainerAmount",
-                                        "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        "SupplierID", datas, pageSize, pageIndex, start, end, null,
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         ContainerAmount data = (ContainerAmount) obj;
@@ -3180,8 +3233,8 @@ public class ReportInterface extends HttpServlet {
                                 });
                             } else {
                                 json = reportOperateWithPage(dataType, operateType, "tbGetContainerAmountWithFilter", "com.cn.bean.report.", "ContainerAmount",
-                                        "SupplierID", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                        new ReportItemOperate() {
+                                        "SupplierID", datas, pageSize, pageIndex, start, end, null,
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         ContainerAmount data = (ContainerAmount) obj;
@@ -3218,8 +3271,8 @@ public class ReportInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             json = reportOperateWithPage(dataType, operateType, "tbGetContainerDemandAndKCWithFilter", "com.cn.bean.report.", "ContainerDemand",
-                                    "OutboundContainerName", datas, pageSize, pageIndex, start, end, jzyMonth,
-                                    new ReportItemOperate() {
+                                    "OutboundContainerName", datas, pageSize, pageIndex, start, end, null,
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                 }
@@ -3236,9 +3289,9 @@ public class ReportInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             if (loginType.compareTo("customerLogin") == 0) {
-                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "spGetFXAlarmWithFilter", "com.cn.bean.report.", "ContainerRepair",
-                                        "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                json = reportOperateWithPageForSupplier(dataType, userName, operateType, "tbGetContainerFXAlarmWithFilter", "com.cn.bean.report.", "ContainerRepair",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null, null,
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         ContainerRepair data = (ContainerRepair) obj;
@@ -3248,9 +3301,9 @@ public class ReportInterface extends HttpServlet {
                                     }
                                 });
                             } else {
-                                json = reportOperateWithPage(dataType, operateType, "spGetFXAlarmWithFilter", "com.cn.bean.report.", "ContainerRepair",
-                                        "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                        new ReportItemOperate() {
+                                json = reportOperateWithPage(dataType, operateType, "tbGetContainerFXAlarmWithFilter", "com.cn.bean.report.", "ContainerRepair",
+                                        "SupplierID", datas, pageSize, pageIndex, null, null, null,
+                                        new ReportItemOperateAdapter() {
                                     @Override
                                     public void itemObjOperate(Object obj) {
                                         ContainerRepair data = (ContainerRepair) obj;
@@ -3265,7 +3318,7 @@ public class ReportInterface extends HttpServlet {
                         case "request_detail": {
                             json = reportOperateDetailWithPage(dataType, operateType, "spGetFXAlarmWithFilter", "com.cn.bean.report.", "ContainerRepair",
                                     "SupplierID", datas, pageSize, pageIndex, null, null, jzyMonth,
-                                    new ReportItemOperate() {
+                                    new ReportItemOperateAdapter() {
                                 @Override
                                 public void itemObjOperate(Object obj) {
                                     ContainerRepair data = (ContainerRepair) obj;
@@ -3289,7 +3342,7 @@ public class ReportInterface extends HttpServlet {
                     switch (operation) {
                         case "create": {
                             json = createOperateOnDate("view", "com/cn/json/move/", "com.cn.bean.move.", "DJInWareHouseList",
-                                    datas, rely, whereCase, "DJInWareHouseID", pageIndex, pageSize, opt.getConnect());
+                                    datas, rely, whereCase, "DJInWareHouseID", pageIndex, pageSize, DatabaseOpt.DATA);
                             break;
                         }
                     }
@@ -3318,9 +3371,23 @@ public class ReportInterface extends HttpServlet {
         }
     }
 
+    class ReportItemOperateAdapter implements ReportItemOperate {
+
+        @Override
+        public void itemFilter(List<Object> filterList, Object obj) {
+            filterList.add(obj);
+        }
+
+        @Override
+        public void itemObjOperate(Object obj) {
+        }
+    }
+
     interface ReportItemOperate {
 
         void itemObjOperate(Object obj);
+
+        void itemFilter(List<Object> filterList, Object obj);
     }
 
     interface FilterListItemOperate {
@@ -3329,7 +3396,7 @@ public class ReportInterface extends HttpServlet {
     }
 
     private String createOperateOnDate(String type, String jsonPackagePath, String beanPackage, String tableName, String datas,
-            String rely, String whereCase, String orderField, int pageIndex, int pageSize, Connection conn) throws Exception {
+            String rely, String whereCase, String orderField, int pageIndex, int pageSize, String conn) throws Exception {
         String json;
         CommonController commonController = new CommonController();
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
@@ -3451,9 +3518,9 @@ public class ReportInterface extends HttpServlet {
         String json = null;
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
-        Connection conn = opt.getConnect();
+        String conn = DatabaseOpt.DATA;
         if (dataType.compareToIgnoreCase("isHis") == 0) {
-            conn = opt.getConnectHis();
+            conn = DatabaseOpt.HIS;
         }
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         Class objClass = Class.forName("com.cn.bean.report." + className);
@@ -3467,21 +3534,27 @@ public class ReportInterface extends HttpServlet {
         }
 
         List<Object> list = commonController.proceduceQuery(proceduceName, proParams, "com.cn.bean.report." + className, conn);
+        List<Object> filterList = new ArrayList<>();
         if (list != null && list.size() > 0) {
+
             for (Object obj : list) {
+                itemOperate.itemFilter(filterList, obj);
+            }
+
+            for (Object obj : filterList) {
                 itemOperate.itemObjOperate(obj);
             }
             if (operateType.compareTo("export") == 0) {
-                json = exportData("com.cn.bean.report.", className, (ArrayList<Object>) list);
+                json = exportData("com.cn.bean.report.", className, (ArrayList<Object>) filterList);
             } else if (operateType.compareTo("create") == 0) {
                 StringBuffer buffer = new StringBuffer(result);
-                buffer.insert(buffer.lastIndexOf("}"), ",\"datas\":" + JSONObject.toJSONString(list, Units.features));
+                buffer.insert(buffer.lastIndexOf("}"), ",\"datas\":" + JSONObject.toJSONString(filterList, Units.features));
                 //buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, null));
                 result = buffer.toString();
                 json = Units.objectToJson(0, "", result);
             } else if (operateType.compareTo("search") == 0) {
                 StringBuffer buffer = new StringBuffer(result);
-                buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(list, Units.features));
+                buffer.insert(buffer.lastIndexOf("}"), "\"datas\":" + JSONObject.toJSONString(filterList, Units.features));
                 //buffer.insert(buffer.lastIndexOf("}"), ", \"counts\":" + method.invoke(null, null));
                 result = buffer.toString();
                 json = Units.objectToJson(0, "", result);
@@ -3508,9 +3581,9 @@ public class ReportInterface extends HttpServlet {
         String json = null;
         CommonController commonController = new CommonController();
         DatabaseOpt opt = new DatabaseOpt();
-        Connection conn = opt.getConnect();
+        String conn = DatabaseOpt.DATA;
         if (dataType.compareToIgnoreCase("isHis") == 0) {
-            conn = opt.getConnectHis();
+            conn = DatabaseOpt.HIS;
         }
         String path = this.getClass().getClassLoader().getResource("/").getPath().replaceAll("%20", " ");
         if (operateType.compareTo("create") == 0) {
