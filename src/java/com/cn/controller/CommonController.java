@@ -47,11 +47,14 @@ public class CommonController {
     /**
      * 数据库操作
      *
-     * @param datas
-     * @param beanPackage
-     * @param tableName
-     * @param operate
-     * @param connType
+     * @param datas 数据
+     * add操作数据格式: [{obj1}, {obj2}, ...]
+     * update操作数据格式: [{updateObj1}, {whereObj1}, {updateObj2}, {whereObj2}, ...]
+     * delete操作数据格式: [{whereObj1}, {whereObj2}, ...]
+     * @param beanPackage 包路径, 如: com.cn.bean.in.
+     * @param tableName 类名, 如: DJInWareHouse
+     * @param operate 操作, 可取值: add, update, delete
+     * @param connType 数据库连接类型
      * @return 0 -- 操作成功 | -1 -- 操作失败 | 1 -- 传入参数错误 | 2 -- 传入数据为空
      * @throws java.lang.Exception
      */
@@ -366,17 +369,17 @@ public class CommonController {
     /**
      * 数据库查询操作
      *
-     * @param type -- table表示查询的是数据库表, tableName加tbl前缀进行查询; view表示查询的是师徒,
+     * @param type -- table表示查询的是数据库表, tableName加tbl前缀进行查询; view表示查询的是视图
      * tableName加view前缀进行查询
-     * @param beanPackage
-     * @param tableName
-     * @param fields
-     * @param wherecase
-     * @param pageSize
-     * @param pageIndex
-     * @param orderField
-     * @param orderFlag
-     * @param connType
+     * @param beanPackage 包路径, 如: com.cn.bean.in.
+     * @param tableName 类名, 如: DJInWareHouse
+     * @param fields 返回字段, 如: *
+     * @param wherecase 查询条件
+     * @param pageSize 每页数量
+     * @param pageIndex 页码
+     * @param orderField 排序字段
+     * @param orderFlag 排序方式
+     * @param connType 数据库连接类型
      * @return
      * @throws Exception
      */
@@ -521,9 +524,9 @@ public class CommonController {
 
     /**
      * 执行更新数据库操作的存储过程
-     * @param proceduceName
-     * @param params
-     * @param connType
+     * @param proceduceName 存储过程名
+     * @param params 参数, json字段格式: "paramsName": "paramsType,paramsValue", 如"partCode":"string,1100010-FA01"
+     * @param connType 数据库连接类型
      * @return
      * @throws Exception 
      */
@@ -535,9 +538,9 @@ public class CommonController {
 
     /**
      * 执行更新数据库操作的存储过程(批量处理)
-     * @param proceduceName
-     * @param params
-     * @param connType
+     * @param proceduceName 存储过程名
+     * @param params 参数, json字段格式: "paramsName": "paramsType,paramsValue", 如"partCode":"string,1100010-FA01"
+     * @param connType 数据库连接类型
      * @return
      * @throws Exception 
      */
@@ -646,7 +649,7 @@ public class CommonController {
      * @param proceduceName
      * @param params 该参数与存储过程的输入参数对应, 如: 存储过程的输入参数为(params1 int, params2
      * varchar(20)),则参数为: {"params1": "int,params1Val", "params2": "string,params2Val"}
-     * @param className
+     * @param className 完成类名, 如: com.cn.bean.in.DJInWareHouse
      * @param connType
      * @return
      * @throws java.lang.Exception

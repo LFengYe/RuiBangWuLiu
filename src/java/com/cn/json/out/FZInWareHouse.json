@@ -13,7 +13,7 @@
     "titles": {
         "fzInWareHouseID": "分装入库单号,20%",
         "partCode": "部品件号,20%",
-        "partName": "部品名称,10%",
+        "partName": "部品名称,20%",
         "inboundAmount": "入库数量,10%",
         "inboundBoxAmount": "入库箱数,10%",
         "fzInProducerName": "制单人,10%",

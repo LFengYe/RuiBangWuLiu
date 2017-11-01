@@ -70,6 +70,38 @@ html,body{
 .wc-route .breadcrumb{
     background-color:white;
 }
+
+#notice_scroll {
+    height: 25px;
+    float: none;
+    clear: both;
+}
+#notice_scroll ul {
+    height: 25px;
+    line-height: 25px;
+}
+#notice_scroll ul li {
+    height: 25px;
+    line-height: 25px;
+    float: none;
+    clear: both;
+}
+
+#alarm_scroll {
+    height: 25px;
+    float: none;
+    clear: both;
+}
+#alarm_scroll ul {
+    height: 25px;
+    line-height: 25px;
+}
+#alarm_scroll ul li {
+    height: 25px;
+    line-height: 25px;
+    float: none;
+    clear: both;
+}
 /*page1的样式*/
 #page1 .page1-input-box,
 #page2 .page2-main-input-box,

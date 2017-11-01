@@ -36,7 +36,7 @@
         "failedReason": "失败原因,0%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
-        "partName": "部品名称,10%",
+        "partName": "部品名称,20%",
         "partCode": "部品件号,20%",
         "fjhCKAmount": "出库数量,10%",
         "fjhCKTime": "出库时间,10%",

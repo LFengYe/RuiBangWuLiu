@@ -19,7 +19,8 @@
         REQUEST_DETAIL: "request_detail",
         REQUEST_PAGE: "request_page"
     };
-
+    
+    var maxPageSize = 999999;
     var pageSize = 15;
     var dataType = "isCur";
     var pageIndex = 1;
@@ -36,8 +37,13 @@
             $("#partStatusSelect").parent(".wc-group").css("display", "none");
         }
         $(".keywords").val("");
-        $(".start-time").val(localStorage.getItem("jzDateTime"));
-        $(".start-time").attr("disabled", true);
+        if (moudle === "盛具报表" || moudle === "盛具需求" || moudle === "盛具维修") {
+            $(".start-time").attr("disabled", false);
+            $(".start-time").val(getNowDateShort() + ' 00:00:00');
+        } else {
+            $(".start-time").attr("disabled", false);
+            $(".start-time").val(localStorage.getItem("jzDateTime"));
+        }
         $(".end-time").val(getNowDateShort() + ' 23:59:59');
         $(".jzyMonth").val(localStorage.getItem("jzyMonth"));
     }
@@ -78,12 +84,12 @@
                 params: arr.params,
                 datas: arr.datas,
                 pageSize: pageSize,
-                dbclickRowCallBack: function (module, maps) {
+                dbclickRowCallBack: function (module, maps) {//打开二级报表
                     request.pageIndex = 1;
-                    request.pageSize = pageSize;
+                    request.pageSize = maxPageSize;
                     //request.start = null;
                     request.datas = maps;
-                    ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
+                    ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {//获取二级报表数据
                         $detailList.show();
                         $mainTable.hide();
                         $thirdList.hide();
@@ -92,13 +98,12 @@
                             title1: null,
                             params: data.params,
                             datas: data.datas,
-                            pageSize: pageSize,
-                            dbclickRowCallBack: function (module, maps) {
+                            dbclickRowCallBack: function (module, maps) {//打开三级报表
                                 request.pageIndex = 1;
-                                request.pageSize = pageSize;
+                                request.pageSize = maxPageSize;
                                 //request.start = null;
                                 request.datas = maps;
-                                ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {
+                                ajax(module, "report.do", OPERATION.REQUEST_DETAIL, request, function (data) {//获取三级报表数据
                                     $thirdList.show();
                                     $detailList.hide();
                                     $mainTable.hide();

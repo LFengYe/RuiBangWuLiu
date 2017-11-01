@@ -980,6 +980,8 @@
             }
             case "计划出库":
             case "总成计划":
+            case "临时调货":
+            case "非生产领料":
             {
                 $addItem.css("display", "inline-block");
                 $("#page2-submit").css("display", "inline-block");

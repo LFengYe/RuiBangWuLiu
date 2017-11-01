@@ -36,7 +36,7 @@
             return this;
         },
         getTableDataDOM: function (datas) {
-            //this.datas = datas;
+            this.find(".select-all button").html("全选");
             this.$container.find("ul").html("");
             var obj = null;
             for (var i = 0; i < datas.length; i++) {

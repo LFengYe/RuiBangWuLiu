@@ -31,6 +31,8 @@
         <script type="text/javascript">
             window.onload = function () {
                 findDimensions();
+                setInterval('AutoScroll("#notice_scroll")', 1000);
+                setInterval('AutoScroll("#alarm_scroll")', 1000);
                 var loginType = localStorage.getItem("loginType");
                 console.log(loginType);
                 if (loginType !== "login")
@@ -114,6 +116,13 @@
                     }
                 });
             }
+            function AutoScroll(obj) {
+                $(obj).find("ul:first").animate({
+                    marginTop: "-3px"
+                }, 2000, function () {
+                    $(this).css({marginTop: "0px"}).find("li:first").appendTo(this);
+                });
+            }
         </script>
         <style type="text/css" id="print_code_style">
             .div_code_table{display: table;width: 250px;text-align: left;border: 0px solid;margin: 0;font-size: 11pt;}
@@ -128,9 +137,10 @@
             .div_table_2 .col ul li{text-align: center;height: 20px;line-height: 20px;border-top: 1px solid;white-space:nowrap;}
             .div_table_2 .div_row{display: table-row;clear: both;}
             .div_table_2 .div_cell{display: table-cell;float: left;line-height: 20px;border-bottom: 1px solid;white-space: nowrap;}
+            .div_table_2 .div_cell img{float: left;width: 120px;display: inline;}
             .div_table_2 .div_cell .cell_separate{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: right;}
             .div_table_2 .div_cell .cell_start{display: inline-block;height: 20px;line-height: 20px;width: 1px;border-left: 1px solid;float: left;}
-            .div_table_2 .div_cell[flag='title']{height: 40px;line-height: 40px;font-weight: bold;font-size: x-large;background-image: url(assets/img/rbwl_logo.png);background-repeat: no-repeat;background-size: 139px 40px}
+            .div_table_2 .div_cell[flag='title']{height: 40px;line-height: 40px;font-weight: bold;font-size: x-large;}
             .div_table_2 .div_cell[flag='title'] .cell_separate{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: right;}
             .div_table_2 .div_cell[flag='title'] .cell_start{display: inline-block;height: 40px;line-height: 40px;width: 1px;border-left: 1px solid;float: left;}
             .div_table_2 .div_cell_double{height: 40px;line-height: 40px;}
@@ -152,8 +162,28 @@
                     <div class="wc-page">
                         <!--导航菜单-->
                         <div class="wc-nav">
-                            <ul class="nav left-nav hidden-sm hidden-md hidden-lg">
-                                <li id="fold" role="presentation">
+                            <ul class="nav left-nav hidden">
+                                <li role="presentation">
+                                    <a class="glyphicon glyphicon-volume-up">公告信息:
+                                        <div id="notice_scroll">
+                                            <ul>
+                                                <li>公告1公告1公告1公告1公告1公告1公告1</li>
+                                                <li>公告2</li>
+                                                <li>公告3公告1公告1</li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li role="presentation">
+                                    <a class="glyphicon glyphicon-alert">报警信息:
+                                        <div id="alarm_scroll">
+                                            <ul>
+                                                <li>20102930-FB01-CA01缺货</li>
+                                                <li>20102930-FB01-CA01超过库存面积</li>
+                                                <li>20102930-FB01-CA01缺货</li>
+                                            </ul>
+                                        </div>
+                                    </a>
                                 </li>
                             </ul>
                             <ul class="nav right-nav " role="tablist">

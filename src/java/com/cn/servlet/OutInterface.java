@@ -1346,30 +1346,6 @@ public class OutInterface extends HttpServlet {
                                     object.put("fileUrl", filePath);
                                     json = Units.objectToJson(-1, (addRes == 0) ? "计划导入失败, 计划已保存!" : "计划导入失败, 计划未保存!", object.toJSONString());
                                 }
-                                /*
-                                if (result.get(0).getListNumber() > 0) {
-                                    //当前库存满足该计划
-                                    int addRes = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.out.", "FJHOutWareHouse", "add", DatabaseOpt.DATA).get(0);
-                                    if (addRes == 0) {
-                                        addRes = commonController.dataBaseOperate(JSONObject.toJSONString(result), "com.cn.bean.out.", "FJHOutWareHouseList", "add", DatabaseOpt.DATA).get(0);
-                                        if (addRes == 0) {
-                                            json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
-                                        } else {
-                                            if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fjhOutWareHouseID"))) {
-                                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fjhOutWareHouseID") + "]", "com.cn.bean.out.", "FJHOutWareHouse", "delete", DatabaseOpt.DATA);
-                                            }
-                                            json = Units.objectToJson(-1, "明细添加失败!", null);
-                                        }
-                                    } else {
-                                        json = Units.objectToJson(-1, "计划添加失败!", null);
-                                    }
-                                } else {
-                                    //当前库存不满足该计划
-                                    JSONObject object = new JSONObject();
-                                    object.put("datas", JSONObject.toJSONString(result));
-                                    json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
-                                }
-                                 */
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", JSONObject.toJSONString(result));
                             }
@@ -1606,32 +1582,6 @@ public class OutInterface extends HttpServlet {
                             } else {
                                 json = Units.objectToJson(-1, "输入参数错误!", null);
                             }
-                            /*
-                            JSONArray arrayParam = JSONArray.parseArray(datas);
-                            String fjhOutWareHouseID = arrayParam.getJSONObject(0).getString("fjhOutWareHouseID");
-                            String mainTabWhereSql = "FJHOutWareHouseID = '" + fjhOutWareHouseID + "'";
-                            List<Object> list = commonController.dataBaseQuery("table", "com.cn.bean.out.", "FJHOutWareHouse", "*", mainTabWhereSql, 11, 1, "FJHOutWareHouseID", 0, DatabaseOpt.DATA);
-                            if (list != null && list.size() > 0) {
-                                JSONArray updateArray = new JSONArray();
-                                for (int i = 0; i < arrayParam.size(); i++) {
-                                    JSONObject obj = new JSONObject();
-                                    obj.put("fjkCKTime", Units.getNowTime());
-                                    obj.put("wareHouseManagerName", session.getAttribute("user"));
-                                    updateArray.add(obj);
-                                    updateArray.add(arrayParam.getJSONObject(i));
-                                }
-                                int result = commonController.dataBaseOperate(updateArray.toJSONString(), "com.cn.bean.out.", "FJHOutWareHouseList", "update", DatabaseOpt.DATA).get(0);
-                                if (result == 0) {
-                                    JSONObject obj = new JSONObject();
-                                    obj.put("wareHouseManagerName", session.getAttribute("user"));
-                                    json = Units.objectToJson(0, "审核成功!", obj.toJSONString());
-                                } else {
-                                    json = Units.objectToJson(-1, "审核失败!", null);
-                                }
-
-                            } else {
-                                json = Units.objectToJson(-1, "输入参数错误!", null);
-                            }*/
                             break;
                         }
                         case "importDetail": {
@@ -1681,32 +1631,6 @@ public class OutInterface extends HttpServlet {
                                     object.put("fileUrl", filePath);
                                     json = Units.objectToJson(-1, (addRes == 0) ? "计划导入失败, 计划已保存!" : "计划导入失败, 计划未保存!", object.toJSONString());
                                 }
-                                /*
-                                JSONObject object = new JSONObject();
-                                object.put("datas", result);
-                                if (result.get(0).getListNumber() > 0) {
-                                    //当前库存满足该计划
-                                    int addRes = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.out.", "FJHOutWareHouse", "add", DatabaseOpt.DATA).get(0);
-                                    if (addRes == 0) {
-//                                        System.out.println("JSONObject.toJSONString(result):" + JSONObject.toJSONString(result));
-                                        addRes = commonController.dataBaseOperate(JSONObject.toJSONString(result), "com.cn.bean.out.", "FJHOutWareHouseList", "add", DatabaseOpt.DATA).get(0);
-                                        if (addRes == 0) {
-                                            json = Units.objectToJson(0, "计划添加成功!", object.toJSONString());
-                                            //json = Units.objectToJson(0, "计划添加成功!", JSONObject.toJSONString(result));
-                                        } else {
-                                            if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fjhOutWareHouseID"))) {
-                                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fjhOutWareHouseID") + "]", "com.cn.bean.out.", "FJHOutWareHouse", "delete", DatabaseOpt.DATA);
-                                            }
-                                            json = Units.objectToJson(-1, "明细添加失败!", object.toJSONString());
-                                        }
-                                    } else {
-                                        json = Units.objectToJson(-1, "计划添加失败!", object.toJSONString());
-                                    }
-                                } else {
-                                    //当前库存不满足该计划
-                                    json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
-                                }
-                                 */
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", null);
                             }
@@ -1749,12 +1673,9 @@ public class OutInterface extends HttpServlet {
                                             JHOutWareHouseShort houseShort = new JHOutWareHouseShort();
                                             houseShort.setSupplierID(list.getSupplierID());
                                             houseShort.setSupplierName(list.getSupplierName());
-//                                            houseShort.setPartID(list.getPartID());
                                             houseShort.setPartName(list.getPartName());
                                             houseShort.setPartCode(list.getPartCode());
-//                                            houseShort.setInboundBatch(list.getInboundBatch());
                                             houseShort.setJhCKAmount(list.getFjhCKAmount());
-//                                            houseShort.setAutoStylingName(list.getAutoStylingName());
                                             houseShort.setShortAmount(list.getShortAmount());
                                             houseShort.setKcCount(list.getKcCount());
 
@@ -1767,31 +1688,6 @@ public class OutInterface extends HttpServlet {
                                     object.put("fileUrl", filePath);
                                     json = Units.objectToJson(-1, (addRes == 0) ? "计划导入失败, 计划已保存!" : "计划导入失败, 计划未保存!", object.toJSONString());
                                 }
-                                /*
-                                JSONObject object = new JSONObject();
-                                object.put("datas", result);
-                                if (result.get(0).getListNumber() > 0) {
-                                    //当前库存满足该计划
-                                    int addRes = commonController.dataBaseOperate("[" + item + "]", "com.cn.bean.out.", "FJHOutWareHouse", "add", DatabaseOpt.DATA).get(0);
-                                    if (addRes == 0) {
-//                                        System.out.println("JSONObject.toJSONString(result):" + JSONObject.toJSONString(result));
-                                        addRes = commonController.dataBaseOperate(JSONObject.toJSONString(result), "com.cn.bean.out.", "FJHOutWareHouseList", "add", DatabaseOpt.DATA).get(0);
-                                        if (addRes == 0) {
-                                            json = Units.objectToJson(0, "计划添加成功!", object.toJSONString());
-                                        } else {
-                                            if (!Units.strIsEmpty(Units.getSubJsonStr(item, "fjhOutWareHouseID"))) {
-                                                commonController.dataBaseOperate("[" + Units.getSubJsonStr(item, "fjhOutWareHouseID") + "]", "com.cn.bean.out.", "FJHOutWareHouse", "delete", DatabaseOpt.DATA);
-                                            }
-                                            json = Units.objectToJson(-1, "明细添加失败!", object.toJSONString());
-                                        }
-                                    } else {
-                                        json = Units.objectToJson(-1, "计划添加失败!", object.toJSONString());
-                                    }
-                                } else {
-                                    //当前库存不满足该计划
-                                    json = Units.objectToJson(-1, "计划导入失败!", object.toJSONString());
-                                }
-                                 */
                             } else {
                                 json = Units.objectToJson(-1, "上传数据为空或文件格式不正确!", null);
                             }

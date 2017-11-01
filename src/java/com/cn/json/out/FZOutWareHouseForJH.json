@@ -39,7 +39,7 @@
     "detailTitles": {
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
-        "partName": "部品名称,10%",
+        "partName": "部品名称,20%",
         "partCode": "部品件号,20%",
         "jhCKAmount": "计划出库数量,10%",
         "finishedAmount": "已完成数量,10%",

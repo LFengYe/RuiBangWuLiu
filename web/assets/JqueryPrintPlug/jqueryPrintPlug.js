@@ -20,7 +20,7 @@
                 for (var j in row) {
                     var rowItems = row[j].split(",");
                     if (rowItems[2] == "title") {
-                        inputResult += "<div class='div_cell col' style='width: " + rowItems[0] + ";' name='" + j + "' flag='" + rowItems[2] + "'><div class='cell_start'></div>" + (rowItems[1] ? rowItems[1] : "") + "<ul></ul><div style='clear:both;'></div></div>";
+                        inputResult += "<div class='div_cell col' style='width: " + rowItems[0] + ";' name='" + j + "' flag='" + rowItems[2] + "'><div class='cell_start'></div><img src='assets/img/rbwl_logo.png' alt='logo'/>" + (rowItems[1] ? rowItems[1] : "") + "<ul></ul><div style='clear:both;'></div></div>";
                     } else {
                         inputResult += "<div class='div_cell col' style='width: " + rowItems[0] + ";' name='" + j + "' flag='" + rowItems[2] + "'><div class='cell_start'></div>" + (rowItems[1] ? rowItems[1] : "") + "<ul></ul><div style='clear:both;'></div></div>";
                     }

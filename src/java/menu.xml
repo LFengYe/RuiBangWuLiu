@@ -78,7 +78,7 @@
             <three  hypelnk="page3"  id="1050113" text="退货出库报表" url="report.do"></three>
             <three  hypelnk="page3"  id="1050114" text="良品终端退库" url="report.do"></three>
             <three  hypelnk="page3"  id="1050115" text="不良品终端退库" url="report.do"></three>
-            <three  hypelnk="page3"  id="1050119" text="线旁退集配区报表" url="report.do"></three>
+            <three  hypelnk="page3"  id="1050120" text="线旁退集配区报表" url="report.do"></three>
             <!--<three  hypelnk="page3"  id="1050111" text="配送上线报表" url="report.do"></three>-->
             <three  hypelnk="page3"  id="1050116" text="调货计划明细" url="report.do"></three>
             <three  hypelnk="page3"  id="1050117" text="供应商送货明细" url="report.do"></three>
@@ -99,7 +99,7 @@
         </second>
         <second hypelnk="page3"  id="10503" text="部品收发存总表" url="report.do"></second>
         <second hypelnk="page3"  id="10504" text="部品计划完成情况" url="report.do"></second>
-        <!--<second hypelnk="page3"  id="10505" text="部品报警明细表" url="report.do"></second>-->
+        <second hypelnk="page3"  id="10505" text="部品报警明细表" url="report.do"></second>
         <second hypelnk="page3"  id="10506" text="盘点报表" url="report.do"></second>
         <second hypelnk=""  id="10507" text="分录报表" url="report.do">
             <!--<three  hypelnk="page3"  id="" text="" url="report.do" info="临时调货数量 - 良品退库 - 不良品退库"></three>-->

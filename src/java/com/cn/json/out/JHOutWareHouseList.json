@@ -32,7 +32,7 @@
         "checkbox": "选择,5%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
-        "partName": "部品名称,10%",
+        "partName": "部品名称,20%",
         "partCode": "部品件号,20%",
         "jhDemandTime": "计划需求时间,10%",
         "inboundBatch": "入库批次,10%",

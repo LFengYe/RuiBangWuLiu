@@ -14,7 +14,7 @@
     "titles": {
         "fzOutWareHouseID": "分装入库单号,20%",
         "partCode": "部品件号,20%",
-        "partName": "部品名称,10%",
+        "partName": "部品名称,20%",
         "outboundAmount": "入库数量,10%",
         "outboundBoxAmount": "入库箱数,10%",
         "fzOutProducerName": "制单人,10%",

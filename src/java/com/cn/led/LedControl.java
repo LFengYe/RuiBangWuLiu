@@ -209,11 +209,11 @@ public class LedControl {
             int result = led.NetWorkSend(ledIPInfo.getIpAddress(), hProgram);
             led.DeleteProgram(hProgram);
             if (result == 0 || count >= 5) {
-                System.out.println(ledIPInfo.getAddressCode() + "设置完成!");
+                logger.info(ledIPInfo.getAddressCode() + "设置完成!");
                 break;
             }
             if (result != 0) {
-                System.out.println(ledIPInfo.getAddressCode() + "设置失败!");
+                logger.info(ledIPInfo.getAddressCode() + "设置失败!");
             }
             count++;
         }

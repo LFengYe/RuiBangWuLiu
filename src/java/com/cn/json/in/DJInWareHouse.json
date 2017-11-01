@@ -48,7 +48,7 @@
         "djInWareHouseID": "待检入库单号,15%",
         "supplierID": "供应商代码,10%",
         "supplierName": "供应商名称,10%",
-        "partName": "部品名称,15%",
+        "partName": "部品名称,20%",
         "partCode": "部品件号,20%",
         "partUnit": "部品单位,5%",
         "partState": "部品状态,5%",

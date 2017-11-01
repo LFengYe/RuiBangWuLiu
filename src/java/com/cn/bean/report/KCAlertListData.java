@@ -29,7 +29,7 @@ public class KCAlertListData {
     private int hgKCAmount;
     private int krYAmount;
     private int qjJYCAmount;
-    private int kcAlertRemark;
+    private String kcAlertRemark;
 
     public String getSupplierID() {
         return supplierID;
@@ -119,11 +119,11 @@ public class KCAlertListData {
         this.qjJYCAmount = qjJYCAmount;
     }
 
-    public int getKcAlertRemark() {
+    public String getKcAlertRemark() {
         return kcAlertRemark;
     }
 
-    public void setKcAlertRemark(int kcAlertRemark) {
+    public void setKcAlertRemark(String kcAlertRemark) {
         this.kcAlertRemark = kcAlertRemark;
     }
 }
