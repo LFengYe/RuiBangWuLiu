@@ -38,7 +38,7 @@ public class DJInWareHouseList {
     private String partState;
     @FieldDescription(description = "车型", operate = "display")
     private String autoStylingName;
-    @FieldDescription(description = "制单时间", type = "date")
+    @FieldDescription(description = "制单时间")
     private String djRKProduceTime;
     @FieldDescription(description = "入库数量")
     private int inboundAmount;

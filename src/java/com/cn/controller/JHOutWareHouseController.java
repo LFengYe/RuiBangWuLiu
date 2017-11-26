@@ -620,13 +620,7 @@ public class JHOutWareHouseController {
         CommonController commonController = new CommonController();
 
         List<JHOutWareHouseList> res = JSONObject.parseArray(RedisAPI.get(jhOutWareHouseID), JHOutWareHouseList.class);
-        /*
-        if (res == null || res.isEmpty()) {
-            JSONObject params1 = new JSONObject();
-            params1.put("JHOutWareHouseID", "string," + jhOutWareHouseID);
-            res = commonController.proceduceQuery("tbGetJHOutWareListSum", params1, "com.cn.bean.out.JHOutWareHouseList", DatabaseOpt.DATA);
-        }
-         */
+        
         if (res != null && !res.isEmpty()) {
             Iterator<JHOutWareHouseList> iterator = res.iterator();
             JHOutWareHouseList oldList = null;
