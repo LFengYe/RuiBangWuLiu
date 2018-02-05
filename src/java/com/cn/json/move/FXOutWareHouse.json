@@ -32,7 +32,7 @@
         "inboundBatch": "入库批次,hidden",
         "partCode": "部品件号,@table,@supplierID,@partState:@partID,@partName,@inboundBatch,@fxAmount,@wareHouseManagerName",
         "fxCKAmount": "返修出库数量,check,小于,fxAmount",
-        "fxOutWareHouseListRemark": "备注,string,500"
+        "fxOutWareHouseListRemark": "备注,parent,fxOutWareHouseRemark"
     },
     "detailMustwrite": ["fxOutWareHouseID", "supplierID", "partCode", "fxCKAmount"],
     "detailUnique": [],

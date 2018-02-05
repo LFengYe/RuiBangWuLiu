@@ -37,7 +37,7 @@
         "partCode": "部品件号,@table,@supplierID:@partName,@partID,@autoStylingName,@partUnit,@inboundPackageAmount",
         "inboundAmount": "入库数量,number",
         "originalBatch": "原厂批次,string,12",
-        "djInWareHouseListRemark": "备注,string,500"
+        "djInWareHouseListRemark": "备注,parent,djINWareHousRemark"
     },
     "detailMustwrite": ["djInWareHouseID", "supplierID", "partCode", "inboundBatch"],
     "detailUnique": [],

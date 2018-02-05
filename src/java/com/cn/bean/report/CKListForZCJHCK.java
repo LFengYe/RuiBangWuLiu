@@ -13,7 +13,9 @@ import com.cn.bean.FieldDescription;
  */
 public class CKListForZCJHCK {
 
+    @FieldDescription(description = "计划出库单号")
     private String jhOutWareHouseID;
+    @FieldDescription(description = "计划需求时间")
     private String jhDemandTime;
     @FieldDescription(description = "出入类型")
     private String outInType;
@@ -29,12 +31,15 @@ public class CKListForZCJHCK {
     private String partID;
     @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
+    @FieldDescription(description = "领货数量")
     private String lhAmount;
     @FieldDescription(description = "终端客户编号")
     private String zdCustomerID;
     @FieldDescription(description = "终端客户名称", operate = "display")
     private String zdCustomerName;
+    @FieldDescription(description = "制单时间")
     private String jhCKProduceTime;
+    @FieldDescription(description = "制单员")
     private String jhCKProducerName;
 
     public String getJhCKProduceTime() {

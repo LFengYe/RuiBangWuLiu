@@ -29,7 +29,7 @@
         "inboundBatch": "入库批次,hidden",
         "partCode": "部品件号,@table,@supplierID:@partName,@partID,@inboundBatch,@inboundAmount,@wareHouseManagerName",
         "sjCKAmount": "送检出库数量,check,小于,inboundAmount",
-        "sjOutWareHouseListRemark": "备注,string,500"
+        "sjOutWareHouseListRemark": "备注,parent,sjOutBackWareHouseRemark"
     },
     "detailMustwrite": ["sjOutWareHouseID", "supplierID", "partCode", "inboundBatch", "sjCKAmount"],
     "detailUnique": [],

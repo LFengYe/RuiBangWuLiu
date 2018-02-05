@@ -37,7 +37,7 @@
         "supplierID": "供应商代码,@table,@customerTypeName,@zdCustomerID:@supplierName",
         "partCode": "部品件号,@table,@supplierID,@ycFLocation,@zdCustomerID:@partID,@partName,@inboundBatch,@tkAmount,@wareHouseManagerName",
         "zdTKAmount": "退库数量,check,小于,tkAmount",
-        "zdBackWareHouseRemark": "备注,10%"
+        "zdBackWareHouseRemark": "备注,parent,zdTKRemark"
     },
     "detailMustwrite": ["zdBackWareHouseID", "supplierID", "partCode", "inboundBatch", "zdTKAmount"],
     "detailUnique": [],

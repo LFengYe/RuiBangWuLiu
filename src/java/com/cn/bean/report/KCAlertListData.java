@@ -23,12 +23,19 @@ public class KCAlertListData {
     private String partID;
     @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
+    @FieldDescription(description = "库存最高值")
     private int kcHighBound;
+    @FieldDescription(description = "库存最低值")
     private int kcLowBound;
+    @FieldDescription(description = "库存总数")
     private int kfJCTotal;
+    @FieldDescription(description = "合格库存数")
     private int hgKCAmount;
+    @FieldDescription(description = "库容余量")
     private int krYAmount;
+    @FieldDescription(description = "缺件及溢出数")
     private int qjJYCAmount;
+    @FieldDescription(description = "备注")
     private String kcAlertRemark;
 
     public String getSupplierID() {

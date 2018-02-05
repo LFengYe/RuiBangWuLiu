@@ -13,7 +13,9 @@ import com.cn.bean.FieldDescription;
  */
 public class CKListForFxpCK {
 
+    @FieldDescription(description = "返修出库时间")
     private String fxCKAuditTime;
+    @FieldDescription(description = "返修出库单号")
     private String fxOutWareHouseID;
     @FieldDescription(description = "出入类型")
     private String outInType;
@@ -31,8 +33,11 @@ public class CKListForFxpCK {
     private String partName;
     @FieldDescription(description = "入库批次")
     private String inboundBatch;
+    @FieldDescription(description = "返修出库数量")
     private String fxCKAmount;
+    @FieldDescription(description = "制单员")
     private String fxCKProducerName;
+    @FieldDescription(description = "备注")
     private String fxOutWareHouseListRemark;
 
     public String getFxCKAuditTime() {

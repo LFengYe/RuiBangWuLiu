@@ -13,6 +13,7 @@ import com.cn.bean.FieldDescription;
  */
 public class CKListForJPSX {
 
+    @FieldDescription(description = "上线时间")
     private String sxTime;
     @FieldDescription(description = "出入类型")
     private String outInType;
@@ -28,12 +29,17 @@ public class CKListForJPSX {
     private String partID;
     @FieldDescription(description = "部品名称", operate = "display")
     private String partName;
+    @FieldDescription(description = "包号")
     private String packingNumber;
+    @FieldDescription(description = "上线数量")
     private String sxAmount;
+    @FieldDescription(description = "终端客户编号")
     private String zdCustomerID;
     @FieldDescription(description = "终端客户名称", operate = "display")
     private String zdCustomerName;
+    @FieldDescription(description = "配送员")
     private String sxStaffName;
+    @FieldDescription(description = "备注")
     private String sxProgressListRemark;
 
     public String getSxTime() {
